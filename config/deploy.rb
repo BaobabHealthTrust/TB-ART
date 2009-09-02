@@ -1,8 +1,8 @@
 set :staging, CLI.ui.ask("Do you want to stage this deployment? (y/n): ") == 'y'
-#set :repository, "git://github.com/jeffrafter/mateme.git"  
-#set :domain, "mateme.socialrange.org"
-set :repository, "git@neverlet.be:mateme.git"
-set :domain, "neno:8999"
+set :repository, "git://github.com/jeffrafter/mateme.git"  
+set :domain, "mateme.socialrange.org"
+#set :repository, "git@neverlet.be:mateme.git"
+#set :domain, "neno:8999"
 set :application, staging ? "staging" : "mateme"
 set :keep_releases, 3
 set :scm, :git
@@ -50,6 +50,12 @@ EOF
         run "ln -nsf #{shared_path}/config/#{f} #{current_path}/config/#{f}"
       end
     end 		
+    
+    desc "Copy workplans to current"
+    task :workplans, :roles => [:app] do
+      run "cp -R #{current_path}/workplans #{current_path}/public"
+    end 		
+    
   end  
 end
 
@@ -100,3 +106,4 @@ end
 before "deploy:migrate", "db:backup"
 after "deploy:setup", "init:config:database"
 after "deploy:symlink", "init:config:localize"
+after "deploy:symlink", "init:config:workplans"

@@ -53,4 +53,19 @@ module ApplicationHelper
   def welcome_message
     "Muli bwanji, enter your user information or scan your id card. <span style='font-size:0.6em;float:right'>(Version: #{MATEME_VERSION}#{' ' + MATEME_SETTINGS['installation'] if MATEME_SETTINGS}, #{File.ctime(File.join(RAILS_ROOT, 'config', 'environment.rb')).strftime('%d-%b-%Y')})</span>"  
   end
+  
+  def show_identifiers(location_id, patient)
+    content = ""
+    idents = GlobalProperty.find_by_property("dashboard.identifiers").property_value
+    json = JSON.parse(idents)
+    names = json[location_id.to_s] rescue []
+    names.each do |name|
+      ident_type = PatientIdentifierType.current.find_by_name(name)
+      next if ident_type.blank?
+      ident = patient.patient_identifiers.find_by_identifier_type(ident_type.id)
+      next if ident.blank?
+      content << "<span class='title'>#{name}:</span> #{ident.identifier}<br/>"       
+    end
+    content
+  end
 end
