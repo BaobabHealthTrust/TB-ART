@@ -34,12 +34,11 @@ class Observation < ActiveRecord::Base
   end
 
   def self.find_most_common(concept_question, answer_string, limit = 10)
-    # Concept name branch will make this easier!
     self.active.find(:all, 
       :select => "COUNT(*) as count, concept_name.name as value", 
-      :joins => "INNER JOIN concept ON concept.concept_id = value_coded INNER JOIN concept_name ON concept_name.concept_id = concept.concept_id", 
+      :joins => "INNER JOIN concept_name ON concept_name.concept_name_id = value_coded_name_id", 
       :conditions => ["obs.concept_id = ? AND (concept_name.name LIKE ? OR concept_name.name IS NULL)", concept_question, "%#{answer_string}%"],
-      :group => :value_coded, 
+      :group => :value_coded_name_id, 
       :order => "COUNT(*) DESC",
       :limit => limit).map{|o| o.value }
   end
