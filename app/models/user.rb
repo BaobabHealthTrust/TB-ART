@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   include Openmrs
   set_table_name :users
   set_primary_key :user_id
+  before_create :set_password
 
   cattr_accessor :current_user
   attr_accessor :plain_password
@@ -14,8 +15,8 @@ class User < ActiveRecord::Base
   def name
     self.first_name + " " + self.last_name
   end
-    
-  def before_create    
+  
+  def set_password
     # We expect that the default OpenMRS interface is used to create users
     self.password = encrypt(self.plain_password, self.salt) if self.plain_password
   end
