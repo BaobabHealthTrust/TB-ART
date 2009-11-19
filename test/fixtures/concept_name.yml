@@ -82,7 +82,7 @@ valium:
   date_created: 2004-04-08 00:00:00 -07:00
 concept_name_03454: 
   name: TEMPERATURE (C)
-  voided: false
+  voided: 0
   creator: 2
   voided_by: 
   void_reason: 
@@ -93,7 +93,7 @@ concept_name_03454:
   date_created: 2004-08-12 00:00:00 -07:00
 concept_name_03455: 
   name: WEIGHT (KG)
-  voided: false
+  voided: 0
   creator: 2
   voided_by: 
   void_reason: 
@@ -110,7 +110,7 @@ drug_frequency_coded:
   locale: en
 systolic_blood_pressure: 
   name: SYSTOLIC BLOOD PRESSURE
-  voided: false
+  voided: 0
   creator: 2
   voided_by: 
   void_reason: 
@@ -121,7 +121,7 @@ systolic_blood_pressure:
   date_created: 2004-08-12 00:00:00 -07:00
 diastolic_blood_pressure: 
   name: DIASTOLIC BLOOD PRESSURE
-  voided: false
+  voided: 0
   creator: 2
   voided_by: 
   void_reason: 

@@ -1,7 +1,7 @@
 evan_address:
   person_address_id: 1
   person_id: 1
-  preferred: false
+  preferred: 0
   address1: Green Snake Way
   address2: Friendship House
   city_village: Katoleza

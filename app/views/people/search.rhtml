@@ -45,7 +45,7 @@
           <% if person.addresses.first && person.addresses.first.city_village.present? %>Current Village: <%=h person.addresses.first.city_village -%>,<% end %>
           <% if person.names.first && person.names.first.family_name2.present? %>Mother's Surname: <%=h person.names.first.family_name2 -%>,<% end %>
           <%=h '(' + person.patient.location_identifier + ')' rescue '' -%>
-          <%=h ' Died' if person.dead rescue '' -%>
+          <%=h ' Died' if person.dead == 1 rescue '' -%>
         </option>
       <% end -%>
       <% if params[:identifier] %>

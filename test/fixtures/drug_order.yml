@@ -3,6 +3,6 @@ default:
   drug_inventory_id: 1
   units: 
   frequency: 
-  prn: false
-  complex: false
+  prn: 0
+  complex: 0
   quantity: 1

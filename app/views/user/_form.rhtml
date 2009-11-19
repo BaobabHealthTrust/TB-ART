@@ -1,7 +1,7 @@
 <%= error_messages_for 'user' %>
 <%case  controller.action_name when "search_user"%>
       <p><label for="user_username">Username</label><br/>
-        <%= @username = User.find(:all, :conditions =>["voided = ?",false], :order =>'username').map{|u|[u.username]}
+        <%= @username = User.find(:all, :conditions =>["voided = 0"], :order =>'username').map{|u|[u.username]}
            select(:user, :username, @username,{},{:include_blank => true ,:textCase => "lower" ,:validationRule =>"\\w{6}\\w*" ,:validationMessage => "Username must be at least SIX characters long"})%>
   <%when "change_password"%>
       <p><label for="user_password">Password</label><br/>

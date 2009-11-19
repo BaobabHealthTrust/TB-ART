@@ -36,7 +36,7 @@ class Person < ActiveRecord::Base
     # If the birthdate was estimated this year, we round up the age, that way if
     # it is March and the patient says they are 25, they stay 25 (not become 24)
     birth_date=self.birthdate
-    estimate=self.birthdate_estimated
+    estimate=self.birthdate_estimated==1
     patient_age += (estimate && birth_date.month == 7 && birth_date.day == 1  && 
       today.month < birth_date.month && self.date_created.year == today.year) ? 1 : 0
   end
@@ -48,7 +48,7 @@ class Person < ActiveRecord::Base
   end
     
   def birthdate_formatted
-    if self.birthdate_estimated
+    if self.birthdate_estimated==1
       if self.birthdate.day == 1 and self.birthdate.month == 7
         self.birthdate.strftime("??/???/%Y")
       elsif self.birthdate.day == 15 
@@ -87,7 +87,7 @@ class Person < ActiveRecord::Base
   def demographics
 
 
-    if self.birthdate_estimated
+    if self.birthdate_estimated==1
       birth_day = "Unknown"
       if self.birthdate.month == 7 and self.birthdate.day == 1
         birth_month = "Unknown"

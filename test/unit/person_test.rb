@@ -17,20 +17,20 @@ class PersonTest < ActiveSupport::TestCase
     end  
       
     should "return the age and increase it by one if the birthdate was estimated and you are checking during the year it was created" do 
-      p = Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => true)
+      p = Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => 1)
       p.date_created = "2008-01-01".to_date
       assert_equal p.age("2008-06-07".to_date), 8
 
-      p = Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => true)
+      p = Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => 1)
       p.date_created = "2000-01-01".to_date
       assert_equal p.age("2008-06-07".to_date), 7
     end
     
     should "format the birthdate" do
       assert_equal person(:evan).birthdate_formatted, "09/Jun/1982"
-      assert_equal Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => true).birthdate_formatted, "??/???/2000"
-      assert_equal Person.make(:birthdate => "2000-06-15".to_date, :birthdate_estimated => true).birthdate_formatted, "??/Jun/2000"
-      assert_equal Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => false).birthdate_formatted, "01/Jul/2000"     
+      assert_equal Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => 1).birthdate_formatted, "??/???/2000"
+      assert_equal Person.make(:birthdate => "2000-06-15".to_date, :birthdate_estimated => 1).birthdate_formatted, "??/Jun/2000"
+      assert_equal Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => 0).birthdate_formatted, "01/Jul/2000"     
     end
     
     should "set the birthdate" do
@@ -78,7 +78,7 @@ class PersonTest < ActiveSupport::TestCase
     should "return the first preferred name" do
       p = person(:evan)
       p.names << PersonName.create(:given_name => "Mr. Cool")
-      p.names << PersonName.create(:given_name => "Sunshine", :family_name => "Cassidy", :preferred => true)
+      p.names << PersonName.create(:given_name => "Sunshine", :family_name => "Cassidy", :preferred => 1)
       p.save!
       assert_equal Person.find(:first, :include => :names).name, "Sunshine Cassidy"
     end
@@ -86,20 +86,20 @@ class PersonTest < ActiveSupport::TestCase
     should "return the first preferred address" do
       p = person(:evan)
       p.addresses << PersonAddress.create(:address1 => 'Sunshine Underground', :city_village => 'Lilongwe')
-      p.addresses << PersonAddress.create(:address1 => 'Staff Housing', :city_village => 'Neno', :preferred => true)
+      p.addresses << PersonAddress.create(:address1 => 'Staff Housing', :city_village => 'Neno', :preferred => 1)
       p.save!
       assert_equal Person.find(:first, :include => :addresses).address, "Neno"
     end
 
     should "refer to the person's names but not include voided names" do
       p = person(:evan)
-      PersonName.create(:given_name => "Sunshine", :family_name => "Cassidy", :preferred => true, :person_id => p.person_id, :voided => true)
+      PersonName.create(:given_name => "Sunshine", :family_name => "Cassidy", :preferred => 1, :person_id => p.person_id, :voided => 1)
       assert_not_equal Person.find(:first, :include => :names).name, "Sunshine Cassidy"
     end
     
     should "refer to the person's addresses but not include voided addresses" do
       p = person(:evan)
-      PersonAddress.create(:address1 => 'Sunshine Underground', :city_village => 'Lilongwe', :preferred => true, :person_id => p.person_id, :voided => true)
+      PersonAddress.create(:address1 => 'Sunshine Underground', :city_village => 'Lilongwe', :preferred => 1, :person_id => p.person_id, :voided => 1)
       assert_not_equal Person.find(:first, :include => :addresses).address, "Lilongwe"
     end
 
@@ -177,7 +177,7 @@ class PersonTest < ActiveSupport::TestCase
     should "return demographics with appropriate estimated birthdates" do
       p = person(:evan)
       assert_equal p.demographics["person"]["birth_day"], 9
-      p.birthdate_estimated = true
+      p.birthdate_estimated = 1
       assert_equal p.demographics["person"]["birth_day"], "Unknown"
       p.set_birthdate(p.birthdate.year,p.birthdate.month,"Unknown")
       assert_equal p.demographics["person"]["birth_year"], 1982

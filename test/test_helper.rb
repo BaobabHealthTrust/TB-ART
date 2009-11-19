@@ -84,11 +84,11 @@ class ActiveSupport::TestCase
      yield block
   end 
   
-  def prescribe(patient, obs, drug, dose = 1, frequency = "ONCE A DAY", prn = false, start_date = nil, end_date = nil)
+  def prescribe(patient, obs, drug, dose = 1, frequency = "ONCE A DAY", prn = 0, start_date = nil, end_date = nil)
     start_date ||= Time.now
     end_date ||= Time.now + 3.days
     encounter = patient.current_treatment_encounter
-    DrugOrder.write_order(encounter, patient, obs, drug, start_date, end_date, dose, frequency, prn = false)
+    DrugOrder.write_order(encounter, patient, obs, drug, start_date, end_date, dose, frequency, prn = 0)
   end
   
   def diagnose(patient, value_coded, value_coded_name_id = nil)

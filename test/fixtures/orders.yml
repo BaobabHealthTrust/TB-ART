@@ -7,13 +7,13 @@ default:
   instructions: 
   start_date: 2000-01-01 00:00:00
   auto_expire_date: 2000-01-01 00:00:00
-  discontinued: false
+  discontinued: 0
   discontinued_date: 2000-01-01 00:00:00
   discontinued_by: 0
   discontinued_reason: 0
   creator: 0
   date_created: 2000-01-01 00:00:00
-  voided: false
+  voided: 0
   voided_by: 0
   date_voided: 2000-01-01 00:00:00
   void_reason: 

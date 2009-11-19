@@ -26,13 +26,13 @@ ConceptSet.blueprint do
 end
 
 Concept.blueprint do
-  retired false
+  retired 0
   short_name ''
   description ''
   form_text ''
   datatype_id 1
   class_id 1
-  is_set false
+  is_set 0
   creator 1
   date_created Time.now
   default_charge 1
@@ -50,15 +50,15 @@ DrugOrder.blueprint do
   drug_inventory_id 1
   units ''
   frequency ''
-  prn false
-  complex false
+  prn 0
+  complex 0
   quantity 1
 end
     
 Drug.blueprint do
   concept_id 1
   name 'Stavudine Lamivudine Nevirapine'
-  retired false
+  retired 0
   creator 1
   date_created Time.now
 end
@@ -70,7 +70,7 @@ DrugSubstance.blueprint do
   units ''
   creator 1
   date_created Time.now
-  retired false
+  retired 0
   retired_by 1
   date_retired Time.now
   retire_reason Time.now
@@ -83,7 +83,7 @@ Encounter.blueprint do
   form_id 1
   creator 1
   date_created Time.now
-  voided false
+  voided 0
   voided_by 1  
   date_voided Time.now
   void_reason ''
@@ -136,7 +136,7 @@ Observation.blueprint do
   comments ''
   creator 1
   date_created Time.now
-  voided false
+  voided 0
   voided_by 1
   date_voided Time.now
   void_reason ''
@@ -150,13 +150,13 @@ Order.blueprint do
   instructions ''
   start_date Time.now
   auto_expire_date Time.now
-  discontinued false
+  discontinued 0
   discontinued_date Time.now
   discontinued_by 1
   discontinued_reason 1
   creator 1
   date_created Time.now
-  voided false
+  voided 0
   voided_by 1
   date_voided Time.now
   void_reason ''
@@ -169,7 +169,7 @@ OrderType.blueprint do
   description 'I like them when they are dill'
   creator 1
   date_created Time.now
-  retired false
+  retired 0
   retired_by 1
   date_retired Time.now
   retire_reason ''
@@ -182,7 +182,7 @@ PatientIdentifier.blueprint do
   location_id 1
   creator 1
   date_created Time.now
-  voided false
+  voided 0
   voided_by 1
   date_voided Time.now
   void_reason ''
@@ -192,10 +192,10 @@ PatientIdentifierType.blueprint do
   name ''
   description ''
   format ''
-  check_digit false
+  check_digit 0
   creator 1
   date_created Time.now
-  required false
+  required 0
   format_description ''
 end
 
@@ -205,7 +205,7 @@ Patient.blueprint do
   date_created Time.now
   changed_by 1
   date_changed Time.now
-  voided false
+  voided 0
   voided_by 1
   date_voided Time.now
   void_reason ''
@@ -213,7 +213,7 @@ end
 
 PersonAddress.blueprint do
   person_id 1
-  preferred false
+  preferred 0
   address1 ''
   address2 ''
   city_village ''
@@ -224,7 +224,7 @@ PersonAddress.blueprint do
   longitude ''
   creator 1
   date_created Time.now
-  voided false
+  voided 0
   voided_by 1
   date_voided Time.now
   void_reason ''
@@ -245,7 +245,7 @@ PersonNameCode.blueprint do
 end
 
 PersonName.blueprint do
-  preferred false
+  preferred 0
   person_id 1
   prefix ''
   given_name ''
@@ -257,7 +257,7 @@ PersonName.blueprint do
   degree ''
   creator 1
   date_created Time.now
-  voided false
+  voided 0
   voided_by 1
   date_voided Time.now
   void_reason ''
@@ -268,7 +268,7 @@ end
 Person.blueprint do
   gender ''
   birthdate Time.now.to_date
-  birthdate_estimated false
+  birthdate_estimated 0
   dead 1
   death_date Time.now
   cause_of_death 1
@@ -276,7 +276,7 @@ Person.blueprint do
   date_created Time.now
   changed_by 1
   date_changed Time.now
-  voided false
+  voided 0
   voided_by 1
   date_voided Time.now
   void_reason ''

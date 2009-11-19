@@ -21,14 +21,14 @@ module Openmrs
   def void(reason = nil)
     unless voided?
       self.date_voided = Time.now
-      self.voided = true
+      self.voided = 1
       self.void_reason = reason
       self.voided_by = User.current_user.user_id unless User.current_user.nil?
     end    
   end
   
   def voided?
-    self.attributes.has_key?("voided") ? voided : raise("Model does not support voiding")
+    self.attributes.has_key?("voided") ? voided == 1 : raise("Model does not support voiding")
   end  
   
 end

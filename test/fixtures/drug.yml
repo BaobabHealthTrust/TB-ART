@@ -11,8 +11,8 @@ triomune_30:
   maximum_daily_dose: 
   date_retired: 
   drug_id: 2
-  combination: true
-  retired: false
+  combination: 1
+  retired: 0
   concept_id: 792
   date_created: 2005-02-24 00:00:00 -08:00
 triomune_40: 
@@ -28,8 +28,8 @@ triomune_40:
   maximum_daily_dose: 
   date_retired: 
   drug_id: 3
-  combination: true
-  retired: false
+  combination: 1
+  retired: 0
   concept_id: 792
   date_created: 2005-02-24 00:00:00 -08:00
 laughing_gas_600: 
@@ -45,8 +45,8 @@ laughing_gas_600:
   maximum_daily_dose: 
   date_retired: 
   drug_id: 4
-  combination: true
-  retired: false
+  combination: 1
+  retired: 0
   concept_id: 1000
   date_created: 2005-02-24 00:00:00 -08:00
 laughing_gas_1000: 
@@ -62,7 +62,7 @@ laughing_gas_1000:
   maximum_daily_dose: 
   date_retired: 
   drug_id: 5
-  combination: true
-  retired: false
+  combination: 1
+  retired: 0
   concept_id: 1000
   date_created: 2005-02-24 00:00:00 -08:00

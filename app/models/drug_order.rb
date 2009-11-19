@@ -6,13 +6,13 @@ class DrugOrder < ActiveRecord::Base
   
   def to_s 
     s = "#{drug.name}: #{self.dose} #{self.units} #{frequency} for #{duration} days"
-    s << " (prn)" if prn?
+    s << " (prn)" if prn == 1
     s
   end
   
   def to_short_s
     s = "#{drug.name}: #{self.dose} #{self.units} #{frequency} for #{duration} days"
-    s << " (prn)" if prn?
+    s << " (prn)" if prn == 1
     s
   end
   
@@ -31,7 +31,7 @@ class DrugOrder < ActiveRecord::Base
              INNER JOIN drug ON drug.drug_id = drug_order.drug_inventory_id"             
     self.all( 
       :joins => joins, 
-      :select => "*, MIN(drug_order.order_id) as order_id, COUNT(*) as number, CONCAT(drug.name, ':', dose, ' ', drug_order.units, ' ', frequency, ' for ', DATEDIFF(auto_expire_date, start_date), ' days', IF(prn, ' prn', '')) as script", 
+      :select => "*, MIN(drug_order.order_id) as order_id, COUNT(*) as number, CONCAT(drug.name, ':', dose, ' ', drug_order.units, ' ', frequency, ' for ', DATEDIFF(auto_expire_date, start_date), ' days', IF(prn=1, ' prn', '')) as script", 
       :group => ['drug.name, dose, drug_order.units, frequency, prn, DATEDIFF(start_date, auto_expire_date)'], 
       :order => "COUNT(*) DESC")
   end
@@ -39,9 +39,10 @@ class DrugOrder < ActiveRecord::Base
   def self.clone_order(encounter, patient, obs, drug_order)
     write_order(encounter, patient, obs, drug_order.drug, Time.now, 
       Time.now + drug_order.duration.days, drug_order.dose, drug_order.frequency, 
-      drug_order.prn?)
+      drug_order.prn)
   end
   
+  # prn should be 0 | 1
   def self.write_order(encounter, patient, obs, drug, start_date, auto_expire_date, dose, frequency, prn)
     encounter ||= patient.current_treatment_encounter
     drug_order = nil
@@ -66,19 +67,3 @@ class DrugOrder < ActiveRecord::Base
     drug_order     
   end
 end
-
-# CREATE TABLE `drug_order` (
-#  `order_id` int(11) NOT NULL DEFAULT '0',
-#  `drug_inventory_id` int(11) DEFAULT '0',
-#  `dose` double DEFAULT NULL,
-#  `equivalent_daily_dose` double DEFAULT NULL,
-#  `units` varchar(255) DEFAULT NULL,
-#  `frequency` varchar(255) DEFAULT NULL,
-#  `prn` tinyint(1) NOT NULL DEFAULT '0',
-#  `complex` tinyint(1) NOT NULL DEFAULT '0',
-#  `quantity` int(11) DEFAULT NULL,
-#  PRIMARY KEY (`order_id`),
-#  KEY `inventory_item` (`drug_inventory_id`),
-#  CONSTRAINT `extends_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
-#  CONSTRAINT `inventory_item` FOREIGN KEY (`drug_inventory_id`) REFERENCES `drug` (`drug_id`)
-# ) ENGINE=InnoDB DEFAULT CHARSET=utf8

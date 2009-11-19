@@ -72,13 +72,13 @@ class UserController < ApplicationController
         
   def voided_list
       session[:voided_list] = false 
-    @user_pages, @users = paginate(:users, :per_page => 50,:conditions =>["voided=?",true])
+    @user_pages, @users = paginate(:users, :per_page => 50,:conditions =>["voided=1"])
       render :view => 'list'
   end
   
   def list
     session[:voided_list] = true
-    @user_pages, @users = paginate(:users, :per_page => 50,:conditions =>["voided=?",false])
+    @user_pages, @users = paginate(:users, :per_page => 50,:conditions =>["voided=0"])
  end
 
   def show
@@ -157,7 +157,7 @@ class UserController < ApplicationController
   def destroy
    unless request.get?
    @user = User.find(session[:user_edit])
-    if @user.update_attributes(:voided => true, :void_reason => params[:user][:void_reason],:voided_by => session[:user_id],:date_voided => Time.now.to_s)
+    if @user.update_attributes(:voided => 1, :void_reason => params[:user][:void_reason],:voided_by => session[:user_id],:date_voided => Time.now.to_s)
       flash[:notice]='User has successfully been removed.'
       redirect_to :action => 'voided_list'
     else
