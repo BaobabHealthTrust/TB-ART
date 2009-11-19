@@ -9,7 +9,7 @@ openmrs_identification_number:
   patient_identifier_type_id: 1
   required: 0
   format_description: 
-  uuid:
+  uuid: 1ff47340-268f-102d-a2b3-16da04859145
 old_identification_number: 
   name: Old Identification Number
   format: ""
@@ -20,7 +20,7 @@ old_identification_number:
   patient_identifier_type_id: 2
   required: 0
   format_description: 
-  uuid:
+  uuid: 1ff49ab4-268f-102d-a2b3-16da04859145
 national_id: 
   name: National id
   format: ""
@@ -31,7 +31,7 @@ national_id:
   patient_identifier_type_id: 3
   required: 0
   format_description: P-175-0000004-5
-  uuid:
+  uuid: 1ff4a9be-268f-102d-a2b3-16da04859145
 arv_number: 
   name: ARV Number
   format: ""
@@ -42,7 +42,7 @@ arv_number:
   patient_identifier_type_id: 4
   required: 0
   format_description: ""
-  uuid:
+  uuid: 1ff4bc6a-268f-102d-a2b3-16da04859145
 pre_art_number: 
   name: Pre ART Number
   format: PART-0001 
@@ -53,7 +53,7 @@ pre_art_number:
   patient_identifier_type_id: 5
   required: 0
   format_description: 
-  uuid:
+  uuid: 1ff4cb10-268f-102d-a2b3-16da04859145
 unknown_id: 
   name: Unknown ID
   format: 
@@ -64,5 +64,5 @@ unknown_id:
   patient_identifier_type_id: 6
   required: 0
   format_description: 
-  uuid:
+  uuid: 1ff4da88-268f-102d-a2b3-16da04859145
   

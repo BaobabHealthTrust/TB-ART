@@ -8,7 +8,6 @@ mikmck:
   creator: 1
   changed_by: 1
   system_id: Baobab Admin
-  uuid: 10af7d9c-268c-102d-a2b3-16da04859145
 registration:
   user_id: 2
   username: registration
@@ -19,4 +18,3 @@ registration:
   creator: 1
   changed_by: 1
   system_id: Partners In Health Admin
-  uuid: 183372ee-268c-102d-a2b3-16da04859145

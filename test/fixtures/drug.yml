@@ -15,7 +15,7 @@ triomune_30:
   retired: 0
   concept_id: 792
   date_created: 2005-02-24 00:00:00 -08:00
-  uuid:
+  uuid: 1fda7756-268f-102d-a2b3-16da04859145
 triomune_40: 
   route: 
   name: Triomune-40
@@ -33,7 +33,7 @@ triomune_40:
   retired: 0
   concept_id: 792
   date_created: 2005-02-24 00:00:00 -08:00
-  uuid:
+  uuid: 1fdb177e-268f-102d-a2b3-16da04859145
 laughing_gas_600: 
   route: 
   name: Laughing gas 600mg
@@ -51,7 +51,7 @@ laughing_gas_600:
   retired: 0
   concept_id: 1000
   date_created: 2005-02-24 00:00:00 -08:00
-  uuid:
+  uuid: 1fdb38b2-268f-102d-a2b3-16da04859145
 laughing_gas_1000: 
   route: 
   name: Laughing gas 1000mg
@@ -69,4 +69,4 @@ laughing_gas_1000:
   retired: 0
   concept_id: 1000
   date_created: 2005-02-24 00:00:00 -08:00
-  uuid:
+  uuid: 1fdb48de-268f-102d-a2b3-16da04859145

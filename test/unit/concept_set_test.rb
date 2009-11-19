@@ -5,8 +5,8 @@ class ConceptSetTest < ActiveSupport::TestCase
     fixtures :concept_set, :concept, :concept_name
 
     should "be valid" do
-      concept_set = ConceptSet.make
-      assert concept_set.valid?
+      c = ConceptSet.make
+      assert c.valid?
     end
   end  
 end

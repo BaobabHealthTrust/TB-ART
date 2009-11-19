@@ -36,9 +36,9 @@ class ObservationTest < ActiveSupport::TestCase
     should "look up active concepts"
     
     should "find the most common active observation and sort by the answer" do
-      observation = Observation.make(:concept_id => concept(:outpatient_diagnosis).id, :value_text => nil, :value_coded => concept_name(:extrapulmonary_tuberculosis_without_lymphadenopathy).concept_id, :value_datetime => nil)
-      observation = Observation.make(:concept_id => concept(:outpatient_diagnosis).id, :value_text => nil, :value_coded => concept_name(:immune_reconstitution_inflammatory_syndrome_construct).concept_id, :value_datetime => nil)
-      observation = Observation.make(:concept_id => concept(:outpatient_diagnosis).id, :value_text => nil, :value_coded => concept_name(:immune_reconstitution_inflammatory_syndrome_construct).concept_id, :value_datetime => nil)
+      observation = Observation.make(:concept_id => concept(:outpatient_diagnosis).id, :value_text => nil, :value_coded_name_id => concept_name(:extrapulmonary_tuberculosis_without_lymphadenopathy).concept_name_id, :value_datetime => nil)
+      observation = Observation.make(:concept_id => concept(:outpatient_diagnosis).id, :value_text => nil, :value_coded_name_id => concept_name(:immune_reconstitution_inflammatory_syndrome_construct).concept_name_id, :value_datetime => nil)
+      observation = Observation.make(:concept_id => concept(:outpatient_diagnosis).id, :value_text => nil, :value_coded_name_id => concept_name(:immune_reconstitution_inflammatory_syndrome_construct).concept_name_id, :value_datetime => nil)
       assert_equal Observation.find_most_common(concept(:outpatient_diagnosis).id, nil), [concept_name(:immune_reconstitution_inflammatory_syndrome_construct).name, concept_name(:extrapulmonary_tuberculosis_without_lymphadenopathy).name]
       assert_equal Observation.find_most_common(concept(:outpatient_diagnosis).id, "LYMPH"), [concept_name(:extrapulmonary_tuberculosis_without_lymphadenopathy).name]
     end
