@@ -1,0 +1,18 @@
+class String; def compact; self.gsub(/^\s*|\s*$/, '').gsub(/\s+/, ' '); end; end
+
+ymls = Dir[File.join(Rails.root, 'test/fixtures/*.yml')]
+ymls.each{|yml|
+  puts ""
+  puts "----------"
+  puts "Processing #{yml}"
+  file = File.new(yml, "r")
+  while (line = file.gets) do
+    if (line.compact == 'uuid:')
+      uuid = ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
+      puts '  uuid: ' + uuid
+    else
+      puts line
+    end 
+  end
+  file.close  
+}

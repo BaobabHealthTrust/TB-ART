@@ -19,3 +19,4 @@ default:
   void_reason: 
   patient_id: 0
   accession_number: 
+  uuid:

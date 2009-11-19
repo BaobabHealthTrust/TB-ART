@@ -18,6 +18,7 @@ location_00005:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:
 location_00006: 
   name: Malawi
   address1: ""
@@ -37,6 +38,7 @@ location_00006:
   county_district: ""
   neighborhood_cell: ""
   longitude: 
+  uuid:
 location_00007: 
   name: Neno District Hospital - Outpatient
   address1: ""
@@ -56,6 +58,7 @@ location_00007:
   county_district: 
   neighborhood_cell: 
   longitude: 
+  uuid:
 registration: 
   name: Neno District Hospital - Registration
   address1: ""
@@ -75,6 +78,7 @@ registration:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:
 neno_art: 
   name: Neno District Hospital - ART
   address1: ""
@@ -94,6 +98,7 @@ neno_art:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:
 location_00010: 
   name: Neno District Hospital - Vitals
   address1: ""
@@ -113,6 +118,7 @@ location_00010:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:
 location_00011: 
   name: Neno District Hospital - Diagnosis
   address1: ""
@@ -132,6 +138,7 @@ location_00011:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:
 location_00001: 
   name: Unknown Location
   address1: ""
@@ -151,6 +158,7 @@ location_00001:
   county_district: 
   neighborhood_cell: 
   longitude: 
+  uuid:
 neno_district_hospital: 
   name: Neno District Hospital
   address1: ""
@@ -170,6 +178,7 @@ neno_district_hospital:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:
 location_00003: 
   name: Magaleta Rural Health Center
   address1: ""
@@ -189,6 +198,7 @@ location_00003:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:
 location_00004: 
   name: Neno Mission Hospital
   address1: ""
@@ -208,3 +218,4 @@ location_00004:
   county_district: 
   neighborhood_cell: 
   longitude: ""
+  uuid:

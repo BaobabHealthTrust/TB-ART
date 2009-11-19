@@ -5,60 +5,70 @@ immune_reconstitution_inflammatory_syndrome_date:
   date_created: 2007-08-02 15:35:58 +02:00
   creator: 2053
   locale: en
+  uuid:
 immune_reconstitution_inflammatory_syndrome_construct: 
   name: IMMUNE RECONSTITUTION INFLAMMATORY SYNDROME CONSTRUCT
   concept_id: 2522
   date_created: 2007-08-02 15:27:59 +02:00
   creator: 2053
   locale: en
+  uuid:
 outpatient_diagnosis: 
   name: OUTPATIENT DIAGNOSIS
   concept_id: 6098
   date_created: 2008-03-21 15:08:47 +02:00
   creator: 15878
   locale: en
+  uuid:
 alcohol_counseling: 
   name: ALCOHOL COUNSELING
   concept_id: 1288
   date_created: 2005-02-25 11:32:55 +02:00
   creator: 2
   locale: en
+  uuid:
 muppet_counseling: 
   name: MUPPET COUNSELING
   concept_id: 1289
   date_created: 2007-10-25 13:39:28 +02:00
   creator: 7
   locale: en
+  uuid:
 extrapulmonary_tuberculosis_without_lymphadenopathy: 
   name: EXTRAPULMONARY TUBERCULOSIS WITHOUT LYMPHADENOPATHY
   concept_id: 2892
   date_created: 2008-01-18 12:24:33 +02:00
   creator: 15877
   locale: en
+  uuid:
 height: 
   name: HEIGHT (CM)
   concept_id: 5090
   date_created: 2004-08-12 00:00:00 +02:00
   creator: 2
   locale: en
+  uuid:
 referrals_ordered: 
   name: REFERRALS ORDERED
   concept_id: 1272
   date_created: 2005-02-22 20:46:03 +02:00
   creator: 2
   locale: en
+  uuid:
 outpatient_diagnosis_non_coded: 
   name: OUTPATIENT DIAGNOSIS, NON-CODED
   concept_id: 3106
   date_created: 2008-05-23 16:26:14 +02:00
   creator: 7
   locale: en
+  uuid:
 treatment: 
   name: TREATMENT
   concept_id: 1185
   date_created: 2005-02-09 00:00:00 +02:00
   creator: 2
   locale: en  
+  uuid:
 stavudine_lamivudine_nevirapine: 
   name: STAVUDINE LAMIVUDINE AND NEVIRAPINE
   creator: 4
@@ -66,6 +76,7 @@ stavudine_lamivudine_nevirapine:
   locale: en
   concept_id: 792
   date_created: 2004-04-08 00:00:00 -07:00  
+  uuid:
 nitrous_oxide: 
   name: NITROUS OXIDE
   creator: 4
@@ -73,6 +84,7 @@ nitrous_oxide:
   locale: en
   concept_id: 1000
   date_created: 2004-04-08 00:00:00 -07:00    
+  uuid:
 valium: 
   name: VALIUM
   creator: 4
@@ -80,6 +92,7 @@ valium:
   locale: en
   concept_id: 1001
   date_created: 2004-04-08 00:00:00 -07:00
+  uuid:
 concept_name_03454: 
   name: TEMPERATURE (C)
   voided: 0
@@ -91,6 +104,7 @@ concept_name_03454:
   locale: en
   concept_id: 5088
   date_created: 2004-08-12 00:00:00 -07:00
+  uuid:
 concept_name_03455: 
   name: WEIGHT (KG)
   voided: 0
@@ -102,12 +116,14 @@ concept_name_03455:
   locale: en
   concept_id: 5089
   date_created: 2004-08-12 00:00:00 -07:00
+  uuid:
 drug_frequency_coded: 
   name: DRUG FREQUENCY CODED
   concept_id: 3320
   date_created: 2008-05-23 16:26:14 +02:00
   creator: 7
   locale: en
+  uuid:
 systolic_blood_pressure: 
   name: SYSTOLIC BLOOD PRESSURE
   voided: 0
@@ -119,6 +135,7 @@ systolic_blood_pressure:
   locale: en
   concept_id: 5085
   date_created: 2004-08-12 00:00:00 -07:00
+  uuid:
 diastolic_blood_pressure: 
   name: DIASTOLIC BLOOD PRESSURE
   voided: 0
@@ -130,3 +147,5 @@ diastolic_blood_pressure:
   locale: en
   concept_id: 5086
   date_created: 2004-08-12 00:00:00 -07:00
+  uuid:
+  

@@ -9,6 +9,7 @@ openmrs_identification_number:
   patient_identifier_type_id: 1
   required: 0
   format_description: 
+  uuid:
 old_identification_number: 
   name: Old Identification Number
   format: ""
@@ -19,6 +20,7 @@ old_identification_number:
   patient_identifier_type_id: 2
   required: 0
   format_description: 
+  uuid:
 national_id: 
   name: National id
   format: ""
@@ -29,6 +31,7 @@ national_id:
   patient_identifier_type_id: 3
   required: 0
   format_description: P-175-0000004-5
+  uuid:
 arv_number: 
   name: ARV Number
   format: ""
@@ -39,6 +42,7 @@ arv_number:
   patient_identifier_type_id: 4
   required: 0
   format_description: ""
+  uuid:
 pre_art_number: 
   name: Pre ART Number
   format: PART-0001 
@@ -49,6 +53,7 @@ pre_art_number:
   patient_identifier_type_id: 5
   required: 0
   format_description: 
+  uuid:
 unknown_id: 
   name: Unknown ID
   format: 
@@ -59,4 +64,5 @@ unknown_id:
   patient_identifier_type_id: 6
   required: 0
   format_description: 
+  uuid:
   

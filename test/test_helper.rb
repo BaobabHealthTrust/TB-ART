@@ -9,8 +9,6 @@ require 'factory_girl'
 
 Dir[File.join(RAILS_ROOT, 'test', 'factories', '**', '*')].each {|f| require f }
 
-
-
 alias :running :lambda
 
 class ActiveSupport::TestCase 
@@ -41,7 +39,7 @@ class ActiveSupport::TestCase
   self.set_fixture_class :weight_for_heights => WeightForHeight
   self.set_fixture_class :weight_height_for_ages => WeightHeightForAge
 
-#  fixtures :users, :location
+  fixtures :users, :location
 
   setup do    
     User.current_user = User.find_by_username('registration')

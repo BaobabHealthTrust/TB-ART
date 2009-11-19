@@ -8,3 +8,4 @@ evan_vitals:
   encounter_datetime: 2001-01-01 00:00:00
   creator: 1
   date_created: 2000-01-01 00:00:00
+  uuid:
