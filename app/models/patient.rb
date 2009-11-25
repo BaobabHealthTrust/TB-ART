@@ -29,8 +29,24 @@ class Patient < ActiveRecord::Base
   
   def current_orders
     encounter = current_treatment_encounter 
-    orders = encounter.orders.active
+    orders = encounter.orders.active.all
     orders
+  end
+  
+  def alerts
+    # next appt
+    # adherence
+    # drug auto-expiry
+    # cd4 due
+    
+  end
+  
+  def summary
+    verbiage = []
+    # verbiage << programs.active.each{|prog| "Started #{prog.name} #{prog.start_date} at #{prog.location}" }
+    # verbiage << "Last seen #{visits.active.recent(1)}"
+    # verbiage << "Current presciptions include #{orders.active.unfinished.prescriptions}"
+    verbiage.join(', ')
   end
 
   def national_id(force = true)

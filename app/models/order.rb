@@ -9,7 +9,11 @@ class Order < ActiveRecord::Base
   belongs_to :provider, :foreign_key => 'orderer', :class_name => 'User'
   belongs_to :observation, :foreign_key => 'obs_id', :class_name => 'Observation'
   has_one :drug_order
-  named_scope :active, :conditions => ['voided = 0 AND discontinued = 0']
+  named_scope :active, :conditions => ['voided = 0']
+  named_scope :unfinished, :conditions => ['discontinued = 0 AND auto_expire_date > NOW()']
+  named_scope :finished, :conditions => ['discontinued = 1 OR auto_expire_date < NOW()']
+  named_scope :labs, :conditions => ['drug_order.drug_inventory_id is NULL']
+  named_scope :prescriptions, :conditions => ['drug_order.drug_inventory_id is NOT NULL']
   
   def to_s
     "#{drug_order}"
