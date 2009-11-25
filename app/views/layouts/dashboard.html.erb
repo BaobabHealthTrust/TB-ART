@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <%= @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue ""  %>
+    <script language="javascript">
+      tstUsername = "<%= User.current_user.username unless User.current_user.nil? %>";
+      tstCurrentDate = "<%= Time.now.strftime("%Y/%m/%d") %>";
+      var tt_cancel_destination = null;
+    </script>
+    <%= stylesheet_link_tag "dashboard" %>
+    <%= javascript_include_tag "preload" %>
+  </head>
+  <body id="mateme">  
+    <div id="container">      
+      <div id="content">
+        <div id="header">
+          <h1><%= patient_image(@patient) -%><%= @patient.person.name %></h1>
+          <div id="print" style="margin-top:7px;">
+            <button id="end" class="silver"><span>Print</span></button>
+          </div>
+          <div id="identifiers">
+            <%= show_identifiers(Location.current_location.id, @patient) rescue '' %>
+          </div>
+          <div id="demographics">
+            <span class='title'>Birthdate:</span> <%= @patient.person.birthdate_formatted rescue '' %>
+          </div>
+        </div>
+        <%= yield %>  
+        <div id="footer" class="dark">
+          <div id="buttons" class="buttons" style="top:0px">
+            <button id="end" class="red left"><span>End</span></button>
+            <button id="next" class="green"><span>Next Task:<br/>Treatment</span></button>
+            <button id="additional" class="yellow"><span>Additional<br/>Tasks</span></button>
+          </div>          
+        </div>    
+      </div>  
+    </div>
+  </body>
+</html>

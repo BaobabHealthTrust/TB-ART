@@ -64,8 +64,12 @@ module ApplicationHelper
       next if ident_type.blank?
       ident = patient.patient_identifiers.find_by_identifier_type(ident_type.id)
       next if ident.blank?
-      content << "<span class='title'>#{name}:</span> #{ident.identifier}<br/>"       
+      content << "<span class='title'>#{name}:</span> #{ident.identifier}"       
     end
     content
+  end
+  
+  def patient_image(patient) 
+    @patient.person.gender == 'M' ? "<img src='/images/male.gif' alt='Male'>" : "<img src='/images/female.gif' alt='Female'>"
   end
 end

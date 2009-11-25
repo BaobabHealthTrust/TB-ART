@@ -1,7 +1,7 @@
 set :staging, CLI.ui.ask("Do you want to stage this deployment? (y/n): ") == 'y'
-#set :repository, "git://github.com/jeffrafter/mateme.git"  
+set :repository, "git://github.com/jeffrafter/mateme.git"  
 #set :domain, "mateme.socialrange.org"
-set :repository, "git@neverlet.be:mateme.git"
+#set :repository, "git@neverlet.be:mateme.git"
 set :domain, "neno:8999"
 set :application, staging ? "staging" : "mateme"
 set :keep_releases, 3

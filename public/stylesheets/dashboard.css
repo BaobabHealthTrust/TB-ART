@@ -1,0 +1,148 @@
+/* colors */
+.yellow { background-color:rgb(255,255,153); }
+.red { background-color:rgb(255,51,51); }
+.green { background-color:rgb(61,235,61); }
+.dark { background-color:rgb(51,51,51); }
+.blue { background-color:rgb(153,153,255); }
+.odd { background-color:rgb(230,230,255); }
+.silver { background-color:rgb(204,204,204); }
+.inactive { background-color:rgb(153,153,153); }
+
+
+body{
+  font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
+  margin: 0;
+  -moz-user-select:none;
+}
+
+#mateme {
+  background-color:#000000;
+}
+
+#container {
+  background-color:#000000;
+  display:block;
+  height:1px;
+  left:0;
+  overflow:visible;
+  position:absolute;
+  top:50%;
+  visibility:visible;
+  width:100%;
+}
+
+#content {
+  background:#FFFFFF;
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:800px;
+  height:600px;
+  margin-left:-400px;
+  margin-top:-300px;
+
+}
+
+#footer {
+  background-color:rgb(51,51,51);
+  border-top:3px solid :#99AAB7;
+  color:#CADCEA;
+  height:80px;
+  width:100%;
+  bottom:0px;
+  position:absolute;
+  overflow:hidden;
+}
+
+.centered {
+  width:400px;
+  height:300px;
+  position:absolute;
+  margin-top:-150px;
+  margin-left:-200px;
+  left:50%;
+  top:50%;
+  text-align:center;
+}
+
+button {
+  font-weight:bold;
+  font-size:1.2em;
+  padding:5px;
+  padding-left:14px;
+  padding-right:14px;
+}
+
+#footer {
+
+}
+
+#footer button {
+  height:60px;
+  margin:10px;
+  float:right
+}
+
+#footer button.left {
+  float:left;
+}
+
+#header {
+  height:60px;
+}
+
+#header h1 {
+  margin-top:10px;
+  position:absolute;
+}
+
+#header div {
+  float:right;
+  font-size:1.3em;
+  font-weight:bold;
+  margin-top:18px;
+  margin-right:10px;
+}
+
+#nav {
+  height:42px;
+  z-index:2;
+}
+
+#nav ul {
+  margin:0px;
+  padding:0px;
+  background-color: transparent; 
+}
+
+#nav li { 
+  background-color:rgb(153,153,153);
+  display: block; 
+  float: left; 
+  margin-left:5px;
+  line-height: 42px; 
+  font-size:1.2em;
+  font-weight:bold;
+}
+
+#nav li a { 
+  border: 1px solid black; 
+  background-color: transparent; 
+  padding: 0 16px; 
+  display: block; 
+  float: left; 
+  color:black;
+}
+
+#nav li a.active {
+  background-color:rgb(153,153,255);
+  border-bottom:1px solid rgb(153,153,255);
+}
+
+#tab {
+  margin-top:1px;
+  background-color:rgb(153,153,255);
+  height:416px;
+  border-top:1px solid black;
+  border-bottom:1px solid black;
+}

@@ -1,0 +1,22 @@
+<%= render :partial => 'dashboards/nav', :locals => {:active => 'overview'} %>
+<style type="text/css">
+  div.panel {
+    border:1px dotted blue;
+    width:380px;
+    float:left;  
+    margin:6px;
+    padding:2px;
+  }
+</style>
+<div id="tab">
+  <div id="summary" class="panel">
+    <h2>Summary</h2>
+  </div>
+  <div id="alerts" class="panel">
+    <h2>Alerts</h2>
+  </div>
+  <div id="encounters" class="panel">
+    <h2>Today</h2>
+  </div>
+  <div id="charts" class="panel"></div>
+</div>
