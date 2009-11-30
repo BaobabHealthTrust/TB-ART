@@ -11,6 +11,17 @@
     </script>
     <%= stylesheet_link_tag "dashboard" %>
     <%= javascript_include_tag "preload" %>
+    <script src="/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      jQuery(document).ready(function($) {    
+        $('#print').click(function() { window.location = '/patients/print_registration?patient_id=<%= @patient.id -%>' })
+        $('#end').click(function() { window.location = '/people' })
+        $('#additional').click(function() { window.location = '/encounter_types?patient_id=<%= @patient.id -%>' })
+        $('#next').click(function() { window.location = '<%= next_task(@patient) -%>' })
+        var next_task_name = '<%= next_task_encounter_type(@patient).name.humanize rescue "" -%>';
+        $('#next').html('<span>Next Task:<br/>' + (next_task_name == '' ? 'Done' : next_task_name) + '</span>');
+      }) 
+    </script>
   </head>
   <body id="mateme">  
     <div id="container">      
@@ -18,7 +29,7 @@
         <div id="header">
           <h1><%= patient_image(@patient) -%><%= @patient.person.name %></h1>
           <div id="print" style="margin-top:7px;">
-            <button id="end" class="silver"><span>Print</span></button>
+            <button id="print" class="silver"><span>Print</span></button>
           </div>
           <div id="identifiers">
             <%= show_identifiers(Location.current_location.id, @patient) rescue '' %>

@@ -74,4 +74,18 @@ class EncountersController < ApplicationController
     render :text => "<li>" + locations.map{|location| location.name }.join("</li><li>") + "</li>"
   end
 
+  def observations
+    # We could eventually include more here, maybe using a scope with includes
+    @encounter = Encounter.find(params[:id], :include => [:observations])
+    render :layout => false
+  end
+
+  def void 
+    @encounter = Encounter.find(params[:id], :include => [:observations])
+    ActiveRecord::Base.transaction do
+      @encounter.observations.each{|obs| obs.void!}
+      @encounter.void!
+    end
+    head :ok
+  end
 end

@@ -5,6 +5,8 @@ class Patient < ActiveRecord::Base
 
   has_one :person, :foreign_key => :person_id
   has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => 'patient_identifier.voided = 0'
+  has_many :patient_programs
+  has_many :orders
   has_many :encounters, :conditions => 'encounter.voided = 0' do 
     def find_by_date(encounter_date)
       encounter_date = Date.today unless encounter_date
@@ -42,11 +44,11 @@ class Patient < ActiveRecord::Base
   end
   
   def summary
+#    verbiage << "Last seen #{visits.active.recent(1)}"
     verbiage = []
-    # verbiage << programs.active.each{|prog| "Started #{prog.name} #{prog.start_date} at #{prog.location}" }
-    # verbiage << "Last seen #{visits.active.recent(1)}"
-    # verbiage << "Current presciptions include #{orders.active.unfinished.prescriptions}"
-    verbiage.join(', ')
+    verbiage << patient_programs.active.map{|prog| "Started #{prog.name} #{prog.start_date} at #{prog.location}" }
+    verbiage << orders.active.unfinished.prescriptions.map{|presc| presc.to_s}
+    verbiage.flatten.join(', ') 
   end
 
   def national_id(force = true)
