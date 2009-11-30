@@ -187,11 +187,10 @@ ul.list li div.encounter {
 } 
 
 div.panel {
-  border:1px dotted blue;
   width:380px;
   float:left;  
-  margin:6px;
-  padding:2px;
+  margin:2px;
+  padding:0px;
 }
 
 div.panel h2 {

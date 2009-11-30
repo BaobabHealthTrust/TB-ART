@@ -46,9 +46,9 @@ class Patient < ActiveRecord::Base
   def summary
 #    verbiage << "Last seen #{visits.active.recent(1)}"
     verbiage = []
-    verbiage << patient_programs.active.map{|prog| "Started #{prog.name} #{prog.start_date} at #{prog.location}" }
+    verbiage << patient_programs.active.map{|prog| "Started #{prog.program.name.humanize} #{prog.date_enrolled.strftime('%b-%Y')}" rescue nil }
     verbiage << orders.active.unfinished.prescriptions.map{|presc| presc.to_s}
-    verbiage.flatten.join(', ') 
+    verbiage.flatten.compact.join(', ') 
   end
 
   def national_id(force = true)
