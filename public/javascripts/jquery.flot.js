@@ -24,7 +24,7 @@
                 position: "ne", // position of default legend container within plot
                 margin: 5, // distance from grid edge to default legend container within plot
                 backgroundColor: null, // null means auto-detect
-                backgroundOpacity: 0.85 // set to 0 to avoid background
+                backgroundOpacity: 1 // set to 0 to avoid background
             },
             xaxis: {
                 ticks: null, // either [1, 3] or [[1, "a"], 3]
@@ -1003,7 +1003,7 @@
                                 tmp = extractColor(div);
                             c = parseColor(tmp).adjust(null, null, null, 1).toString();
                         }
-                        jQuery('<div style="position:absolute;width:' + div.width() + 'px;height:' + div.height() + 'px;' + pos +'background-color:' + c + ';"> </div>').appendTo(target).css('opacity', options.legend.backgroundOpacity);
+                        jQuery('<div style="position:absolute;width:' + div.width() + 'px;height:' + div.height() + 'px;' + pos +'background-color:' + c + ';"> </div>').appendTo(target);
                         
                     }
                 }

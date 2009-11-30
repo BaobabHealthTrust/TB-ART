@@ -12,7 +12,7 @@
     var patient_data = [
       <% @min = Time.now
          @max = Time.now
-         @obs = @patient.person.observations.find_by_concept_name("WEIGHT (KG)")
+         @obs = @patient.person.observations.active.find_by_concept_name("WEIGHT (KG)")
          @obs.sort_by{|obs| obs.obs_datetime}.each do |obs|
            @min = obs.obs_datetime if obs.obs_datetime < @min %>
         [<%= obs.obs_datetime.to_f -%>, <%= obs.value_numeric -%>],<% end %>
@@ -20,34 +20,32 @@
     <% @min = @max - 1.year if @min > @max - 1.year %>
 
     var patient_ticks = [
-      <%
-         @first = Time.mktime(@min.year, @min.month, 1) # move to the start of the month
-         @last = Time.mktime(@max.year + (@max.month == 12 ? 1 : 0), @max.month + (@max.month < 12 ? 1 : -11), 1)
-         while (@first <= @last) do
-       %>
-        [<%= @first.to_f -%>, "<div class='xLabel'><%= @first.strftime("%b") -%><br/><b><%= @first.strftime("%Y") if @first.month == 1 -%></b></div>"],
-       <% @first = Time.mktime(@first.year + (@first.month == 12 ? 1 : 0), @first.month + (@first.month < 12 ? 1 : -11), 1) %>
-       <% end %>
-    ];
+    <% @first = Time.mktime(@min.year, @min.month, 1) # move to the start of the month
+     @last = Time.mktime(@max.year + (@max.month == 12 ? 1 : 0), @max.month + (@max.month < 12 ? 1 : -11), 1)
+     while (@first <= @last) do -%>
+    [<%= @first.to_f -%>, "<div class='xLabel'><%= @first.strftime("%b") -%><br/><b><%= @first.strftime("%Y") if @first.month == 1 -%></b></div>"],
+    <% @first = Time.mktime(@first.year + (@first.month == 12 ? 1 : 0), @first.month + (@first.month < 12 ? 1 : -11), 1) -%>
+    <% end -%>
+];
     
     var range = <%= 1.year.to_f -%>;
     var min = <%= @min.to_f -%>;
     var max = <%= @max.to_f -%>;
     var max_tick = "<%= @max.strftime("%d-%b") -%>";
-    patient_data.push([max]);
+    patient_data.push([max, 0]);
         
     function get_data(x1, x2) {
       return [{
         color: "green",
         data: patient_data,
         points: { show: true},
-        lines: { show: true, fill: true, fillColor: "rgb(0, 255, 80)" },
+        lines: { show: true, fill: true, fillColor: "rgb(61,235,61)" },
         bars: { show: true }
       }]
     }
 
-    var plot_options = {
-      grid: { clickable: false },
+    var plot_options = {      
+      grid: { clickable: false,backgroundColor: "white" },
       yaxis: { min: 0, max: 120},
       xaxis: { min: max-range, max: max, ticks: patient_ticks}
     }
