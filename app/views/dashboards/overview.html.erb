@@ -1,59 +1,78 @@
 <%= render :partial => 'dashboards/nav', :locals => {:active => 'overview'} %>
 <script type="text/javascript">
   function select(node) {
+    $('#observations').empty().load('/encounters/observations/' + node.attr('encounter'))
     $('#encounters li.data').removeClass("active");
     node.addClass("active");
   }
 
   jQuery(document).ready(function($) {
     $('#visit').click(function() { window.location = '/patients/print_visit?patient_id=<%= @patient.id -%>' })
-    $('#encounters li.data').click(function() { select($(this)); $('#observations').empty().load('/encounters/observations/' + $(this).attr('encounter')) }); 
-    $('#encounters li.data div.void').click(function() { $.post('/encounters/void/' + $(this).parent().attr('encounter')) }); 
+    $('#encounters li.data').click(function() { select($(this)); }); 
     $('#encounters li.data div.void').click(function() { $.post('/encounters/void/' + $(this).parent().attr('encounter')) }); 
     $('#charts').empty().load('/patients/graph/<%= @patient.id -%>?data=weight');     
+    recent = $('#encounters li.data:first');
+    if (recent) select(recent);
   }) 
 </script>
 <div id="tab">
-  <div id="history" style="float:left;width:400px;">
+  <div id="history" style="float:left;width:400px;margin-top:5px;">
     <div id="programs" class="panel">
-      <h2>Programs</h2>
-      <ul class="list" style="height:70px;">
-        <% for prog in @patient.patient_programs.active.all do %>
+      <!-- h2>Programs</h2 -->
+      <ul class="list small" style="height:90px;">
+        <% for prog in @programs do %>
           <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
             <div class="program"><%=h prog.program.name.humanize %> started <%=h prog.date_enrolled.strftime("%b-%Y") %></div>
           </li>  
         <% end %>
+        <% if @programs.empty? %>
+          <li class="data even">
+            <div class="program">There are no current programs for this patient</div>
+          </li>        
+        <% end %>        
       </ul>
     </div>
     <div id="treatment" class="panel">
-      <h2>Treatment</h2>
-      <ul class="list" style="height:70px;">
-        <% for presc in @patient.orders.active.unfinished.prescriptions.all do %>
+      <!-- h2>Treatment</h2 -->
+      <ul class="list small" style="height:90px;">
+        <% for presc in @prescriptions do %>
           <li class="data <%= cycle('even', 'odd') %>" prescription="<%= presc.id %>">
-            <div class="program"><%=h presc.to_s %></div>
+            <div class="prescription"><%=h presc.to_s %></div>
           </li>  
+        <% end %>
+        <% if @prescriptions.empty? %>
+          <li class="data even">
+            <div class="prescription">There are no current prescriptions for this patient</div>
+          </li>        
         <% end %>
       </ul>
     </div>
     <div id="charts" class="panel" style="height:235px;">
     </div>
   </div>
-  <!-- div id="alerts" class="panel">
-    <h2>Alerts</h2>
-  </div-->
-  <div id="encounters" class="panel" style="float:right;">
-    <h2>Today's Visit</h2>
-    <ul class="list" style="clear:both;">
-      <% for encounter in @encounters.reverse do %>
-        <li class="data <%= cycle('even', 'odd') %>" encounter="<%= encounter.id %>">
-          <div class="void"><img src="/images/cancel_flat_small.png"/></div>
-          <div class="encounter"><%=h encounter.name.humanize %> at <%=h encounter.encounter_datetime.strftime("%k:%M") %></div>
-        </li>  
-      <% end %>
-    </ul>
-    <p></p>
-    <ul id="observations" class="list" style="font-size:0.8em">
-    </ul>    
-    <button id="visit" class="silver" style="float:right;margin-top:10px;"><span>Print Visit</span></button>    
-  </div>
+  <div id="today" style="margin-top:5px">
+    <div id="alerts" class="panel">
+      <!-- h2>Alerts</h2 -->
+      <ul class="list small" style="height:90px;">
+        <li class="data even">
+          <div class="alert">There are no alerts for this patient</div>
+        </li>
+      </ul>
+    </div>
+    <div id="encounters" class="panel" style="float:right;">
+      <h2>Today's Visit</h2>
+      <ul class="list" style="clear:both;">
+        <% for encounter in @encounters.reverse do %>
+          <li class="data <%= cycle('even', 'odd') %>" encounter="<%= encounter.id %>">
+            <div class="void"><img src="/images/cancel_flat_small.png"/></div>
+            <div class="encounter"><%=h encounter.name.humanize %> at <%=h encounter.encounter_datetime.strftime("%k:%M") %></div>
+          </li>  
+        <% end %>
+      </ul>
+      <p></p>
+      <ul id="observations" class="list small">
+      </ul>    
+      <button id="visit" class="silver" style="float:right;margin-top:10px;"><span>Print Visit</span></button>    
+    </div>
+  </div>  
 </div>

@@ -1,0 +1,24 @@
+<%= render :partial => 'dashboards/nav', :locals => {:active => 'treatment'} %>
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+    $('#prescribe').click(function() { window.location = '/prescriptions/new?patient_id=<%= @patient.id -%>' })
+    $('#presciptions li.data div.void').click(function() { $.post('/prescriptions/void/?patient_id=<%= @patient.id -%>&order_id=' + $(this).parent().attr('prescription')) }); 
+  }) 
+</script>
+<div id="tab">
+  <div id="treatment" class="panel" style="width:780px">
+    <h2>Today's Treatment</h2>
+    <ul id="prescriptions" class="list" style="height:270px;width:100%;">
+      <% for order in @orders do %>
+        <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
+          <div class="void"><img src="/images/cancel_flat_small.png"/></div>
+          <div class="summary"><%= order.to_s.gsub(/\n/, '<br/>') -%></div>
+        </li>  
+      <% end %>
+      <% if @orders.blank? %>        
+        <li>No prescriptions are available for this patient today</li>
+      <% end %>
+    </ul>
+    <button id="prescribe" class="silver" style="float:right;margin-top:10px;"><span>New Prescription</span></button>    
+  </div>
+</div>

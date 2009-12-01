@@ -3,7 +3,14 @@ class PatientsController < ApplicationController
   
   def show
     @encounters = @patient.encounters.current.active.find(:all)
+    @prescriptions = @patient.orders.active.unfinished.prescriptions.all
+    @programs = @patient.patient_programs.active.all
     render :template => 'dashboards/overview', :layout => 'dashboard' 
+  end
+
+  def treatment
+    @orders = @patient.current_orders rescue []
+    render :template => 'dashboards/treatment', :layout => 'dashboard' 
   end
 
   def problems
@@ -16,10 +23,6 @@ class PatientsController < ApplicationController
 
   def history
     render :template => 'dashboards/history', :layout => 'dashboard' 
-  end
-
-  def orders
-    render :template => 'dashboards/orders', :layout => 'dashboard' 
   end
 
   def programs
