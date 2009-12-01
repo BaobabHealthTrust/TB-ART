@@ -4,7 +4,7 @@
 .green { background-color:rgb(61,235,61); }
 .dark { background-color:rgb(51,51,51); }
 .blue { background-color:rgb(153,153,255); }
-.odd { background-color:rgb(230,230,255); }
+.even { background-color:rgb(230,230,255); }
 .silver { background-color:rgb(204,204,204); }
 .inactive { background-color:rgb(153,153,153); }
 
@@ -79,6 +79,7 @@ button {
 
 #footer button {
   height:60px;
+  width:140px;
   margin:10px;
   float:right
 }
@@ -103,7 +104,6 @@ button {
   margin-top:18px;
   margin-right:10px;
 }
-
 #nav {
   height:42px;
   z-index:2;
@@ -132,6 +132,7 @@ button {
   display: block; 
   float: left; 
   color:black;
+  text-decoration:none;
 }
 
 #nav li a.active {
@@ -152,12 +153,15 @@ ul, ul li, ul li div {
 }
 ul.list li {
   clear:both;
-
+}
+ul.list li.active {
+  background-color:#5AF;
 }
 ul.list {
   font-size:1.3em;
   border:2px solid black;
-  padding:0px;
+  padding:0;
+  margin:0;
   background-color:white;
   overflow:auto;
   height:100px;
@@ -168,32 +172,28 @@ ul.list li.data {
   list-style: none;
   padding-left:8px;
   padding-top:8px;
-  line-height:0.7em;
   cursor:pointer;
-}
-ul.list li.odd {
-  background:#fff;
-}
-ul.list li.odd {
-  background:#eee;
 }
 ul.list li div.void {
   float:left;
   padding-right:7px;
 }
 ul.list li div.encounter {
-  padding-top:5px;
-  float:left;
 } 
 
 div.panel {
   width:380px;
   float:left;  
   margin:6px;
+  margin-top:2px;
   padding:2px;
 }
 
 div.panel h2 {
   padding:0;
   margin:0;
+  font-size:1.3em;
+  font-weight:bold;
+  margin-top:0px;
+  margin-right:10px;
 }

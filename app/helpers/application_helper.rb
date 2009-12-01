@@ -70,6 +70,6 @@ module ApplicationHelper
   end
   
   def patient_image(patient) 
-    @patient.person.gender == 'M' ? "<img src='/images/male.gif' alt='Male'>" : "<img src='/images/female.gif' alt='Female'>"
+    @patient.person.gender == 'M' ? "<img src='/images/male.gif' alt='Male' height='30px' style='margin-bottom:-4px;'>" : "<img src='/images/female.gif' alt='Female' height='30px' style='margin-bottom:-4px;'>"
   end
 end

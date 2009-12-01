@@ -1,34 +1,59 @@
 <%= render :partial => 'dashboards/nav', :locals => {:active => 'overview'} %>
 <script type="text/javascript">
+  function select(node) {
+    $('#encounters li.data').removeClass("active");
+    node.addClass("active");
+  }
+
   jQuery(document).ready(function($) {
     $('#visit').click(function() { window.location = '/patients/print_visit?patient_id=<%= @patient.id -%>' })
-    $('#encounters li.data').click(function() { $('#observations').empty().load('/encounters/observations/' + $(this).attr('encounter')) }); 
+    $('#encounters li.data').click(function() { select($(this)); $('#observations').empty().load('/encounters/observations/' + $(this).attr('encounter')) }); 
     $('#encounters li.data div.void').click(function() { $.post('/encounters/void/' + $(this).parent().attr('encounter')) }); 
     $('#encounters li.data div.void').click(function() { $.post('/encounters/void/' + $(this).parent().attr('encounter')) }); 
     $('#charts').empty().load('/patients/graph/<%= @patient.id -%>?data=weight');     
   }) 
 </script>
 <div id="tab">
-  <div id="summary" class="panel">
-    <p><%=h @patient.summary %></p>
+  <div id="history" style="float:left;width:400px;">
+    <div id="programs" class="panel">
+      <h2>Programs</h2>
+      <ul class="list" style="height:70px;">
+        <% for prog in @patient.patient_programs.active.all do %>
+          <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
+            <div class="program"><%=h prog.program.name.humanize %> started <%=h prog.date_enrolled.strftime("%b-%Y") %></div>
+          </li>  
+        <% end %>
+      </ul>
+    </div>
+    <div id="treatment" class="panel">
+      <h2>Treatment</h2>
+      <ul class="list" style="height:70px;">
+        <% for presc in @patient.orders.active.unfinished.prescriptions.all do %>
+          <li class="data <%= cycle('even', 'odd') %>" prescription="<%= presc.id %>">
+            <div class="program"><%=h presc.to_s %></div>
+          </li>  
+        <% end %>
+      </ul>
+    </div>
+    <div id="charts" class="panel" style="height:235px;">
+    </div>
   </div>
-  <div id="alerts" class="panel">
+  <!-- div id="alerts" class="panel">
     <h2>Alerts</h2>
-  </div>
-  <div id="encounters" class="panel" style="clear:left;">
-    <button id="visit" class="silver" style="float:right"><span>Print</span></button>    
+  </div-->
+  <div id="encounters" class="panel" style="float:right;">
     <h2>Today's Visit</h2>
-    <ul class="list">
-      <% for encounter in @encounters do %>
+    <ul class="list" style="clear:both;">
+      <% for encounter in @encounters.reverse do %>
         <li class="data <%= cycle('even', 'odd') %>" encounter="<%= encounter.id %>">
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
           <div class="encounter"><%=h encounter.name.humanize %> at <%=h encounter.encounter_datetime.strftime("%k:%M") %></div>
         </li>  
       <% end %>
     </ul>
-    <ul id="observations" class="list">
+    <p></p>
+    <ul id="observations" class="list" style="font-size:0.8em">
     </ul>    
-  </div>
-  <div id="charts" class="panel" style="height:235px;">
+    <button id="visit" class="silver" style="float:right;margin-top:10px;"><span>Print Visit</span></button>    
   </div>
 </div>
