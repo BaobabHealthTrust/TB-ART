@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <%= @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue ""  %>
+    <title><%= @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue ""  %></title>
     <script language="javascript">
       tstUsername = "<%= User.current_user.username unless User.current_user.nil? %>";
       tstCurrentDate = "<%= Time.now.strftime("%Y/%m/%d") %>";
@@ -16,7 +16,7 @@
       jQuery(document).ready(function($) {    
         $('#logout').click(function() { window.location = '/logout' })
         $('#find').click(function() { window.location = '/people/search' })
-        if ($('#staging')) $('#staging').click(function() { window.location = 'http://staging/' })        
+        if ($('#staging')) $('#staging').click(function() { window.location = 'http://staging/clinic' })        
       }) 
     </script>
     <style type="text/css">
@@ -28,7 +28,7 @@
         font-family:"Nimbus Sans L","Arial Narrow",sans-serif;
         font-size:2.2em;
         padding-left:5px;
-        width:745px;      
+        width:600px;      
       }
       #header div {
         font-weight:normal;
@@ -46,7 +46,7 @@
           <div id="version" style="padding-top:44px;"><%= version %></div>
           <div id="user" style="margin-top:-4px;">Logged in as <%= User.current_user.username %></div>
           <form id='barcodeForm' action="/people/search">
-            <div style="color:black;font-size:1.2em;font-weight:normal;text-align:center;width:100%;position:absolute;margin-top:10px;">scan a barcode</div>
+            <div style="float:left">Scan a barcode:</div>
             <%= text_field_tag :identifier, '', {:id => 'barcode', :class => 'touchscreenTextInput', :style => 'position:absolute' } %>
             <%= submit_tag "Submit", :style => "display:none" %>
           </form>

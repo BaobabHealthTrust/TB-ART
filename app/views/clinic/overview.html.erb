@@ -5,7 +5,7 @@
 </script>
 <style type="text/css">
   #stats {
-    width:760px;
+    width:750px;
     border:1px solid black;
     margin:10px;    
     background:white;
@@ -15,8 +15,9 @@
   }
 </style>
 <div id="tab">
-  <div class="panel">
+  <div class="panel" style="width:780px">
     <h2>Current Patient Statistics</h2>
+    <div style="height:270px;overflow:auto;">
     <table id="stats">
       <tr>
         <th style="text-align:left;">Encounter Type</th>
@@ -35,5 +36,6 @@
         </tr>
       <% end %>        
     </table>
+    </div>
   </div>        
 </div>

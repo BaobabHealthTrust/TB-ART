@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <%= @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue ""  %>
+    <title><%= @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue ""  %></title>
     <script language="javascript">
       tstUsername = "<%= User.current_user.username unless User.current_user.nil? %>";
       tstCurrentDate = "<%= Time.now.strftime("%Y/%m/%d") %>";
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       jQuery(document).ready(function($) {    
         $('#print').click(function() { window.location = '/patients/print_registration?patient_id=<%= @patient.id -%>' })
-        $('#finish').click(function() { window.location = '/people' })
+        $('#finish').click(function() { window.location = "/clinic" })
         $('#additional').click(function() { window.location = '/encounter_types?patient_id=<%= @patient.id -%>' })
       }) 
     </script>

@@ -62,8 +62,7 @@ class Encounter < ActiveRecord::Base
     with_scope(:find => opts) do
       rows = self.active.all(
          :select => 'count(*) as number, name', 
-         :group => 'encounter.encounter_type', 
-         :order => 'number desc', 
+         :group => 'encounter.encounter_type',
          :having => ['encounter_type.name in (?)', encounter_types],
          :joins => 'LEFT JOIN encounter_type ON encounter_type.encounter_type_id = encounter.encounter_type')           
       return rows.inject({}) {|result, row| result[row['name']] = row['number']; result }
