@@ -9,9 +9,8 @@ class SessionsController < ApplicationController
     logout_keeping_session!
     user = User.authenticate(params[:login], params[:password])
     if user
-      self.current_user = user
-      url = self.current_user.admin? ? '/admin' : '/'
-      redirect_to url
+      self.current_user = user      
+      redirect_to '/clinic'
     else
       note_failed_signin
       @login = params[:login]
@@ -32,8 +31,7 @@ class SessionsController < ApplicationController
       return    
     end
     self.current_location = location
-    url = self.current_user.admin? ? '/admin' : '/'
-    redirect_to url
+    redirect_to '/clinic'
   end
 
   def destroy

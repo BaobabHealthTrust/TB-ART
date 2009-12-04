@@ -10,22 +10,25 @@
     z-index:2;
   }
   #graph.nav ul {
-    padding-top:-10px;
+    margin-top:1px;
+    position:absolute;
+    z-index:3;
   }
 
   #graph.nav li { 
     margin-left:2px;
-    line-height: 22px; 
+    line-height:22px; 
     font-size:0.8em;
   }
 
   #graph.nav li a { 
+    border: 2px solid black; 
     padding: 0 3px; 
   }
 
   #graph.nav li a.active {
     background-color:#fff;
-    border-bottom:1px solid #fff;
+    border-bottom:2px solid #fff;
   }
 
   
@@ -33,6 +36,8 @@
 <div id="graph" class="nav">
   <ul>
     <li><a class="active" href='#'>Weight</a></li>
+    <!-- li><a href='#'>CD4</a></li>
+    <li><a href='#'>CRT</a></li -->
   </ul>
 </div>
 <div id="placeholder" style="width:370px;height:140px;"></div>
