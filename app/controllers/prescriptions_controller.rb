@@ -45,7 +45,7 @@ class PrescriptionsController < ApplicationController
         DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:dose_strength], params[:frequency], prn)
       end  
     end  
-    redirect_to "/prescriptions?patient_id=#{@patient.id}"
+    redirect_to "/patients/treatment?patient_id=#{@patient.id}"
   end
   
   # Look up the set of matching generic drugs based on the concepts. We 

@@ -2,7 +2,12 @@
 <script type="text/javascript">
   jQuery(document).ready(function($) {
     $('#prescribe').click(function() { window.location = '/prescriptions/new?patient_id=<%= @patient.id -%>' })
-    $('#presciptions li.data div.void').click(function() { $.post('/prescriptions/void/?patient_id=<%= @patient.id -%>&order_id=' + $(this).parent().attr('prescription')) }); 
+    $('#treatment li.data div.void').click(function() { 
+      node = $(this).parent();
+      $.post('/prescriptions/void/?patient_id=<%= @patient.id -%>&order_id=' + node.attr('prescription'), {}, function(data, status) {
+        if (status == 'success') node.remove();
+      }) 
+    }); 
   }) 
 </script>
 <div id="tab">
@@ -16,7 +21,7 @@
         </li>  
       <% end %>
       <% if @orders.blank? %>        
-        <li>No prescriptions are available for this patient today</li>
+        <li class="data">No prescriptions are available for this patient today</li>
       <% end %>
     </ul>
     <button id="prescribe" class="silver" style="float:right;margin-top:10px;"><span>New Prescription</span></button>    

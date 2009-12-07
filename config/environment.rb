@@ -46,4 +46,6 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'concept_class', 'concept_class'
 end  
 
-
+class Mime::Type
+  delegate :split, :to => :to_s
+end
