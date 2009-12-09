@@ -1,6 +1,6 @@
 <script>
   var tt_cancel_destination = "/clinic"
-  var skipped = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  var skipped = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   
   function seen(page) {
     for (var i = page; i >= 0; i--) {
@@ -33,6 +33,8 @@
 
   <%= text_field_tag "person[addresses][city_village]",  params[:city_village], {:field_type => 'alpha', :helpText => 'Current Village (residence)', :ajaxURL => '/person_addresses/village?search_string=', :allowFreeText => true }%>
   
+  <%= text_field_tag "person[phone_number]",  params[:phone_number], {:field_type => 'number', :helpText => 'Phone Number', :allowFreeText => true }%>
+
   <!-- Make sure patient is created -->
 
   <%= hidden_field_tag "person[patient]", "" %>

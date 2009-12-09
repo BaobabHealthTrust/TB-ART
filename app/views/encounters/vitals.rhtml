@@ -89,7 +89,7 @@
   function showWeightForHeight() {
     var currentHeightRounded = (currentHeight % Math.floor(currentHeight) < 0.5 ? 0 : 0.5) + Math.floor(currentHeight);
     var weightForHeights = <%= WeightForHeight.patient_weight_for_height_values.to_json -%>;
-    var medianWeightHeight = weightForHeights[currentHeightRounded];
+    var medianWeightHeight = weightForHeights[currentHeightRounded.toFixed(1)];
     var weightForHeightPercentile = (currentWeight/(medianWeightHeight)*100).toFixed(0);
  
     displayText += "Weight for height:";
