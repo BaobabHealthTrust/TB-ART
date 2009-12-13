@@ -1,5 +1,9 @@
 <script type="text/javascript">
+  <% if params[:relation] %>
+  var tt_cancel_destination = "/patients/relationships?patient_id=<%=h params[:relation] -%>"
+  <% else %>
   var tt_cancel_destination = "/clinic"
+  <% end %>
 
   function changeNextButtonText(text){
     $('nextButton').innerHTML = "<span>" + text + "</span>";  
@@ -25,6 +29,7 @@
     <%= text_field_tag :family_name, params[:family_name], {:field_type => 'alpha', :helpText => 'Last name', :ajaxURL => '/person_names/family_names?search_string=', :allowFreeText => true }%> 
     Gender: <%= select_tag :gender, options_for_select({"" => "", "Male" => "M", "Female" => "F"}), {:helpText => "Gender"} %> 
     <%= hidden_field_tag :create_patient, params[:create_patient] %>
+    <%= hidden_field_tag :relation, params[:relation] %>
     <%= submit_tag "Find person" %>
   <% end -%>
 <% end -%>
@@ -60,5 +65,6 @@
     <input type="hidden" name="family_name" value="<%=h params[:family_name] -%>" />
     <input type="hidden" name="family_name2" value="<%=h params[:family_name2] -%>" />
     <input type="hidden" name="address2" value="<%=h params[:address2] -%>" />
+    <input type="hidden" name="relation" value="<%=h params[:relation] -%>" />
   <% end -%>
 <% end -%>

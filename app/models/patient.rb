@@ -4,8 +4,9 @@ class Patient < ActiveRecord::Base
   include Openmrs
 
   has_one :person, :foreign_key => :person_id
-  has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => 'patient_identifier.voided = 0'
+  has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => 'patient_identifier.voided = 0'  
   has_many :patient_programs
+  has_many :relationships, :foreign_key => :person_a, :dependent => :destroy, :conditions => 'relationship.voided = 0'
   has_many :orders
   has_many :encounters, :conditions => 'encounter.voided = 0' do 
     def find_by_date(encounter_date)

@@ -8,6 +8,7 @@ ActionController::Routing::Routes.draw do |map|
   map.encounter '/encounters/new/:encounter_type', :controller => 'encounters', :action => 'new'  
   map.resource :session
   map.resources :barcodes, :collection => {:label => :get}
+  map.resources :relationships, :collection => {:search => :get}
   map.resources :encounter_types
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

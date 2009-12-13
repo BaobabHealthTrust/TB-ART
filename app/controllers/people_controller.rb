@@ -31,7 +31,7 @@ class PeopleController < ApplicationController
         found_person =  Person.create_from_form(found_person_data) unless found_person_data.nil?
       end
       if found_person
-        redirect_to :controller => :encounters, :action => :new, :patient_id => found_person.id and return 
+        redirect_to search_complete_url(found_person.id, params[:relation]) and return
       end
     end
     @people = Person.search(params)    
@@ -39,17 +39,22 @@ class PeopleController < ApplicationController
  
   # This method is just to allow the select box to submit, we could probably do this better
   def select
-    redirect_to :controller => :encounters, :action => :new, :patient_id => params[:person] and return unless params[:person].blank? || params[:person] == '0'
+    redirect_to search_complete_url(params[:person], params[:relation]) and return unless params[:person].blank? || params[:person] == '0'
     redirect_to :action => :new, :gender => params[:gender], :given_name => params[:given_name], :family_name => params[:family_name],
-    :family_name2 => params[:family_name2], :address2 => params[:address2], :identifier => params[:identifier]
+    :family_name2 => params[:family_name2], :address2 => params[:address2], :identifier => params[:identifier], :relation => params[:relation]
   end
  
   def create
     person = Person.create_from_form(params[:person])
     if params[:person][:patient]
       person.patient.national_id_label
-      print_and_redirect("/patients/national_id_label/?patient_id=#{person.patient.id}", next_task(person.patient))
+      if (params[:relation])
+        print_and_redirect("/patients/national_id_label/?patient_id=#{person.patient.id}", search_complete_url(person.id, params[:relation]))      
+      else
+        print_and_redirect("/patients/national_id_label/?patient_id=#{person.patient.id}", next_task(person.patient))
+      end  
     else
+      # Does this ever get hit?
       redirect_to :action => "index"
     end
   end
@@ -71,6 +76,17 @@ class PeopleController < ApplicationController
   def reset_datetime
     session[:datetime] = nil
     redirect_to :action => "index" and return
+  end
+  
+private
+  
+  def search_complete_url(found_person_id, primary_person_id) 
+    if (primary_person_id)
+      # Notice this swaps them!
+      new_relationship_url(:patient_id => primary_person_id, :relation => found_person_id)
+    else
+      url_for(:controller => :encounters, :action => :new, :patient_id => found_person_id)
+    end
   end
 end
  

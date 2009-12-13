@@ -9,8 +9,13 @@ class PatientsController < ApplicationController
   end
 
   def treatment
-    @orders = @patient.current_orders rescue []
+    @orders = @patient.person.current_orders rescue []
     render :template => 'dashboards/treatment', :layout => 'dashboard' 
+  end
+
+  def relationships
+    @relationships = @patient.relationships rescue []
+    render :template => 'dashboards/relationships', :layout => 'dashboard' 
   end
 
   def problems

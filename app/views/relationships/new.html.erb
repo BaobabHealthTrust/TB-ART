@@ -1,0 +1,18 @@
+<style type="text/css">
+  /* TEMP, move out of here! */
+  .options {
+    height:8em;
+  }
+</style>
+<script>
+  var tt_cancel_destination = "/patients/relationships/<%= @patient.patient_id %>"  
+</script>
+<form id='relationship' action="/relationships/create" method='post'> 
+  <%= hidden_field_tag :patient_id, @patient.id %>
+  <%= hidden_field_tag :relation, params[:relation] %>
+
+  <%= select_tag :relationship, options_for_select(
+    RelationshipType.all.inject({}){|result, element| result[element.b_is_to_a] = element.relationship_type_id; result }, params[:relationship]), 
+    {:helpText => "How is this person related to the patient"} %> 
+
+</form>

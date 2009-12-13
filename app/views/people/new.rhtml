@@ -1,5 +1,10 @@
 <script>
+  <% if params[:relation] %>
+  var tt_cancel_destination = "/patients/relationships?patient_id=<%=h params[:relation] -%>"
+  <% else %>
   var tt_cancel_destination = "/clinic"
+  <% end %>
+
   var skipped = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   
   function seen(page) {
@@ -36,6 +41,8 @@
   <!-- Make sure patient is created -->
 
   <%= hidden_field_tag "person[patient]", "" %>
+
+  <%= hidden_field_tag "relation", params[:relation] %>
   
   <%= hidden_field_tag :identifier, params[:identifier] %>
 
