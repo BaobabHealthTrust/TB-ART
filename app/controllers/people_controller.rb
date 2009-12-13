@@ -48,7 +48,7 @@ class PeopleController < ApplicationController
     person = Person.create_from_form(params[:person])
     if params[:person][:patient]
       person.patient.national_id_label
-      if (params[:relation])
+      unless (params[:relation].blank?)
         print_and_redirect("/patients/national_id_label/?patient_id=#{person.patient.id}", search_complete_url(person.id, params[:relation]))      
       else
         print_and_redirect("/patients/national_id_label/?patient_id=#{person.patient.id}", next_task(person.patient))
@@ -81,7 +81,7 @@ class PeopleController < ApplicationController
 private
   
   def search_complete_url(found_person_id, primary_person_id) 
-    if (primary_person_id)
+    unless (primary_person_id.blank?)
       # Notice this swaps them!
       new_relationship_url(:patient_id => primary_person_id, :relation => found_person_id)
     else
