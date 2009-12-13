@@ -8,6 +8,7 @@ class Person < ActiveRecord::Base
   has_many :names, :class_name => 'PersonName', :foreign_key => :person_id, :dependent => :destroy, :conditions => 'person_name.voided = 0', :order => 'person_name.preferred DESC'
   has_many :addresses, :class_name => 'PersonAddress', :foreign_key => :person_id, :dependent => :destroy, :conditions => 'person_address.voided = 0', :order => 'person_address.preferred DESC'
   has_many :relationships, :class_name => 'Relationship', :foreign_key => :person_a, :conditions => 'relationship.voided = 0'
+  has_many :person_attributes, :class_name => 'PersonAttribute', :foreign_key => :person_id, :conditions => 'person_attribute.voided = 0'
   has_many :observations, :class_name => 'Observation', :foreign_key => :person_id, :dependent => :destroy, :conditions => 'obs.voided = 0' do
     def find_by_concept_name(name)
       concept_name = ConceptName.find_by_name(name)
@@ -216,7 +217,7 @@ class Person < ActiveRecord::Base
     address_params = params["addresses"]
     names_params = params["names"]
     patient_params = params["patient"]
-    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|phone_number/) }
+    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number/) }
     birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
     person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate/) }
 
@@ -230,6 +231,10 @@ class Person < ActiveRecord::Base
     person.save
     person.names.create(names_params)
     person.addresses.create(address_params)
+
+    person.person_attributes.create(
+      :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").id,
+      :value => params["cell_phone_number"])
  
 # TODO handle the birthplace attribute
  
