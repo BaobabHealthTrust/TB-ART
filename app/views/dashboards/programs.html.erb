@@ -1,3 +1,29 @@
 <%= render :partial => 'dashboards/nav', :locals => {:active => 'programs'} %>
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+    $('#enroll').click(function() { window.location = '/programs/new?patient_id=<%= @patient.id -%>' })
+    $('#programs li.data div.void').click(function() { 
+      node = $(this).parent();
+      $.post('/programs/void/?id=' + node.attr('program'), {}, function(data, status) {
+        if (status == 'success') node.remove();
+      })       
+    }); 
+  }) 
+</script>
 <div id="tab">
+  <div class="panel" style="width:780px">
+    <h2>Programs</h2>
+    <ul id="programs" class="list" style="height:270px;width:100%;">
+      <% for program in @programs do %>
+        <li class="data <%= cycle('even', 'odd') %>" program="<%= program.id %>">
+          <div class="void"><img src="/images/cancel_flat_small.png"/></div>
+          <div class="summary"><%= program.to_s.gsub(/\n/, '<br/>') -%></div>
+        </li>  
+      <% end %>
+      <% if @programs.blank? %>        
+        <li class="data">This patient is not enrolled in any programs</li>
+      <% end %>
+    </ul>
+    <button id="enroll" class="silver" style="float:right;margin-top:10px;"><span>Enroll in program</span></button>    
+  </div>
 </div>

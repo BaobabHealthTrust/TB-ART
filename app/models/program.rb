@@ -4,4 +4,6 @@ class Program < ActiveRecord::Base
   include Openmrs
   belongs_to :concept
   has_many :patient_programs
+
+  named_scope :active, :conditions => ['program.retired = 0']
 end

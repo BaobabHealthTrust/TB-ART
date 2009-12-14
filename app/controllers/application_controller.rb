@@ -60,4 +60,11 @@ class ApplicationController < ActionController::Base
     @message = message
     render :template => 'print/print', :layout => nil
   end
+  
+private
+
+  def find_patient
+    @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
+  end
+  
 end

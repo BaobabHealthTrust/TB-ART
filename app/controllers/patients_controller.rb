@@ -31,6 +31,7 @@ class PatientsController < ApplicationController
   end
 
   def programs
+    @programs = @patient.patient_programs.active.all
     render :template => 'dashboards/programs', :layout => 'dashboard' 
   end
 

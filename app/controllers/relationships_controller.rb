@@ -1,5 +1,5 @@
 class RelationshipsController < ApplicationController
-  before_filter :find_patient
+  before_filter :find_patient, :except => [:void]
   
   def new
     render :layout => 'application'
@@ -25,10 +25,5 @@ class RelationshipsController < ApplicationController
     @relationship = Relationship.find(params[:id])
     @relationship.void!
     head :ok
-  end
-  
-private
-  def find_patient
-    @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-  end
+  end  
 end
