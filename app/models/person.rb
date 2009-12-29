@@ -233,7 +233,7 @@ class Person < ActiveRecord::Base
     person.addresses.create(address_params)
 
     person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").id,
+      :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
       :value => params["cell_phone_number"])
  
 # TODO handle the birthplace attribute

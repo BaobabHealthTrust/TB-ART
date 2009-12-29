@@ -1,5 +1,11 @@
 <%= render :partial => 'dashboards/nav', :locals => {:active => 'programs'} %>
 <script type="text/javascript">
+  function select(node) {
+    $('#states').empty().load('/programs/states/' + node.attr('program'))
+    $('#programs li.data').removeClass("active");
+    node.addClass("active");
+  }
+
   jQuery(document).ready(function($) {
     $('#enroll').click(function() { window.location = '/programs/new?patient_id=<%= @patient.id -%>' })
     $('#programs li.data div.void').click(function() { 
@@ -8,10 +14,13 @@
         if (status == 'success') node.remove();
       })       
     }); 
+    $('#programs li.data').click(function() { select($(this)); }); 
+    recent = $('#programs li.data:first');
+    if (recent) select(recent);
   }) 
 </script>
 <div id="tab">
-  <div class="panel" style="width:780px">
+  <div class="panel" style="width:380px;float:left">
     <h2>Programs</h2>
     <ul id="programs" class="list" style="height:270px;width:100%;">
       <% for program in @programs do %>
@@ -24,6 +33,13 @@
         <li class="data">This patient is not enrolled in any programs</li>
       <% end %>
     </ul>
-    <button id="enroll" class="silver" style="float:right;margin-top:10px;"><span>Enroll in program</span></button>    
+    <button id="enroll" class="silver" style="margin-top:10px;"><span>Enroll in program</span></button>    
+  </div>
+  <div class="panel" style="width:380px">
+    <h2>Status</h2>
+    <ul id="states" class="list" style="height:270px;width:100%;">
+    </ul>
+    <button id="update" class="silver" style="float:right;margin-top:10px;margin-left:10px;"><span>Update Status</span></button>    
+    <button id="status" class="silver" style="float:right;margin-top:10px;"><span>New Status</span></button>    
   </div>
 </div>

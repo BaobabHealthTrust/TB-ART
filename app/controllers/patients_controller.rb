@@ -67,7 +67,4 @@ class PatientsController < ApplicationController
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:patient_id]}#{rand(10000)}.lbl", :disposition => "inline")
   end
   
-  def find_patient
-    @patient = Patient.find(params[:id] || params[:patient_id] || session[:patient_id]) rescue nil
-  end
 end

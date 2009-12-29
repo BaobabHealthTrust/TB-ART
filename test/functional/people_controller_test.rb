@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class PeopleControllerTest < ActionController::TestCase
-  fixtures :person, :person_name, :person_name_code, :person_address, :patient, :patient_identifier, :patient_identifier_type
+  fixtures :person, :person_name, :person_name_code, :person_address, :person_attribute_type, :patient, :patient_identifier, :patient_identifier_type
 
   def setup  
     @controller = PeopleController.new
@@ -147,6 +147,7 @@ class PeopleControllerTest < ActionController::TestCase
             :birth_month => 2, 
             :birth_day => 28,
             :gender => 'M',
+            :cell_phone_number => 'Unknown',
             :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
             :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
           }
@@ -165,6 +166,7 @@ class PeopleControllerTest < ActionController::TestCase
             :birth_year => 'Unknown', 
             :age_estimate => 17,
             :gender => 'M',
+            :cell_phone_number => 'Unknown',
             :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
             :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
           }
@@ -180,6 +182,7 @@ class PeopleControllerTest < ActionController::TestCase
           :birth_year => 'Unknown', 
           :age_estimate => 17,
           :gender => 'M',
+          :cell_phone_number => 'Unknown',
           :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
           :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
           }  

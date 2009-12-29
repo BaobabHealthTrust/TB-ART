@@ -1,5 +1,5 @@
 class ProgramsController < ApplicationController
-  before_filter :find_patient, :except => [:void]
+  before_filter :find_patient, :except => [:void, :states]
   
   def new
     @patient_program = PatientProgram.new
@@ -12,6 +12,11 @@ class ProgramsController < ApplicationController
     else 
       render :action => "new" 
     end
+  end
+
+  def states
+    @program = PatientProgram.find(params[:id])
+    render :layout => false    
   end
   
   def void

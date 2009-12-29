@@ -28,7 +28,7 @@
       <ul class="list small" style="height:90px;">
         <% for prog in @programs do %>
           <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
-            <div class="program"><%=h prog.program.name.humanize %> started <%=h prog.date_enrolled.strftime("%b-%Y") %></div>
+            <div class="program"><%=h prog.program.name.humanize %> started <%=h prog.date_enrolled.strftime("%b-%Y") rescue 'Unknown' %></div>
           </li>  
         <% end %>
         <% if @programs.empty? %>

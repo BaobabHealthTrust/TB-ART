@@ -59,13 +59,13 @@
        showWeightHeightForAge();
        showWeightForHeight();
      }
-     displayText += '<div id="weightHistory">Weight history graph:</div>';
-     displayText += '<div id="placeholder" style="width:500px;height:300px;"></div><div id="overview" style="width:500px;height:140px;"></div>';
      $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '</div>' ;
-     drawGraph();
    }
         
   function showWeightHeightForAge(){
+    $('weight_for_age').value = currentWeightPercentile;
+    $('height_for_age').value = currentHeightPercentile;
+   
     displayText = "Weight for age:";
     if (currentWeightPercentile >= 80){
       displayText += "<span class='goodWeightForAge'>" + currentWeightPercentile + "%</span><br>";
@@ -91,6 +91,8 @@
     var weightForHeights = <%= WeightForHeight.patient_weight_for_height_values.to_json -%>;
     var medianWeightHeight = weightForHeights[currentHeightRounded.toFixed(1)];
     var weightForHeightPercentile = (currentWeight/(medianWeightHeight)*100).toFixed(0);
+
+    $('weight_for_height').value = weightForHeightPercentile;
  
     displayText += "Weight for height:";
  
@@ -105,64 +107,20 @@
   }
  
   function showBMI() {
-      currentBmi = (currentWeight/(currentHeight*currentHeight)*10000).toFixed(1);
-      displayText = "BMI: ";
-      if (currentBmi > 18.5) {
-        displayText += currentBmi;
-      } else if (currentBmi > 17.0) {
-        displayText += "<span class='lowBMI'>" + currentBmi + "</span>" + "<br/><span class='recommendation'> Eligible for counseling</span>";
-      } else {
-       displayText += "<span class='lowBMI'>" + currentBmi + "</span><br/><span class='recommendation'>Eligible for therapeutic feeding</span>";
-      }
-   }
- 
-  function drawGraph() {
-    var patient_data = [
-      <% @min = Time.now
-         @max = Time.now
-         @obs = @patient.person.observations.find_by_concept_name("WEIGHT (KG)")
-         @obs.sort_by{|obs| obs.obs_datetime}.each do |obs|
-           @min = obs.obs_datetime if obs.obs_datetime < @min %>
-        [<%= obs.obs_datetime.to_f -%>, <%= obs.value_numeric -%>],<% end %>
-    ];
-    <% @min = @max - 1.year if @min > @max - 1.year %>
- 
-    var patient_ticks = [
-      <%
-         @first = Time.mktime(@min.year, @min.month, 1) # move to the start of the month
-         @last = Time.mktime(@max.year + (@max.month == 12 ? 1 : 0), @max.month + (@max.month < 12 ? 1 : -11), 1)
-         while (@first <= @last) do
-       %>
-        [<%= @first.to_f -%>, "<div class='xLabel'><%= @first.strftime("%b") -%><br/><b><%= @first.strftime("%Y") if @first.month == 1 -%></b></div>"],
-       <% @first = Time.mktime(@first.year + (@first.month == 12 ? 1 : 0), @first.month + (@first.month < 12 ? 1 : -11), 1) %>
-       <% end %>
-    ];
-    
-    var range = <%= 1.year.to_f -%>;
-    var min = <%= @min.to_f -%>;
-    var max = <%= @max.to_f -%>;
-    var max_tick = "<%= @max.strftime("%d-%b") -%>";
-    patient_data.push([max, currentWeight]);
-        
-    function get_data(x1, x2) {
-      return [{
-        color: "green",
-        data: patient_data,
-        points: { show: true},
-        lines: { show: true, fill: true, fillColor: "rgba(0, 255, 80, 0.2)" },
-        bars: { show: true }
-      }]
+    currentBmi = (currentWeight/(currentHeight*currentHeight)*10000).toFixed(1);
+
+    $('bmi').value = currentBmi;
+
+    displayText = "BMI: ";
+    if (currentBmi > 18.5) {
+      displayText += currentBmi;
+    } else if (currentBmi > 17.0) {
+      displayText += "<span class='lowBMI'>" + currentBmi + "</span>" + "<br/><span class='recommendation'> Eligible for counseling</span>";
+    } else {
+     displayText += "<span class='lowBMI'>" + currentBmi + "</span><br/><span class='recommendation'>Eligible for therapeutic feeding</span>";
     }
+ }
  
-    var plot_options = {
-      grid: { clickable: false },
-      yaxis: { min: 0, max: 120},
-      xaxis: { min: max-range, max: max, ticks: patient_ticks}
-    }
-    
-    var plot = jQuery.plot(jQuery("#placeholder"), get_data(null, null), plot_options);
- 
-  }
   </script>
  
  
@@ -257,7 +215,33 @@
         <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
 
       <% end %>
- 
+
+      <% if @patient.person.age > 14 %>
+
+        <%= hidden_field_tag("observations[][value_numeric]", nil, {:id => 'bmi'}) %>
+        <%= hidden_field_tag("observations[][concept_name]", "BODY MASS INDEX, MEASURED") %>
+        <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+        <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+
+      <% else %> 
+        
+        <%= hidden_field_tag("observations[][value_numeric]", nil, {:id => 'weight_for_height'}) %>
+        <%= hidden_field_tag("observations[][concept_name]", "WT FOR HT") %>
+        <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+        <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+    
+        <%= hidden_field_tag("observations[][value_numeric]", nil, {:id => 'weight_for_age'}) %>
+        <%= hidden_field_tag("observations[][concept_name]", "WT FOR AGE") %>
+        <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+        <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+    
+        <%= hidden_field_tag("observations[][value_numeric]", nil, {:id => 'height_for_age'}) %>
+        <%= hidden_field_tag("observations[][concept_name]", "HT FOR AGE") %>
+        <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+        <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+    
+      <% end %>
+    
     <label for='showSummary'>Summary </label>
     <%= text_field_tag :showSummary, nil, { :tt_onLoad => "growthIndicators()", :optional => "true", :tt_pageStyleClass => "NoControls" } %>
    

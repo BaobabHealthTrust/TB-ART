@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
 private
 
   def find_patient
-    @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
+    @patient = Patient.find(params[:patient_id] || session[:patient_id] || params[:id]) rescue nil
   end
   
 end
