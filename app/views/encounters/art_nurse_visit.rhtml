@@ -1,0 +1,11 @@
+<script>
+  var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
+</script>  
+<form id='appointment' action="/encounters/create" method='post'>
+  <%= hidden_field_tag "encounter[encounter_type_name]", "ART NURSE VISIT" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+  
+  <%= submit_tag "Finish" %>    
+</form>

@@ -1,4 +1,5 @@
 require 'digest/sha1'
+require 'digest/sha2'
 
 class User < ActiveRecord::Base
   include Openmrs
@@ -27,7 +28,7 @@ class User < ActiveRecord::Base
   end
       
   def authenticated?(plain)
-    encrypt(plain, salt) == password || Digest::SHA1.hexdigest("#{plain}#{salt}") == password
+    encrypt(plain, salt) == password || Digest::SHA1.hexdigest("#{plain}#{salt}") == password || Digest::SHA256.hexdigest("#{plain}#{salt}") == password
   end
   
   def admin?

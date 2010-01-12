@@ -6,12 +6,46 @@
 </style>
 <script>
   var tt_cancel_destination = "/patients/programs/<%= @patient.patient_id %>"  
+  
+  function set_program_for_workflows() {
+    var program_id = encodeURIComponent($('program_id').value); 
+    $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/workflows?program=" + program_id);
+  }
+  
+  function set_workflow_for_states() {
+    var workflow_id = encodeURIComponent($('program_workflow_id').value); 
+    $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/states?workflow=" + workflow_id);
+  }
+  
 </script>
 <form id='program' action="/programs/create" method='post'> 
   <%= hidden_field_tag :patient_id, @patient.id %>
 
-  <%= select_tag 'patient_program[program_id]', options_for_select(
+  <%= select_tag 'program_id', options_for_select(
     Program.active.all.inject({}){|result, element| result[element.name] = element.program_id; result }, nil), 
     {:helpText => "Select Program"} %> 
+
+  <%= text_field_tag 'location_id', params[:location_id],
+    {:id => 'location_id', 
+     :field_type => 'alpha', 
+     :helpText => "Location", 
+     :ajaxURL => '/programs/locations?q=', 
+     :allowFreeText => true } %>
+
+  <%= text_field_tag 'program_workflow_id', params[:program_workflow_id],     
+    {:id => 'program_workflow_id', 
+     :field_type => 'alpha', 
+     :helpText => "Program Workflow",
+     :tt_onLoad => "set_program_for_workflows();",
+     :ajaxURL => "", 
+     :allowFreeText => false } %> 
+
+  <%= text_field_tag 'initial_state', params[:initial_state],     
+    {:id => 'initial_state', 
+     :field_type => 'alpha', 
+     :helpText => "Initial State",
+     :tt_onLoad => "set_workflow_for_states();",
+     :ajaxURL => "", 
+     :allowFreeText => false } %> 
 
 </form>

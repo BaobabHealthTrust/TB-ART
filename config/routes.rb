@@ -9,7 +9,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :session
   map.resources :barcodes, :collection => {:label => :get}
   map.resources :relationships, :collection => {:search => :get}
-  map.resources :programs
+  map.resources :programs, :collection => {:locations => :get, :workflows => :get, :states => :get}
   map.resources :encounter_types
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

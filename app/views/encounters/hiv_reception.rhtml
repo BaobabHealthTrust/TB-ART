@@ -1,0 +1,35 @@
+<script>
+  var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
+  
+  function new_guardian() {
+    window.location = "/relationships/search?patient_id=<%= @patient.patient_id %>"
+  }
+  
+  function show_new_guardian_button() {
+    var button = "<button onmousedown='new_guardian();' class='button navButton gray'><span>New Guardian</span></button>";
+    $('tt_extraButtons').innerHTML = button
+  }
+</script>  
+<form id='appointment' action="/encounters/create" method='post'>
+  <%= hidden_field_tag "encounter[encounter_type_name]", "HIV RECEPTION" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <label for='guardian_present'>Guardian Present</label>
+    <%= select_tag "observations[][value_text]", guardian_options(@patient),
+      {:id => "guardian_present",
+       :multiple => true,
+       :tt_onLoad => 'show_new_guardian_button()' } %>
+    <%= hidden_field_tag("observations[][concept_name]", "GUARDIAN PRESENT") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+  
+  <label for='patient_present'>Patient Present</label>
+    <%= select_tag "observations[][value_coded_or_text]", options_for_select([['Yes','YES'],['No','NO']]), :id => 'patient_present' %>
+    <%= hidden_field_tag("observations[][concept_name]", "PATIENT PRESENT") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+  
+  <%= submit_tag "Finish" %>    
+</form>
