@@ -2,7 +2,8 @@
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
   
   function new_guardian() {
-    window.location = "/relationships/search?patient_id=<%= @patient.patient_id %>"
+    var current = '/encounters/new/hiv_reception?patient_id=<%= @patient.patient_id %>';
+    window.location = "/relationships/search?patient_id=<%= @patient.patient_id %>&return_to=" + escape(current)
   }
   
   function show_new_guardian_button() {
@@ -22,12 +23,14 @@
        :multiple => true,
        :optional => true,
        :tt_onLoad => 'show_new_guardian_button()' } %>
+    <%= hidden_field_tag("observations[][value_coded_or_text]", nil) %>
     <%= hidden_field_tag("observations[][concept_name]", "GUARDIAN PRESENT") %>
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
   
   <label for='patient_present'>Patient Present</label>
     <%= select_tag "observations[][value_coded_or_text]", options_for_select([['Yes','YES'],['No','NO']]), :id => 'patient_present' %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
     <%= hidden_field_tag("observations[][concept_name]", "PATIENT PRESENT") %>
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  

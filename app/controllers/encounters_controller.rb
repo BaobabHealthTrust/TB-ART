@@ -8,11 +8,12 @@ class EncountersController < ApplicationController
     (params[:observations] || []).each{|observation|
       # Check to see if any values are part of this observation
       # This keeps us from saving empty observations
-      values = "coded_or_text group_id boolean coded drug datetime numeric modifier text".split(" ").map{|value_name|
+      values = ['coded_or_text', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
         observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
       }.compact
 
       next if values.length == 0
+      observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
       observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
       observation[:encounter_id] = encounter.id
       observation[:obs_datetime] = encounter.encounter_datetime ||= Time.now()

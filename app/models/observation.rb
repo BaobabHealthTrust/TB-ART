@@ -4,6 +4,7 @@ class Observation < ActiveRecord::Base
   include Openmrs
 
   belongs_to :concept
+  belongs_to :concept_name, :class_name => "ConceptName", :foreign_key => "concept_name"
   belongs_to :answer_concept, :class_name => "Concept", :foreign_key => "value_coded"
   belongs_to :answer_concept_name, :class_name => "ConceptName", :foreign_key => "value_coded_name_id"
   has_many :concept_names, :through => :concept
@@ -64,10 +65,10 @@ class Observation < ActiveRecord::Base
   end
 
   def to_s
-    "#{self.concept.name.name rescue 'Unknown concept name'}: #{self.answer_string}"
+    "#{self.concept_name.name rescue self.concept.name.name rescue 'Unknown concept name'}: #{self.answer_string}"
   end
 
   def answer_string
-    "#{self.answer_concept_name.name rescue nil}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}"
+    "#{self.answer_concept_name.name rescue nil}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}"
   end
 end

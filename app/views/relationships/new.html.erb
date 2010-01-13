@@ -5,7 +5,11 @@
   }
 </style>
 <script>
+  <% if session[:return_to] %>
+  var tt_cancel_destination = "<%= session[:return_to] %>"  
+  <% else %>
   var tt_cancel_destination = "/patients/relationships/<%= @patient.patient_id %>"  
+  <% end %>
 </script>
 <form id='relationship' action="/relationships/create" method='post'> 
   <%= hidden_field_tag :patient_id, @patient.id %>

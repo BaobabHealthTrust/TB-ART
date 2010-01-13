@@ -80,7 +80,7 @@ module ApplicationHelper
   def guardian_options(patient)
     rels = @patient.relationships.active.guardian.all
     guardians = rels.map{|rel| rel.relation}    
-    options_array = guardians.map{|guard| [guard.name, guard.person_id]}
+    options_array = guardians.map{|guard| [guard.name, guard.name]}
     options_for_select(options_array)  
   end
 end
