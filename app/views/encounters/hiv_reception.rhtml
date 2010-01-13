@@ -20,6 +20,7 @@
     <%= select_tag "observations[][value_text]", guardian_options(@patient),
       {:id => "guardian_present",
        :multiple => true,
+       :optional => true,
        :tt_onLoad => 'show_new_guardian_button()' } %>
     <%= hidden_field_tag("observations[][concept_name]", "GUARDIAN PRESENT") %>
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>

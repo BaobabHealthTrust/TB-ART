@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   end
       
   def authenticated?(plain)
-    encrypt(plain, salt) == password || Digest::SHA1.hexdigest("#{plain}#{salt}") == password || Digest::SHA256.hexdigest("#{plain}#{salt}") == password
+    encrypt(plain, salt) == password || Digest::SHA1.hexdigest("#{plain}#{salt}") == password || Digest::SHA512.hexdigest("#{plain}#{salt}") == password
   end
   
   def admin?
