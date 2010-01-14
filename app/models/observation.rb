@@ -22,6 +22,8 @@ class Observation < ActiveRecord::Base
   end
 
   def value_coded_or_text=(value_coded_or_text)
+    return if value_coded_or_text.blank?
+    
     value_coded_name = ConceptName.find_by_name(value_coded_or_text)
     if value_coded_name.nil?
       # TODO: this should not be done this way with a brittle hard ref to concept name

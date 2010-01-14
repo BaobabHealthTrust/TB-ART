@@ -4,7 +4,6 @@ class EncountersController < ApplicationController
     encounter = Encounter.new(params[:encounter])
     encounter.encounter_datetime = session[:datetime] unless session[:datetime].blank?
     encounter.save
-
     (params[:observations] || []).each{|observation|
       # Check to see if any values are part of this observation
       # This keeps us from saving empty observations
