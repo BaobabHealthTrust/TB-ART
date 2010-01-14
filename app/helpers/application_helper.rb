@@ -77,10 +77,9 @@ module ApplicationHelper
     @patient.person.gender == 'M' ? "<img src='/images/male.gif' alt='Male' height='30px' style='margin-bottom:-4px;'>" : "<img src='/images/female.gif' alt='Female' height='30px' style='margin-bottom:-4px;'>"
   end
   
-  def guardian_options(patient)
-    rels = @patient.relationships.active.guardian.all
-    guardians = rels.map{|rel| rel.relation}    
-    options_array = guardians.map{|guard| [guard.name, guard.name]}
+  def relationship_options(patient)
+    rels = @patient.relationships.active.all
+    options_array = rels.map{|rel| [rel.relation.name + " (#{rel.type.b_is_to_a})", rel.relation.name]}
     options_for_select(options_array)  
   end
 end

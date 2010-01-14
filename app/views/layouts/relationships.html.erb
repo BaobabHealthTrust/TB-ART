@@ -50,6 +50,7 @@
             otherwise click find by name.</div>
           <form id='barcodeForm' action="/people/search">
             <div style="float:left">Scan a barcode:</div>
+            <%= hidden_field_tag :relation, @patient.patient_id %>
             <%= text_field_tag :identifier, '', {:id => 'barcode', :class => 'touchscreenTextInput', :style => 'position:absolute' } %>
             <%= submit_tag "Submit", :style => "display:none" %>
           </form>
