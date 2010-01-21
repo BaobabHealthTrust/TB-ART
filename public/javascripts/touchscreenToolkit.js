@@ -433,6 +433,18 @@ function showAjaxResponse(aHttpRequest) {
 	$('options').innerHTML = aHttpRequest.responseText;
 }
 
+function assignSelectOptionsFromSuggestions(formElement, options) {
+  var lis = options.getElementsByTagName("li");
+  for (var i=0; i<lis.length; i++) {
+    var li = lis[i];
+    var value = li.getAttribute("value") || li.getAttribute("tstValue") || li.innerHTML;
+    var option = document.createElement("option");
+    option.setAttribute("value", value);
+    option.innerHTML = li.innerHTML;
+    formElement.appendChild(option);
+  }
+}
+
 function getFormPostParams() {
 	var params = "";
 	for (var i=0; i<tstFormElements.length; i++) {
@@ -704,10 +716,55 @@ function elementToTouchscreenInput(aFormElement, aInputDiv) {
 	return aTouchscreenInputNode;
 }
 
+// These really don't like multi selects :)
+function selectNextOption() {
+  try {
+    var selected = null;
+    var options = $("options").getElementsByTagName('li');
+    for (var i=0; i<options.length; i++) {
+      if (selected) {
+        updateTouchscreenInputForSelect(options[i]);    
+        break;
+      }      
+      if (options[i].style.backgroundColor == 'lightblue') {
+        // Grab this, we need to select the very next item (if there is one)
+        selected = options[i];
+      }
+    }
+    // If nothing was selected then select the first option
+    if (!selected && options.length > 0) 
+      updateTouchscreenInputForSelect(options[0]);    
+    var currentPage = tstCurrentPage; 
+    var currentInput = $("touchscreenInput"+currentPage);
+    currentInput.focus();    
+  }catch(e){}
+}
+
+// These really don't like multi selects :)
+function selectPrevOption() {  
+  try {
+    var selected = null;
+    var options = $("options").getElementsByTagName('li');
+    for (var i=options.length-1; i>=0; i--) {
+      if (selected) {
+        updateTouchscreenInputForSelect(options[i]);    
+        break;
+      }      
+      if (options[i].style.backgroundColor == 'lightblue') {
+        // Grab this, we need to select the very next iteraton (if there is one)
+        selected = options[i];
+      }
+    }
+    var currentPage = tstCurrentPage; 
+    var currentInput = $("touchscreenInput"+currentPage);
+    currentInput.focus();    
+  }catch(e){}
+}
+
 function unhighlight(element){
   element.style.backgroundColor = "none"
 }
-	
+
 // TODO make these into 1 function
 function updateTouchscreenInputForSelect(element){
   var inputTarget = tstInputTarget; 
@@ -1728,7 +1785,14 @@ function checkKey(anEvent) {
 		confirmCancelEntry(); 
     return;
 	}
-
+	if (anEvent.keyCode == 38) {
+    selectPrevOption();
+    return;
+  }
+	if (anEvent.keyCode == 40) {
+    selectNextOption();
+    return;
+  }
   if(doListSuggestions){
     listSuggestions(inputTargetPageNumber);
   }
@@ -1925,7 +1989,7 @@ TTInput.prototype = {
 	validateSelectOptions: function() {
 		this.value = this.element.value
 		var tagName = this.formElement.tagName;
-		var suggestURL = this.formElement.getAttribute("ajaxURL") || "";
+		var suggestURL = this.formElement.getAttribute("ajaxURL") || this.element.getAttribute("ajaxURL") || "";
 		var allowFreeText = this.formElement.getAttribute("allowFreeText") || "false";
 		var optional = this.formElement.getAttribute("optional") || "false";
 
@@ -1938,6 +2002,7 @@ TTInput.prototype = {
 
 			var selectOptions = null;
 			if (this.formElement.tagName == "SELECT") {
+        if (suggestURL != "") assignSelectOptionsFromSuggestions(this.formElement, $('options'));
 				selectOptions = this.formElement.getElementsByTagName("OPTION");
         var val_arr = new Array();
         var multiple = this.formElement.getAttribute("multiple") == "multiple";
