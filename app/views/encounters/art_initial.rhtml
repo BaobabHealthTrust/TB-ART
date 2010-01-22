@@ -1,11 +1,144 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
+  
+  function new_program_enrollment() {
+    var current = '/encounters/new/art_initial?patient_id=<%= @patient.patient_id %>';
+    window.location = "/programs/new?patient_id=<%= @patient.patient_id %>&return_to=" + escape(current);
+  }
+  
+  function show_new_program_enrollment_button() {  
+    var button = "<button onmousedown='new_program_enrollment();' class='button navButton gray'><span>New Program Enrollment</span></button>";
+    $('tt_extraButtons').innerHTML = button;
+  }
+  
 </script>  
 <form id='appointment' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "ART_INITIAL" %>
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+  
+  <label for='ever_received_art'>Ever received ART?</label>
+    <%= select_tag "ever_received_art", options_for_select([['Yes','YES'],['No','NO']]), :id => 'ever_received_art' %>
+  
+  <label for='transfer_in'>Transfer In?</label>
+    <%= select_tag "observations[][value_coded]", options_for_select([['Yes','YES'],['No','NO']]),
+      {:id => "transfer_in",
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "TRANSFER IN") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+    
+  <label for='initial_program'>Previous Program Enrollment</label>
+    <%= select_tag "initial_program", program_enrollment_options(@patient, 'HIV PROGRAM'),
+      {:id => "initial_program",
+       :multiple => false,
+       :optional => false,
+       :tt_onLoad => 'show_new_program_enrollment_button()' } %>
+  
+  <label for='has_transfer_letter'>Has transfer letter?</label>
+    <%= select_tag "observations[][value_coded]", options_for_select([['Yes','YES'],['No','NO']]),
+      {:id => "has_transfer_letter",
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "HAS TRANSFER LETTER") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+  
+  <label for='taken_art_in_last_two_weeks'>Taken ART in the last two weeks?</label>
+    <%= select_tag "observations[][value_coded]", options_for_select([['Yes','YES'],['No','NO']]),
+      {:id => "taken_art_in_last_two_weeks",
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "TAKEN ART LAST TWO WEEKS") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+  
+  <label for='previous_art_number'>ART number at previous location</label>
+    <%= text_field_tag "observations[][value_text]", nil,
+      {:id => "previous_art_number",
+       :optional => true } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_coded]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "ART NUMBER AT PREVIOUS LOCATION") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+  
+
+  <label for='agrees_to_followup'>Agrees to followup?</label>
+    <%= select_tag "observations[][value_coded]", options_for_select([['Yes','YES'],['No','NO']]),
+      {:id => "agrees_to_followup",
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "FOLLOW UP AGREEMENT") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+  
+  <label for='first_positive_hiv_test_type'>Type of first positive HIV test</label>
+    <%= select_tag "observations[][value_coded]", options_for_select([['HIV RAPID TEST, QUALITATIVE','HIV RAPID TEST, QUALITATIVE'],['HIV DNA POLYMERASE CHAIN REACTION','HIV DNA POLYMERASE CHAIN REACTION']]),
+      {:id => "first_positive_hiv_test_type",
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "FIRST POSITIVE HIV TEST TYPE") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+
+  <label for='first_positive_hiv_test_location'>Location of first positive HIV test</label>
+    <%= text_field_tag "observations[][value_text]", nil,
+      {:id => "first_positive_hiv_test_location",
+       :field_type => 'alpha',
+       :ajaxURL => '/programs/locations?q=', 
+       :allowFreeText => true,     
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_coded]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "FIRST POSITIVE HIV TEST LOCATION") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+
+  <label for='first_positive_hiv_test_date'>Date of first positive HIV test</label>
+  <%= text_field_tag "observations[][value_datetime]", (Time.now - 1.month).year, 
+      {:field_type => 'date', 
+       :tt_pageStyleClass => "Date DatesOnly",         
+       :id => "first_positive_hiv_test_date"} %>
+    <%= hidden_field_tag("observations[][value_coded]", nil) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "FIRST POSITIVE HIV TEST DATE") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+
+  <label for='art_number'>ART number</label>
+    <%= text_field_tag "observations[][value_text]", nil,
+      {:id => "art_number",
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_coded]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "ART NUMBER") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+
+  <% if @patient.person.gender == 'F' && @patient.person.age > 15 %>
+  <label for='referred_by_pmtct'>Referred by PMTCT</label>
+    <%= select_tag "observations[][value_coded]", options_for_select([['Yes','YES'],['No','NO']]),
+      {:id => "referred_by_pmtct",
+       :optional => false } %>
+    <%= hidden_field_tag("observations[][value_datetime]", nil) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "REFERRED BY PMTCT") %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+  <% end %>  
+
+  
+  <!--  *SKIP INITIAL HEIGHT
+        *SKIP INITIAL WEIGHT
+  -->  
   
   <%= submit_tag "Finish" %>    
 </form>

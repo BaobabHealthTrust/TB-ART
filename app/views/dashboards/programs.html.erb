@@ -1,7 +1,7 @@
 <%= render :partial => 'dashboards/nav', :locals => {:active => 'programs'} %>
 <script type="text/javascript">
   function select(node) {
-    $('#states').empty().load('/programs/states/' + node.attr('program'))
+    $('#states').empty().load('/programs/status/' + node.attr('program'))
     $('#programs li.data').removeClass("active");
     node.addClass("active");
   }

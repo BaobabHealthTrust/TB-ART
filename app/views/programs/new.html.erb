@@ -10,11 +10,13 @@
   function set_program_for_workflows() {
     var program_id = encodeURIComponent($('program_id').value); 
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/workflows?program=" + program_id);
+    clearInput();
   }
   
   function set_workflow_for_states() {
     var workflow_id = encodeURIComponent($('program_workflow_id').value); 
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/states?workflow=" + workflow_id);
+    clearInput();
   }
   
 </script>
@@ -25,27 +27,47 @@
     Program.active.all.inject({}){|result, element| result[element.name] = element.program_id; result }, nil), 
     {:helpText => "Select Program"} %> 
 
-  <%= text_field_tag 'location_id', params[:location_id],
+  <%= select_tag 'location_id', params[:location_id],
     {:id => 'location_id', 
      :field_type => 'alpha', 
      :helpText => "Location", 
      :ajaxURL => '/programs/locations?q=', 
-     :allowFreeText => true } %>
+     :allowFreeText => false } %>
 
-  <%= text_field_tag 'program_workflow_id', params[:program_workflow_id],     
+  <%= select_tag 'program_workflow_id', params[:program_workflow_id],     
     {:id => 'program_workflow_id', 
      :field_type => 'alpha', 
-     :helpText => "Program Workflow",
+     :helpText => "Program workflow",
      :tt_onLoad => "set_program_for_workflows();",
      :ajaxURL => "", 
      :allowFreeText => false } %> 
 
-  <%= text_field_tag 'initial_state', params[:initial_state],     
+  <%= select_tag 'initial_state', params[:inital_state],     
     {:id => 'initial_state', 
      :field_type => 'alpha', 
-     :helpText => "Initial State",
+     :helpText => "Initial state",
      :tt_onLoad => "set_workflow_for_states();",
      :ajaxURL => "", 
      :allowFreeText => false } %> 
 
+  <%= text_field_tag 'initial_date', params[:initial_date] || (Time.now).year, 
+      {:id => 'initial_date',
+       :field_type => 'date', 
+       :helpText => "Initial state start date",
+       :tt_pageStyleClass => "Date DatesOnly"} %>     
+<!--
+  <%= select_tag 'current_state', params[:current_state],     
+    {:id => 'current_state', 
+     :field_type => 'alpha', 
+     :helpText => "Current state",
+     :tt_onLoad => "set_workflow_for_states();",
+     :ajaxURL => "", 
+     :allowFreeText => false } %> 
+
+  <%= text_field_tag 'current_date', params[:current_date] || (Time.now).year, 
+      {:id => 'current_date',
+       :field_type => 'date', 
+       :helpText => "Current state start date",
+       :tt_pageStyleClass => "Date DatesOnly"} %>     
+-->
 </form>

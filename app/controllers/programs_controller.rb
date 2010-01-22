@@ -2,19 +2,28 @@ class ProgramsController < ApplicationController
   before_filter :find_patient, :except => [:void, :states]
   
   def new
+    session[:return_to] = nil
+    session[:return_to] = params[:return_to] unless params[:return_to].blank?
     @patient_program = PatientProgram.new
   end
 
   def create
-    @patient_program = @patient.patient_programs.build(params[:patient_program])
-    if @patient_program.save
+    @patient_program = @patient.patient_programs.build(
+      :program_id => params[:program_id],
+      :date_enrolled => params[:initial_date],
+      :location_id => params[:location_id])      
+    @patient_state = @patient_program.patient_states.build(
+      :state => params[:initial_state],
+      :start_date => params[:initial_date]) 
+    if @patient_program.save && @patient_state.save
+      redirect_to session[:return_to] and return unless session[:return_to].blank?
       redirect_to :controller => :patients, :action => :programs, :patient_id => @patient.patient_id
     else 
       render :action => "new" 
     end
   end
 
-  def states
+  def status
     @program = PatientProgram.find(params[:id])
     render :layout => false    
   end
@@ -27,7 +36,7 @@ class ProgramsController < ApplicationController
   
   def locations
     @locations = Location.most_common_program_locations(params[:q] || '')
-    @names = @locations.map{|location| "<li value='#{location.id}'>#{location.name}</li>" }
+    @names = @locations.map{|location| "<li value='#{location.location_id}'>#{location.name}</li>" }
     render :text => @names.join('')
   end
   

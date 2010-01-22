@@ -82,4 +82,12 @@ module ApplicationHelper
     options_array = rels.map{|rel| [rel.relation.name + " (#{rel.type.b_is_to_a})", rel.relation.name]}
     options_for_select(options_array)  
   end
+  
+  def program_enrollment_options(patient, filter_program_name=nil)
+    progs = @patient.patient_programs.active.all
+    progs.reject!{|prog| prog.program.name != filter_program_name} unless filter_program_name.blank?
+    options_array = progs.map{|prog| [prog.program.name + " (started #{prog.date_enrolled.strftime('%d/%b/%Y')} at #{prog.location.name})", prog.id]}
+    options_for_select(options_array)  
+  end
+  
 end
