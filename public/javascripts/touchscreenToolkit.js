@@ -383,9 +383,18 @@ function populateInputPage(pageNum) {
 	}
 	
 	setTouchscreenAttributes(touchscreenInputNode, tstFormElements[i], pageNum);
-	if (tstFormElements[i].value) 
-		touchscreenInputNode.value = tstFormElements[i].value;
 
+	if (tstFormElements[i].value) {
+    if (tstFormElements[i].tagName == "SELECT") {
+      try { 
+        touchscreenInputNode.value = tstFormElements[i].options[tstFormElements[i].selectedIndex].innerHTML; 
+      } catch(e) {
+    		touchscreenInputNode.value = tstFormElements[i].value;
+      }  
+    } else {
+  		touchscreenInputNode.value = tstFormElements[i].value;
+    }
+  }  
 	tstInputTarget = touchscreenInputNode; 
 
 	// options	
@@ -429,12 +438,9 @@ function addScrollButtons() {
 	inputPage.appendChild(scrollButton);
 }
 
-function showAjaxResponse(aHttpRequest) {
-	$('options').innerHTML = aHttpRequest.responseText;
-}
-
 function assignSelectOptionsFromSuggestions(formElement, options) {
-  var lis = options.getElementsByTagName("li");
+  formElement.innerHTML = '';
+  var lis = options.getElementsByTagName("li");  
   for (var i=0; i<lis.length; i++) {
     var li = lis[i];
     var value = li.getAttribute("value") || li.getAttribute("tstValue") || li.innerHTML;
@@ -566,7 +572,12 @@ function getOptions() {
 	
 	if (!tstSearchPage) {
 		if(tstFormElements[i].getAttribute("ajaxURL") != null){
-			ajaxRequest(options,tstFormElements[i].getAttribute("ajaxURL")+tstFormElements[i].value);
+      var val = tstFormElements[i].value;
+      if (tstFormElements[i].value) {
+        if (tstFormElements[i].tagName == "SELECT") 
+          try { val = tstFormElements[i].options[tstFormElements[i].selectedIndex].innerHTML; } catch(e) { }  
+      }  
+			ajaxRequest(options,tstFormElements[i].getAttribute("ajaxURL")+val);
 		}
 		else {
 			if(tstFormElements[i].tagName == "SELECT") {
@@ -722,6 +733,7 @@ function selectNextOption() {
     var selected = null;
     var options = $("options").getElementsByTagName('li');
     for (var i=0; i<options.length; i++) {
+      if (options[i].style.display == 'none') continue;
       if (selected) {
         updateTouchscreenInputForSelect(options[i]);    
         break;
@@ -731,9 +743,14 @@ function selectNextOption() {
         selected = options[i];
       }
     }
-    // If nothing was selected then select the first option
-    if (!selected && options.length > 0) 
-      updateTouchscreenInputForSelect(options[0]);    
+    // If nothing was selected then select the first visible option
+    if (!selected) {
+      for (var i=0; i<options.length; i++) {
+        if (options[i].style.display == 'none') continue;
+        updateTouchscreenInputForSelect(options[i]);    
+        break;
+      }
+    }
     var currentPage = tstCurrentPage; 
     var currentInput = $("touchscreenInput"+currentPage);
     currentInput.focus();    
@@ -746,6 +763,7 @@ function selectPrevOption() {
     var selected = null;
     var options = $("options").getElementsByTagName('li');
     for (var i=options.length-1; i>=0; i--) {
+      if (options[i].style.display == 'none') continue;
       if (selected) {
         updateTouchscreenInputForSelect(options[i]);    
         break;
@@ -857,9 +875,10 @@ function highlightSelection(options, inputElement){
     //njih
       if(optionIncludedInValue(unescape(options[i].innerHTML), val_arr)){
         options[i].style.backgroundColor = "lightblue"
-				if (options[i].getAttribute("tstValue")) {
+				if (options[i].getAttribute("tstValue")) 
 					inputElement.setAttribute("tstValue", options[i].getAttribute("tstValue"));
-				}
+				else if (options[i].getAttribute("value")) 
+					inputElement.setAttribute("value", options[i].getAttribute("value"));
       }
       else{
         options[i].style.backgroundColor = ""
@@ -893,11 +912,13 @@ function handleResult(optionsList, aXMLHttpRequest) {
       for(var i=0;i<optionNodeCount;i++){
         var onmousedown = optionNodes[i].getAttribute("onmousedown");
         optionNodes[i].setAttribute("onmousedown", onmousedown + ";updateTouchscreenInput(this);");
-        if (optionNodes[i].getAttribute("tstValue") == tstInputTarget.value) {                                  
+        if (optionNodes[i].getAttribute("tstValue") == tstInputTarget.value || optionNodes[i].getAttribute("value") == tstInputTarget.value) {                                  
           tstInputTarget.value = optionNodes[i].innerHTML;
           optionNodes[i].style.backgroundColor = "lightblue";
           if (optionNodes[i].hasAttribute("tstValue")) 
             tstInputTarget.setAttribute('tstValue', optionNodes[i].getAttribute("tstValue"));
+          else if (optionNodes[i].hasAttribute("value")) 
+            tstInputTarget.setAttribute('value', optionNodes[i].getAttribute("value"));
           break;
         } else if (optionNodes[i].innerHTML == tstInputTarget.value) {
 					optionNodes[i].style.backgroundColor = "lightblue";
@@ -905,6 +926,12 @@ function handleResult(optionsList, aXMLHttpRequest) {
       }
     }
 		optionsList.innerHTML = "<ul>"+optionsList.innerHTML+"</ul>"
+    var inputElement = tstFormElements[tstPages[tstCurrentPage]];
+    assignSelectOptionsFromSuggestions(inputElement, $('options'));
+    
+    var val = tstInputTarget.value;
+    if (val == null) val = "";
+    inputElement.value = val;		
   }
 }
 
@@ -914,6 +941,8 @@ function tt_update(sourceElement){
 
 	if (sourceElement.getAttribute("tstValue")) {
 		sourceValue = sourceElement.getAttribute("tstValue");
+	} else if (sourceElement.getAttribute("value")) {
+		sourceValue = sourceElement.getAttribute("value");
 	} else {
 		sourceValue = sourceElement.value;
 	}
@@ -2002,7 +2031,6 @@ TTInput.prototype = {
 
 			var selectOptions = null;
 			if (this.formElement.tagName == "SELECT") {
-        if (suggestURL != "") assignSelectOptionsFromSuggestions(this.formElement, $('options'));
 				selectOptions = this.formElement.getElementsByTagName("OPTION");
         var val_arr = new Array();
         var multiple = this.formElement.getAttribute("multiple") == "multiple";
