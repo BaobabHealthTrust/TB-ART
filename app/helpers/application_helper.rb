@@ -90,4 +90,10 @@ module ApplicationHelper
     options_for_select(options_array)  
   end
   
+  def concept_set_options(concept_name)
+    concept_id = ConceptName.active.find_by_name(concept_name).concept_id
+    set = ConceptSet.find_all_by_concept_set(concept_id, :order => 'sort_weight')
+    options = set.map{|item| [item.concept.name.name, item.concept_id] }
+    options_for_select(options)
+  end
 end

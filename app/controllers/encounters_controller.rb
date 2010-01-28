@@ -1,26 +1,41 @@
 class EncountersController < ApplicationController
 
-  def create
+  def create  
+    @patient = Patient.find(params[:encounter][:patient_id])
+    # Encounter handling
     encounter = Encounter.new(params[:encounter])
     encounter.encounter_datetime = session[:datetime] unless session[:datetime].blank?
-    encounter.save
-    (params[:observations] || []).each{|observation|
+    encounter.save    
+    # Observation handling
+    (params[:observations] || []).each do |observation|
       # Check to see if any values are part of this observation
       # This keeps us from saving empty observations
       values = ['coded_or_text', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
         observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
       }.compact
-
       next if values.length == 0
       observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
       observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
       observation[:encounter_id] = encounter.id
-      observation[:obs_datetime] = encounter.encounter_datetime ||= Time.now()
+      observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name] ||= "OUTPATIENT DIAGNOSIS" if encounter.type.name == "OUTPATIENT DIAGNOSIS"
       Observation.create(observation)
-    }
-    @patient = Patient.find(params[:encounter][:patient_id])
+    end
+    # Program handling
+    (params[:programs] || []).each do |program|
+      # Look up the program if the program id is set      
+      @patient_program = PatientProgram.find(program[:patient_program_id]) unless program[:patient_program_id].blank?
+      # If it wasn't set, we need to create it
+      unless (@patient_program)
+        @patient_program = @patient.patient_programs.create(
+          :program_id => program[:program_id],
+          :date_enrolled => program[:date_enrolled] || Time.now)          
+      end
+      # Lots of states bub
+      (program[:states] || []).each {|state| @patient_program.transition(state) }
+    end
+    # Go to the next task in the workflow (or dashboard)
     redirect_to next_task(@patient) 
   end
 

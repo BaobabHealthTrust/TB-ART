@@ -21,7 +21,7 @@
   <label for='ever_received_art'>Ever received ART?</label>
     <%= select_tag "ever_received_art", options_for_select([['Yes','YES'],['No','NO']]), :id => 'ever_received_art' %>
   
-  <label for='transfer_in'>Transfer In?</label>
+<!--  <label for='transfer_in'>Transfer In?</label>
     <%= select_tag "observations[][value_coded]", options_for_select([['Yes','YES'],['No','NO']]),
       {:id => "transfer_in",
        :optional => false } %>
@@ -30,14 +30,22 @@
     <%= hidden_field_tag("observations[][concept_name]", "TRANSFER IN") %>
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
-    
   <label for='initial_program'>Previous Program Enrollment</label>
     <%= select_tag "initial_program", program_enrollment_options(@patient, 'HIV PROGRAM'),
       {:id => "initial_program",
        :multiple => false,
        :optional => false,
        :tt_onLoad => 'show_new_program_enrollment_button()' } %>
-  
+-->    
+
+  <%= hidden_field_tag("programs[][patient_program_id]", nil) %>
+  <%= hidden_field_tag("programs[][program_id]", Program.find_by_name('HIV PROGRAM').id) %>
+  <%= hidden_field_tag("programs[][location_id]", nil) %>
+  <%= hidden_field_tag("programs[][date_enrolled]", Date.today ) %>
+  <%= hidden_field_tag("programs[][states][][state]", 76) %><!-- Following -->
+  <%= hidden_field_tag("programs[][states][][start_date]", Date.today) %>
+  <%= hidden_field_tag("programs[][states][][end_date]", nil) %>
+
   <label for='has_transfer_letter'>Has transfer letter?</label>
     <%= select_tag "observations[][value_coded]", options_for_select([['Yes','YES'],['No','NO']]),
       {:id => "has_transfer_letter",
@@ -134,7 +142,6 @@
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
   <% end %>  
-
   
   <!--  *SKIP INITIAL HEIGHT
         *SKIP INITIAL WEIGHT

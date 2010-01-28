@@ -13,4 +13,23 @@ class PatientProgram < ActiveRecord::Base
   def to_s
     self.program.concept.name.name + " (at #{location.name})"
   end
+  
+  def transition(params)
+    ActiveRecord::Base.transaction do
+      # Check if there is an open state and close it
+      state = self.patient_states.last
+      if (state && state.end_date.blank?)
+        state.end_date = params[:start_date]
+        state.save!
+      end    
+      # Create the new state
+      state = self.patient_states.new(params)
+      state.save!
+    end  
+  end
+  
+  def complete(end_date)
+    self.date_completed = end_date
+    self.save!
+  end
 end

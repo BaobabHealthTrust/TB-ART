@@ -6,6 +6,82 @@
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+
+  <% if @patient.person.age > 14 %>
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I ADULT'),
+      {:id => "stage_1_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage I Conditions (Adult)" } %>
+
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT'),
+      {:id => "stage_2_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage II Conditions (Adult)" } %>
+
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT'),
+      {:id => "stage_3_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage III Conditions (Adult)" } %>
+
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT'),
+      {:id => "stage_4_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage IV Conditions (Adult)" } %>
+  <% else %>  
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I PEDS'),
+      {:id => "stage_1_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage I Conditions (Peds)" } %>
+
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
+      {:id => "stage_2_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage II Conditions (Peds)" } %>
+
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III PEDS'),
+      {:id => "stage_3_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage III Conditions (Peds)" } %>
+
+    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV PEDS'),
+      {:id => "stage_4_conditions",
+       :multiple => true,
+       :optional => true,
+       :helpText => "Stage IV Conditions (Peds)" } %>
+  <% end %>   
+
+  <%= touch_meta_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV PEDS') %>
+
+  <label for='new_cd4_count_available'>New CD4 count available?</label>
+    <%= select_tag "new_cd4_count_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'new_cd4_count_available' %>
+
+  <%= touch_location_tag "CD4 COUNT LOCATION", @patient, nil,
+    {:id => "cd4_count_location",
+     :condition => '$("new_cd4_count_available").value == "YES"',
+     :helpText => "CD4 Count Location"} %>
+
+  <%= touch_date_tag "CD4 COUNT DATE", @patient, (Time.now - 1.month).year,
+    {:id => "cd4_count_date",
+     :condition => '$("new_cd4_count_available").value == "YES"',
+     :helpText => "CD4 Count Date"} %>
+
+  <%= touch_numeric_tag "CD4 COUNT", @patient, nil,
+    {:id => "cd4_count",
+     :condition => '$("new_cd4_count_available").value == "YES"',
+     :min => 0,
+     :max => 100,
+     :absoluteMin => 0,
+     :absoluteMax => 100,
+     :units => '%',
+     :helpText => "CD4 Count"} %>
   
   <%= submit_tag "Finish" %>    
 </form>
