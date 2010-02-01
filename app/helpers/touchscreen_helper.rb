@@ -67,12 +67,12 @@ module TouchscreenHelper
     content
   end
 
-  def touch_select_tag(concept, patient, values, options={}, time=DateTime.now())
+  def touch_select_tag(concept, patient, choices, options={}, time=DateTime.now())
     options = {  
      :allowFreeText => false 
     }.merge(options)                 
     content = ""
-    content << select_tag("observations[][value_coded_or_text]", values, options) 
+    content << select_tag("observations[][value_coded_or_text]", choices, options) 
     content << touch_meta_tag(concept, patient, time, 'value_coded_or_text')
     content
   end
