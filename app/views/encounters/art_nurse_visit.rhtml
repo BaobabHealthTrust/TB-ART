@@ -6,6 +6,49 @@
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <% if @patient.person.gender == 'F' && @patient.person.age > 14 %>
+    <%= touch_yes_no_unknown_tag "IS PATIENT PREGNANT?", @patient, nil,
+      {:optional => true,
+       :helpText => "Is patient pregnant?" } %>
+  <% end %>    
   
+  <%= touch_yes_no_unknown_tag "IS ABLE TO WALK UNAIDED?", @patient, nil,
+    {:optional => true,
+     :helpText => "Is patient able to walk unaided?" } %>
+
+  <%= touch_yes_no_unknown_tag "IS AT WORK OR SCHOOL?", @patient, nil,
+    {:optional => true,
+     :helpText => "Is patient at work or school?" } %>
+
+  <%= touch_select_tag "SYMPTOM PRESENT", @patient, concept_set_options('MALAWI ART SYMPTOM SET'),
+    {:id => 'symptoms',
+     :optional => true,
+     :multiple => true,
+     :helpText => "Symptoms (select all that apply)" } %>
+
+  <%= touch_select_tag "ADVERSE EFFECTS", @patient, [['SKIN RASH', 'SKIN RASH'], ['PERIPHERAL NEUROPATHY', 'PERIPHERAL NEUROPATHY'], ['SKIN RASH', 'SKIN RASH']],
+    {:id => 'symptoms',
+     :optional => true,
+     :multiple => true,
+     :helpText => "Adverse effects (select all that apply)" } %>
+
+  <% @patient.orders.active.unfinished.arv.prescriptions.each do |order| %>
+    <%= touch_numeric_tag "AMOUNT OF DRUG BROUGHT TO CLINIC", @patient, nil,
+      {:units => "#{order.drug_order.units}",
+       :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} brought to clinic"} %>
+    <%= touch_numeric_tag "AMOUNT OF DRUG REMAINING AT HOME", @patient, nil,
+      {:units => "#{order.drug_order.units}",
+       :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} left at home"} %>
+  <% end %>
+  
+  <!--   Adherence report -->  
+
+  <!-- Referrals -->  
+  <!--   Refer to clinician -->      
+
+  <!-- Prescribe ARVs? -->
+  <!--   If no, and ON ANTIRETROVIRALS, then program state = treatment stopped -->  
+
   <%= submit_tag "Finish" %>    
 </form>

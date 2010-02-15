@@ -80,4 +80,18 @@ module TouchscreenHelper
   def touch_boolean_tag(concept, patient, value, options={}, time=DateTime.now())
     touch_select_field(concept, patient, value, options_for_select([['Yes','YES'],['No','NO']]), time)
   end
+  
+  def touch_yes_no_unknown_tag(concept, patient, value, options={}, time=DateTime.now())
+    touch_select_field(concept, patient, value, options_for_select([['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), time)
+  end
+  
+  def touch_hidden_tag(concept, patient, value, options={}, time=DateTime.now())
+    options = {  
+     :allowFreeText => false 
+    }.merge(options)                 
+    content = ""
+    content << hidden_tag("observations[][value_coded_or_text]", value, options) 
+    content << touch_meta_tag(concept, patient, time, 'value_coded_or_text')
+    content
+  end
 end
