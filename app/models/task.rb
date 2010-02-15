@@ -9,12 +9,12 @@ class Task < ActiveRecord::Base
   def self.next_task(location, patient)
     all_tasks = self.active.all(:order => 'sort_weight ASC')
     todays_encounters = patient.encounters.current.all(:include => [:type])
-    todays_encounter_types = todays_encounters.map{|e| e.type.encounter_type_id}
+    todays_encounter_types = todays_encounters.map{|e| e.type.name}
     all_tasks.each do |task|
       # Is the task for this location?
-      next unless location.name.match(/#{task.location}/)
+      next unless task.location.blank? || task.location == '*' || location.name.match(/#{task.location}/)
       # Have we already run this task?
-      next if todays_encounter_types.include? task.encounter_type_id
+      next if task.encounter_type.present? && todays_encounter_types.include?(task.encounter_type)
       # Are we checking gender and is it right?
       next if task.gender.present? && patient.person.gender != task.gender      
       # Check for an observation made today with a specific value
@@ -41,9 +41,9 @@ class Task < ActiveRecord::Base
         next unless patient_state.present?
       end
       # Nothing failed, this is the next task, lets replace any macros
-      task.url = task.url.gsub(/\{patient\}/, patient.patient_id)
-      task.url = task.url.gsub(/\{person\}/, patient.person.person_id)
-      task.url = task.url.gsub(/\{location\}/, location.location_id)
+      task.url = task.url.gsub(/\{patient\}/, "#{patient.patient_id}")
+      task.url = task.url.gsub(/\{person\}/, "#{patient.person.person_id}")
+      task.url = task.url.gsub(/\{location\}/, "#{location.location_id}")
       return task
     end
   end  

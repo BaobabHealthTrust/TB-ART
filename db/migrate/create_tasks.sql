@@ -1,9 +1,8 @@
 DROP TABLE IF EXISTS `task`;
 CREATE TABLE `task` (
   `task_id` int(11) NOT NULL auto_increment,
-  `name` varchar(255) default NULL,
   `url` varchar(255) default NULL,
-  `enounter_type_id` int(11) default NULL,
+  `encounter_type` varchar(255) default NULL,
   `description` text default NULL,
   `location` varchar(255) default NULL,
   `gender` varchar(50) default NULL,
@@ -18,7 +17,7 @@ CREATE TABLE `task` (
   `sort_weight` double default NULL,
   `creator` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
-  `voided` smallint(6) NOT NULL,
+  `voided` smallint(6) default 0,
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
