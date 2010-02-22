@@ -59,7 +59,9 @@
        showWeightHeightForAge();
        showWeightForHeight();
      }
-     $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '</div>' ;
+     // Temp, skip the summary
+     // $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '<div id="charts"></div></div>' ;
+     gotoNextPage();
    }
         
   function showWeightHeightForAge(){

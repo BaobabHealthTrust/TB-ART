@@ -131,11 +131,12 @@ button {
   padding: 0 16px; 
   display: block; 
   float: left; 
-  color:black;
+  color:white;
   text-decoration:none;
 }
 
 .nav li a.active {
+  color:black;
   background-color:#ddd;
   border-bottom:1px solid #ddd;
 }
@@ -168,14 +169,13 @@ ul.list {
   height:100px;
 }  
 ul.small {
-  font-size:0.8em;
+  font-size:1.1em;
 }
 ul.list li.data {
   vertical-align:top;
   display:block;
   list-style: none;
-  padding-left:8px;
-  padding-top:8px;
+  padding:6px;
   cursor:pointer;
 }
 ul.list li div.void {

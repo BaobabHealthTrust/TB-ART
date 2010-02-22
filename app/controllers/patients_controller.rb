@@ -9,7 +9,7 @@ class PatientsController < ApplicationController
   end
 
   def treatment
-    @orders = @patient.person.current_orders rescue []
+    @prescriptions = @patient.orders.active.unfinished.prescriptions.all
     render :template => 'dashboards/treatment', :layout => 'dashboard' 
   end
 

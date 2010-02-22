@@ -66,11 +66,17 @@ class Observation < ActiveRecord::Base
       :limit => limit).map{|o| o.value }
   end
 
-  def to_s
-    "#{self.concept_name.name rescue self.concept.name.name rescue 'Unknown concept name'}: #{self.answer_string}"
+  def to_s(tags=[])
+    formatted_name = self.concept_name.tagged(tags).name rescue nil
+    formatted_name ||= self.concept_name.name rescue nil
+    formatted_name ||= self.concept.concept_names.tagged(tags).first.name rescue nil
+    formatted_name ||= self.concept.concept_names.first.name rescue 'Unknown concept name'
+    "#{formatted_name}: #{self.answer_string(tags)}"
   end
 
-  def answer_string
-    "#{self.answer_concept_name.name rescue nil}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}"
+  def answer_string(tags=[])
+    coded_answer_name = self.answer_concept.concept_names.tagged(tags).first.name rescue nil
+    coded_answer_name ||= self.answer_concept.concept_names.first.name rescue nil
+    "#{coded_answer_name}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}"
   end
 end

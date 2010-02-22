@@ -1,6 +1,6 @@
 class PeopleController < ApplicationController
   def index
-    render :layout => "menu"
+    redirect_to "/clinic"
   end
  
   def new

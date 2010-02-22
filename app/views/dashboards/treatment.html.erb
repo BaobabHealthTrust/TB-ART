@@ -14,13 +14,13 @@
   <div id="treatment" class="panel" style="width:780px">
     <h2>Today's Treatment</h2>
     <ul id="prescriptions" class="list" style="height:270px;width:100%;">
-      <% for order in @orders do %>
+      <% @prescriptions.each do |order| %>
         <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
           <div class="summary"><%= order.to_s.gsub(/\n/, '<br/>') -%></div>
         </li>  
       <% end %>
-      <% if @orders.blank? %>        
+      <% if @prescriptions.blank? %>        
         <li class="data">No prescriptions are available for this patient today</li>
       <% end %>
     </ul>
