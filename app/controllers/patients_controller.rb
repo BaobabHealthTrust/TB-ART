@@ -5,16 +5,31 @@ class PatientsController < ApplicationController
     @encounters = @patient.encounters.current.active.find(:all)
     @prescriptions = @patient.orders.active.unfinished.prescriptions.all
     @programs = @patient.patient_programs.active.all
+    # This code is pretty hacky at the moment
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted.each do |restriction|    
+      @encounters = restriction.filter_encounters(@encounters)
+      @prescriptions = restriction.filter_orders(@prescriptions)
+      @programs = restriction.filter_programs(@programs)
+    end
     render :template => 'dashboards/overview', :layout => 'dashboard' 
   end
 
   def treatment
     @prescriptions = @patient.orders.active.unfinished.prescriptions.all
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted.each do |restriction|
+      @prescriptions = restriction.filter_orders(@prescriptions)
+    end
     render :template => 'dashboards/treatment', :layout => 'dashboard' 
   end
 
   def relationships
     @relationships = @patient.relationships rescue []
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted.each do |restriction|
+      @relationships = restriction.filter_relationships(@encounters)
+    end
     render :template => 'dashboards/relationships', :layout => 'dashboard' 
   end
 
@@ -32,6 +47,10 @@ class PatientsController < ApplicationController
 
   def programs
     @programs = @patient.patient_programs.active.all
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted.each do |restriction|
+      @programs = restriction.filter_programs(@programs)
+    end
     render :template => 'dashboards/programs', :layout => 'dashboard' 
   end
 
@@ -66,5 +85,8 @@ class PatientsController < ApplicationController
     print_string = @patient.visit_label rescue (raise "Unable to find patient (#{params[:patient_id]}) or generate a visit label for that patient")
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:patient_id]}#{rand(10000)}.lbl", :disposition => "inline")
   end
+  
+private
+  
   
 end

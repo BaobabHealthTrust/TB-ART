@@ -42,7 +42,12 @@
        :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} left at home"} %>
   <% end %>
   
-  <!--   Adherence report -->  
+  <!-- Adherence report -->  
+  <!--   do we need a referral to adherence counseling? -->
+
+  <%= touch_yes_no_unknown_tag "REFERRALS ORDERED?", @patient, nil,
+    {:optional => true,
+     :helpText => "Is patient able to walk unaided?" } %>
 
   <!-- Referrals -->  
   <!--   Refer to clinician -->      
