@@ -28,7 +28,7 @@ class PatientsController < ApplicationController
     @relationships = @patient.relationships rescue []
     @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
     @restricted.each do |restriction|
-      @relationships = restriction.filter_relationships(@encounters)
+      @relationships = restriction.filter_relationships(@relationships)
     end
     render :template => 'dashboards/relationships', :layout => 'dashboard' 
   end
