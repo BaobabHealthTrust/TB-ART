@@ -27,7 +27,7 @@
      :multiple => true,
      :helpText => "Symptoms (select all that apply)" } %>
 
-  <%= touch_select_tag "ADVERSE EFFECTS", @patient, [['SKIN RASH', 'SKIN RASH'], ['PERIPHERAL NEUROPATHY', 'PERIPHERAL NEUROPATHY'], ['SKIN RASH', 'SKIN RASH']],
+  <%= touch_select_tag "ADVERSE EFFECT", @patient, options_for_select([['SKIN RASH', 'SKIN RASH'], ['PERIPHERAL NEUROPATHY', 'PERIPHERAL NEUROPATHY']]),
     {:id => 'symptoms',
      :optional => true,
      :multiple => true,
@@ -45,15 +45,14 @@
   <!-- Adherence report -->  
   <!--   do we need a referral to adherence counseling? -->
 
-  <%= touch_yes_no_unknown_tag "REFERRALS ORDERED?", @patient, nil,
-    {:optional => true,
-     :helpText => "Is patient able to walk unaided?" } %>
-
-  <!-- Referrals -->  
-  <!--   Refer to clinician -->      
-
-  <!-- Prescribe ARVs? -->
+  <%= touch_yes_no_unknown_tag "PRESCRIBE ARVS THIS VISIT", @patient, nil,
+    {:optional => false,
+     :helpText => "Prescribe ARVs this visit?" } %>
   <!--   If no, and ON ANTIRETROVIRALS, then program state = treatment stopped -->  
+
+  <%= touch_yes_no_unknown_tag "REFER TO ART CLINICIAN", @patient, nil,
+    {:optional => false,
+     :helpText => "Refer to clinician?" } %>
 
   <%= submit_tag "Finish" %>    
 </form>

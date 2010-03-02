@@ -71,6 +71,7 @@ module TouchscreenHelper
     options = {  
      :allowFreeText => false 
     }.merge(options)                 
+    options.delete(:multiple)
     content = ""
     content << select_tag("observations[][value_coded_or_text]", choices, options) 
     content << touch_meta_tag(concept, patient, time, 'value_coded_or_text')
@@ -78,11 +79,15 @@ module TouchscreenHelper
   end
 
   def touch_boolean_tag(concept, patient, value, options={}, time=DateTime.now())
-    touch_select_field(concept, patient, value, options_for_select([['Yes','YES'],['No','NO']]), time)
+    touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO']], value), options, time)
   end
   
   def touch_yes_no_unknown_tag(concept, patient, value, options={}, time=DateTime.now())
-    touch_select_field(concept, patient, value, options_for_select([['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), time)
+    touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']], value), options, time)
+  end
+  
+  def touch_yes_no_tag(concept, patient, value, options={}, time=DateTime.now())
+    touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO']], value), options, time)
   end
   
   def touch_hidden_tag(concept, patient, value, options={}, time=DateTime.now())

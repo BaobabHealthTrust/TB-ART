@@ -10,13 +10,13 @@
   function set_program_for_workflows() {
     var program_id = encodeURIComponent($('program_id').value); 
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/workflows?program=" + program_id);
-    clearInput();
+    listSuggestions(tstCurrentPage); 
   }
   
   function set_workflow_for_states() {
     var workflow_id = encodeURIComponent($('program_workflow_id').value); 
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/states?workflow=" + workflow_id);
-    clearInput();
+    listSuggestions(tstCurrentPage); 
   }
   
 </script>

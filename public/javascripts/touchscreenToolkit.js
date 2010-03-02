@@ -941,8 +941,6 @@ function tt_update(sourceElement){
 
 	if (sourceElement.getAttribute("tstValue")) {
 		sourceValue = sourceElement.getAttribute("tstValue");
-	} else if (sourceElement.getAttribute("value")) {
-		sourceValue = sourceElement.getAttribute("value");
 	} else {
 		sourceValue = sourceElement.value;
 	}
