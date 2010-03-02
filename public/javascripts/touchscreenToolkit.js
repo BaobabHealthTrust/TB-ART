@@ -576,8 +576,9 @@ function getOptions() {
       if (tstFormElements[i].value) {
         if (tstFormElements[i].tagName == "SELECT") 
           try { val = tstFormElements[i].options[tstFormElements[i].selectedIndex].innerHTML; } catch(e) { }  
-      }  
-			ajaxRequest(options,tstFormElements[i].getAttribute("ajaxURL")+val);
+      }
+      if (tstFormElements[i].getAttribute("ajaxURL") != '')  
+  			ajaxRequest(options,tstFormElements[i].getAttribute("ajaxURL")+val);
 		}
 		else {
 			if(tstFormElements[i].tagName == "SELECT") {
@@ -1668,7 +1669,7 @@ function listSuggestions(inputTargetPageNumber) {
 	}
 	var inputElement = $('touchscreenInput'+inputTargetPageNumber); 
 
-	if(inputElement.getAttribute("ajaxURL") != null){
+	if(inputElement.getAttribute("ajaxURL") != null && inputElement.getAttribute("ajaxURL")){
 		ajaxRequest($('options'),inputElement.getAttribute("ajaxURL")+inputElement.value);
 	}
 	else{

@@ -32,7 +32,7 @@
     changeNextButtonText('Select Prescription');
     var diagnosis = encodeURIComponent(selectedValue('diagnosis')); 
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/prescriptions/suggested?patient_id=<%= @patient.patient_id %>&diagnosis=" + diagnosis + "&search_string=");
-    clearInput();  
+    listSuggestions(tstCurrentPage); 
   }
 
 
@@ -40,7 +40,7 @@
     var generic = encodeURIComponent($('generic').value); 
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/prescriptions/formulations?generic=" + generic + "&search_string=");
     $('infoBar'+tstCurrentPage).innerHTML = $('generic').value;
-    clearInput();
+    listSuggestions(tstCurrentPage); 
   }
 
   function set_formulation_for_type() {
@@ -55,7 +55,7 @@
       $('infoBar'+tstCurrentPage).innerHTML = $('formulation').value + ': ' + $('dose_strength').value + ' ' + units + ' ' + selectedValue('frequency');        
     else
       $('infoBar'+tstCurrentPage).innerHTML = $('formulation').value + ': ' + 'Variable Dose; ';              
-    clearInput();
+    listSuggestions(tstCurrentPage); 
   }
   
   function set_generic_drug_and_formulation_for_dose(frequency) {
@@ -65,7 +65,7 @@
     var formulation = encodeURIComponent($('formulation').value); 
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/prescriptions/dosages?generic=" + generic + "&formulation=" + formulation + "&frequency=" + frequency + "&search_string=");
     $('infoBar'+tstCurrentPage).innerHTML = $('formulation').value;  
-    clearInput();
+    listSuggestions(tstCurrentPage); 
   }
   
   function set_info_for_frequency() {
@@ -118,19 +118,19 @@
     :allowFreeText => 'false',
     :helpText => "Prescribe treatment for which diagnosis?"}%>
   
-  <%= text_field_tag :suggestion, params[:suggestion] || 0, {
+  <%= text_field_tag :suggestion, params[:suggestion] || 'New Prescription', {
     :tt_onLoad => "set_diagnosis_for_suggestions();",
     :ajaxURL => "", 
     :textCase => "upper", 
     :field_type => 'boolean',
     :allowFreeText => 'false',
-    :condition => "selectedValue('diagnosis') != '0'",
+    :condition => "selectedValue('diagnosis') != 'New Prescription'",
     :helpText => "Common prescriptions for this diagnosis"}%>
   
   <%= text_field_tag :generic, nil, {
     :ajaxURL => "/prescriptions/generics?search_string=", 
     :textCase => "upper", 
-    :condition => "selectedValue('suggestion') == '0'",    
+    :condition => "selectedValue('suggestion') == 'New Prescription'",    
     :helpText => "Generic Drug"}%>
 
   <% # Set ajaxURL in the script, but need to start it blank %>
@@ -138,14 +138,14 @@
     :tt_onLoad => "set_generic_drug_for_formulation();",
     :ajaxURL => "", 
     :textCase => "upper", 
-    :condition => "selectedValue('suggestion') == '0'",    
+    :condition => "selectedValue('suggestion') == 'New Prescription'",    
     :helpText => "Formulation"}%>
 
   <%= select_tag :type_of_prescription, options_for_select(
     {"Standard Dose" => "standard",
      "Variable Dose" => "variable"}), 
     {:tt_onLoad => "set_formulation_for_type();",
-     :condition => "selectedValue('suggestion') == '0'",    
+     :condition => "selectedValue('suggestion') == 'New Prescription'",    
      :helpText => "Type of Prescription"} %> 
 
   <% # Set ajaxURL in the script, but need to start it blank %>
@@ -155,9 +155,10 @@
     :field_type => 'number',
     :units => 'mg',
     :helpText => "Dose strength",
-    :condition => "selectedValue('suggestion') == '0' && selectedValue('type_of_prescription') == 'Standard Dose'",
+    :condition => "selectedValue('suggestion') == 'New Prescription' && selectedValue('type_of_prescription') == 'Standard Dose'",
     :validationRule => "([0-9]+\\.?[0-9]*)|Unknown$",
     :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",
+    :allowFreeText => "true",
     :tt_pageStyleClass => "NumbersOnlyWithDecimal"}%>
 <!--:absoluteMin => should use minimumDailyDose
     :absoluteMax => should use maximumDailyDose-->    
@@ -170,7 +171,7 @@
   <%= select_tag :frequency, options_for_select(options, ''), 
     {:tt_onLoad => "set_info_for_frequency();",     
      :helpText => "Frequency",
-     :condition => "selectedValue('suggestion') == '0' && selectedValue('type_of_prescription') == 'Standard Dose'"} %> 
+     :condition => "selectedValue('suggestion') == 'New Prescription' && selectedValue('type_of_prescription') == 'Standard Dose'"} %> 
 
 
   <% # Set ajaxURL in the script, but need to start it blank %>
@@ -180,9 +181,10 @@
     :textCase => "upper", 
     :field_type => "number",
     :helpText => "Morning Dose Strength",
-    :condition => "selectedValue('suggestion') == '0' && selectedValue('type_of_prescription') == 'Variable Dose'",
+    :condition => "selectedValue('suggestion') == 'New Prescription' && selectedValue('type_of_prescription') == 'Variable Dose'",
     :validationRule => "([0-9]+\\.?[0-9]*)|Unknown$",
     :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",
+    :allowFreeText => "true",
     :tt_pageStyleClass => "NumbersOnlyWithDecimal"}%>
 
   <% # Set ajaxURL in the script, but need to start it blank %>
@@ -192,9 +194,10 @@
     :textCase => "upper", 
     :field_type => "number",
     :helpText => "Afternoon Dose Strength",
-    :condition => "selectedValue('suggestion') == '0' && selectedValue('type_of_prescription') == 'Variable Dose'",
+    :condition => "selectedValue('suggestion') == 'New Prescription' && selectedValue('type_of_prescription') == 'Variable Dose'",
     :validationRule => "([0-9]+\\.?[0-9]*)|Unknown$",
     :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",
+    :allowFreeText => "true",
     :tt_pageStyleClass => "NumbersOnlyWithDecimal"}%>
 
   <% # Set ajaxURL in the script, but need to start it blank %>
@@ -204,7 +207,7 @@
     :textCase => "upper", 
     :field_type => "number",
     :helpText => "Evening Dose Strength",
-    :condition => "selectedValue('suggestion') == '0' && selectedValue('type_of_prescription') == 'Variable Dose'",
+    :condition => "selectedValue('suggestion') == 'New Prescription' && selectedValue('type_of_prescription') == 'Variable Dose'",
     :validationRule => "([0-9]+\\.?[0-9]*)|Unknown$",
     :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",
     :tt_pageStyleClass => "NumbersOnlyWithDecimal"}%>
@@ -216,9 +219,10 @@
     :textCase => "upper", 
     :field_type => "number",
     :helpText => "Night Dose Strength",
-    :condition => "selectedValue('suggestion') == '0' && selectedValue('type_of_prescription') == 'Variable Dose'",
+    :condition => "selectedValue('suggestion') == 'New Prescription' && selectedValue('type_of_prescription') == 'Variable Dose'",
     :validationRule => "([0-9]+\\.?[0-9]*)|Unknown$",
     :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",
+    :allowFreeText => "true",
     :tt_pageStyleClass => "NumbersOnlyWithDecimal"}%>
 
   <% # Set ajaxURL in the script, but need to start it blank %>
@@ -227,17 +231,18 @@
     :ajaxURL => "", 
     :field_type => 'number',
     :units => 'days',
-    :condition => "selectedValue('suggestion') == '0'",    
+    :condition => "selectedValue('suggestion') == 'New Prescription'",    
     :helpText => "Duration (days)",
     :validationRule => "([0-9]+\\.?[0-9]*)|Unknown$",
     :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",
+    :allowFreeText => "true",
     :tt_pageStyleClass => "NumbersOnlyWithDecimal"}%>
 
   <%= select_tag :prn, options_for_select(
     {"No" => "0", 
      "Yes" => "1"}), 
     {:tt_onLoad => "set_info_for_prn();",
-     :condition => "selectedValue('suggestion') == '0'",    
+     :condition => "selectedValue('suggestion') == 'New Prescription'",    
      :helpText => "Take as needed (PRN)?"} %> 
 
   <!-- label for='showSummary'></label -->

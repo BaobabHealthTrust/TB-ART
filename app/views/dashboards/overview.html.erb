@@ -13,7 +13,6 @@
   }
 
   jQuery(document).ready(function($) {
-    $('#visit').click(function() { window.location = '/patients/print_visit?patient_id=<%= @patient.id -%>' })
     $('#encounters li.data').click(function() { select($(this)); }); 
     $('#encounters li.data div.void').click(function() { voiding($(this)); return false; }); 
     $('#charts').empty().load('/patients/graph/<%= @patient.id -%>?data=weight');     
@@ -78,7 +77,6 @@
       <p></p>
       <ul id="observations" class="list small">
       </ul>    
-      <button id="visit" class="silver" style="float:right;margin-top:5px;"><span>Print Visit</span></button>    
     </div>
   </div>  
 </div>

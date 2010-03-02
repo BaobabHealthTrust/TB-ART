@@ -22,7 +22,7 @@ class PrescriptionsController < ApplicationController
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
     @encounter = @patient.current_treatment_encounter
     @diagnosis = Observation.find(params[:diagnosis]) rescue nil
-    unless (@suggestion.blank? || @suggestion == '0')
+    unless (@suggestion.blank? || @suggestion == '0' || @suggestion == 'New Prescription')
       @order = DrugOrder.find(@suggestion)
       DrugOrder.clone_order(@encounter, @patient, @diagnosis, @order)
     else
