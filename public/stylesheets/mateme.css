@@ -27,14 +27,23 @@
 }
 
 #footer {
-  background:#BBCCD9;
-  border-top:3px solid :#99AAB7;
+  background-color:#333333;
   color:#CADCEA;
   height:80px;
   width:100%;
   bottom:0px;
   position:absolute;
   overflow:hidden;
+}
+
+#footer button.left, div.buttonsDiv button.left {
+  float:left;
+}
+
+#footer button, div.buttonsDiv button {
+  float:right;
+  margin-top:10px;
+  min-width:140px;
 }
 
 .inputPage {

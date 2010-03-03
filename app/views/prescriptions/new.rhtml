@@ -209,7 +209,8 @@
     :helpText => "Evening Dose Strength",
     :condition => "selectedValue('suggestion') == 'New Prescription' && selectedValue('type_of_prescription') == 'Variable Dose'",
     :validationRule => "([0-9]+\\.?[0-9]*)|Unknown$",
-    :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",
+    :validationMessage => "You must enter a number (for example: 5<b>.0</b>)",    
+    :allowFreeText => "true",
     :tt_pageStyleClass => "NumbersOnlyWithDecimal"}%>
 
   <% # Set ajaxURL in the script, but need to start it blank %>

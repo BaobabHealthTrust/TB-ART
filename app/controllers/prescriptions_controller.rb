@@ -35,12 +35,9 @@ class PrescriptionsController < ApplicationController
       end  
       start_date = Time.now
       auto_expire_date = Time.now + params[:duration].to_i.days
-      prn = params[:prn]
-      if params[:type_of_prescription] == "variable"
-        DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:morning_dose], 'MORNING', prn) unless params[:morning_dose] == "Unknown" || params[:morning_dose].to_f == 0
-        DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:afternoon_dose], 'AFTERNOON', prn) unless params[:afternoon_dose] == "Unknown" || params[:afternoon_dose].to_f == 0
-        DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:evening_dose], 'EVENING', prn) unless params[:evening_dose] == "Unknown" || params[:evening_dose].to_f == 0
-        DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:night_dose], 'NIGHT', prn)  unless params[:night_dose] == "Unknown" || params[:night_dose].to_f == 0
+      prn = params[:prn].to_i
+      if params[:type_of_prescription] == "variable"      
+        DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, [params[:morning_dose], params[:afternoon_dose], params[:evening_dose], params[:night_dose]], 'VARIABLE', prn)
       else
         DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:dose_strength], params[:frequency], prn)
       end  

@@ -58,8 +58,6 @@
        :helpText => "Stage IV Conditions (Peds)" } %>
   <% end %>   
 
-  <%= touch_meta_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV PEDS') %>
-
   <label for='new_cd4_count_available'>New CD4 count available?</label>
     <%= select_tag "new_cd4_count_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'new_cd4_count_available' %>
 
