@@ -359,17 +359,17 @@ button span {
 
 
 button, button.blue { 
-  background:#000; 
+  background:#E6E6FF; 
   font-size:1.3em; 
   height:57px; 
   line-height:57px;
   min-width:48px;
 }
 button span, button.blue span { 
-  background:#000; 
+  background:#E6E6FF; 
   height:57px; 
   line-height:57px;
-  color:#fff; 
+  color:#000; 
 }
 /*button:hover, button:hover.blue {
   background:#00f; 
