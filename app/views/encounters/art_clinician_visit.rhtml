@@ -68,7 +68,7 @@
      :condition => '$("new_cd4_count_available").value == "YES"',
      :helpText => "CD4 Count Location"} %>
 
-  <%= touch_date_tag "CD4 COUNT DATE", @patient, (Time.now - 1.month).year,
+  <%= touch_date_tag "CD4 COUNT DATETIME", @patient, (Time.now - 1.month).year,
     {:id => "cd4_count_date",
      :condition => '$("new_cd4_count_available").value == "YES"',
      :helpText => "CD4 Count Date"} %>
