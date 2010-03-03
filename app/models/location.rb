@@ -24,4 +24,8 @@ class Location < ActiveRecord::Base
        "%#{search}%","#{search}"])
   end
 
+  def self.current_health_center
+    @@current_health_center ||= Location.find(GlobalProperty.find_by_property("current_health_center").property_value) rescue self.current_location
+  end
+
 end

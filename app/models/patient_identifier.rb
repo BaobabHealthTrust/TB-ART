@@ -4,6 +4,7 @@ class PatientIdentifier < ActiveRecord::Base
   set_table_name "patient_identifier"
   set_primary_key :patient_identifier_id
 
+  named_scope :active, :conditions => ['patient_identifier.voided = 0']
   belongs_to :type, :class_name => "PatientIdentifierType", :foreign_key => :identifier_type
   belongs_to :patient, :class_name => "Patient", :foreign_key => :patient_id
 
