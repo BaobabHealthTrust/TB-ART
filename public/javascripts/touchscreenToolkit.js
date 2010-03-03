@@ -187,11 +187,11 @@ function createButtons() {
 	buttonsDiv.innerHTML += "<button id='nextButton' class='button green navButton' onMouseDown='gotoNextPage()'><span>Next</span></button>";
 
 	//create back button
-  buttonsDiv.innerHTML += "<button id='backButton' class='button gray navButton'><span>Back</span></button>"; 
+  buttonsDiv.innerHTML += "<button id='backButton' class='button yellow navButton'><span>Back</span></button>"; 
 
 	//create clear button or new patient button if on search page
 	if (!tstSearchPage) {
-		buttonsDiv.innerHTML += "<button id='clearButton' class='button gray navButton' onMouseDown='clearInput()'><span>Clear</span></button>"; 
+		buttonsDiv.innerHTML += "<button id='clearButton' class='button yellow navButton' onMouseDown='clearInput()'><span>Clear</span></button>"; 
 	} else {
 		var buttonLabel = "New Patient";
 		if (tstSearchMode && (tstSearchMode == "guardian")) { 

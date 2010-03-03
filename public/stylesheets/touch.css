@@ -121,6 +121,12 @@ form{
   font-size: 1.5em;
   -moz-user-select:none;
   height: 57px;
+  background:silver;
+  border:2px solid black;
+}
+
+.keyboardButton span, #launchButton span {
+  color:black;
 }
 
 .toggleButtonTrue{
