@@ -18,7 +18,15 @@
         $('#print').click(function() { window.location = '/patients/print_registration?patient_id=<%= @patient.id -%>' })
         $('#finish').click(function() { window.location = "/clinic" })
         $('#additional').click(function() { window.location = '/encounter_types?patient_id=<%= @patient.id -%>' })
+
+        // Show the flash
+        var flash = $('#flash');
+        if (flash.html() != '') {
+          flash.show();
+          setTimeout(function(){ $('#flash').hide() }, 3000);
+        }
       }) 
+      
     </script>
   </head>
   <body id="mateme">  
@@ -33,6 +41,7 @@
             <span class='title'>Birthdate:</span> <%= @patient.person.birthdate_formatted rescue '' %>
           </div>
         </div>
+        <div id="flash" class="flash centered" style="display:none;"><%= [flash[:notice], flash[:error], flash[:failure], flash[:success]].compact.join(" ").chomp unless flash.blank? -%></div>
         <%= yield %>  
         <div id="footer" class="dark">
           <div id="buttons" class="buttons" style="top:0px">

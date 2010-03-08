@@ -10,6 +10,8 @@ class Order < ActiveRecord::Base
   belongs_to :observation, :foreign_key => 'obs_id', :class_name => 'Observation'
   has_one :drug_order
   named_scope :active, :conditions => ['voided = 0']
+  named_scope :current, :conditions => 'DATE(encounter.encounter_datetime) = CURRENT_DATE() AND encounter.voided = 0', :include => :encounter
+  named_scope :historical, :conditions => 'DATE(encounter.encounter_datetime) <> CURRENT_DATE() AND encounter.voided = 0', :include => :encounter
   named_scope :unfinished, :conditions => ['discontinued = 0 AND auto_expire_date > NOW()']
   named_scope :finished, :conditions => ['discontinued = 1 OR auto_expire_date < NOW()']
   named_scope :arv, lambda {|order|

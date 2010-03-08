@@ -118,11 +118,10 @@ form{
   display: inline; /*-moz-inline-box;*/
   margin: 5px;
   text-align: center;
-  font-size: 1.5em;
-  -moz-user-select:none;
   height: 57px;
   background:silver;
   border:2px solid black;
+  -moz-user-select:none;
 }
 
 .keyboardButton span, #launchButton span {
@@ -164,7 +163,7 @@ form{
   display: block;
   z-index: 10;
   bottom: 85px;
-  left: 30px;
+  left: 20px;
 }
 
 .buttonLine{
@@ -335,6 +334,9 @@ form{
   z-index:10;
 }
 
+.buttonsDiv button {
+  margin:5px;
+}
 
 /*button.navButton {
  float:right;
@@ -467,7 +469,6 @@ button.yellow span {
 }
 
 .dateselector input, button{
-	margin: 5px;
 	text-align: center;
 }
 
@@ -477,12 +478,20 @@ button.yellow span {
 }
 .dateselector button {
 	display:block;
-	font-size: 1.5em;
 	color: black;
-	margin: 5px;
+	margin: 2px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color:silver;
+  color:black;
+  border:2px solid black;
 	text-align: center;
   width:90%;
 }
+.dateselector button span {
+  color:black;
+}
+
 
 .ShortSelectList #scrollUp, 
 .ShortSelectList #scrollDown, 

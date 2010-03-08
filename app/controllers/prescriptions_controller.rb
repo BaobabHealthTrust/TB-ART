@@ -1,7 +1,9 @@
 class PrescriptionsController < ApplicationController
+  # Is this used?
   def index
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @orders = @patient.current_orders rescue []
+    @orders = @patient.orders.prescriptions.current.all rescue []
+    @history = @patient.orders.prescriptions.historical.all rescue []
     redirect_to "/prescriptions/new?patient_id=#{params[:patient_id] || session[:patient_id]}" and return if @orders.blank?
     render :template => 'prescriptions/index', :layout => 'menu'
   end

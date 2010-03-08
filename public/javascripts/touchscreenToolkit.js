@@ -905,14 +905,15 @@ function handleResult(optionsList, aXMLHttpRequest) {
 
 	if (!optionsList) return;
 
-  if (aXMLHttpRequest.readyState == 4 && aXMLHttpRequest.status == 200) {
+  if (aXMLHttpRequest.readyState == 4 && aXMLHttpRequest.status == 200) {  
     optionsList.innerHTML = aXMLHttpRequest.responseText;
     if(optionsList.getElementsByTagName("li")[0] != null){
-      var optionNodes = optionsList.getElementsByTagName("li");
+      var optionNodes = optionsList.getElementsByTagName("LI");
       var optionNodeCount = optionNodes.length;
       for(var i=0;i<optionNodeCount;i++){
         var onmousedown = optionNodes[i].getAttribute("onmousedown");
-        optionNodes[i].setAttribute("onmousedown", onmousedown + ";updateTouchscreenInput(this);");
+        if (onmousedown == null || onmousedown.match(/updateTouchscreenInput/) == null)
+          optionNodes[i].setAttribute("onmousedown", onmousedown + ";updateTouchscreenInput(this);");
         if (optionNodes[i].getAttribute("tstValue") == tstInputTarget.value || optionNodes[i].getAttribute("value") == tstInputTarget.value) {                                  
           tstInputTarget.value = optionNodes[i].innerHTML;
           optionNodes[i].style.backgroundColor = "lightblue";
@@ -920,7 +921,6 @@ function handleResult(optionsList, aXMLHttpRequest) {
             tstInputTarget.setAttribute('tstValue', optionNodes[i].getAttribute("tstValue"));
           else if (optionNodes[i].hasAttribute("value")) 
             tstInputTarget.setAttribute('value', optionNodes[i].getAttribute("value"));
-          break;
         } else if (optionNodes[i].innerHTML == tstInputTarget.value) {
 					optionNodes[i].style.backgroundColor = "lightblue";
 				}
@@ -1677,6 +1677,9 @@ function listSuggestions(inputTargetPageNumber) {
 		options = optionsList.getElementsByTagName("li");
 		var searchTerm = new RegExp(inputElement.value,"i");
 		for(var i=0; i<options.length; i++){
+      var onmousedown = options[i].getAttribute("onmousedown");
+      if (onmousedown == null || onmousedown.match(/updateTouchscreenInput/) == null)
+        options[i].setAttribute("onmousedown", onmousedown + ";updateTouchscreenInput(this);");
 			if(options[i].innerHTML.search(searchTerm) == -1){
 				options[i].style.display = "none";
 			}

@@ -16,10 +16,12 @@ class PatientsController < ApplicationController
   end
 
   def treatment
-    @prescriptions = @patient.orders.active.unfinished.prescriptions.all
+    @prescriptions = @patient.orders.current.prescriptions.all
+    @historical = @patient.orders.historical.prescriptions.all
     @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
     @restricted.each do |restriction|
       @prescriptions = restriction.filter_orders(@prescriptions)
+      @historical = restriction.filter_orders(@historical)
     end
     render :template => 'dashboards/treatment', :layout => 'dashboard' 
   end

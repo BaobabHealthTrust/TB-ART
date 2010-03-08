@@ -1,6 +1,12 @@
 <%= render :partial => 'dashboards/nav', :locals => {:active => 'treatment'} %>
+<%= javascript_include_tag "barcode" %>
+<style type="text/css">
+  .subtotal { margin-left:32px; font-size: 0.8em;}
+</style>
 <script type="text/javascript">
+  barcodeId = 'barcode';
   jQuery(document).ready(function($) {
+    $('#dispense').click(function() { window.location = '/dispensations/new?patient_id=<%= @patient.id -%>' })
     $('#prescribe').click(function() { window.location = '/prescriptions/new?patient_id=<%= @patient.id -%>' })
     $('#treatment li.data div.void').click(function() { 
       node = $(this).parent();
@@ -13,8 +19,27 @@
 <div id="tab">
   <div id="treatment" class="panel" style="width:780px">
     <h2>Today's Treatment</h2>
-    <ul id="prescriptions" class="list" style="height:270px;width:100%;">
+    <ul id="prescriptions" class="list" style="height:135px;width:100%;">
       <% @prescriptions.each do |order| %>
+        <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
+          <div class="void"><img src="/images/cancel_flat_small.png"/></div>
+          <div class="summary">
+            <%= order.to_s.gsub(/\n/, '<br/>') -%>
+            <% dispensing = order.drug_order.total_drug_supply(@patient) %>
+            <% dispensing[0].each do |amount_dispensed| %>
+              <div class="subtotal dispensation"><%=h amount_dispensed.to_s %></div>
+            <% end %>
+            <div class="subtotal"><%=h dispensing[1].to_s %></div>
+          </div>
+        </li>  
+      <% end %>
+      <% if @prescriptions.blank? %>        
+        <li class="data">No prescriptions are available for this patient today</li>
+      <% end %>
+    </ul>
+    <h2>Historical Treatment</h2>
+    <ul id="prescriptions" class="list" style="height:135px;width:100%;">
+      <% @historical.reverse.each do |order| %>
         <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
           <div class="summary"><%= order.to_s.gsub(/\n/, '<br/>') -%></div>
@@ -25,5 +50,13 @@
       <% end %>
     </ul>
     <button id="prescribe" class="silver" style="float:right;margin-top:10px;"><span>New Prescription</span></button>    
-  </div>
+    <button id="dispense" class="silver" style="float:right;margin-top:10px;"><span>Dispense</span></button>    
+    <div style="padding-top:20px;">
+      <form id='barcodeForm' action="/dispensations/create?patient_id=<%= @patient.id -%>" method="post">
+        <div style="float:left;margin-top:-6px;"><label for="barcode" style="margin-top:-5px;"><img src="/images/barcode.jpg" style="vertical-align:top;background:white;"/></label></div>
+        <%= text_field_tag :identifier, '', {:id => 'barcode', :class => 'touchscreenTextInput', :style => 'position:absolute;width:330px' } %>
+        <%= submit_tag "Submit", :style => "display:none" %>
+      </form>
+    </div>
+  </div>  
 </div>

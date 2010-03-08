@@ -125,9 +125,6 @@ form{
 
 .keyboardButton, #launchButton{
   display: inline; /*-moz-inline-box;*/
-  margin: 5px;
-  text-align: center;
-  font-size: 1.5em;
   -moz-user-select:none;
 }
 
@@ -166,7 +163,7 @@ form{
   display: block;
   z-index: 10;
   bottom: 85px;
-  left: 30px;
+  left: 15px;
 }
 
 .buttonLine{
@@ -458,7 +455,8 @@ button:hover.dark span {
 }
 
 .dateselector input, button{
-	margin: 5px;
+  margin: 2px;
+	margin-top: 5px;
 	text-align: center;
 }
 

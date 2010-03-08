@@ -7,6 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.location '/location', :controller => 'sessions', :action => 'location'
   map.encounter '/encounters/new/:encounter_type', :controller => 'encounters', :action => 'new'  
   map.resource :session
+  map.resources :dispensations, :collection => {:quantities => :get}
   map.resources :barcodes, :collection => {:label => :get}
   map.resources :relationships, :collection => {:search => :get}
   map.resources :programs, :collection => {:locations => :get, :workflows => :get, :states => :get}

@@ -108,4 +108,41 @@ class DrugOrder < ActiveRecord::Base
     end             
     drug_order     
   end
+  
+  # We have to recalculate everything each time, because this might be the result
+  # of a clinical worker voiding something. 
+  def total_drug_supply(patient, encounter=nil)
+    encounter ||= patient.current_dispensation_encounter
+    amounts_brought = Observation.all(:conditions => 
+      ['obs.voided = 0 AND ' +
+       'obs.concept_id = ? AND ' +
+       'obs.person_id = ? AND ' +
+       'DATE(encounter.encounter_datetime) = CURRENT_DATE() AND ' +
+       'encounter.voided = 0 AND ' +
+       'orders.voided = 0 AND ' +
+       'drug_order.drug_inventory_id = ?', 
+        ConceptName.find_by_name("AMOUNT OF DRUG BROUGHT TO CLINIC").concept_id,
+        patient.person.person_id,
+        drug_inventory_id], 
+      :include => [:encounter, [:order => :drug_order]])      
+    total_brought = amounts_brought.sum{|amount| amount.value_numeric}
+    amounts_dispensed = Observation.active.all(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?', ConceptName.find_by_name("AMOUNT DISPENSED").concept_id, self.order_id, encounter.encounter_id])
+    total_dispensed = amounts_dispensed.sum{|amount| amount.value_numeric}
+    total = total_dispensed + total_brought    
+    obs = Observation.active.first(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?', ConceptName.find_by_name("TOTAL SUPPLY OF DRUG RECEIVED BY PATIENT").concept_id, self.order_id, encounter.encounter_id])
+    if obs      
+      obs.value_numeric = total
+      obs.save
+    else
+      obs = Observation.create(
+        :concept_name => "TOTAL SUPPLY OF DRUG RECEIVED BY PATIENT",
+        :order_id => self.order_id,
+        :person_id => patient.person.person_id,
+        :encounter_id => encounter.id,
+        :value_drug => self.drug_inventory_id,
+        :value_numeric => total,
+        :obs_datetime => Time.now)    
+    end
+    [amounts_dispensed, obs]
+  end
 end

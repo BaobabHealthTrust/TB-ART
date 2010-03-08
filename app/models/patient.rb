@@ -29,19 +29,18 @@ class Patient < ActiveRecord::Base
     encounter = encounters.current.find_by_encounter_type(type.id)
     encounter ||= encounters.create(:encounter_type => type.id)
   end
-  
-  def current_orders
-    encounter = current_treatment_encounter 
-    orders = encounter.orders.active.all
-    orders
+
+  def current_dispensation_encounter
+    type = EncounterType.find_by_name("DISPENSING")
+    encounter = encounters.current.find_by_encounter_type(type.id)
+    encounter ||= encounters.create(:encounter_type => type.id)
   end
   
   def alerts
     # next appt
     # adherence
     # drug auto-expiry
-    # cd4 due
-    
+    # cd4 due    
   end
   
   def summary
