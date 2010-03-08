@@ -71,7 +71,6 @@ module TouchscreenHelper
     options = {  
      :allowFreeText => false 
     }.merge(options)                 
-    options.delete(:multiple)
     content = ""
     content << select_tag("observations[][value_coded_or_text]", choices, options) 
     content << touch_meta_tag(concept, patient, time, 'value_coded_or_text')

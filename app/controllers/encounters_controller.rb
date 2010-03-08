@@ -20,7 +20,13 @@ class EncountersController < ApplicationController
       observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name] ||= "OUTPATIENT DIAGNOSIS" if encounter.type.name == "OUTPATIENT DIAGNOSIS"
-      Observation.create(observation)
+      # Handle multiple select
+      if observation[:value_coded_or_text] && observation[:value_coded_or_text].is_a?(Array)
+        values = observation[:value_coded_or_text]
+        values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
+      else      
+        Observation.create(observation)
+      end
     end
     # Program handling
     (params[:programs] || []).each do |program|
