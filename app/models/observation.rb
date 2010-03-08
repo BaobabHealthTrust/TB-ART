@@ -11,6 +11,7 @@ class Observation < ActiveRecord::Base
   belongs_to :answer_concept_name, :class_name => "ConceptName", :foreign_key => "value_coded_name_id"
   has_many :concept_names, :through => :concept
   named_scope :active, :conditions => ['obs.voided = 0']
+  named_scope :recent, lambda {|number| {:order => 'obs_id desc', :limit => number}}
 
 
   def patient_id=(patient_id)
@@ -79,6 +80,6 @@ class Observation < ActiveRecord::Base
   def answer_string(tags=[])
     coded_answer_name = self.answer_concept.concept_names.tagged(tags).first.name rescue nil
     coded_answer_name ||= self.answer_concept.concept_names.first.name rescue nil
-    "#{coded_answer_name}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}"
+    "#{coded_answer_name}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}#{' ['+order.to_s+']' if order_id && tags.include?('order')}"
   end
 end

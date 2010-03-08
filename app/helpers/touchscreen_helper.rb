@@ -1,7 +1,7 @@
 # Methods added to this helper will be available to all templates in the application.
 module TouchscreenHelper
 
-  def touch_meta_tag(concept, patient, time=DateTime.now(), kind=nil)
+  def touch_meta_tag(concept, patient, time=DateTime.now(), kind=nil, options={})
     content = ""
     content << hidden_field_tag("observations[][value_numeric]", nil) unless kind == 'value_numeric'
     content << hidden_field_tag("observations[][value_datetime]", nil) unless kind == 'value_datetime'
@@ -10,6 +10,8 @@ module TouchscreenHelper
     content << hidden_field_tag("observations[][value_text]", nil)  unless kind == 'value_text'
     content << hidden_field_tag("observations[][value_boolean]", nil)  unless kind == 'value_boolean'
     content << hidden_field_tag("observations[][value_drug]", nil)  unless kind == 'value_drug'
+    content << hidden_field_tag("observations[][obs_group_id]", options[:obs_group_id])
+    content << hidden_field_tag("observations[][order_id]", options[:order_id])
     content << hidden_field_tag("observations[][concept_name]", concept) 
     content << hidden_field_tag("observations[][patient_id]", patient.id) 
     content << hidden_field_tag("observations[][obs_datetime]", time)
@@ -23,7 +25,7 @@ module TouchscreenHelper
     }.merge(options)                 
     content = ""
     content << text_field_tag("observations[][value_datetime]", value, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_datetime')
+    content << touch_meta_tag(concept, patient, time, 'value_datetime', options)
     content
   end
 
@@ -47,7 +49,7 @@ module TouchscreenHelper
     }.merge(options)                 
     content = ""
     content << text_field_tag("observations[][value_text]", value, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_text')
+    content << touch_meta_tag(concept, patient, time, 'value_text', options)
     content
   end
 
@@ -57,13 +59,13 @@ module TouchscreenHelper
       :ajaxURL => '/programs/locations?q=', 
       :allowFreeText => true
     }.merge(options)                 
-    touch_text_field_tag(concept, patient, value, options, time)
+    touch_text_field_tag(concept, patient, value, options, time, options)
   end
 
   def touch_options_tag(concept, patient, values, options={}, time=DateTime.now())
     content = ""
     content << text_field_tag("observations[][value_text]", values, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_text')
+    content << touch_meta_tag(concept, patient, time, 'value_text', options)
     content
   end
 
@@ -73,7 +75,7 @@ module TouchscreenHelper
     }.merge(options)                 
     content = ""
     content << select_tag("observations[][value_coded_or_text]", choices, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_coded_or_text')
+    content << touch_meta_tag(concept, patient, time, 'value_coded_or_text', options)
     content
   end
 
@@ -95,7 +97,7 @@ module TouchscreenHelper
     }.merge(options)                 
     content = ""
     content << hidden_tag("observations[][value_coded_or_text]", value, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_coded_or_text')
+    content << touch_meta_tag(concept, patient, time, 'value_coded_or_text', options)
     content
   end
 end

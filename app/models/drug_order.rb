@@ -128,19 +128,20 @@ class DrugOrder < ActiveRecord::Base
     total_brought = amounts_brought.sum{|amount| amount.value_numeric}
     amounts_dispensed = Observation.active.all(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?', ConceptName.find_by_name("AMOUNT DISPENSED").concept_id, self.order_id, encounter.encounter_id])
     total_dispensed = amounts_dispensed.sum{|amount| amount.value_numeric}
-    total = total_dispensed + total_brought    
+    self.quantity = total_dispensed + total_brought  
+    self.save
     obs = Observation.active.first(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?', ConceptName.find_by_name("TOTAL SUPPLY OF DRUG RECEIVED BY PATIENT").concept_id, self.order_id, encounter.encounter_id])
     if obs      
-      obs.value_numeric = total
+      obs.value_numeric = self.quantity
       obs.save
     else
       obs = Observation.create(
         :concept_name => "TOTAL SUPPLY OF DRUG RECEIVED BY PATIENT",
         :order_id => self.order_id,
         :person_id => patient.person.person_id,
-        :encounter_id => encounter.id,
+        :encounter_id => encounter.encounter_id,
         :value_drug => self.drug_inventory_id,
-        :value_numeric => total,
+        :value_numeric => self.quantity,
         :obs_datetime => Time.now)    
     end
     [amounts_dispensed, obs]
