@@ -6,6 +6,7 @@ module TouchscreenHelper
     content << hidden_field_tag("observations[][value_numeric]", nil) unless kind == 'value_numeric'
     content << hidden_field_tag("observations[][value_datetime]", nil) unless kind == 'value_datetime'
     content << hidden_field_tag("observations[][value_coded_or_text]", nil) unless kind == 'value_coded_or_text'
+    content << hidden_field_tag("observations[][value_coded_or_text_multiple][]", nil) unless kind == 'value_coded_or_text_multiple'
     content << hidden_field_tag("observations[][value_coded]", nil)  unless kind == 'value_coded'
     content << hidden_field_tag("observations[][value_text]", nil)  unless kind == 'value_text'
     content << hidden_field_tag("observations[][value_boolean]", nil)  unless kind == 'value_boolean'
@@ -59,7 +60,7 @@ module TouchscreenHelper
       :ajaxURL => '/programs/locations?q=', 
       :allowFreeText => true
     }.merge(options)                 
-    touch_text_field_tag(concept, patient, value, options, time, options)
+    touch_text_field_tag(concept, patient, value, options, time)
   end
 
   def touch_options_tag(concept, patient, values, options={}, time=DateTime.now())
@@ -73,9 +74,10 @@ module TouchscreenHelper
     options = {  
      :allowFreeText => false 
     }.merge(options)                 
+    kind = options[:multiple] ? "value_coded_or_text_multiple" : "value_coded_or_text"
     content = ""
-    content << select_tag("observations[][value_coded_or_text]", choices, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_coded_or_text', options)
+    content << select_tag("observations[][#{kind}]", choices, options) 
+    content << touch_meta_tag(concept, patient, time, kind, options)
     content
   end
 

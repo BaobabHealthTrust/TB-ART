@@ -10,7 +10,7 @@ class EncountersController < ApplicationController
     (params[:observations] || []).each do |observation|
       # Check to see if any values are part of this observation
       # This keeps us from saving empty observations
-      values = ['coded_or_text', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
+      values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
         observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
       }.compact
       next if values.length == 0
@@ -21,8 +21,8 @@ class EncountersController < ApplicationController
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name] ||= "OUTPATIENT DIAGNOSIS" if encounter.type.name == "OUTPATIENT DIAGNOSIS"
       # Handle multiple select
-      if observation[:value_coded_or_text] && observation[:value_coded_or_text].is_a?(Array)
-        values = observation[:value_coded_or_text]
+      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
+        values = observation.delete(:value_coded_or_text_multiple)
         values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
       else      
         Observation.create(observation)

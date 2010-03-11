@@ -41,7 +41,7 @@
     <%= touch_numeric_tag "AMOUNT OF DRUG REMAINING AT HOME", @patient, nil,
       {:units => "#{order.drug_order.units}",
        :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} left at home",
-       :order_id => order.order_id} %>
+       :order_id => order.order_id  } %>
   <% end %>
   
   <!-- Adherence report -->  
