@@ -40,7 +40,7 @@ class DrugOrder < ActiveRecord::Base
   def self.clone_order(encounter, patient, obs, drug_order)
     write_order(encounter, patient, obs, drug_order.drug, Time.now, 
       Time.now + drug_order.duration.days, drug_order.dose, drug_order.frequency, 
-      drug_order.prn)
+      drug_order.prn, drug_order.order.instructions, drug_order.equivalent_daily_dose)
   end
 
   # Eventually it would be good for this to not be hard coded, and the data available in the concept table
@@ -62,29 +62,34 @@ class DrugOrder < ActiveRecord::Base
   end
   
   # prn should be 0 | 1
-  def self.write_order(encounter, patient, obs, drug, start_date, auto_expire_date, dose, frequency, prn)
+  def self.write_order(encounter, patient, obs, drug, start_date, auto_expire_date, dose, frequency, prn, instructions = nil, equivalent_daily_dose = nil)
     encounter ||= patient.current_treatment_encounter
     units = drug.units || 'per dose'
     duration = (auto_expire_date.to_date - start_date.to_date).to_i rescue nil
     equivalent_daily_dose = nil
-    instructions = nil
     drug_order = nil       
     if (frequency == "VARIABLE")
-      total_dose = dose.sum{|amount| amount.to_f rescue 0 }
-      return nil if total_dose.blank?
-      equivalent_daily_dose = total_dose
-      instructions = "#{drug.name}:"
-      instructions += " MORNING:#{dose[0]} #{units}" unless dose[0].blank? || dose[0].to_f == 0
-      instructions += " AFTERNOON:#{dose[1]} #{units}" unless dose[1].blank? || dose[1].to_f == 0
-      instructions += " EVENING:#{dose[2]} #{units}" unless dose[2].blank? || dose[2].to_f == 0
-      instructions += " NIGHT:#{dose[3]} #{units}" unless dose[3].blank? || dose[3].to_f == 0
-      instructions += " for #{duration} days" 
-      instructions += " (prn)" if prn == 1
-      dose = total_dose
+      if dose.is_a?(Array)
+        total_dose = dose.sum{|amount| amount.to_f rescue 0 }
+        return nil if total_dose.blank?
+        dose = total_dose
+      end  
+      equivalent_daily_dose ||= dose
+      if instructions.blank?
+        instructions = "#{drug.name}:"
+        instructions += " MORNING:#{dose[0]} #{units}" unless dose[0].blank? || dose[0].to_f == 0
+        instructions += " AFTERNOON:#{dose[1]} #{units}" unless dose[1].blank? || dose[1].to_f == 0
+        instructions += " EVENING:#{dose[2]} #{units}" unless dose[2].blank? || dose[2].to_f == 0
+        instructions += " NIGHT:#{dose[3]} #{units}" unless dose[3].blank? || dose[3].to_f == 0
+        instructions += " for #{duration} days" 
+        instructions += " (prn)" if prn == 1        
+      end  
     else
-      equivalent_daily_dose = dose.to_f * DrugOrder.doses_per_day(frequency)
-      instructions = "#{drug.name}: #{dose} #{units} #{frequency} for #{duration} days"
-      instructions << " (prn)" if prn == 1
+      equivalent_daily_dose ||= dose.to_f * DrugOrder.doses_per_day(frequency)
+      if instructions.blank?
+        instructions = "#{drug.name}: #{dose} #{units} #{frequency} for #{duration} days"
+        instructions += " (prn)" if prn == 1
+      end
     end
     ActiveRecord::Base.transaction do
       order = encounter.orders.create(

@@ -35,7 +35,7 @@ class Patient < ActiveRecord::Base
     encounter = encounters.current.find_by_encounter_type(type.id)
     encounter ||= encounters.create(:encounter_type => type.id)
   end
-  
+    
   def alerts
     # next appt
     # adherence
@@ -102,6 +102,11 @@ class Patient < ActiveRecord::Base
     id ||= self.patient_identifiers.find_by_identifier_type(PatientIdentifierType.find_by_name("Pre ART Number").id).identifier rescue nil if Location.current_location.name == 'Neno District Hospital - ART'    
     id ||= national_id_with_dashes
     id
+  end
+  
+  def current_weight
+    obs = person.observations.active.recent(1).question("WEIGHT (KG)").all
+    obs.first.value_numeric rescue 0
   end
   
   def min_weight

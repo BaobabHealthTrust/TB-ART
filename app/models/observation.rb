@@ -11,8 +11,12 @@ class Observation < ActiveRecord::Base
   belongs_to :answer_concept_name, :class_name => "ConceptName", :foreign_key => "value_coded_name_id"
   has_many :concept_names, :through => :concept
   named_scope :active, :conditions => ['obs.voided = 0']
-  named_scope :recent, lambda {|number| {:order => 'obs_id desc', :limit => number}}
-
+  named_scope :recent, lambda {|number| {:order => 'obs_datetime desc', :limit => number}}
+  named_scope :question, lambda {|concept|
+    concept_id = concept.to_i
+    concept_id = ConceptName.active.first(:conditions => {:name => concept}).concept_id rescue 0 if concept_id == 0
+    {:conditions => {:concept_id => concept_id}}
+  }
 
   def patient_id=(patient_id)
     self.person_id=patient_id

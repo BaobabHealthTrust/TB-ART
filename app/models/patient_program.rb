@@ -32,4 +32,22 @@ class PatientProgram < ActiveRecord::Base
     self.date_completed = end_date
     self.save!
   end
+  
+  # This is a pretty clumsy way of finding which regimen the patient is on.
+  # Eventually it would be good to have a way to associate a program with a
+  # regimen type without doing it manually. Note, the location of the regimen
+  # obs must be the current health center, not the station!
+  def current_regimen
+    location_id = Location.current_health_center.location_id
+    obs = patient.person.observations.active.recent(1).all(:conditions => ['value_coded IN (?) AND location_id = ?', regimens, location_id])
+    obs.first.value_coded rescue nil
+  end
+
+  def regimens(weight=nil)
+    RegimenCriteria.active.program(program_id).criteria(weight).all(
+      :select => 'concept_id', 
+      :group => 'concept_id, program_id',
+      :include => :concept).map(&:concept)
+  end
+      
 end
