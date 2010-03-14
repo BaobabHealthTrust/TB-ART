@@ -19,8 +19,8 @@ class Patient < ActiveRecord::Base
     self.encounters.current.all(:include => [:observations]).map{|encounter| 
       encounter.observations.active.all(
         :conditions => ["obs.concept_id = ? OR obs.concept_id = ?", 
-        ConceptName.find_by_name("OUTPATIENT DIAGNOSIS").concept_id,
-        ConceptName.find_by_name("OUTPATIENT DIAGNOSIS, NON-CODED").concept_id])
+        ConceptName.active.find_by_name("DIAGNOSIS").concept_id,
+        ConceptName.active.find_by_name("DIAGNOSIS, NON-CODED").concept_id])
     }.flatten.compact
   end
 

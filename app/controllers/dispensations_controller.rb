@@ -39,21 +39,20 @@ class DispensationsController < ApplicationController
   
   def quantities 
     drug = Drug.find(params[:formulation])
-    # Most common quantity for the generic, not the specific
-    concept_id = drug.concept_id
-    # Grab the 10 most popular quantities for this drug
+    # Most common quantity should be for the generic, not the specific
+    # But for now, the value_drug shortcut is significant enough that we 
+    # Should just use it. Also, we are using the AMOUNT DISPENSED obs
+    # and not the drug_order.quantity because the quantity contains number
+    # of pills brought to clinic and we should assume that the AMOUNT DISPENSED
+    # observations more accurately represent pack sizes
     amounts = []
-    orders = DrugOrder.find(:all, 
-      :select => 'quantity',
-      :joins => 'LEFT JOIN orders ON orders.order_id = drug_order.order_id',
-      :limit => 10, 
-      :group => 'orders.concept_id, quantity', 
-      :order => 'count(*)', 
-      :conditions => ['orders.concept_id = ?', concept_id])
-      
-    orders.each {|order|
-      amounts << "#{order.quantity.to_f}" unless order.quantity.blank?
-    }  
+    Observation.active.question("AMOUNT DISPENSED").all(
+      :conditions => {:value_drug => drug.drug_id},
+      :group => 'value_drug, value_numeric',
+      :order => 'count(*)',
+      :limit => '10').each do |obs|
+      amounts << "#{obs.value_numeric.to_f}" unless obs.value_numeric.blank?
+    end
     amounts = amounts.flatten.compact.uniq
     render :text => "<li>" + amounts.join("</li><li>") + "</li>"
   end
