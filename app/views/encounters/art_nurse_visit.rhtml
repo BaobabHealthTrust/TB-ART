@@ -33,7 +33,7 @@
      :multiple => true,
      :helpText => "Adverse effects (select all that apply)" } %>
 
-  <% @patient.orders.active.unfinished.arv.prescriptions.each do |order| %>
+  <% @patient.orders.unfinished.arv.prescriptions.each do |order| %>
     <%= touch_numeric_tag "AMOUNT OF DRUG BROUGHT TO CLINIC", @patient, nil,
       {:units => "#{order.drug_order.units}",
        :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} brought to clinic",

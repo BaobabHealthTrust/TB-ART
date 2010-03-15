@@ -64,7 +64,7 @@ module ApplicationHelper
     json = JSON.parse(idents)
     names = json[location_id.to_s] rescue []
     names.each do |name|
-      ident_type = PatientIdentifierType.current.find_by_name(name)
+      ident_type = PatientIdentifierType.find_by_name(name)
       next if ident_type.blank?
       ident = patient.patient_identifiers.find_by_identifier_type(ident_type.id)
       next if ident.blank?
@@ -78,20 +78,20 @@ module ApplicationHelper
   end
   
   def relationship_options(patient)
-    rels = @patient.relationships.active.all
+    rels = @patient.relationships.all
     options_array = rels.map{|rel| [rel.relation.name + " (#{rel.type.b_is_to_a})", rel.relation.name]}
     options_for_select(options_array)  
   end
   
   def program_enrollment_options(patient, filter_program_name=nil)
-    progs = @patient.patient_programs.active.all
+    progs = @patient.patient_programs.all
     progs.reject!{|prog| prog.program.name != filter_program_name} unless filter_program_name.blank?
     options_array = progs.map{|prog| [prog.program.name + " (started #{prog.date_enrolled.strftime('%d/%b/%Y')} at #{prog.location.name})", prog.id]}
     options_for_select(options_array)  
   end
   
   def concept_set_options(concept_name)
-    concept_id = ConceptName.active.find_by_name(concept_name).concept_id
+    concept_id = ConceptName.find_by_name(concept_name).concept_id
     set = ConceptSet.find_all_by_concept_set(concept_id, :order => 'sort_weight')
     options = set.map{|item| [item.concept.name.name, item.concept.name.name] }
     options_for_select(options)

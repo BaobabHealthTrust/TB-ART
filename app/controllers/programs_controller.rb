@@ -30,7 +30,7 @@ class ProgramsController < ApplicationController
   
   def void
     @program = PatientProgram.find(params[:id])
-    @program.void!
+    @program.void
     head :ok
   end  
   
@@ -41,13 +41,13 @@ class ProgramsController < ApplicationController
   end
   
   def workflows
-    @workflows = ProgramWorkflow.active.all(:conditions => ['program_id = ?', params[:program]], :include => :concept)
+    @workflows = ProgramWorkflow.all(:conditions => ['program_id = ?', params[:program]], :include => :concept)
     @names = @workflows.map{|workflow| "<li value='#{workflow.id}'>#{workflow.concept.name.name}</li>" }
     render :text => @names.join('')
   end
   
   def states
-    @states = ProgramWorkflowState.active.all(:conditions => ['program_workflow_id = ?', params[:workflow]], :include => :concept)
+    @states = ProgramWorkflowState.all(:conditions => ['program_workflow_id = ?', params[:workflow]], :include => :concept)
     @names = @states.map{|state| "<li value='#{state.id}'>#{state.concept.name.name}</li>" }
     render :text => @names.join('')  
   end

@@ -24,7 +24,7 @@
   <%= hidden_field_tag :patient_id, @patient.id %>
 
   <%= select_tag 'program_id', options_for_select(
-    Program.active.all.inject({}){|result, element| result[element.name] = element.program_id; result }, nil), 
+    Program.all.inject({}){|result, element| result[element.name] = element.program_id; result }, nil), 
     {:helpText => "Select Program"} %> 
 
   <%= select_tag 'location_id', params[:location_id],

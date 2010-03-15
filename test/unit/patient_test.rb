@@ -14,7 +14,7 @@ class PatientTest < ActiveSupport::TestCase
     end
     
     should "not include voided identifiers in the list of patient identifiers" do
-      PatientIdentifier.find(:first).void!
+      PatientIdentifier.find(:first).void
       assert_equal patient(:evan).patient_identifiers.count, 2
     end
     
@@ -27,7 +27,7 @@ class PatientTest < ActiveSupport::TestCase
     end
      
     should "not included voided encounters" do
-      Encounter.find(:first).void!
+      Encounter.find(:first).void
       assert_equal patient(:evan).encounters.count, 0
     end
     
@@ -41,17 +41,17 @@ class PatientTest < ActiveSupport::TestCase
     end
     
     should "create a new national identifier if none exists" do
-      PatientIdentifier.find(:first).void!
+      PatientIdentifier.find(:first).void
       assert_not_nil patient(:evan).national_id
     end
     
     should "not create a new national identifier if it is not forced"  do
-      PatientIdentifier.find(:first).void!
+      PatientIdentifier.find(:first).void
       #assert_nil patient(:evan).national_id(false)
     end
     
     should "format the national identifier with dashes" do
-      PatientIdentifier.find(:first).void!
+      PatientIdentifier.find(:first).void
       t = PatientIdentifierType.find_by_name("National id")
       patient(:evan).patient_identifiers.create(:identifier =>  "P123456789012", :identifier_type => t.id)
       assert_equal patient(:evan).national_id_with_dashes, "P1234-5678-9012"
@@ -100,13 +100,13 @@ EOF
           :encounter_type => encounter_type(:outpatient_diagnosis).encounter_type_id)
         @diagnosis = Observation.make(
           :encounter_id => @encounter.id, 
-          :concept_id => concept(:outpatient_diagnosis).concept_id,
+          :concept_id => concept(:diagnosis).concept_id,
           :value_coded => concept(:extrapulmonary_tuberculosis_without_lymphadenopathy).concept_id,
           :value_coded_name_id => concept_name(:extrapulmonary_tuberculosis_without_lymphadenopathy).concept_name_id,
           :value_text => nil)
         @diagnosis_non_coded = Observation.make(
           :encounter_id => @encounter.id, 
-          :concept_id => concept(:outpatient_diagnosis_non_coded).concept_id,
+          :concept_id => concept(:diagnosis_non_coded).concept_id,
           :value_text => "HE IS TOO SUAVE")
       end
     
@@ -123,12 +123,12 @@ EOF
       end
                   
       should "not include voided diagnoses in the list of current diagnoses" do
-        @diagnosis.void!
+        @diagnosis.void
         assert_equal [@diagnosis_non_coded], @evan.current_diagnoses
       end
 
       should "not include diagnoses belonging to voided encounters in the list of current diagnoses" do
-        @encounter.void!
+        @encounter.void
         assert_equal [], @evan.current_diagnoses
       end
 

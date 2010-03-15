@@ -13,7 +13,7 @@ class ReportController < ApplicationController
     @diagnoses = ConceptName.find(:all,
                                   :joins =>
                                         "INNER JOIN obs ON
-                                         concept_name.concept_id = obs.value_coded",
+                                         concept_name.concept_id = obs.value_coded AND obs.voided = 0",
                                   :conditions => ["date_format(obs_datetime, '%Y-%m-%d') >= ? AND date_format(obs_datetime, '%Y-%m-%d') <= ?",
                                             @start_date, @end_date],
                                   :group =>   "name",
@@ -21,7 +21,7 @@ class ReportController < ApplicationController
     @patient = Person.find(:all,
                            :joins => 
                                 "INNER JOIN obs ON 
-                                 person.person_id = obs.person_id",
+                                 person.person_id = obs.person_id AND obs.voided = 0",
                            :conditions => ["date_format(obs_datetime, '%Y-%m-%d') >= ? AND date_format(obs_datetime, '%Y-%m-%d') <= ?",
                                             @start_date, @end_date],
                            :select => "person.voided,obs.value_coded,obs.obs_datetime,obs.voided ")
@@ -106,7 +106,7 @@ class ReportController < ApplicationController
   diagnoses = ConceptName.find(:all,
                                   :joins =>
                                         "INNER JOIN obs ON
-                                         concept_name.concept_id = obs.value_coded",
+                                         concept_name.concept_id = obs.value_coded AND obs.voided = 0",
                                   :conditions => ["date_format(obs_datetime, '%Y-%m-%d') >= ? AND date_format(obs_datetime, '%Y-%m-%d') <= ?",
                                             @start_date, @end_date],
                                   :group =>   "name",
@@ -115,7 +115,7 @@ class ReportController < ApplicationController
   @patient = Person.find(:all,
                            :joins => 
                                 "INNER JOIN obs ON 
-                                 person.person_id = obs.person_id",
+                                 person.person_id = obs.person_id AND obs.voided = 0",
                            :conditions => ["date_format(obs_datetime, '%Y-%m-%d') >= ? AND date_format(obs_datetime, '%Y-%m-%d') <= ?",
                                             @start_date, @end_date],
                            :select => "person.gender,person.birthdate,person.birthdate_estimated,person.date_created,

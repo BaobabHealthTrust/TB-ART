@@ -1,23 +1,29 @@
 class Person < ActiveRecord::Base
   set_table_name "person"
   set_primary_key "person_id"
-
   include Openmrs
 
-  has_one :patient, :foreign_key => :patient_id, :dependent => :destroy
-  has_many :names, :class_name => 'PersonName', :foreign_key => :person_id, :dependent => :destroy, :conditions => 'person_name.voided = 0', :order => 'person_name.preferred DESC'
-  has_many :addresses, :class_name => 'PersonAddress', :foreign_key => :person_id, :dependent => :destroy, :conditions => 'person_address.voided = 0', :order => 'person_address.preferred DESC'
-  has_many :relationships, :class_name => 'Relationship', :foreign_key => :person_a, :conditions => 'relationship.voided = 0'
-  has_many :person_attributes, :class_name => 'PersonAttribute', :foreign_key => :person_id, :conditions => 'person_attribute.voided = 0'
-  has_many :observations, :class_name => 'Observation', :foreign_key => :person_id, :dependent => :destroy, :conditions => 'obs.voided = 0' do
+  has_one :patient, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
+  has_many :names, :class_name => 'PersonName', :foreign_key => :person_id, :dependent => :destroy, :order => 'person_name.preferred DESC', :conditions => {:voided => 0}
+  has_many :addresses, :class_name => 'PersonAddress', :foreign_key => :person_id, :dependent => :destroy, :order => 'person_address.preferred DESC', :conditions => {:voided => 0}
+  has_many :relationships, :class_name => 'Relationship', :foreign_key => :person_a, :conditions => {:voided => 0}
+  has_many :person_attributes, :class_name => 'PersonAttribute', :foreign_key => :person_id, :conditions => {:voided => 0}
+  has_many :observations, :class_name => 'Observation', :foreign_key => :person_id, :dependent => :destroy, :conditions => {:voided => 0} do
     def find_by_concept_name(name)
       concept_name = ConceptName.find_by_name(name)
       find(:all, :conditions => ['concept_id = ?', concept_name.concept_id]) rescue []
     end
   end
-#  accepts_nested_attributes_for :names, :addresses, :patient
-
   
+  def after_void(reason = nil)
+    self.patient.void(reason) rescue nil
+    self.names.each{|row| row.void(reason) }
+    self.addresses.each{|row| row.void(reason) }
+    self.relationships.each{|row| row.void(reason) }
+    self.person_attributes.each{|row| row.void(reason) }
+    # We are going to rely on patient => encounter => obs to void those
+  end
+
   def name
     "#{self.names.first.given_name} #{self.names.first.family_name}" rescue nil
   end  
@@ -135,8 +141,6 @@ class Person < ActiveRecord::Base
     return people.first.id unless people.blank? || people.size > 1
     people = Person.find(:all, :include => [{:names => [:person_name_code]}, :patient], :conditions => [
     "gender = ? AND \
-     person.voided = 0 AND \
-     (patient.voided = 0 OR patient.voided IS NULL) AND \
      (person_name.given_name LIKE ? OR person_name_code.given_name_code LIKE ?) AND \
      (person_name.family_name LIKE ? OR person_name_code.family_name_code LIKE ?)",
     params[:gender],
@@ -180,8 +184,6 @@ class Person < ActiveRecord::Base
 #    return people if people.size == 1
 #    people = Person.find(:all, :include => [{:names => [:person_name_code]}, :patient], :conditions => [
 #    "gender = ? AND \
-#     person.voided = 0 AND \
-#     (patient.voided = 0 OR patient.voided IS NULL) AND \
 #     (person_name.given_name LIKE ? OR person_name_code.given_name_code LIKE ?) AND \
 #     (person_name.family_name LIKE ? OR person_name_code.family_name_code LIKE ?)",
 #    params[:gender],

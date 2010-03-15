@@ -2,16 +2,17 @@ require 'digest/sha1'
 require 'digest/sha2'
 
 class User < ActiveRecord::Base
-  include Openmrs
   set_table_name :users
   set_primary_key :user_id
+  include Openmrs
+
   before_create :set_password
 
   cattr_accessor :current_user
   attr_accessor :plain_password
 
-  has_many :user_properties, :foreign_key => :user_id
-  has_many :user_roles, :foreign_key => :user_id, :dependent => :delete_all
+  has_many :user_properties, :foreign_key => :user_id # no default scope
+  has_many :user_roles, :foreign_key => :user_id, :dependent => :delete_all # no default scope
 
   def name
     self.first_name + " " + self.last_name

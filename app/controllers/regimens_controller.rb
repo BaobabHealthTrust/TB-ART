@@ -1,7 +1,7 @@
 class RegimensController < ApplicationController
   def new
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @programs = @patient.patient_programs.active.all
+    @programs = @patient.patient_programs.all
     @current_regimens_for_programs = current_regimens_for_programs
   end
   
@@ -10,7 +10,7 @@ class RegimensController < ApplicationController
     encounter = @patient.current_treatment_encounter
     start_date = Time.now
     auto_expire_date = Time.now + params[:duration].to_i.days
-    orders = Regimen.active.all(:conditions => {:regimen_criteria_id => params[:regimen]})
+    orders = Regimen.all(:conditions => {:regimen_criteria_id => params[:regimen]})
     ActiveRecord::Base.transaction do
       # Need to write an obs for the regimen they are on, note that this is ARV
       # Specific at the moment and will likely need to have some kind of lookup
@@ -53,7 +53,7 @@ class RegimensController < ApplicationController
   
   def dosing
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @criteria = RegimenCriteria.active.criteria(@patient.current_weight).all(:conditions => {:concept_id => params[:id]}, :include => :regimens)
+    @criteria = RegimenCriteria.criteria(@patient.current_weight).all(:conditions => {:concept_id => params[:id]}, :include => :regimens)
     @options = @criteria.map do |r| 
       [r.regimen_criteria_id, r.regimens.map(&:to_s).join('; ')]
     end
@@ -70,7 +70,7 @@ class RegimensController < ApplicationController
     amounts = []
     orders = DrugOrder.find(:all, 
       :select => 'DATEDIFF(orders.auto_expire_date, orders.start_date) as duration_days',
-      :joins => 'LEFT JOIN orders ON orders.order_id = drug_order.order_id',
+      :joins => 'LEFT JOIN orders ON orders.order_id = drug_order.order_id AND orders.voided = 0',
       :limit => 10, 
       :group => 'drug_inventory_id, DATEDIFF(orders.auto_expire_date, orders.start_date)', 
       :order => 'count(*)', 

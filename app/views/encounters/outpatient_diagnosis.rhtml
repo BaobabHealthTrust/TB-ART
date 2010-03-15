@@ -14,15 +14,15 @@
    
   <%# This options hash allows us to define our options in one place %>
   <% options = {
-    :helpText => 'Outpatient diagnosis',
+    :helpText => 'Diagnosis',
     :allowFreeText => 'true',
     :ajaxURL => "/encounters/diagnoses?search_string=",
     :textCase => "upper" } %>
  
-  <label for='observations[][value_coded_or_text]'>Outpatient diagnosis</label>
+  <label for='observations[][value_coded_or_text]'>Diagnosis</label>
   <%= text_field_tag("observations[][value_coded_or_text]", nil, options) %>
   <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "OUTPATIENT DIAGNOSIS", options) %>
+  <%= hidden_field_tag("observations[][concept_name]", "DIAGNOSIS", options) %>
   <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
   <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
  
@@ -45,7 +45,7 @@
     <% options[:helpText] = "Additional diagnosis" %>
     <%= text_field_tag("observations[][value_coded_or_text]", nil, options) %>
     <%= hidden_field_tag("observations[][value_text]", nil) %>
-    <%= hidden_field_tag("observations[][concept_name]", "OUTPATIENT DIAGNOSIS", options) %>
+    <%= hidden_field_tag("observations[][concept_name]", "DIAGNOSIS", options) %>
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
   <% end %>

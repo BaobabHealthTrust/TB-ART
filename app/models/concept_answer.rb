@@ -3,9 +3,9 @@ class ConceptAnswer < ActiveRecord::Base
   set_primary_key :concept_answer_id
   include Openmrs
 
-  belongs_to :answer, :class_name => 'Concept', :foreign_key => 'answer_concept'
-  belongs_to :drug, :class_name => 'Drug', :foreign_key => 'answer_drug'
-  belongs_to :concept, :class_name => 'Concept', :foreign_key => 'concept_id'
+  belongs_to :answer, :class_name => 'Concept', :foreign_key => 'answer_concept', :conditions => {:retired => 0}
+  belongs_to :drug, :class_name => 'Drug', :foreign_key => 'answer_drug', :conditions => {:retired => 0}
+  belongs_to :concept, :class_name => 'Concept', :foreign_key => 'concept_id', :conditions => {:retired => 0}
 
   def name
     self.answer.name.name rescue ''

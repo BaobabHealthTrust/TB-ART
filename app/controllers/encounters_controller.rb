@@ -19,7 +19,7 @@ class EncountersController < ApplicationController
       observation[:encounter_id] = encounter.id
       observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
       observation[:person_id] ||= encounter.patient_id
-      observation[:concept_name] ||= "OUTPATIENT DIAGNOSIS" if encounter.type.name == "OUTPATIENT DIAGNOSIS"
+      observation[:concept_name] ||= "DIAGNOSIS" if encounter.type.name == "DIAGNOSIS"
       # Handle multiple select
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
         values = observation.delete(:value_coded_or_text_multiple)
@@ -56,8 +56,8 @@ class EncountersController < ApplicationController
   def diagnoses
     search_string = (params[:search_string] || '').upcase
     filter_list = params[:filter_list].split(/, */) rescue []
-    outpatient_diagnosis = ConceptName.find_by_name("OUTPATIENT DIAGNOSIS").concept
-    diagnosis_concepts = ConceptClass.find_by_name("DIAGNOSIS", :include => {:concepts => :name}).concepts rescue []    
+    outpatient_diagnosis = ConceptName.find_by_name("DIAGNOSIS").concept
+    diagnosis_concepts = ConceptClass.find_by_name("Diagnosis", :include => {:concepts => :name}).concepts rescue []    
     # TODO Need to check a global property for which concept set to limit things to
     if (false)
       diagnosis_concept_set = ConceptName.find_by_name('MALAWI NATIONAL DIAGNOSIS').concept
@@ -79,7 +79,7 @@ class EncountersController < ApplicationController
     filter_list = params[:filter_list].split(/, */) rescue []
     valid_answers = []
     unless search_string.blank?
-      drugs = Drug.find(:all, :conditions => ["retired = 0 AND name LIKE ?", '%' + search_string + '%'])
+      drugs = Drug.find(:all, :conditions => ["name LIKE ?", '%' + search_string + '%'])
       valid_answers = drugs.map {|drug| drug.name.upcase }
     end
     treatment = ConceptName.find_by_name("TREATMENT").concept
@@ -91,7 +91,7 @@ class EncountersController < ApplicationController
   def locations
     search_string = (params[:search_string] || 'neno').upcase
     filter_list = params[:filter_list].split(/, */) rescue []    
-    locations =  Location.find(:all, :select =>'name', :conditions => ["retired = 0 AND name LIKE ?", '%' + search_string + '%'])
+    locations =  Location.find(:all, :select =>'name', :conditions => ["name LIKE ?", '%' + search_string + '%'])
     render :text => "<li>" + locations.map{|location| location.name }.join("</li><li>") + "</li>"
   end
 
@@ -102,11 +102,8 @@ class EncountersController < ApplicationController
   end
 
   def void 
-    @encounter = Encounter.find(params[:id], :include => [:observations])
-    ActiveRecord::Base.transaction do
-      @encounter.observations.each{|obs| obs.void!}
-      @encounter.void!
-    end
+    @encounter = Encounter.find(params[:id])
+    @encounter.void
     head :ok
   end
 end

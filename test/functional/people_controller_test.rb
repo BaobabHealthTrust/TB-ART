@@ -90,7 +90,7 @@ class PeopleControllerTest < ActionController::TestCase
     should "not include voided people in the search results" do
       logged_in_as :mikmck, :registration do      
         p = person(:evan)
-        p.void!
+        p.void
         get :search, {:gender => 'M', :given_name => 'evan', :family_name => 'waters'}
         assert_response :success
         assert_does_not_contain assigns(:people), person(:evan)
@@ -100,7 +100,7 @@ class PeopleControllerTest < ActionController::TestCase
     should "not include voided names in the search results" do
       logged_in_as :mikmck, :registration do      
         name = person(:evan).names.first
-        name.void!
+        name.void
         get :search, {:gender => 'M', :given_name => 'evan', :family_name => 'waters'}
         assert_response :success
         assert_does_not_contain assigns(:people), person(:evan)
@@ -109,11 +109,12 @@ class PeopleControllerTest < ActionController::TestCase
           
     should "not include voided patients in the search results" do
       logged_in_as :mikmck, :registration do      
+        evan = person(:evan)
         p = patient(:evan)
-        p.void!
+        p.void
         get :search, {:gender => 'M', :given_name => 'evan', :family_name => 'waters'}
         assert_response :success
-        assert_does_not_contain assigns(:people), person(:evan)
+        assert_does_not_contain assigns(:people), evan
       end  
     end
 

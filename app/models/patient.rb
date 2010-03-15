@@ -3,24 +3,32 @@ class Patient < ActiveRecord::Base
   set_primary_key "patient_id"
   include Openmrs
 
-  has_one :person, :foreign_key => :person_id
-  has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => 'patient_identifier.voided = 0'  
-  has_many :patient_programs
-  has_many :relationships, :foreign_key => :person_a, :dependent => :destroy, :conditions => 'relationship.voided = 0'
-  has_many :orders
-  has_many :encounters, :conditions => 'encounter.voided = 0' do 
+  has_one :person, :foreign_key => :person_id, :conditions => {:voided => 0}
+  has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
+  has_many :patient_programs, :conditions => {:voided => 0}
+  has_many :relationships, :foreign_key => :person_a, :dependent => :destroy, :conditions => {:voided => 0}
+  has_many :orders, :conditions => {:voided => 0}
+  has_many :encounters, :conditions => {:voided => 0} do 
     def find_by_date(encounter_date)
       encounter_date = Date.today unless encounter_date
       find(:all, :conditions => ["DATE(encounter_datetime) = DATE(?)", encounter_date]) # Use the SQL DATE function to compare just the date part
     end
   end
 
+  def after_void(reason = nil)
+    self.person.void(reason) rescue nil
+    self.patient_identifiers.each {|row| row.void(reason) }
+    self.patient_programs.each {|row| row.void(reason) }
+    self.orders.each {|row| row.void(reason) }
+    self.encounters.each {|row| row.void(reason) }
+  end
+
   def current_diagnoses
     self.encounters.current.all(:include => [:observations]).map{|encounter| 
-      encounter.observations.active.all(
+      encounter.observations.all(
         :conditions => ["obs.concept_id = ? OR obs.concept_id = ?", 
-        ConceptName.active.find_by_name("DIAGNOSIS").concept_id,
-        ConceptName.active.find_by_name("DIAGNOSIS, NON-CODED").concept_id])
+        ConceptName.find_by_name("DIAGNOSIS").concept_id,
+        ConceptName.find_by_name("DIAGNOSIS, NON-CODED").concept_id])
     }.flatten.compact
   end
 
@@ -44,10 +52,10 @@ class Patient < ActiveRecord::Base
   end
   
   def summary
-#    verbiage << "Last seen #{visits.active.recent(1)}"
+#    verbiage << "Last seen #{visits.recent(1)}"
     verbiage = []
-    verbiage << patient_programs.active.map{|prog| "Started #{prog.program.name.humanize} #{prog.date_enrolled.strftime('%b-%Y')}" rescue nil }
-    verbiage << orders.active.unfinished.prescriptions.map{|presc| presc.to_s}
+    verbiage << patient_programs.map{|prog| "Started #{prog.program.name.humanize} #{prog.date_enrolled.strftime('%b-%Y')}" rescue nil }
+    verbiage << orders.unfinished.prescriptions.map{|presc| presc.to_s}
     verbiage.flatten.compact.join(', ') 
   end
 
@@ -85,7 +93,7 @@ class Patient < ActiveRecord::Base
     label.font_horizontal_multiplier = 1
     label.font_vertical_multiplier = 1
     label.left_margin = 50
-    encs = encounters.current.active.find(:all)
+    encs = encounters.current.find(:all)
     return nil if encs.blank?
     
     label.draw_multi_text("Visit: #{encs.first.encounter_datetime.strftime("%d/%b/%Y %H:%M")}", :font_reverse => true)    
@@ -105,7 +113,7 @@ class Patient < ActiveRecord::Base
   end
   
   def current_weight
-    obs = person.observations.active.recent(1).question("WEIGHT (KG)").all
+    obs = person.observations.recent(1).question("WEIGHT (KG)").all
     obs.first.value_numeric rescue 0
   end
   

@@ -2,8 +2,6 @@ class Program < ActiveRecord::Base
   set_table_name "program"
   set_primary_key "program_id"
   include Openmrs
-  belongs_to :concept
-  has_many :patient_programs
-
-  named_scope :active, :conditions => ['program.retired = 0']
+  belongs_to :concept, :conditions => {:retired => 0}
+  has_many :patient_programs, :conditions => {:voided => 0}
 end

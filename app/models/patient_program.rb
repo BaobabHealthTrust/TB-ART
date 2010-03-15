@@ -2,14 +2,17 @@ class PatientProgram < ActiveRecord::Base
   set_table_name "patient_program"
   set_primary_key "patient_program_id"
   include Openmrs
-  belongs_to :patient
-  belongs_to :program
-  belongs_to :location
-  has_many :patient_states, :class_name => 'PatientState'
+  belongs_to :patient, :conditions => {:voided => 0}
+  belongs_to :program, :conditions => {:retired => 0}
+  belongs_to :location, :conditions => {:retired => 0}
+  has_many :patient_states, :class_name => 'PatientState', :conditions => {:voided => 0}
 
-  named_scope :active, :conditions => ['patient_program.voided = 0 AND program.retired = 0'], :include => :program
   named_scope :current, :conditions => ['date_enrolled > ? AND (date_completed IS NULL OR date_completed > ?)', Time.now, Time.now]
   
+  def after_void(reason = nil)
+    self.patient_states.each{|row| row.void(reason) }
+  end
+
   def to_s
     self.program.concept.name.name + " (at #{location.name})"
   end
@@ -39,12 +42,12 @@ class PatientProgram < ActiveRecord::Base
   # obs must be the current health center, not the station!
   def current_regimen
     location_id = Location.current_health_center.location_id
-    obs = patient.person.observations.active.recent(1).all(:conditions => ['value_coded IN (?) AND location_id = ?', regimens, location_id])
+    obs = patient.person.observations.recent(1).all(:conditions => ['value_coded IN (?) AND location_id = ?', regimens, location_id])
     obs.first.value_coded rescue nil
   end
 
   def regimens(weight=nil)
-    RegimenCriteria.active.program(program_id).criteria(weight).all(
+    RegimenCriteria.program(program_id).criteria(weight).all(
       :select => 'concept_id', 
       :group => 'concept_id, program_id',
       :include => :concept).map(&:concept)

@@ -21,9 +21,7 @@ class ActiveSupport::TestCase
   self.set_fixture_class :concept_set => ConceptSet
   self.set_fixture_class :concept => Concept
   self.set_fixture_class :drug => Drug
-  self.set_fixture_class :drug_ingredient => DrugIngredient
   self.set_fixture_class :drug_order => DrugOrder
-  self.set_fixture_class :drug_substance => DrugSubstance
   self.set_fixture_class :encounter => Encounter
   self.set_fixture_class :encounter_type => EncounterType
   self.set_fixture_class :global_property => GlobalProperty
@@ -94,7 +92,7 @@ class ActiveSupport::TestCase
     encounter = Encounter.make(:encounter_type => encounter_type(:outpatient_diagnosis), 
       :patient_id => patient.id)
     encounter.observations.create(:obs_datetime => Time.now, 
-      :person_id => patient.id, :concept_id => concept(:outpatient_diagnosis), 
+      :person_id => patient.id, :concept_id => concept(:diagnosis), 
       :value_coded => value_coded, :value_coded_name_id => value_coded_name_id)
   end
 end

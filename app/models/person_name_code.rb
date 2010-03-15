@@ -3,7 +3,7 @@ class PersonNameCode < ActiveRecord::Base
   set_primary_key "person_name_code_id"
   include Openmrs
   
-  belongs_to :person_name
+  belongs_to :person_name, :conditions => {:voided => 0}
   
   def self.rebuild_person_name_codes
     PersonNameCode.delete_all

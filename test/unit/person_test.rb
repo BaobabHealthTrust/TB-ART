@@ -105,7 +105,7 @@ class PersonTest < ActiveSupport::TestCase
 
     should "refer to the person's observations but not include voided observations" do
       o = obs(:evan_vitals_height)
-      o.void!("End of the world")
+      o.void("End of the world")
       p = person(:evan)
       assert p.observations.empty?
     end  

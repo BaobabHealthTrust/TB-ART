@@ -14,7 +14,7 @@ class PrescriptionsController < ApplicationController
   
   def void 
     @order = Order.find(params[:order_id])
-    @order.void!
+    @order.void
     flash.now[:notice] = "Order was successfully voided"
     index and return
   end
@@ -66,7 +66,7 @@ class PrescriptionsController < ApplicationController
     @concept_ids = ConceptName.find_all_by_name(@generic).map{|c| c.concept_id}
     render :text => "" and return if @concept_ids.blank?
     search_string = (params[:search_string] || '').upcase
-    @drugs = Drug.active.find(:all, 
+    @drugs = Drug.find(:all, 
       :select => "name", 
       :conditions => ["concept_id IN (?) AND name LIKE ?", @concept_ids, '%' + search_string + '%'])
     render :text => "<li>" + @drugs.map{|drug| drug.name }.join("</li><li>") + "</li>"
@@ -82,7 +82,7 @@ class PrescriptionsController < ApplicationController
     amounts = []
     orders = DrugOrder.find(:all, 
       :select => 'DATEDIFF(orders.auto_expire_date, orders.start_date) as duration_days',
-      :joins => 'LEFT JOIN orders ON orders.order_id = drug_order.order_id',
+      :joins => 'LEFT JOIN orders ON orders.order_id = drug_order.order_id AND orders.voided = 0',
       :limit => 10, 
       :group => 'drug_inventory_id, DATEDIFF(orders.auto_expire_date, orders.start_date)', 
       :order => 'count(*)', 

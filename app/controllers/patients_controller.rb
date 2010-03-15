@@ -2,9 +2,9 @@ class PatientsController < ApplicationController
   before_filter :find_patient, :except => [:void]
   
   def show
-    @encounters = @patient.encounters.current.active.find(:all)
-    @prescriptions = @patient.orders.active.unfinished.prescriptions.all
-    @programs = @patient.patient_programs.active.all
+    @encounters = @patient.encounters.current.find(:all)
+    @prescriptions = @patient.orders.unfinished.prescriptions.all
+    @programs = @patient.patient_programs.all
     # This code is pretty hacky at the moment
     @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
     @restricted.each do |restriction|    
@@ -48,7 +48,7 @@ class PatientsController < ApplicationController
   end
 
   def programs
-    @programs = @patient.patient_programs.active.all
+    @programs = @patient.patient_programs.all
     @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
     @restricted.each do |restriction|
       @programs = restriction.filter_programs(@programs)
@@ -62,11 +62,7 @@ class PatientsController < ApplicationController
 
   def void 
     @encounter = Encounter.find(params[:encounter_id])
-    ActiveRecord::Base.transaction do
-      @encounter.observations.each{|obs| obs.void! }    
-      @encounter.orders.each{|order| order.void! }    
-      @encounter.void!
-    end  
+    @encounter.void
     show and return
   end
   

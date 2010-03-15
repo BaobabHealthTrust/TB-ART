@@ -3,11 +3,9 @@ class Task < ActiveRecord::Base
   set_primary_key :task_id
   include Openmrs
 
-  named_scope :active, :conditions => ['task.voided = 0']
-
   # Try to find the next task for the patient at the given location
   def self.next_task(location, patient)
-    all_tasks = self.active.all(:order => 'sort_weight ASC')
+    all_tasks = self.all(:order => 'sort_weight ASC')
     todays_encounters = patient.encounters.current.all(:include => [:type])
     todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}
     all_tasks.each do |task|
@@ -33,13 +31,13 @@ class Task < ActiveRecord::Base
 
       # Check for a particular current order type
       if task.has_order_type_id.present?
-        next unless Order.active.unfinished.first(
+        next unless Order.unfinished.first(
           :conditions => {:order_type_id => task.has_order_type_id})
       end
 
       # Check for a particular program state at this location      
       if task.has_program_id.present?
-        patient_state = PatientState.active.current.first(:conditions => [
+        patient_state = PatientState.current.first(:conditions => [
           'patient_program.patient_id = ? AND patient_program.location_id = ? AND patient_program.program_id = ? AND patient_state.state = ?',
           patient.patient_id,
           Location.current_health_center.location_id,
@@ -51,13 +49,13 @@ class Task < ActiveRecord::Base
       
       # Check for a particular relationship
       if task.has_relationship_type_id.present?        
-        next unless patient.relationships.active.first(
+        next unless patient.relationships.first(
           :conditions => ['relationship.relationship = ?', task.has_relationship_type_id])
       end
 
       # Check for a particular identifier at this location
       if task.has_identifier_type_id.present?
-        next unless patient.patient_identifiers.active.first(
+        next unless patient.patient_identifiers.first(
           :conditions => ['patient_identifier.identifier_type = ? AND patient_identifier.location_id = ?', task.has_identifier_type_id, Location.current_health_center.location_id])
       end
 

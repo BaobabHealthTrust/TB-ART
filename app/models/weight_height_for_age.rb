@@ -6,5 +6,4 @@ class WeightHeightForAge < ActiveRecord::Base
     values = self.find(:all, :conditions =>["age_in_months = ? and sex = ?", age*12, gender]).first	
     [values.median_weight, values.median_height] if values
   end
-
 end

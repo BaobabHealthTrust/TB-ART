@@ -16,8 +16,8 @@ class Location < ActiveRecord::Base
     return self.find_by_sql([
       "SELECT DISTINCT location.name AS name, location.location_id AS location_id \
        FROM location \
-       INNER JOIN patient_program ON patient_program.location_id = location.location_id \
-       WHERE name LIKE ? \
+       INNER JOIN patient_program ON patient_program.location_id = location.location_id AND patient_program.voided = 0 \
+       WHERE location.retired = 0 AND name LIKE ? \
        GROUP BY patient_program.location_id \
        ORDER BY INSTR(name, ?) ASC, COUNT(name) DESC, name ASC \
        LIMIT 10", 

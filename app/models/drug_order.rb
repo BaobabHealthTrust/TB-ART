@@ -1,8 +1,8 @@
 class DrugOrder < ActiveRecord::Base
-  include Openmrs
   set_table_name :drug_order
   set_primary_key :order_id
-  belongs_to :drug, :foreign_key => :drug_inventory_id
+  include Openmrs
+  belongs_to :drug, :foreign_key => :drug_inventory_id, :conditions => {:retired => 0}
 
   def order
     @order ||= Order.find(order_id)
@@ -27,8 +27,9 @@ class DrugOrder < ActiveRecord::Base
   end
 
   def self.find_common_orders(diagnosis_concept_id)
+    # Note we are not worried about drug.retired in this case
     joins = "INNER JOIN orders ON orders.order_id = drug_order.order_id AND orders.voided = 0
-             INNER JOIN obs ON orders.obs_id = obs.obs_id AND obs.value_coded = #{diagnosis_concept_id}
+             INNER JOIN obs ON orders.obs_id = obs.obs_id AND obs.value_coded = #{diagnosis_concept_id} AND obs.voided = 0
              INNER JOIN drug ON drug.drug_id = drug_order.drug_inventory_id"             
     self.all( 
       :joins => joins, 
@@ -119,19 +120,16 @@ class DrugOrder < ActiveRecord::Base
   def total_drug_supply(patient, encounter=nil)
     encounter ||= patient.current_dispensation_encounter
     amounts_brought = Observation.all(:conditions => 
-      ['obs.voided = 0 AND ' +
-       'obs.concept_id = ? AND ' +
+      ['obs.concept_id = ? AND ' +
        'obs.person_id = ? AND ' +
        'DATE(encounter.encounter_datetime) = CURRENT_DATE() AND ' +
-       'encounter.voided = 0 AND ' +
-       'orders.voided = 0 AND ' +
        'drug_order.drug_inventory_id = ?', 
         ConceptName.find_by_name("AMOUNT OF DRUG BROUGHT TO CLINIC").concept_id,
         patient.person.person_id,
         drug_inventory_id], 
       :include => [:encounter, [:order => :drug_order]])      
     total_brought = amounts_brought.sum{|amount| amount.value_numeric}
-    amounts_dispensed = Observation.active.all(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?', ConceptName.find_by_name("AMOUNT DISPENSED").concept_id, self.order_id, encounter.encounter_id])
+    amounts_dispensed = Observation.all(:conditions => ['concept_id = ? AND order_id = ? AND encounter_id = ?', ConceptName.find_by_name("AMOUNT DISPENSED").concept_id, self.order_id, encounter.encounter_id])
     total_dispensed = amounts_dispensed.sum{|amount| amount.value_numeric}
     self.quantity = total_dispensed + total_brought  
     self.save

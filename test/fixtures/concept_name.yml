@@ -13,8 +13,8 @@ immune_reconstitution_inflammatory_syndrome_construct:
   creator: 2053
   locale: en
   uuid: 1fd78c9e-268f-102d-a2b3-16da04859145
-outpatient_diagnosis: 
-  name: OUTPATIENT DIAGNOSIS
+diagnosis: 
+  name: DIAGNOSIS
   concept_id: 6098
   date_created: 2008-03-21 15:08:47 +02:00
   creator: 15878
@@ -55,8 +55,8 @@ referrals_ordered:
   creator: 2
   locale: en
   uuid: 1fd7d0e6-268f-102d-a2b3-16da04859145
-outpatient_diagnosis_non_coded: 
-  name: OUTPATIENT DIAGNOSIS, NON-CODED
+diagnosis_non_coded: 
+  name: DIAGNOSIS, NON-CODED
   concept_id: 3106
   date_created: 2008-05-23 16:26:14 +02:00
   creator: 7

@@ -1,6 +1,6 @@
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
-MATEME_VERSION = '1.5.1'
+RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
+MATEME_VERSION = '1.5.2'
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -27,19 +27,6 @@ require 'bantu_soundex'
 require 'json'
 require 'colorfy_strings'
 
-# Foreign key checks use a lot of resources but are useful during development
-module ActiveRecord
-  module ConnectionAdapters
-    class MysqlAdapter 
-      alias_method :orig_configure_connection, :configure_connection
-      def configure_connection
-        orig_configure_connection
-        execute("SET FOREIGN_KEY_CHECKS=0") if ENV['RAILS_ENV'] != 'development'
-      end  
-    end
-  end
-end
-
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'person_address', 'person_address'
   inflect.irregular 'obs', 'obs'
@@ -49,3 +36,6 @@ end
 class Mime::Type
   delegate :split, :to => :to_s
 end
+
+# Foreign key checks use a lot of resources but are useful during development
+ActiveRecord::Base.connection.execute("SET FOREIGN_KEY_CHECKS=0") if ENV['RAILS_ENV'] != 'development'

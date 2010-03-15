@@ -1,10 +1,10 @@
 class Privilege < ActiveRecord::Base
+  set_table_name "privilege"
+  set_primary_key "privilege"
   include Openmrs
 
-  set_table_name "privilege"
-  has_many :role_privileges, :foreign_key => :privilege, :dependent => :delete_all
-  has_many :roles, :through => :role_privileges
-  set_primary_key "privilege"
+  has_many :role_privileges, :foreign_key => :privilege, :dependent => :delete_all # no default scope
+  has_many :roles, :through => :role_privileges # no default scope
 
   # NOT USED
   def self.create_privileges_and_attach_to_roles

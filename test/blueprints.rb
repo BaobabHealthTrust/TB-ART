@@ -41,11 +41,6 @@ Concept.blueprint do
   date_changed Time.now
 end
   
-DrugIngredient.blueprint do
-  drug_id 1
-  drug_substance_id 1
-end
-  
 DrugOrder.blueprint do
   drug_inventory_id 1
   units ''
@@ -61,19 +56,6 @@ Drug.blueprint do
   retired 0
   creator 1
   date_created Time.now
-end
-
-DrugSubstance.blueprint do
-  concept_id 1
-  name ''
-  route 1
-  units ''
-  creator 1
-  date_created Time.now
-  retired 0
-  retired_by 1
-  date_retired Time.now
-  retire_reason Time.now
 end
 
 Encounter.blueprint do

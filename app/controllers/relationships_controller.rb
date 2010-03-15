@@ -26,7 +26,7 @@ class RelationshipsController < ApplicationController
   
   def void
     @relationship = Relationship.find(params[:id])
-    @relationship.void!
+    @relationship.void
     head :ok
   end  
 end

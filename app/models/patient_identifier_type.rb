@@ -3,8 +3,6 @@ class PatientIdentifierType < ActiveRecord::Base
   set_primary_key "patient_identifier_type_id"
   include Openmrs
 
-  named_scope :current, :conditions => ['retired = 0']
-
   def next_identifier(options = {})
     case self.name
       when "National id"

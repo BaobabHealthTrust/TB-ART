@@ -18,7 +18,8 @@ class PersonNameTest < ActiveSupport::TestCase
     end
     
     should "lookup the most common names and not include voided names" do
-      person_name = PersonName.make(:family_name => 'Homie the Clown', :voided => 1)
+      person_name = PersonName.make(:family_name => 'Homie the Clown')
+      person_name.void
       names = PersonName.find_most_common("family_name", "hom")
       assert_equal names.size, 0
     end  

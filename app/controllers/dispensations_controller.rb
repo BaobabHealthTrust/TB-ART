@@ -46,7 +46,7 @@ class DispensationsController < ApplicationController
     # of pills brought to clinic and we should assume that the AMOUNT DISPENSED
     # observations more accurately represent pack sizes
     amounts = []
-    Observation.active.question("AMOUNT DISPENSED").all(
+    Observation.question("AMOUNT DISPENSED").all(
       :conditions => {:value_drug => drug.drug_id},
       :group => 'value_drug, value_numeric',
       :order => 'count(*)',

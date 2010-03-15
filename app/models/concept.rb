@@ -3,11 +3,14 @@ class Concept < ActiveRecord::Base
   set_primary_key :concept_id
   include Openmrs
 
-  named_scope :active, :conditions => ['concept.retired = 0']
-
-  belongs_to :concept_class
-  belongs_to :concept_datatype
-  has_many :concept_answers do
+  belongs_to :concept_class, :conditions => {:retired => 0}
+  belongs_to :concept_datatype, :conditions => {:retired => 0}
+  has_one :name, :class_name => 'ConceptName'
+  has_many :answer_concept_names, :class_name => 'ConceptName', :conditions => {:voided => 0}
+  has_many :concept_names, :conditions => {:voided => 0}
+  has_many :concept_maps # no default scope
+  has_many :concept_sets  # no default scope
+  has_many :concept_answers do # no default scope
     def limit(search_string)
       return self if search_string.blank?
       map{|concept_answer|
@@ -15,11 +18,5 @@ class Concept < ActiveRecord::Base
       }.compact
     end
   end
-
-  has_many :concept_maps
-  has_many :concept_names
-  has_many :answer_concept_names, :class_name => 'ConceptName'
-  has_one :name, :class_name => 'ConceptName'
-  has_many :drugs
-  has_many :concept_sets #, :class_name => 'ConceptSet'
+  has_many :drugs, :conditions => {:retired => 0}
 end
