@@ -1,8 +1,8 @@
 -- MySQL dump 10.11
 --
--- Host: localhost    Database: openmrs_test
+-- Host: localhost    Database: openmrs_1_5
 -- ------------------------------------------------------
--- Server version	5.0.75-0ubuntu10
+-- Server version	5.0.67
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,19 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `art_num_list`
+--
+
+DROP TABLE IF EXISTS `art_num_list`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `art_num_list` (
+  `identifier` varchar(50) NOT NULL default '',
+  PRIMARY KEY  (`identifier`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `cohort`
@@ -28,20 +41,22 @@ CREATE TABLE `cohort` (
   `description` varchar(1000) default NULL,
   `creator` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
-  `voided` tinyint(1) NOT NULL,
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`cohort_id`),
+  UNIQUE KEY `cohort_uuid_index` (`uuid`),
   KEY `cohort_creator` (`creator`),
   KEY `user_who_voided_cohort` (`voided_by`),
   KEY `user_who_changed_cohort` (`changed_by`),
   CONSTRAINT `cohort_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_changed_cohort` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_cohort` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -90,13 +105,13 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `concept` (
   `concept_id` int(11) NOT NULL auto_increment,
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `short_name` varchar(255) default NULL,
   `description` text,
   `form_text` text,
   `datatype_id` int(11) NOT NULL default '0',
   `class_id` int(11) NOT NULL default '0',
-  `is_set` tinyint(1) NOT NULL default '0',
+  `is_set` smallint(6) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `default_charge` int(11) default NULL,
@@ -106,7 +121,9 @@ CREATE TABLE `concept` (
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_id`),
+  UNIQUE KEY `concept_uuid_index` (`uuid`),
   KEY `concept_classes` (`class_id`),
   KEY `concept_creator` (`creator`),
   KEY `concept_datatypes` (`datatype_id`),
@@ -117,7 +134,7 @@ CREATE TABLE `concept` (
   CONSTRAINT `concept_datatypes` FOREIGN KEY (`datatype_id`) REFERENCES `concept_datatype` (`concept_datatype_id`),
   CONSTRAINT `user_who_changed_concept` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_concept` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6153 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6989 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -134,14 +151,16 @@ CREATE TABLE `concept_answer` (
   `answer_drug` int(11) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_answer_id`),
+  UNIQUE KEY `concept_answer_uuid_index` (`uuid`),
   KEY `answer_creator` (`creator`),
   KEY `answer` (`answer_concept`),
   KEY `answers_for_concept` (`concept_id`),
   CONSTRAINT `answer` FOREIGN KEY (`answer_concept`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `answers_for_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `answer_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8812 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -157,17 +176,34 @@ CREATE TABLE `concept_class` (
   `description` varchar(255) NOT NULL default '',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_class_id`),
+  UNIQUE KEY `concept_class_uuid_index` (`uuid`),
   KEY `concept_class_creator` (`creator`),
   KEY `user_who_retired_concept_class` (`retired_by`),
   KEY `concept_class_retired_status` (`retired`),
   CONSTRAINT `concept_class_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_concept_class` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `concept_complex`
+--
+
+DROP TABLE IF EXISTS `concept_complex`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `concept_complex` (
+  `concept_id` int(11) NOT NULL,
+  `handler` varchar(255) default NULL,
+  PRIMARY KEY  (`concept_id`),
+  CONSTRAINT `concept_attributes` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -184,17 +220,19 @@ CREATE TABLE `concept_datatype` (
   `description` varchar(255) NOT NULL default '',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_datatype_id`),
+  UNIQUE KEY `concept_datatype_uuid_index` (`uuid`),
   KEY `concept_datatype_creator` (`creator`),
   KEY `user_who_retired_concept_datatype` (`retired_by`),
   KEY `concept_datatype_retired_status` (`retired`),
   CONSTRAINT `concept_datatype_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_concept_datatype` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -231,14 +269,16 @@ CREATE TABLE `concept_description` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_description_id`),
+  UNIQUE KEY `concept_description_uuid_index` (`uuid`),
   KEY `concept_being_described` (`concept_id`),
   KEY `user_who_created_description` (`creator`),
   KEY `user_who_changed_description` (`changed_by`),
   CONSTRAINT `description_for_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `user_who_changed_description` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_created_description` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5816 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -256,14 +296,16 @@ CREATE TABLE `concept_map` (
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `concept_id` int(11) NOT NULL default '0',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_map_id`),
+  UNIQUE KEY `concept_map_uuid_index` (`uuid`),
   KEY `map_source` (`source`),
   KEY `map_creator` (`creator`),
   KEY `map_for_concept` (`concept_id`),
   CONSTRAINT `map_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `map_for_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `map_source` FOREIGN KEY (`source`) REFERENCES `concept_source` (`concept_source_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1530 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -280,12 +322,14 @@ CREATE TABLE `concept_name` (
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `concept_name_id` int(11) NOT NULL auto_increment,
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_name_id`),
   UNIQUE KEY `concept_name_id` (`concept_name_id`),
+  UNIQUE KEY `concept_name_uuid_index` (`uuid`),
   KEY `user_who_created_name` (`creator`),
   KEY `name_of_concept` (`name`),
   KEY `unique_concept_name_id` (`concept_id`),
@@ -293,7 +337,7 @@ CREATE TABLE `concept_name` (
   CONSTRAINT `name_for_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `user_who_created_name` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_this_name` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1017819588 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9712 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -309,17 +353,19 @@ CREATE TABLE `concept_name_tag` (
   `description` text NOT NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_name_tag_id`),
   UNIQUE KEY `concept_name_tag_id` (`concept_name_tag_id`),
   UNIQUE KEY `concept_name_tag_id_2` (`concept_name_tag_id`),
-  UNIQUE KEY `concept_name_tag_id_3` (`concept_name_tag_id`),
+  UNIQUE KEY `concept_name_tag_unique_tags` (`tag`),
+  UNIQUE KEY `concept_name_tag_uuid_index` (`uuid`),
   KEY `user_who_created_name_tag` (`creator`),
   KEY `user_who_voided_name_tag` (`voided_by`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=399 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -355,7 +401,7 @@ CREATE TABLE `concept_numeric` (
   `low_critical` double default NULL,
   `low_normal` double default NULL,
   `units` varchar(50) default NULL,
-  `precise` tinyint(1) NOT NULL default '0',
+  `precise` smallint(6) NOT NULL default '0',
   PRIMARY KEY  (`concept_id`),
   CONSTRAINT `numeric_attributes` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -383,7 +429,9 @@ CREATE TABLE `concept_proposal` (
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
   `locale` varchar(50) NOT NULL default '',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_proposal_id`),
+  UNIQUE KEY `concept_proposal_uuid_index` (`uuid`),
   KEY `encounter_for_proposal` (`encounter_id`),
   KEY `concept_for_proposal` (`concept_id`),
   KEY `user_who_created_proposal` (`creator`),
@@ -396,7 +444,7 @@ CREATE TABLE `concept_proposal` (
   CONSTRAINT `proposal_obs_id` FOREIGN KEY (`obs_id`) REFERENCES `obs` (`obs_id`),
   CONSTRAINT `user_who_changed_proposal` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_created_proposal` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -424,18 +472,22 @@ DROP TABLE IF EXISTS `concept_set`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `concept_set` (
+  `concept_set_id` int(11) NOT NULL auto_increment,
   `concept_id` int(11) NOT NULL default '0',
   `concept_set` int(11) NOT NULL default '0',
   `sort_weight` double default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  PRIMARY KEY  (`concept_id`,`concept_set`),
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`concept_set_id`),
+  UNIQUE KEY `concept_set_uuid_index` (`uuid`),
   KEY `has_a` (`concept_set`),
   KEY `user_who_created` (`creator`),
+  KEY `idx_concept_set_concept` (`concept_id`),
   CONSTRAINT `has_a` FOREIGN KEY (`concept_set`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `is_a` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `user_who_created` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1350 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -464,20 +516,22 @@ CREATE TABLE `concept_source` (
   `concept_source_id` int(11) NOT NULL auto_increment,
   `name` varchar(50) NOT NULL default '',
   `description` text NOT NULL,
-  `hl7_code` varchar(50) NOT NULL default '',
+  `hl7_code` varchar(50) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(4) default NULL,
+  `voided` tinyint(1) NOT NULL,
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_source_id`),
+  UNIQUE KEY `concept_source_uuid_index` (`uuid`),
   KEY `concept_source_creator` (`creator`),
   KEY `user_who_voided_concept_source` (`voided_by`),
   KEY `unique_hl7_code` (`hl7_code`,`voided`),
   CONSTRAINT `concept_source_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_concept_source` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -492,7 +546,9 @@ CREATE TABLE `concept_state_conversion` (
   `concept_id` int(11) default '0',
   `program_workflow_id` int(11) default '0',
   `program_workflow_state_id` int(11) default '0',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`concept_state_conversion_id`),
+  UNIQUE KEY `concept_state_conversion_uuid_index` (`uuid`),
   UNIQUE KEY `unique_workflow_concept_in_conversion` (`program_workflow_id`,`concept_id`),
   KEY `triggering_concept` (`concept_id`),
   KEY `affected_workflow` (`program_workflow_id`),
@@ -500,7 +556,7 @@ CREATE TABLE `concept_state_conversion` (
   CONSTRAINT `concept_triggers_conversion` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `conversion_involves_workflow` FOREIGN KEY (`program_workflow_id`) REFERENCES `program_workflow` (`program_workflow_id`),
   CONSTRAINT `conversion_to_state` FOREIGN KEY (`program_workflow_state_id`) REFERENCES `program_workflow_state` (`program_workflow_state_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -532,17 +588,18 @@ DROP TABLE IF EXISTS `concept_word`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `concept_word` (
+  `concept_word_id` int(11) NOT NULL auto_increment,
   `concept_id` int(11) NOT NULL default '0',
   `word` varchar(50) NOT NULL default '',
-  `synonym` varchar(255) NOT NULL default '',
   `locale` varchar(20) NOT NULL default '',
   `concept_name_id` int(11) NOT NULL,
-  PRIMARY KEY  (`concept_id`,`word`,`synonym`,`locale`),
+  PRIMARY KEY  (`concept_word_id`),
   KEY `word_in_concept_name` (`word`),
   KEY `word_for_name` (`concept_name_id`),
+  KEY `concept_word_concept_idx` (`concept_id`),
   CONSTRAINT `word_for` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `word_for_name` FOREIGN KEY (`concept_name_id`) REFERENCES `concept_name` (`concept_name_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23397 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -556,7 +613,7 @@ CREATE TABLE `drug` (
   `drug_id` int(11) NOT NULL auto_increment,
   `concept_id` int(11) NOT NULL default '0',
   `name` varchar(50) default NULL,
-  `combination` tinyint(1) NOT NULL default '0',
+  `combination` smallint(6) NOT NULL default '0',
   `dosage_form` int(11) default NULL,
   `dose_strength` double default NULL,
   `maximum_daily_dose` double default NULL,
@@ -565,11 +622,13 @@ CREATE TABLE `drug` (
   `units` varchar(50) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
-  `retire_reason` datetime default NULL,
+  `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`drug_id`),
+  UNIQUE KEY `drug_uuid_index` (`uuid`),
   KEY `drug_creator` (`creator`),
   KEY `primary_drug_concept` (`concept_id`),
   KEY `dosage_form_concept` (`dosage_form`),
@@ -580,7 +639,7 @@ CREATE TABLE `drug` (
   CONSTRAINT `drug_retired_by` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `primary_drug_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `route_concept` FOREIGN KEY (`route`) REFERENCES `concept` (`concept_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=410 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -599,7 +658,7 @@ CREATE TABLE `drug_ingredient` (
   KEY `drug_substance` (`drug_substance_id`),
   CONSTRAINT `drug` FOREIGN KEY (`drug_id`) REFERENCES `drug` (`drug_id`),
   CONSTRAINT `drug_substance` FOREIGN KEY (`drug_substance_id`) REFERENCES `drug_substance` (`drug_substance_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -616,8 +675,8 @@ CREATE TABLE `drug_order` (
   `equivalent_daily_dose` double default NULL,
   `units` varchar(255) default NULL,
   `frequency` varchar(255) default NULL,
-  `prn` tinyint(1) NOT NULL default '0',
-  `complex` tinyint(1) NOT NULL default '0',
+  `prn` smallint(6) NOT NULL default '0',
+  `complex` smallint(6) NOT NULL default '0',
   `quantity` int(11) default NULL,
   PRIMARY KEY  (`order_id`),
   KEY `inventory_item` (`drug_inventory_id`),
@@ -653,7 +712,7 @@ CREATE TABLE `drug_substance` (
   KEY `primary_drug_ingredient_concept` (`concept_id`),
   KEY `route_concept` (`route`),
   KEY `user_who_retired_drug` (`retired_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -673,11 +732,13 @@ CREATE TABLE `encounter` (
   `encounter_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`encounter_id`),
+  UNIQUE KEY `encounter_uuid_index` (`uuid`),
   KEY `encounter_location` (`location_id`),
   KEY `encounter_patient` (`patient_id`),
   KEY `encounter_provider` (`provider_id`),
@@ -685,6 +746,7 @@ CREATE TABLE `encounter` (
   KEY `encounter_creator` (`creator`),
   KEY `encounter_form` (`form_id`),
   KEY `user_who_voided_encounter` (`voided_by`),
+  KEY `enc_todays` (`voided`,`encounter_type`,`encounter_datetime`),
   CONSTRAINT `encounter_form` FOREIGN KEY (`form_id`) REFERENCES `form` (`form_id`),
   CONSTRAINT `encounter_ibfk_1` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `encounter_location` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`),
@@ -692,7 +754,7 @@ CREATE TABLE `encounter` (
   CONSTRAINT `encounter_provider` FOREIGN KEY (`provider_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `encounter_type_id` FOREIGN KEY (`encounter_type`) REFERENCES `encounter_type` (`encounter_type_id`),
   CONSTRAINT `user_who_voided_encounter` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=601 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=191068 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -705,20 +767,44 @@ SET character_set_client = utf8;
 CREATE TABLE `encounter_type` (
   `encounter_type_id` int(11) NOT NULL auto_increment,
   `name` varchar(50) NOT NULL default '',
-  `description` varchar(50) NOT NULL default '',
+  `description` text,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`encounter_type_id`),
+  UNIQUE KEY `encounter_type_uuid_index` (`uuid`),
   KEY `user_who_created_type` (`creator`),
   KEY `user_who_retired_encounter_type` (`retired_by`),
   KEY `retired_status` (`retired`),
   CONSTRAINT `user_who_created_type` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_encounter_type` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `external_source`
+--
+
+DROP TABLE IF EXISTS `external_source`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `external_source` (
+  `external_source_id` int(11) NOT NULL auto_increment,
+  `source` int(11) NOT NULL default '0',
+  `source_code` varchar(255) NOT NULL,
+  `name` varchar(255) default NULL,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (`external_source_id`),
+  KEY `map_ext_source` (`source`),
+  KEY `map_ext_creator` (`creator`),
+  CONSTRAINT `map_ext_source` FOREIGN KEY (`source`) REFERENCES `concept_source` (`concept_source_id`),
+  CONSTRAINT `map_ext_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1022 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -737,16 +823,18 @@ CREATE TABLE `field` (
   `table_name` varchar(50) default NULL,
   `attribute_name` varchar(50) default NULL,
   `default_value` text,
-  `select_multiple` tinyint(1) NOT NULL default '0',
+  `select_multiple` smallint(6) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`field_id`),
+  UNIQUE KEY `field_uuid_index` (`uuid`),
   KEY `concept_for_field` (`concept_id`),
   KEY `user_who_changed_field` (`changed_by`),
   KEY `user_who_created_field` (`creator`),
@@ -758,7 +846,7 @@ CREATE TABLE `field` (
   CONSTRAINT `user_who_changed_field` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_created_field` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_field` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=720 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -773,7 +861,9 @@ CREATE TABLE `field_answer` (
   `answer_id` int(11) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`field_id`,`answer_id`),
+  UNIQUE KEY `field_answer_uuid_index` (`uuid`),
   KEY `answers_for_field` (`field_id`),
   KEY `field_answer_concept` (`answer_id`),
   KEY `user_who_created_field_answer` (`creator`),
@@ -794,13 +884,15 @@ CREATE TABLE `field_type` (
   `field_type_id` int(11) NOT NULL auto_increment,
   `name` varchar(50) default NULL,
   `description` longtext,
-  `is_set` tinyint(1) NOT NULL default '0',
+  `is_set` smallint(6) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`field_type_id`),
+  UNIQUE KEY `field_type_uuid_index` (`uuid`),
   KEY `user_who_created_field_type` (`creator`),
   CONSTRAINT `user_who_created_field_type` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -815,7 +907,7 @@ CREATE TABLE `form` (
   `name` varchar(255) NOT NULL default '',
   `version` varchar(50) NOT NULL default '',
   `build` int(11) default NULL,
-  `published` tinyint(4) NOT NULL default '0',
+  `published` smallint(6) NOT NULL default '0',
   `description` text,
   `encounter_type` int(11) default NULL,
   `template` mediumtext,
@@ -824,11 +916,13 @@ CREATE TABLE `form` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retired_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`form_id`),
+  UNIQUE KEY `form_uuid_index` (`uuid`),
   KEY `user_who_created_form` (`creator`),
   KEY `user_who_last_changed_form` (`changed_by`),
   KEY `user_who_retired_form` (`retired_by`),
@@ -837,7 +931,7 @@ CREATE TABLE `form` (
   CONSTRAINT `user_who_created_form` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_last_changed_form` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_form` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -883,13 +977,15 @@ CREATE TABLE `form_field` (
   `parent_form_field` int(11) default NULL,
   `min_occurs` int(11) default NULL,
   `max_occurs` int(11) default NULL,
-  `required` tinyint(1) default NULL,
+  `required` smallint(6) NOT NULL default '0',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `sort_weight` float(11,5) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`form_field_id`),
+  UNIQUE KEY `form_field_uuid_index` (`uuid`),
   KEY `user_who_last_changed_form_field` (`changed_by`),
   KEY `field_within_form` (`field_id`),
   KEY `form_containing_field` (`form_id`),
@@ -900,7 +996,7 @@ CREATE TABLE `form_field` (
   CONSTRAINT `form_field_hierarchy` FOREIGN KEY (`parent_form_field`) REFERENCES `form_field` (`form_field_id`),
   CONSTRAINT `user_who_created_form_field` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_last_changed_form_field` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3922 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -920,7 +1016,7 @@ CREATE TABLE `formentry_error` (
   PRIMARY KEY  (`formentry_error_id`),
   KEY `User who created formentry_error` (`creator`),
   CONSTRAINT `User who created formentry_error` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -961,8 +1057,10 @@ CREATE TABLE `global_property` (
   `property_value` mediumtext,
   `description` text,
   `id` int(11) NOT NULL auto_increment,
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=889598257 DEFAULT CHARSET=utf8;
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `global_property_uuid_index` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=223 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -978,8 +1076,11 @@ CREATE TABLE `hl7_in_archive` (
   `hl7_source_key` varchar(255) default NULL,
   `hl7_data` mediumtext NOT NULL,
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  PRIMARY KEY  (`hl7_in_archive_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `message_state` int(1) default '0',
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`hl7_in_archive_id`),
+  UNIQUE KEY `hl7_in_archive_uuid_index` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=21365 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -997,8 +1098,10 @@ CREATE TABLE `hl7_in_error` (
   `error` varchar(255) NOT NULL default '',
   `error_details` text,
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  PRIMARY KEY  (`hl7_in_error_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`hl7_in_error_id`),
+  UNIQUE KEY `hl7_in_error_uuid_index` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1013,11 +1116,13 @@ CREATE TABLE `hl7_in_queue` (
   `hl7_source` int(11) NOT NULL default '0',
   `hl7_source_key` text,
   `hl7_data` mediumtext NOT NULL,
-  `state` int(11) NOT NULL default '0' COMMENT '0=pending, 1=processing, 2=processed, 3=error',
+  `message_state` int(1) NOT NULL default '0',
   `date_processed` datetime default NULL,
   `error_msg` text,
   `date_created` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`hl7_in_queue_id`),
+  UNIQUE KEY `hl7_in_queue_uuid_index` (`uuid`),
   KEY `hl7_source` (`hl7_source`),
   CONSTRAINT `hl7_source` FOREIGN KEY (`hl7_source`) REFERENCES `hl7_source` (`hl7_source_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -1036,9 +1141,75 @@ CREATE TABLE `hl7_source` (
   `description` tinytext,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`hl7_source_id`),
+  UNIQUE KEY `hl7_source_uuid_index` (`uuid`),
   KEY `creator` (`creator`),
   CONSTRAINT `creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `htmlformentry_html_form`
+--
+
+DROP TABLE IF EXISTS `htmlformentry_html_form`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `htmlformentry_html_form` (
+  `id` int(11) NOT NULL auto_increment,
+  `form_id` int(11) default NULL,
+  `name` varchar(100) NOT NULL,
+  `xml_data` mediumtext NOT NULL,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `changed_by` int(11) default NULL,
+  `date_changed` datetime default NULL,
+  `retired` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `User who created htmlformentry_htmlform` (`creator`),
+  KEY `Form with which this htmlform is related` (`form_id`),
+  KEY `User who changed htmlformentry_htmlform` (`changed_by`),
+  CONSTRAINT `Form with which this htmlform is related` FOREIGN KEY (`form_id`) REFERENCES `form` (`form_id`),
+  CONSTRAINT `User who changed htmlformentry_htmlform` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `User who created htmlformentry_htmlform` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `liquibasechangelog`
+--
+
+DROP TABLE IF EXISTS `liquibasechangelog`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `liquibasechangelog` (
+  `ID` varchar(63) NOT NULL,
+  `AUTHOR` varchar(63) NOT NULL,
+  `FILENAME` varchar(200) NOT NULL,
+  `DATEEXECUTED` datetime NOT NULL,
+  `MD5SUM` varchar(32) default NULL,
+  `DESCRIPTION` varchar(255) default NULL,
+  `COMMENTS` varchar(255) default NULL,
+  `TAG` varchar(255) default NULL,
+  `LIQUIBASE` varchar(10) default NULL,
+  PRIMARY KEY  (`ID`,`AUTHOR`,`FILENAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `liquibasechangeloglock`
+--
+
+DROP TABLE IF EXISTS `liquibasechangeloglock`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `liquibasechangeloglock` (
+  `ID` int(11) NOT NULL,
+  `LOCKED` tinyint(1) NOT NULL,
+  `LOCKGRANTED` datetime default NULL,
+  `LOCKEDBY` varchar(255) default NULL,
+  PRIMARY KEY  (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
@@ -1072,20 +1243,66 @@ CREATE TABLE `location` (
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
-  `parent_location_id` int(11) default NULL,
   `location_type_id` int(11) default NULL,
+  `parent_location` int(11) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`location_id`),
+  UNIQUE KEY `location_uuid_index` (`uuid`),
   KEY `user_who_created_location` (`creator`),
   KEY `name_of_location` (`name`),
   KEY `user_who_retired_location` (`retired_by`),
   KEY `retired_status` (`retired`),
-  KEY `parent_location_for_location` (`parent_location_id`),
   KEY `type_of_location` (`location_type_id`),
+  KEY `parent_location` (`parent_location`),
   CONSTRAINT `location_type` FOREIGN KEY (`location_type_id`) REFERENCES `location_type` (`location_type_id`),
-  CONSTRAINT `parent_location` FOREIGN KEY (`parent_location_id`) REFERENCES `location` (`location_id`),
+  CONSTRAINT `parent_location` FOREIGN KEY (`parent_location`) REFERENCES `location` (`location_id`),
   CONSTRAINT `user_who_created_location` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_location` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `location_tag`
+--
+
+DROP TABLE IF EXISTS `location_tag`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `location_tag` (
+  `location_tag_id` int(11) NOT NULL auto_increment,
+  `tag` varchar(50) default NULL,
+  `description` varchar(255) default NULL,
+  `creator` int(11) NOT NULL,
+  `date_created` datetime NOT NULL,
+  `retired` smallint(6) NOT NULL default '0',
+  `retired_by` int(11) default NULL,
+  `date_retired` datetime default NULL,
+  `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`location_tag_id`),
+  UNIQUE KEY `location_tag_uuid_index` (`uuid`),
+  KEY `location_tag_creator` (`creator`),
+  KEY `location_tag_retired_by` (`retired_by`),
+  CONSTRAINT `location_tag_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `location_tag_retired_by` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `location_tag_map`
+--
+
+DROP TABLE IF EXISTS `location_tag_map`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `location_tag_map` (
+  `location_id` int(11) NOT NULL,
+  `location_tag_id` int(11) NOT NULL,
+  PRIMARY KEY  (`location_id`,`location_tag_id`),
+  KEY `location_tag_map_tag` (`location_tag_id`),
+  CONSTRAINT `location_tag_map_location` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`),
+  CONSTRAINT `location_tag_map_tag` FOREIGN KEY (`location_tag_id`) REFERENCES `location_tag` (`location_tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1138,7 +1355,9 @@ CREATE TABLE `note` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`note_id`),
+  UNIQUE KEY `note_uuid_index` (`uuid`),
   KEY `patient_note` (`patient_id`),
   KEY `obs_note` (`obs_id`),
   KEY `encounter_note` (`encounter_id`),
@@ -1172,7 +1391,9 @@ CREATE TABLE `notification_alert` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`alert_id`),
+  UNIQUE KEY `notification_alert_uuid_index` (`uuid`),
   KEY `alert_creator` (`creator`),
   KEY `alert_assigned_to_user` (`user_id`),
   KEY `user_who_changed_alert` (`changed_by`),
@@ -1217,7 +1438,9 @@ CREATE TABLE `notification_template` (
   `sender` varchar(255) default NULL,
   `recipients` varchar(512) default NULL,
   `ordinal` int(11) default '0',
-  PRIMARY KEY  (`template_id`)
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`template_id`),
+  UNIQUE KEY `notification_template_uuid_index` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
@@ -1252,12 +1475,15 @@ CREATE TABLE `obs` (
   `comments` varchar(255) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
   `value_location` int(11) default NULL,
+  `value_complex` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`obs_id`),
+  UNIQUE KEY `obs_uuid_index` (`uuid`),
   KEY `answer_concept` (`value_coded`),
   KEY `encounter_observations` (`encounter_id`),
   KEY `obs_concept` (`concept_id`),
@@ -1282,7 +1508,7 @@ CREATE TABLE `obs` (
   CONSTRAINT `obs_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
   CONSTRAINT `person_obs` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`) ON UPDATE CASCADE,
   CONSTRAINT `user_who_voided_obs` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=543 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=357018 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1324,17 +1550,19 @@ CREATE TABLE `order_type` (
   `description` varchar(255) NOT NULL default '',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`order_type_id`),
+  UNIQUE KEY `order_type_uuid_index` (`uuid`),
   KEY `type_created_by` (`creator`),
   KEY `user_who_retired_order_type` (`retired_by`),
   KEY `retired_status` (`retired`),
   CONSTRAINT `type_created_by` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_order_type` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1353,19 +1581,22 @@ CREATE TABLE `orders` (
   `instructions` text,
   `start_date` datetime default NULL,
   `auto_expire_date` datetime default NULL,
-  `discontinued` tinyint(1) NOT NULL default '0',
+  `discontinued` smallint(6) NOT NULL default '0',
   `discontinued_date` datetime default NULL,
   `discontinued_by` int(11) default NULL,
   `discontinued_reason` int(11) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
   `patient_id` int(11) NOT NULL,
   `accession_number` varchar(255) default NULL,
+  `obs_id` int(11) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`order_id`),
+  UNIQUE KEY `orders_uuid_index` (`uuid`),
   KEY `order_creator` (`creator`),
   KEY `orderer_not_drug` (`orderer`),
   KEY `orders_in_encounter` (`encounter_id`),
@@ -1374,7 +1605,9 @@ CREATE TABLE `orders` (
   KEY `user_who_voided_order` (`voided_by`),
   KEY `discontinued_because` (`discontinued_reason`),
   KEY `order_for_patient` (`patient_id`),
+  KEY `obs_for_order` (`obs_id`),
   CONSTRAINT `discontinued_because` FOREIGN KEY (`discontinued_reason`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `obs_for_order` FOREIGN KEY (`obs_id`) REFERENCES `obs` (`obs_id`),
   CONSTRAINT `orderer_not_drug` FOREIGN KEY (`orderer`) REFERENCES `users` (`user_id`),
   CONSTRAINT `orders_in_encounter` FOREIGN KEY (`encounter_id`) REFERENCES `encounter` (`encounter_id`),
   CONSTRAINT `order_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
@@ -1382,7 +1615,7 @@ CREATE TABLE `orders` (
   CONSTRAINT `type_of_order` FOREIGN KEY (`order_type_id`) REFERENCES `order_type` (`order_type_id`),
   CONSTRAINT `user_who_discontinued_order` FOREIGN KEY (`discontinued_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_order` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25401 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1399,7 +1632,7 @@ CREATE TABLE `patient` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
@@ -1424,29 +1657,33 @@ DROP TABLE IF EXISTS `patient_identifier`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `patient_identifier` (
+  `patient_identifier_id` int(11) NOT NULL auto_increment,
   `patient_id` int(11) NOT NULL default '0',
   `identifier` varchar(50) NOT NULL default '',
   `identifier_type` int(11) NOT NULL default '0',
-  `preferred` tinyint(4) NOT NULL default '0',
+  `preferred` smallint(6) NOT NULL default '0',
   `location_id` int(11) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
-  PRIMARY KEY  (`patient_id`,`identifier`,`identifier_type`),
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`patient_identifier_id`),
+  UNIQUE KEY `patient_identifier_uuid_index` (`uuid`),
   KEY `defines_identifier_type` (`identifier_type`),
   KEY `identifier_creator` (`creator`),
   KEY `identifier_voider` (`voided_by`),
   KEY `identifier_location` (`location_id`),
   KEY `identifier_name` (`identifier`),
+  KEY `idx_patient_identifier_patient` (`patient_id`),
   CONSTRAINT `defines_identifier_type` FOREIGN KEY (`identifier_type`) REFERENCES `patient_identifier_type` (`patient_identifier_type_id`),
   CONSTRAINT `identifier_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `identifier_voider` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `identifies_patient` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`) ON UPDATE CASCADE,
+  CONSTRAINT `identifies_patient` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`),
   CONSTRAINT `patient_identifier_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35981 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1461,23 +1698,25 @@ CREATE TABLE `patient_identifier_type` (
   `name` varchar(50) NOT NULL default '',
   `description` text NOT NULL,
   `format` varchar(50) default NULL,
-  `check_digit` tinyint(1) NOT NULL default '0',
+  `check_digit` smallint(6) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `required` tinyint(1) NOT NULL default '0',
+  `required` smallint(6) NOT NULL default '0',
   `format_description` varchar(255) default NULL,
   `validator` varchar(200) default NULL,
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`patient_identifier_type_id`),
+  UNIQUE KEY `patient_identifier_type_uuid_index` (`uuid`),
   KEY `type_creator` (`creator`),
   KEY `user_who_retired_patient_identifier_type` (`retired_by`),
   KEY `retired_status` (`retired`),
   CONSTRAINT `type_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_patient_identifier_type` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1497,11 +1736,14 @@ CREATE TABLE `patient_program` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
+  `location_id` int(11) default NULL,
   PRIMARY KEY  (`patient_program_id`),
+  UNIQUE KEY `patient_program_uuid_index` (`uuid`),
   KEY `patient_in_program` (`patient_id`),
   KEY `program_for_patient` (`program_id`),
   KEY `patient_program_creator` (`creator`),
@@ -1512,7 +1754,7 @@ CREATE TABLE `patient_program` (
   CONSTRAINT `program_for_patient` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`),
   CONSTRAINT `user_who_changed` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_patient_program` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3882 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1532,11 +1774,13 @@ CREATE TABLE `patient_state` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`patient_state_id`),
+  UNIQUE KEY `patient_state_uuid_index` (`uuid`),
   KEY `state_for_patient` (`state`),
   KEY `patient_program_for_state` (`patient_program_id`),
   KEY `patient_state_creator` (`creator`),
@@ -1547,7 +1791,89 @@ CREATE TABLE `patient_state` (
   CONSTRAINT `patient_state_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `patient_state_voider` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `state_for_patient` FOREIGN KEY (`state`) REFERENCES `program_workflow_state` (`program_workflow_state_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7065 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `patientflags_flag`
+--
+
+DROP TABLE IF EXISTS `patientflags_flag`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `patientflags_flag` (
+  `flag_id` int(11) NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `criteria` varchar(5000) NOT NULL,
+  `message` varchar(255) NOT NULL,
+  `enabled` tinyint(1) NOT NULL,
+  `evaluator` varchar(255) NOT NULL,
+  `description` varchar(1000) default NULL,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `changed_by` int(11) default NULL,
+  `date_changed` datetime default NULL,
+  `retired` tinyint(1) NOT NULL default '0',
+  `retired_by` int(11) default NULL,
+  `date_retired` datetime default NULL,
+  `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`flag_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `patientflags_flag_tag`
+--
+
+DROP TABLE IF EXISTS `patientflags_flag_tag`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `patientflags_flag_tag` (
+  `flag_id` int(11) NOT NULL,
+  `tag_id` int(11) NOT NULL,
+  KEY `flag_id` (`flag_id`),
+  KEY `tag_id` (`tag_id`),
+  CONSTRAINT `patientflags_flag_tag_ibfk_1` FOREIGN KEY (`flag_id`) REFERENCES `patientflags_flag` (`flag_id`),
+  CONSTRAINT `patientflags_flag_tag_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `patientflags_tag` (`tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `patientflags_tag`
+--
+
+DROP TABLE IF EXISTS `patientflags_tag`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `patientflags_tag` (
+  `tag_id` int(11) NOT NULL auto_increment,
+  `tag` varchar(255) NOT NULL,
+  `description` varchar(1000) default NULL,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `changed_by` int(11) default NULL,
+  `date_changed` datetime default NULL,
+  `retired` tinyint(1) NOT NULL default '0',
+  `retired_by` int(11) default NULL,
+  `date_retired` datetime default NULL,
+  `retire_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`tag_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `patients_for_location`
+--
+
+DROP TABLE IF EXISTS `patients_for_location`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `patients_for_location` (
+  `patient_id` int(11) NOT NULL,
+  PRIMARY KEY  (`patient_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1574,19 +1900,21 @@ CREATE TABLE `person` (
   `person_id` int(11) NOT NULL auto_increment,
   `gender` varchar(50) default '',
   `birthdate` date default NULL,
-  `birthdate_estimated` tinyint(1) default NULL,
-  `dead` tinyint(1) NOT NULL default '0',
+  `birthdate_estimated` smallint(6) NOT NULL default '0',
+  `dead` smallint(6) NOT NULL default '0',
   `death_date` datetime default NULL,
   `cause_of_death` int(11) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`person_id`),
+  UNIQUE KEY `person_uuid_index` (`uuid`),
   KEY `user_who_created_patient` (`creator`),
   KEY `user_who_voided_patient` (`voided_by`),
   KEY `user_who_changed_pat` (`changed_by`),
@@ -1597,7 +1925,7 @@ CREATE TABLE `person` (
   CONSTRAINT `user_who_changed_person` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_created_person` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_person` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=915 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=46365 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1610,7 +1938,7 @@ SET character_set_client = utf8;
 CREATE TABLE `person_address` (
   `person_address_id` int(11) NOT NULL auto_increment,
   `person_id` int(11) default NULL,
-  `preferred` tinyint(1) NOT NULL default '0',
+  `preferred` smallint(6) NOT NULL default '0',
   `address1` varchar(50) default NULL,
   `address2` varchar(50) default NULL,
   `city_village` varchar(50) default NULL,
@@ -1621,7 +1949,7 @@ CREATE TABLE `person_address` (
   `longitude` varchar(50) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
@@ -1630,14 +1958,16 @@ CREATE TABLE `person_address` (
   `region` varchar(50) default NULL,
   `subregion` varchar(50) default NULL,
   `township_division` varchar(50) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`person_address_id`),
+  UNIQUE KEY `person_address_uuid_index` (`uuid`),
   KEY `patient_address_creator` (`creator`),
   KEY `patient_addresses` (`person_id`),
   KEY `patient_address_void` (`voided_by`),
   CONSTRAINT `address_for_person` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`) ON UPDATE CASCADE,
   CONSTRAINT `patient_address_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `patient_address_void` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=786 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=33224 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1656,11 +1986,13 @@ CREATE TABLE `person_attribute` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`person_attribute_id`),
+  UNIQUE KEY `person_attribute_uuid_index` (`uuid`),
   KEY `identifies_person` (`person_id`),
   KEY `defines_attribute_type` (`person_attribute_type_id`),
   KEY `attribute_creator` (`creator`),
@@ -1671,7 +2003,7 @@ CREATE TABLE `person_attribute` (
   CONSTRAINT `attribute_voider` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `defines_attribute_type` FOREIGN KEY (`person_attribute_type_id`) REFERENCES `person_attribute_type` (`person_attribute_type_id`),
   CONSTRAINT `identifies_person` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19930 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1687,26 +2019,31 @@ CREATE TABLE `person_attribute_type` (
   `description` text NOT NULL,
   `format` varchar(50) default NULL,
   `foreign_key` int(11) default NULL,
-  `searchable` tinyint(1) NOT NULL default '0',
+  `searchable` smallint(6) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `retire_reason` varchar(255) default NULL,
+  `edit_privilege` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`person_attribute_type_id`),
+  UNIQUE KEY `person_attribute_type_uuid_index` (`uuid`),
   KEY `name_of_attribute` (`name`),
   KEY `type_creator` (`creator`),
   KEY `attribute_type_changer` (`changed_by`),
   KEY `attribute_is_searchable` (`searchable`),
   KEY `user_who_retired_person_attribute_type` (`retired_by`),
   KEY `person_attribute_type_retired_status` (`retired`),
+  KEY `privilege_which_can_edit` (`edit_privilege`),
   CONSTRAINT `attribute_type_changer` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `attribute_type_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `privilege_which_can_edit` FOREIGN KEY (`edit_privilege`) REFERENCES `privilege` (`privilege`),
   CONSTRAINT `user_who_retired_person_attribute_type` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1718,7 +2055,7 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `person_name` (
   `person_name_id` int(11) NOT NULL auto_increment,
-  `preferred` tinyint(1) NOT NULL default '0',
+  `preferred` smallint(6) NOT NULL default '0',
   `person_id` int(11) default NULL,
   `prefix` varchar(50) default NULL,
   `given_name` varchar(50) default NULL,
@@ -1730,13 +2067,15 @@ CREATE TABLE `person_name` (
   `degree` varchar(50) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`person_name_id`),
+  UNIQUE KEY `person_name_uuid_index` (`uuid`),
   KEY `name_for_patient` (`person_id`),
   KEY `user_who_made_name` (`creator`),
   KEY `user_who_voided_name` (`voided_by`),
@@ -1746,7 +2085,7 @@ CREATE TABLE `person_name` (
   CONSTRAINT `name for person` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`) ON UPDATE CASCADE,
   CONSTRAINT `user_who_made_name` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_name` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1164 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=47940 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1771,7 +2110,7 @@ CREATE TABLE `person_name_code` (
   KEY `family_name_code` (`family_name_code`),
   KEY `given_family_name_code` (`given_name_code`,`family_name_code`),
   CONSTRAINT `code for name` FOREIGN KEY (`person_name_id`) REFERENCES `person_name` (`person_name_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1601 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=47326 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1784,7 +2123,9 @@ SET character_set_client = utf8;
 CREATE TABLE `privilege` (
   `privilege` varchar(50) NOT NULL default '',
   `description` varchar(250) NOT NULL default '',
-  PRIMARY KEY  (`privilege`)
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`privilege`),
+  UNIQUE KEY `privilege_uuid_index` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
@@ -1802,17 +2143,114 @@ CREATE TABLE `program` (
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `name` varchar(50) NOT NULL,
   `description` varchar(500) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`program_id`),
+  UNIQUE KEY `program_uuid_index` (`uuid`),
   KEY `program_concept` (`concept_id`),
   KEY `program_creator` (`creator`),
   KEY `user_who_changed_program` (`changed_by`),
   CONSTRAINT `program_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `program_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_changed_program` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `program_encounter_type_map`
+--
+
+DROP TABLE IF EXISTS `program_encounter_type_map`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `program_encounter_type_map` (
+  `program_encounter_type_map_id` int(11) NOT NULL auto_increment,
+  `program_id` int(11) default NULL,
+  `encounter_type_id` int(11) default NULL,
+  PRIMARY KEY  (`program_encounter_type_map_id`),
+  KEY `program_mapping` (`program_id`,`encounter_type_id`),
+  KEY `referenced_encounter_type` (`encounter_type_id`),
+  CONSTRAINT `referenced_encounter_type` FOREIGN KEY (`encounter_type_id`) REFERENCES `encounter_type` (`encounter_type_id`),
+  CONSTRAINT `referenced_program_encounter_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `program_location_restriction`
+--
+
+DROP TABLE IF EXISTS `program_location_restriction`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `program_location_restriction` (
+  `program_location_restriction_id` int(11) NOT NULL auto_increment,
+  `program_id` int(11) default NULL,
+  `location_id` int(11) default NULL,
+  PRIMARY KEY  (`program_location_restriction_id`),
+  KEY `program_mapping` (`program_id`,`location_id`),
+  KEY `referenced_location` (`location_id`),
+  CONSTRAINT `referenced_location` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`),
+  CONSTRAINT `referenced_program` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `program_orders_map`
+--
+
+DROP TABLE IF EXISTS `program_orders_map`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `program_orders_map` (
+  `program_orders_map_id` int(11) NOT NULL auto_increment,
+  `program_id` int(11) default NULL,
+  `concept_id` int(11) default NULL,
+  PRIMARY KEY  (`program_orders_map_id`),
+  KEY `program_mapping` (`program_id`,`concept_id`),
+  KEY `referenced_concept_id` (`concept_id`),
+  CONSTRAINT `referenced_concept_id` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `referenced_program_orders_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `program_patient_identifier_type_map`
+--
+
+DROP TABLE IF EXISTS `program_patient_identifier_type_map`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `program_patient_identifier_type_map` (
+  `program_patient_identifier_type_map_id` int(11) NOT NULL auto_increment,
+  `program_id` int(11) default NULL,
+  `patient_identifier_type_id` int(11) default NULL,
+  PRIMARY KEY  (`program_patient_identifier_type_map_id`),
+  KEY `program_mapping` (`program_id`,`patient_identifier_type_id`),
+  KEY `referenced_patient_identifier_type` (`patient_identifier_type_id`),
+  CONSTRAINT `referenced_patient_identifier_type` FOREIGN KEY (`patient_identifier_type_id`) REFERENCES `patient_identifier_type` (`patient_identifier_type_id`),
+  CONSTRAINT `referenced_program_patient_identifier_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `program_relationship_type_map`
+--
+
+DROP TABLE IF EXISTS `program_relationship_type_map`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `program_relationship_type_map` (
+  `program_relationship_type_map_id` int(11) NOT NULL auto_increment,
+  `program_id` int(11) default NULL,
+  `relationship_type_id` int(11) default NULL,
+  PRIMARY KEY  (`program_relationship_type_map_id`),
+  KEY `program_mapping` (`program_id`,`relationship_type_id`),
+  KEY `referenced_relationship_type` (`relationship_type_id`),
+  CONSTRAINT `referenced_program_relationship_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`),
+  CONSTRAINT `referenced_relationship_type` FOREIGN KEY (`relationship_type_id`) REFERENCES `relationship_type` (`relationship_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1828,10 +2266,12 @@ CREATE TABLE `program_workflow` (
   `concept_id` int(11) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`program_workflow_id`),
+  UNIQUE KEY `program_workflow_uuid_index` (`uuid`),
   KEY `program_for_workflow` (`program_id`),
   KEY `workflow_concept` (`concept_id`),
   KEY `workflow_creator` (`creator`),
@@ -1840,7 +2280,7 @@ CREATE TABLE `program_workflow` (
   CONSTRAINT `workflow_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `workflow_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `workflow_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1854,14 +2294,16 @@ CREATE TABLE `program_workflow_state` (
   `program_workflow_state_id` int(11) NOT NULL auto_increment,
   `program_workflow_id` int(11) NOT NULL default '0',
   `concept_id` int(11) NOT NULL default '0',
-  `initial` tinyint(1) NOT NULL default '0',
-  `terminal` tinyint(1) NOT NULL default '0',
+  `initial` smallint(6) NOT NULL default '0',
+  `terminal` smallint(6) NOT NULL default '0',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL default '0',
+  `retired` smallint(6) NOT NULL default '0',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`program_workflow_state_id`),
+  UNIQUE KEY `program_workflow_state_uuid_index` (`uuid`),
   KEY `workflow_for_state` (`program_workflow_id`),
   KEY `state_concept` (`concept_id`),
   KEY `state_creator` (`creator`),
@@ -1870,7 +2312,58 @@ CREATE TABLE `program_workflow_state` (
   CONSTRAINT `state_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `state_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `workflow_for_state` FOREIGN KEY (`program_workflow_id`) REFERENCES `program_workflow` (`program_workflow_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `regimen`
+--
+
+DROP TABLE IF EXISTS `regimen`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `regimen` (
+  `regimen_id` int(11) NOT NULL auto_increment,
+  `regimen_criteria_id` int(11) NOT NULL default '0',
+  `drug_inventory_id` int(11) default '0',
+  `dose` double default NULL,
+  `equivalent_daily_dose` double default NULL,
+  `units` varchar(255) default NULL,
+  `frequency` varchar(255) default NULL,
+  `prn` tinyint(1) NOT NULL default '0',
+  `complex` tinyint(1) NOT NULL default '0',
+  `quantity` int(11) default NULL,
+  `instructions` text,
+  PRIMARY KEY  (`regimen_id`),
+  KEY `map_regimen_criteria` (`regimen_criteria_id`),
+  KEY `map_drug_inventory` (`drug_inventory_id`),
+  CONSTRAINT `map_drug_inventory` FOREIGN KEY (`drug_inventory_id`) REFERENCES `drug` (`drug_id`),
+  CONSTRAINT `map_regimen_criteria` FOREIGN KEY (`regimen_criteria_id`) REFERENCES `regimen_criteria` (`regimen_criteria_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `regimen_criteria`
+--
+
+DROP TABLE IF EXISTS `regimen_criteria`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `regimen_criteria` (
+  `regimen_criteria_id` int(11) NOT NULL auto_increment,
+  `concept_id` int(11) NOT NULL default '0',
+  `min_weight` int(3) NOT NULL default '0',
+  `max_weight` int(3) NOT NULL default '200',
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `retired` smallint(6) NOT NULL default '0',
+  `retired_by` int(11) default NULL,
+  `date_retired` datetime default NULL,
+  `program_id` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`regimen_criteria_id`),
+  KEY `map_concept` (`concept_id`),
+  CONSTRAINT `map_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1887,11 +2380,13 @@ CREATE TABLE `relationship` (
   `person_b` int(11) NOT NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) default NULL,
   PRIMARY KEY  (`relationship_id`),
+  UNIQUE KEY `relationship_uuid_index` (`uuid`),
   KEY `related_person` (`person_a`),
   KEY `related_relative` (`person_b`),
   KEY `relationship_type` (`relationship`),
@@ -1902,7 +2397,7 @@ CREATE TABLE `relationship` (
   CONSTRAINT `relationship_type_id` FOREIGN KEY (`relationship`) REFERENCES `relationship_type` (`relationship_type_id`),
   CONSTRAINT `relation_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `relation_voider` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1992 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1921,10 +2416,12 @@ CREATE TABLE `relationship_type` (
   `description` varchar(255) NOT NULL default '',
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`relationship_type_id`),
+  UNIQUE KEY `relationship_type_uuid_index` (`uuid`),
   KEY `user_who_created_rel` (`creator`),
   CONSTRAINT `user_who_created_rel` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1963,18 +2460,20 @@ CREATE TABLE `report_object` (
   `date_created` datetime NOT NULL,
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `voided` tinyint(1) NOT NULL,
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`report_object_id`),
+  UNIQUE KEY `report_object_uuid_index` (`uuid`),
   KEY `report_object_creator` (`creator`),
   KEY `user_who_changed_report_object` (`changed_by`),
   KEY `user_who_voided_report_object` (`voided_by`),
   CONSTRAINT `report_object_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_changed_report_object` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_report_object` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1989,7 +2488,80 @@ CREATE TABLE `report_schema_xml` (
   `name` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `xml_data` mediumtext NOT NULL,
-  PRIMARY KEY  (`report_schema_id`)
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`report_schema_id`),
+  UNIQUE KEY `report_schema_xml_uuid_index` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `reporting_report_design`
+--
+
+DROP TABLE IF EXISTS `reporting_report_design`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `reporting_report_design` (
+  `id` int(11) NOT NULL auto_increment,
+  `uuid` char(38) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(1000) default NULL,
+  `report_definition_id` int(11) NOT NULL default '0',
+  `renderer_type` varchar(255) NOT NULL,
+  `properties` text,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `changed_by` int(11) default NULL,
+  `date_changed` datetime default NULL,
+  `retired` tinyint(1) NOT NULL default '0',
+  `retired_by` int(11) default NULL,
+  `date_retired` datetime default NULL,
+  `retire_reason` varchar(255) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `report_definition_id for reporting_report_design` (`report_definition_id`),
+  KEY `creator for reporting_report_design` (`creator`),
+  KEY `changed_by for reporting_report_design` (`changed_by`),
+  KEY `retired_by for reporting_report_design` (`retired_by`),
+  CONSTRAINT `changed_by for reporting_report_design` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `creator for reporting_report_design` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `report_definition_id for reporting_report_design` FOREIGN KEY (`report_definition_id`) REFERENCES `serialized_object` (`serialized_object_id`),
+  CONSTRAINT `retired_by for reporting_report_design` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `reporting_report_design_resource`
+--
+
+DROP TABLE IF EXISTS `reporting_report_design_resource`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `reporting_report_design_resource` (
+  `id` int(11) NOT NULL auto_increment,
+  `uuid` char(38) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(1000) default NULL,
+  `report_design_id` int(11) NOT NULL default '0',
+  `content_type` varchar(50) default NULL,
+  `extension` varchar(20) default NULL,
+  `contents` longblob,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `changed_by` int(11) default NULL,
+  `date_changed` datetime default NULL,
+  `retired` tinyint(1) NOT NULL default '0',
+  `retired_by` int(11) default NULL,
+  `date_retired` datetime default NULL,
+  `retire_reason` varchar(255) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `report_design_id for reporting_report_design_resource` (`report_design_id`),
+  KEY `creator for reporting_report_design_resource` (`creator`),
+  KEY `changed_by for reporting_report_design_resource` (`changed_by`),
+  KEY `retired_by for reporting_report_design_resource` (`retired_by`),
+  CONSTRAINT `changed_by for reporting_report_design_resource` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `creator for reporting_report_design_resource` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `report_design_id for reporting_report_design_resource` FOREIGN KEY (`report_design_id`) REFERENCES `reporting_report_design` (`id`),
+  CONSTRAINT `retired_by for reporting_report_design_resource` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
@@ -2003,7 +2575,9 @@ SET character_set_client = utf8;
 CREATE TABLE `role` (
   `role` varchar(50) NOT NULL default '',
   `description` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`role`)
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`role`),
+  UNIQUE KEY `role_uuid_index` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
@@ -2062,12 +2636,14 @@ CREATE TABLE `scheduler_task_config` (
   `date_created` datetime default '2005-01-01 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
+  `uuid` char(38) NOT NULL,
   PRIMARY KEY  (`task_config_id`),
+  UNIQUE KEY `scheduler_task_config_uuid_index` (`uuid`),
   KEY `schedule_creator` (`created_by`),
   KEY `schedule_changer` (`changed_by`),
   CONSTRAINT `scheduler_changer` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `scheduler_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2085,7 +2661,7 @@ CREATE TABLE `scheduler_task_config_property` (
   PRIMARY KEY  (`task_config_property_id`),
   KEY `task_config` (`task_config_id`),
   CONSTRAINT `task_config_for_property` FOREIGN KEY (`task_config_id`) REFERENCES `scheduler_task_config` (`task_config_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2098,6 +2674,41 @@ SET character_set_client = utf8;
 CREATE TABLE `schema_info` (
   `version` int(11) default NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `serialized_object`
+--
+
+DROP TABLE IF EXISTS `serialized_object`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `serialized_object` (
+  `serialized_object_id` int(11) NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(5000) default NULL,
+  `type` varchar(255) NOT NULL,
+  `subtype` varchar(255) NOT NULL,
+  `serialization_class` varchar(255) NOT NULL,
+  `serialized_data` text NOT NULL,
+  `date_created` datetime NOT NULL,
+  `creator` int(11) NOT NULL,
+  `date_changed` datetime default NULL,
+  `changed_by` int(11) default NULL,
+  `retired` smallint(6) NOT NULL default '0',
+  `date_retired` datetime default NULL,
+  `retired_by` int(11) default NULL,
+  `retire_reason` varchar(1000) default NULL,
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`serialized_object_id`),
+  UNIQUE KEY `serialized_object_uuid_index` (`uuid`),
+  KEY `serialized_object_creator` (`creator`),
+  KEY `serialized_object_changed_by` (`changed_by`),
+  KEY `serialized_object_retired_by` (`retired_by`),
+  CONSTRAINT `serialized_object_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `serialized_object_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `serialized_object_retired_by` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2114,7 +2725,52 @@ CREATE TABLE `sessions` (
   `updated_at` datetime default NULL,
   PRIMARY KEY  (`id`),
   KEY `sessions_session_id_index` (`session_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18052 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `task`
+--
+
+DROP TABLE IF EXISTS `task`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `task` (
+  `task_id` int(11) NOT NULL auto_increment,
+  `url` varchar(255) default NULL,
+  `encounter_type` varchar(255) default NULL,
+  `description` text,
+  `location` varchar(255) default NULL,
+  `gender` varchar(50) default NULL,
+  `has_obs_concept_id` int(11) default NULL,
+  `has_obs_value_coded` int(11) default NULL,
+  `has_obs_value_drug` int(11) default NULL,
+  `has_obs_value_datetime` datetime default NULL,
+  `has_obs_value_numeric` double default NULL,
+  `has_obs_value_text` text,
+  `has_program_id` int(11) default NULL,
+  `has_program_workflow_state_id` int(11) default NULL,
+  `has_identifier_type_id` int(11) default NULL,
+  `has_relationship_type_id` int(11) default NULL,
+  `has_order_type_id` int(11) default NULL,
+  `sort_weight` double default NULL,
+  `creator` int(11) NOT NULL,
+  `date_created` datetime NOT NULL,
+  `voided` smallint(6) default '0',
+  `voided_by` int(11) default NULL,
+  `date_voided` datetime default NULL,
+  `void_reason` varchar(255) default NULL,
+  `changed_by` int(11) default NULL,
+  `date_changed` datetime default NULL,
+  `uuid` char(38) default NULL,
+  PRIMARY KEY  (`task_id`),
+  KEY `task_creator` (`creator`),
+  KEY `user_who_voided_task` (`voided_by`),
+  KEY `user_who_changed_task` (`changed_by`),
+  CONSTRAINT `task_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `user_who_changed_task` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `user_who_voided_task` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2129,7 +2785,7 @@ CREATE TABLE `tribe` (
   `retired` tinyint(1) NOT NULL default '0',
   `name` varchar(50) NOT NULL default '',
   PRIMARY KEY  (`tribe_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2176,15 +2832,15 @@ CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `system_id` varchar(50) NOT NULL default '',
   `username` varchar(50) default NULL,
-  `password` varchar(50) default NULL,
-  `salt` varchar(50) default NULL,
+  `password` varchar(128) default NULL,
+  `salt` varchar(128) default NULL,
   `secret_question` varchar(255) default NULL,
   `secret_answer` varchar(255) default NULL,
   `creator` int(11) NOT NULL default '0',
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
-  `voided` tinyint(1) NOT NULL default '0',
+  `voided` smallint(6) NOT NULL default '0',
   `voided_by` int(11) default NULL,
   `date_voided` datetime default NULL,
   `void_reason` varchar(255) default NULL,
@@ -2265,11 +2921,14 @@ CREATE TABLE `weight_height_for_ages` (
   `median_weight` double default NULL,
   `standard_low_weight` double default NULL,
   `standard_high_weight` double default NULL,
-  `age_sex` char(4) default NULL
+  `age_sex` char(4) default NULL,
+  KEY `index_weight_height_for_ages_on_age_in_months` (`age_in_months`),
+  KEY `index_weight_height_for_ages_on_sex` (`sex`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -2278,4 +2937,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-06-02 13:20:39
+-- Dump completed on 2010-03-16 13:17:46
