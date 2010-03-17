@@ -1,22 +1,49 @@
 require 'abstract_unit'
+require 'fixtures/article'
 require 'fixtures/product'
 require 'fixtures/tariff'
 require 'fixtures/product_tariff'
 require 'fixtures/suburb'
 require 'fixtures/street'
 require 'fixtures/restaurant'
+require 'fixtures/dorm'
+require 'fixtures/room'
+require 'fixtures/room_attribute'
+require 'fixtures/room_attribute_assignment'
+require 'fixtures/student'
+require 'fixtures/room_assignment'
+require 'fixtures/user'
+require 'fixtures/reading'
 
-class TestAssociations < Test::Unit::TestCase
-  fixtures :products, :tariffs, :product_tariffs, :suburbs, :streets, :restaurants, :restaurants_suburbs
+class TestAssociations < ActiveSupport::TestCase
+  fixtures :articles, :products, :tariffs, :product_tariffs, :suburbs, :streets, :restaurants, :restaurants_suburbs,
+           :dorms, :rooms, :room_attributes, :room_attribute_assignments, :students, :room_assignments, :users, :readings,
+           :memberships
   
-  def test_quoted_table_columns
-    assert_equal "product_tariffs.product_id,product_tariffs.tariff_id,product_tariffs.tariff_start_date", 
-        ProductTariff.send(:quoted_table_columns, ProductTariff.primary_key)
+  def test_has_many_through_with_conditions_when_through_association_is_not_composite
+    user = User.find(:first)
+    assert_equal 1, user.articles.find(:all, :conditions => ["articles.name = ?", "Article One"]).size
+  end
+
+  def test_has_many_through_with_conditions_when_through_association_is_composite
+    room = Room.find(:first)
+    assert_equal 0, room.room_attributes.find(:all, :conditions => ["room_attributes.name != ?", "keg"]).size
+  end
+
+  def test_has_many_through_on_custom_finder_when_through_association_is_composite_finder_when_through_association_is_not_composite
+    user = User.find(:first)
+    assert_equal 1, user.find_custom_articles.size
+  end
+
+  def test_has_many_through_on_custom_finder_when_through_association_is_composite
+    room = Room.find(:first)
+    assert_equal 0, room.find_custom_room_attributes.size
   end
   
   def test_count
     assert_equal 2, Product.count(:include => :product_tariffs)
     assert_equal 3, Tariff.count(:include => :product_tariffs)
+    assert_equal 2, Tariff.count(:group => :start_date).size
   end
   
   def test_products
@@ -94,6 +121,21 @@ class TestAssociations < Test::Unit::TestCase
     assert_equal 3, @products.inject(0) {|sum, product| sum + product.instance_variable_get('@tariffs').length},
       "Incorrect number of tariffs returned"
   end
+  
+  def test_has_many_through_when_not_pre_loaded
+  	student = Student.find(:first)
+  	rooms = student.rooms
+  	assert_equal 1, rooms.size
+  	assert_equal 1, rooms.first.dorm_id
+  	assert_equal 1, rooms.first.room_id
+  end
+  
+  def test_has_many_through_when_through_association_is_composite
+    dorm = Dorm.find(:first)
+    assert_equal 1, dorm.rooms.length
+    assert_equal 1, dorm.rooms.first.room_attributes.length
+    assert_equal 'keg', dorm.rooms.first.room_attributes.first.name
+  end
 
   def test_associations_with_conditions
     @suburb = Suburb.find([2, 1])
@@ -115,5 +157,29 @@ class TestAssociations < Test::Unit::TestCase
     
     @restaurant = Restaurant.find([1,1], :include => :suburbs)
     assert_equal 2, @restaurant.suburbs.size  
+  end
+  
+  def test_has_many_with_primary_key
+    @membership = Membership.find([1, 1])
+    
+    assert_equal 2, @membership.readings.size
+  end
+
+  def test_has_one_with_primary_key
+    @membership = Membership.find([1, 1])
+    
+    assert_equal 2, @membership.reading.id
+  end
+
+  def test_joins_has_many_with_primary_key
+    @membership = Membership.find(:first, :joins => :readings, :conditions => { :readings => { :id => 1 } })
+    
+    assert_equal [1, 1], @membership.id
+  end
+
+  def test_joins_has_one_with_primary_key
+    @membership = Membership.find(:first, :joins => :reading, :conditions => { :readings => { :id => 2 } })
+    
+    assert_equal [1, 1], @membership.id
   end
 end

@@ -33,14 +33,18 @@ unless defined?(ActiveRecord)
   end
 end
 
+require 'active_record/associations.rb'
+
 require 'composite_primary_keys/fixtures'
 require 'composite_primary_keys/composite_arrays'
 require 'composite_primary_keys/associations'
+require 'composite_primary_keys/association_preload'
 require 'composite_primary_keys/reflection'
 require 'composite_primary_keys/base'
 require 'composite_primary_keys/calculations'
 require 'composite_primary_keys/migration'
 require 'composite_primary_keys/attribute_methods'
+require 'composite_primary_keys/validations/uniqueness'
 
 ActiveRecord::Base.class_eval do
   include CompositePrimaryKeys::ActiveRecord::Base

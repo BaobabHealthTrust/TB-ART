@@ -2,7 +2,7 @@ require 'abstract_unit'
 require 'fixtures/reference_type'
 require 'fixtures/reference_code'
 
-class TestIds < Test::Unit::TestCase
+class TestIds < ActiveSupport::TestCase
   fixtures :reference_types, :reference_codes
   
   CLASSES = {
@@ -43,6 +43,13 @@ class TestIds < Test::Unit::TestCase
       to_test = @klass.find(:all, :order => order)[0..1].map(&:id)
       assert_equal '(1,1),(1,2)', @klass.ids_to_s(to_test) if @key_test == :dual
       assert_equal '1,1;1,2', @klass.ids_to_s(to_test, ',', ';', '', '') if @key_test == :dual
+    end
+  end
+  
+  def test_composite_where_clause
+    testing_with do
+      where = 'reference_codes.reference_type_id=1 AND reference_codes.reference_code=2) OR (reference_codes.reference_type_id=2 AND reference_codes.reference_code=2'
+      assert_equal(where, @klass.composite_where_clause([[1, 2], [2, 2]])) if @key_test == :dual
     end
   end
   

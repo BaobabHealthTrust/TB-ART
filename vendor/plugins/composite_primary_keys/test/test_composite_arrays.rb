@@ -2,7 +2,7 @@ require 'abstract_unit'
 require 'fixtures/reference_type'
 require 'fixtures/reference_code'
 
-class CompositeArraysTest < Test::Unit::TestCase
+class CompositeArraysTest < ActiveSupport::TestCase
 
   def test_new_primary_keys
     keys = CompositePrimaryKeys::CompositeKeys.new
@@ -42,5 +42,10 @@ class CompositeArraysTest < Test::Unit::TestCase
     keys = [1,2,3].to_composite_ids
     assert_equal CompositePrimaryKeys::CompositeIds, keys.class
     assert_equal '1,2,3', keys.to_s
+  end
+  
+  def test_flatten
+    keys = [CompositePrimaryKeys::CompositeIds.new([1,2,3]), CompositePrimaryKeys::CompositeIds.new([4,5,6])]
+    assert_equal 6, keys.flatten.size
   end
 end
