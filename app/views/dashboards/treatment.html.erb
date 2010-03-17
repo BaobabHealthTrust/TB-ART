@@ -9,6 +9,7 @@
   jQuery(document).ready(function($) {
     $('#dispense').click(function() { window.location = '/dispensations/new?patient_id=<%= @patient.id -%>' })
     $('#prescribe').click(function() { window.location = '/prescriptions/new?patient_id=<%= @patient.id -%>' })
+    $('#regimen').click(function() { window.location = '/regimens/new?patient_id=<%= @patient.id -%>' })
     $('#treatment li.data div.void').click(function() { 
       node = $(this).parent();
       $.post('/prescriptions/void/?patient_id=<%= @patient.id -%>&order_id=' + node.attr('prescription'), {}, function(data, status) {
@@ -52,12 +53,13 @@
         <li class="data">No prescriptions are available for this patient today</li>
       <% end %>
     </ul>
-    <button id="prescribe" class="silver" style="float:right;margin-top:10px;"><span>New Prescription</span></button>    
+    <button id="regimen" class="silver" style="float:right;margin-top:10px;"><span>Regimen</span></button>    
+    <button id="prescribe" class="silver" style="float:right;margin-top:10px;"><span>Prescribe</span></button>    
     <button id="dispense" class="silver" style="float:right;margin-top:10px;"><span>Dispense</span></button>    
     <div style="padding-top:20px;">
       <form id='barcodeForm' action="/dispensations/create?patient_id=<%= @patient.id -%>" method="post">
         <div style="float:left;margin-top:-6px;"><label for="barcode" style="margin-top:-5px;"><img src="/images/barcode.jpg" style="vertical-align:top;background:white;"/></label></div>
-        <%= text_field_tag :identifier, '', {:id => 'barcode', :class => 'touchscreenTextInput', :style => 'position:absolute;width:330px' } %>
+        <%= text_field_tag :identifier, '', {:id => 'barcode', :class => 'touchscreenTextInput', :style => 'position:absolute;width:230px' } %>
         <%= submit_tag "Submit", :style => "display:none" %>
       </form>
     </div>
