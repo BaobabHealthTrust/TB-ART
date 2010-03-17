@@ -355,6 +355,7 @@ button {
   font-weight:bold; 
   padding:0; 
   text-align:center; 
+  border:1px solid black;
   -moz-user-select:none;
   -moz-user-focus:disabled;
 }
@@ -366,8 +367,8 @@ button span {
   display:block; 
   white-space:nowrap; 
   padding:0 8px; 
-  height:57px; 
-  line-height:57px;
+  height:55px; 
+  line-height:55px;
   color:white; 
   -moz-user-select:none;
   -moz-user-focus:disabled;
