@@ -38,7 +38,7 @@
     :allowFreeText => 'false',
     :helpText => "Prescribe regimen for which program?"}%>
   
-  <%= select_tag :continue_existing_regimen, options_for_select([['YES','YES'],['NO','NO']]), {
+  <%= select_tag :continue_existing_regimen, options_for_select([['',''],['YES','YES'],['NO','NO']], ''), {
     :textCase => "upper", 
     :allowFreeText => 'false',
     :condition => 'current_regimens_for_programs[$("patient_program").value] != null',
