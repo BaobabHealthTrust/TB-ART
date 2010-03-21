@@ -98,7 +98,7 @@ module TouchscreenHelper
      :allowFreeText => false 
     }.merge(options)                 
     content = ""
-    content << hidden_tag("observations[][value_coded_or_text]", value, options) 
+    content << hidden_field_tag("observations[][value_coded_or_text]", value, options) 
     content << touch_meta_tag(concept, patient, time, 'value_coded_or_text', options)
     content
   end
