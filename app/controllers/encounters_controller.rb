@@ -21,10 +21,11 @@ class EncountersController < ApplicationController
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name] ||= "DIAGNOSIS" if encounter.type.name == "DIAGNOSIS"
       # Handle multiple select
-      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
+      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].compact!.blank?
         values = observation.delete(:value_coded_or_text_multiple)
         values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
       else      
+        observation.delete(:value_coded_or_text_multiple)
         Observation.create(observation)
       end
     end
