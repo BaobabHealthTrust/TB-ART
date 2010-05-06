@@ -47,7 +47,7 @@ class PatientProgram < ActiveRecord::Base
   end
 
   def regimens(weight=nil)
-    RegimenCriteria.program(program_id).criteria(weight).all(
+    Regimen.program(program_id).criteria(weight).all(
       :select => 'concept_id', 
       :group => 'concept_id, program_id',
       :include => :concept).map(&:concept)

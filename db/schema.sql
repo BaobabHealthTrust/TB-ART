@@ -754,7 +754,7 @@ CREATE TABLE `encounter` (
   CONSTRAINT `encounter_provider` FOREIGN KEY (`provider_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `encounter_type_id` FOREIGN KEY (`encounter_type`) REFERENCES `encounter_type` (`encounter_type_id`),
   CONSTRAINT `user_who_voided_encounter` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=191068 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=191075 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -802,8 +802,8 @@ CREATE TABLE `external_source` (
   PRIMARY KEY  (`external_source_id`),
   KEY `map_ext_source` (`source`),
   KEY `map_ext_creator` (`creator`),
-  CONSTRAINT `map_ext_source` FOREIGN KEY (`source`) REFERENCES `concept_source` (`concept_source_id`),
-  CONSTRAINT `map_ext_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `map_ext_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `map_ext_source` FOREIGN KEY (`source`) REFERENCES `concept_source` (`concept_source_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1022 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
@@ -1336,6 +1336,25 @@ CREATE TABLE `mime_type` (
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary table structure for view `my_patient_view`
+--
+
+DROP TABLE IF EXISTS `my_patient_view`;
+/*!50001 DROP VIEW IF EXISTS `my_patient_view`*/;
+/*!50001 CREATE TABLE `my_patient_view` (
+  `patient_id` int(11),
+  `tribe` int(11),
+  `creator` int(11),
+  `date_created` datetime,
+  `changed_by` int(11),
+  `date_changed` datetime,
+  `voided` smallint(6),
+  `voided_by` int(11),
+  `date_voided` datetime,
+  `void_reason` varchar(255)
+) */;
+
+--
 -- Table structure for table `note`
 --
 
@@ -1508,7 +1527,7 @@ CREATE TABLE `obs` (
   CONSTRAINT `obs_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
   CONSTRAINT `person_obs` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`) ON UPDATE CASCADE,
   CONSTRAINT `user_who_voided_obs` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=357018 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=357093 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1615,7 +1634,7 @@ CREATE TABLE `orders` (
   CONSTRAINT `type_of_order` FOREIGN KEY (`order_type_id`) REFERENCES `order_type` (`order_type_id`),
   CONSTRAINT `user_who_discontinued_order` FOREIGN KEY (`discontinued_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_order` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25401 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25403 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2324,33 +2343,6 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `regimen` (
   `regimen_id` int(11) NOT NULL auto_increment,
-  `regimen_criteria_id` int(11) NOT NULL default '0',
-  `drug_inventory_id` int(11) default '0',
-  `dose` double default NULL,
-  `equivalent_daily_dose` double default NULL,
-  `units` varchar(255) default NULL,
-  `frequency` varchar(255) default NULL,
-  `prn` tinyint(1) NOT NULL default '0',
-  `complex` tinyint(1) NOT NULL default '0',
-  `quantity` int(11) default NULL,
-  `instructions` text,
-  PRIMARY KEY  (`regimen_id`),
-  KEY `map_regimen_criteria` (`regimen_criteria_id`),
-  KEY `map_drug_inventory` (`drug_inventory_id`),
-  CONSTRAINT `map_drug_inventory` FOREIGN KEY (`drug_inventory_id`) REFERENCES `drug` (`drug_id`),
-  CONSTRAINT `map_regimen_criteria` FOREIGN KEY (`regimen_criteria_id`) REFERENCES `regimen_criteria` (`regimen_criteria_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
--- Table structure for table `regimen_criteria`
---
-
-DROP TABLE IF EXISTS `regimen_criteria`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `regimen_criteria` (
-  `regimen_criteria_id` int(11) NOT NULL auto_increment,
   `concept_id` int(11) NOT NULL default '0',
   `min_weight` int(3) NOT NULL default '0',
   `max_weight` int(3) NOT NULL default '200',
@@ -2360,10 +2352,49 @@ CREATE TABLE `regimen_criteria` (
   `retired_by` int(11) default NULL,
   `date_retired` datetime default NULL,
   `program_id` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`regimen_criteria_id`),
+  PRIMARY KEY  (`regimen_id`),
   KEY `map_concept` (`concept_id`),
   CONSTRAINT `map_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `regimen_drug_order`
+--
+
+DROP TABLE IF EXISTS `regimen_drug_order`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `regimen_drug_order` (
+  `regimen_drug_order_id` int(11) NOT NULL auto_increment,
+  `regimen_id` int(11) NOT NULL default '0',
+  `drug_inventory_id` int(11) default '0',
+  `dose` double default NULL,
+  `equivalent_daily_dose` double default NULL,
+  `units` varchar(255) default NULL,
+  `frequency` varchar(255) default NULL,
+  `prn` tinyint(1) NOT NULL default '0',
+  `complex` tinyint(1) NOT NULL default '0',
+  `quantity` int(11) default NULL,
+  `instructions` text,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `voided` smallint(6) NOT NULL default '0',
+  `voided_by` int(11) default NULL,
+  `date_voided` datetime default NULL,
+  `void_reason` varchar(255) default NULL,
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`regimen_drug_order_id`),
+  UNIQUE KEY `regimen_drug_order_uuid_index` (`uuid`),
+  KEY `regimen_drug_order_creator` (`creator`),
+  KEY `user_who_voided_regimen_drug_order` (`voided_by`),
+  KEY `map_regimen` (`regimen_id`),
+  KEY `map_drug_inventory` (`drug_inventory_id`),
+  CONSTRAINT `map_drug_inventory` FOREIGN KEY (`drug_inventory_id`) REFERENCES `drug` (`drug_id`),
+  CONSTRAINT `map_regimen` FOREIGN KEY (`regimen_id`) REFERENCES `regimen` (`regimen_id`),
+  CONSTRAINT `regimen_drug_order_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `user_who_voided_regimen_drug_order` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2725,7 +2756,7 @@ CREATE TABLE `sessions` (
   `updated_at` datetime default NULL,
   PRIMARY KEY  (`id`),
   KEY `sessions_session_id_index` (`session_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18052 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18058 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2856,6 +2887,98 @@ CREATE TABLE `users` (
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary table structure for view `v_encounter_mdt`
+--
+
+DROP TABLE IF EXISTS `v_encounter_mdt`;
+/*!50001 DROP VIEW IF EXISTS `v_encounter_mdt`*/;
+/*!50001 CREATE TABLE `v_encounter_mdt` (
+  `patient_id` int(11),
+  `encounter_type` int(11),
+  `encounter_datetime` datetime
+) */;
+
+--
+-- Temporary table structure for view `v_encounter_mr`
+--
+
+DROP TABLE IF EXISTS `v_encounter_mr`;
+/*!50001 DROP VIEW IF EXISTS `v_encounter_mr`*/;
+/*!50001 CREATE TABLE `v_encounter_mr` (
+  `encounter_id` int(11),
+  `encounter_type` int(11),
+  `patient_id` int(11),
+  `provider_id` int(11),
+  `location_id` int(11),
+  `form_id` int(11),
+  `encounter_datetime` datetime,
+  `creator` int(11),
+  `date_created` datetime,
+  `voided` smallint(6),
+  `voided_by` int(11),
+  `date_voided` datetime,
+  `void_reason` varchar(255)
+) */;
+
+--
+-- Temporary table structure for view `v_feeding_first`
+--
+
+DROP TABLE IF EXISTS `v_feeding_first`;
+/*!50001 DROP VIEW IF EXISTS `v_feeding_first`*/;
+/*!50001 CREATE TABLE `v_feeding_first` (
+  `person_id` int(11),
+  `value_coded` int(11),
+  `obs_datetime` datetime
+) */;
+
+--
+-- Temporary table structure for view `v_feeding_last`
+--
+
+DROP TABLE IF EXISTS `v_feeding_last`;
+/*!50001 DROP VIEW IF EXISTS `v_feeding_last`*/;
+/*!50001 CREATE TABLE `v_feeding_last` (
+  `person_id` int(11),
+  `value_coded` int(11),
+  `obs_datetime` datetime
+) */;
+
+--
+-- Temporary table structure for view `v_max_edt`
+--
+
+DROP TABLE IF EXISTS `v_max_edt`;
+/*!50001 DROP VIEW IF EXISTS `v_max_edt`*/;
+/*!50001 CREATE TABLE `v_max_edt` (
+  `patient_id` int(11),
+  `encounter_type` int(11),
+  `encounter_datetime` datetime
+) */;
+
+--
+-- Temporary table structure for view `v_patient_state_mr`
+--
+
+DROP TABLE IF EXISTS `v_patient_state_mr`;
+/*!50001 DROP VIEW IF EXISTS `v_patient_state_mr`*/;
+/*!50001 CREATE TABLE `v_patient_state_mr` (
+  `patient_state_id` int(11),
+  `patient_program_id` int(11),
+  `state` int(11),
+  `start_date` date,
+  `end_date` date,
+  `creator` int(11),
+  `date_created` datetime,
+  `changed_by` int(11),
+  `date_changed` datetime,
+  `voided` smallint(6),
+  `voided_by` int(11),
+  `date_voided` datetime,
+  `void_reason` varchar(255)
+) */;
+
+--
 -- Table structure for table `weight_for_height`
 --
 
@@ -2927,8 +3050,77 @@ CREATE TABLE `weight_height_for_ages` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
+--
+-- Final view structure for view `my_patient_view`
+--
 
+/*!50001 DROP TABLE `my_patient_view`*/;
+/*!50001 DROP VIEW IF EXISTS `my_patient_view`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `my_patient_view` AS select `patient`.`patient_id` AS `patient_id`,`patient`.`tribe` AS `tribe`,`patient`.`creator` AS `creator`,`patient`.`date_created` AS `date_created`,`patient`.`changed_by` AS `changed_by`,`patient`.`date_changed` AS `date_changed`,`patient`.`voided` AS `voided`,`patient`.`voided_by` AS `voided_by`,`patient`.`date_voided` AS `date_voided`,`patient`.`void_reason` AS `void_reason` from `patient` limit 10 */;
+
+--
+-- Final view structure for view `v_encounter_mdt`
+--
+
+/*!50001 DROP TABLE `v_encounter_mdt`*/;
+/*!50001 DROP VIEW IF EXISTS `v_encounter_mdt`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_encounter_mdt` AS select `encounter`.`patient_id` AS `patient_id`,`encounter`.`encounter_type` AS `encounter_type`,max(`encounter`.`encounter_datetime`) AS `encounter_datetime` from `encounter` where (`encounter`.`voided` = 0) group by `encounter`.`patient_id`,`encounter`.`encounter_type` */;
+
+--
+-- Final view structure for view `v_encounter_mr`
+--
+
+/*!50001 DROP TABLE `v_encounter_mr`*/;
+/*!50001 DROP VIEW IF EXISTS `v_encounter_mr`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_encounter_mr` AS select `e`.`encounter_id` AS `encounter_id`,`e`.`encounter_type` AS `encounter_type`,`e`.`patient_id` AS `patient_id`,`e`.`provider_id` AS `provider_id`,`e`.`location_id` AS `location_id`,`e`.`form_id` AS `form_id`,`e`.`encounter_datetime` AS `encounter_datetime`,`e`.`creator` AS `creator`,`e`.`date_created` AS `date_created`,`e`.`voided` AS `voided`,`e`.`voided_by` AS `voided_by`,`e`.`date_voided` AS `date_voided`,`e`.`void_reason` AS `void_reason` from (`encounter` `e` join `v_encounter_mdt` `mdt` on(((`e`.`patient_id` = `mdt`.`patient_id`) and (`e`.`encounter_type` = `mdt`.`encounter_type`) and (`e`.`encounter_datetime` = `mdt`.`encounter_datetime`) and (`e`.`voided` = 0)))) group by `e`.`patient_id`,`e`.`encounter_type` */;
+
+--
+-- Final view structure for view `v_feeding_first`
+--
+
+/*!50001 DROP TABLE `v_feeding_first`*/;
+/*!50001 DROP VIEW IF EXISTS `v_feeding_first`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_feeding_first` AS select `obs`.`person_id` AS `person_id`,`obs`.`value_coded` AS `value_coded`,min(`obs`.`obs_datetime`) AS `obs_datetime` from `obs` where ((`obs`.`concept_id` = 1151) and (`obs`.`voided` = 0)) group by `obs`.`person_id`,`obs`.`value_coded` */;
+
+--
+-- Final view structure for view `v_feeding_last`
+--
+
+/*!50001 DROP TABLE `v_feeding_last`*/;
+/*!50001 DROP VIEW IF EXISTS `v_feeding_last`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_feeding_last` AS select `obs`.`person_id` AS `person_id`,`obs`.`value_coded` AS `value_coded`,min(`obs`.`obs_datetime`) AS `obs_datetime` from `obs` where ((`obs`.`concept_id` = 1151) and (`obs`.`voided` = 0)) group by `obs`.`person_id`,`obs`.`value_coded` */;
+
+--
+-- Final view structure for view `v_max_edt`
+--
+
+/*!50001 DROP TABLE `v_max_edt`*/;
+/*!50001 DROP VIEW IF EXISTS `v_max_edt`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_max_edt` AS select `encounter`.`patient_id` AS `patient_id`,`encounter`.`encounter_type` AS `encounter_type`,max(`encounter`.`encounter_datetime`) AS `encounter_datetime` from `encounter` where (`encounter`.`voided` = 0) group by `encounter`.`patient_id`,`encounter`.`encounter_type` */;
+
+--
+-- Final view structure for view `v_patient_state_mr`
+--
+
+/*!50001 DROP TABLE `v_patient_state_mr`*/;
+/*!50001 DROP VIEW IF EXISTS `v_patient_state_mr`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_patient_state_mr` AS select `patient_state`.`patient_state_id` AS `patient_state_id`,`patient_state`.`patient_program_id` AS `patient_program_id`,`patient_state`.`state` AS `state`,`patient_state`.`start_date` AS `start_date`,`patient_state`.`end_date` AS `end_date`,`patient_state`.`creator` AS `creator`,`patient_state`.`date_created` AS `date_created`,`patient_state`.`changed_by` AS `changed_by`,`patient_state`.`date_changed` AS `date_changed`,`patient_state`.`voided` AS `voided`,`patient_state`.`voided_by` AS `voided_by`,`patient_state`.`date_voided` AS `date_voided`,`patient_state`.`void_reason` AS `void_reason` from `patient_state` where `patient_state`.`patient_state_id` in (select max(`patient_state`.`patient_state_id`) AS `MAX(patient_state_id)` from `patient_state` where (`patient_state`.`voided` = 0) group by `patient_state`.`patient_program_id`) */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -2937,4 +3129,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-03-16 13:17:46
+-- Dump completed on 2010-05-06  4:26:32

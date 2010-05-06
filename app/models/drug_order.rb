@@ -53,6 +53,7 @@ class DrugOrder < ActiveRecord::Base
     return 5 if frequency == "FIVE TIMES A DAY (5X/D)"
     return 6 if frequency == "SIX TIMES A DAY (Q4HRS)"
     return 1 if frequency == "IN THE MORNING (QAM)"
+    return 1 if frequency == "ONCE A DAY AT NOON (QNOON)"
     return 1 if frequency == "IN THE EVENING (QPM)"
     return 1 if frequency == "ONCE A DAY AT NIGHT (QHS)"
     return 0.5 if frequency == "EVERY OTHER DAY (QOD)"

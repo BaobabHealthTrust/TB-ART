@@ -10,7 +10,7 @@ class RegimensController < ApplicationController
     encounter = @patient.current_treatment_encounter
     start_date = Time.now
     auto_expire_date = Time.now + params[:duration].to_i.days
-    orders = Regimen.all(:conditions => {:regimen_criteria_id => params[:regimen]})
+    orders = RegimenDrugOrder.all(:conditions => {:regimen_id => params[:regimen]})
     ActiveRecord::Base.transaction do
       # Need to write an obs for the regimen they are on, note that this is ARV
       # Specific at the moment and will likely need to have some kind of lookup
@@ -53,17 +53,17 @@ class RegimensController < ApplicationController
   
   def dosing
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @criteria = RegimenCriteria.criteria(@patient.current_weight).all(:conditions => {:concept_id => params[:id]}, :include => :regimens)
+    @criteria = Regimen.criteria(@patient.current_weight).all(:conditions => {:concept_id => params[:id]}, :include => :regimen_drug_orders)
     @options = @criteria.map do |r| 
-      [r.regimen_criteria_id, r.regimens.map(&:to_s).join('; ')]
+      [r.regimen_id, r.regimen_drug_orders.map(&:to_s).join('; ')]
     end
     render :layout => false    
   end
   
   # Look up likely durations for the regimen
   def durations
-    @regimen = RegimenCriteria.find_by_concept_id(params[:id], :include => :regimens)
-    @drug_id = @regimen.regimens.first.drug_inventory_id rescue nil
+    @regimen = Regimen.find_by_concept_id(params[:id], :include => :regimen_drug_orders)
+    @drug_id = @regimen.regimen_drug_orders.first.drug_inventory_id rescue nil
     render :text => "No matching durations found for regimen" and return unless @drug_id
 
     # Grab the 10 most popular durations for this drug

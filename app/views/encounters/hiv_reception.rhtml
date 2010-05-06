@@ -10,6 +10,11 @@
     var button = "<button onmousedown='new_relationship();' class='button navButton gray'><span>New Relationship</span></button>";
     $('tt_extraButtons').innerHTML = button
   }
+  
+  function hide_new_relationship_button() {
+    $('tt_extraButtons').innerHTML = "";    
+  }
+  
 </script>  
 <form id='appointment' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "HIV RECEPTION" %>
@@ -29,7 +34,9 @@
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
   
   <label for='patient_present'>Patient Present</label>
-    <%= select_tag "observations[][value_coded_or_text]", options_for_select([['Yes','YES'],['No','NO']]), :id => 'patient_present' %>
+    <%= select_tag "observations[][value_coded_or_text]", options_for_select([['Yes','YES'],['No','NO']]), 
+      {:id => 'patient_present',
+      :tt_onLoad => 'hide_new_relationship_button()'} %>
     <%= hidden_field_tag("observations[][value_text]", nil) %>
     <%= hidden_field_tag("observations[][concept_name]", "PATIENT PRESENT") %>
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
