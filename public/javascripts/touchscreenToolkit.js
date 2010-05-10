@@ -1921,9 +1921,16 @@ TTInput.prototype = {
 		this.shouldConfirm = false;
 
     if (isDateElement(this.formElement)) {
-      this.value.match(/(\d+)\/(\d+)\/(\d+)/);
+      var val = this.value;
+      var thisDate;
+      if (val.match(/(\d{4})-(\d{2})-(\d{2})/)) {
+        thisDate = new Date(RegExp.$1,parseFloat(RegExp.$2)-1, RegExp.$3);
+      } else {
+        val = val.replace(/-/g, '/');
+        val.match(/(\d+)\/(\d+)\/(\d+)/);
+        thisDate = new Date(RegExp.$3,parseFloat(RegExp.$2)-1, RegExp.$1);
+      }
       //var thisDate = new Date(this.value);
-      var thisDate = new Date(RegExp.$3,parseFloat(RegExp.$2)-1, RegExp.$1);
 			minValue = this.element.getAttribute("min");
 			maxValue = this.element.getAttribute("max");
 			absMinValue = this.element.getAttribute("absoluteMin");
