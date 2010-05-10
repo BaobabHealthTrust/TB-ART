@@ -54,6 +54,7 @@
       {:id => 'initial_date',
        :field_type => 'date', 
        :helpText => "Initial state start date",
+       :max => "#{(Date.today).strftime('%Y-%m-%d')}",
        :tt_pageStyleClass => "Date DatesOnly"} %>     
 <!--
   <%= select_tag 'current_state', params[:current_state],     

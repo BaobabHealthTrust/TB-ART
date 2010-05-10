@@ -344,8 +344,7 @@ function populateInputPage(pageNum) {
     identifier = splitResult[splitResult.length-1]
   }
 	wrapperPage.setAttribute('id','tt_page_'+identifier);
-	wrapperPage.setAttribute('class','inputPage');
-  wrapperPage.appendChild(inputPage);
+	wrapperPage.appendChild(inputPage);
 
 	$('tt_staticControlsWrapper').setAttribute('class','tt_controls_'+identifier);
 

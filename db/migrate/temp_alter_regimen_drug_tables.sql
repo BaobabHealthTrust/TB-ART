@@ -1,1 +1,1 @@
-ALTER TABLE regimen RENAME regimen_drug_order
+ALTER TABLE regimen RENAME regimen_drug_order;

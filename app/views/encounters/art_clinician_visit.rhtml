@@ -59,7 +59,7 @@
   <% end %>   
 
   <label for='new_cd4_count_available'>New CD4 count available?</label>
-    <%= select_tag "new_cd4_count_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'new_cd4_count_available' %>
+    <%= select_tag "new_cd4_count_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'new_cd4_count_available', :tt_pageStyleClass => 'NoKeyboard' %>
 
   <%= touch_location_tag "CD4 COUNT LOCATION", @patient, nil,
     {:id => "cd4_count_location",
@@ -69,16 +69,12 @@
   <%= touch_date_tag "CD4 COUNT DATETIME", @patient, (Time.now - 1.month).year,
     {:id => "cd4_count_date",
      :condition => '$("new_cd4_count_available").value == "YES"',
-     :helpText => "CD4 Count Date"} %>
+     :helpText => "CD4 Count Date",
+     :max => "#{(Date.today).strftime('%Y-%m-%d')}"} %>
 
   <%= touch_numeric_tag "CD4 COUNT", @patient, nil,
     {:id => "cd4_count",
      :condition => '$("new_cd4_count_available").value == "YES"',
-     :min => 0,
-     :max => 100,
-     :absoluteMin => 0,
-     :absoluteMax => 100,
-     :units => '%',
      :helpText => "CD4 Count"} %>
   
   <%= submit_tag "Finish" %>    

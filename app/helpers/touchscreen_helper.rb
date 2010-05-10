@@ -31,12 +31,19 @@ module TouchscreenHelper
   end
 
   def touch_numeric_tag(concept, patient, value, options={}, time=DateTime.now())
+    # Try to find an associated concept_numeric for limits
+    concept_name = ConceptName.first(:conditions => {:name => concept},
+      :include => {:concept => [:concept_numeric]})
+    precision = concept_name.concept.concept_numeric.precision rescue {}
+    options = precision.merge(options)
     options = {
       :field_type => 'number',
       :validationRule => "^([0-9]+)|Unknown$",
       :validationMessage => "You must enter numbers only (for example 90)",
       :tt_pageStyleClass => "Numeric NumbersOnly"
     }.merge(options)                 
+    limits = concept_name.concept.concept_numeric.options rescue {}
+    options = limits.merge(options)
     content = ""
     content << text_field_tag("observations[][value_numeric]", value, options) 
     content << touch_meta_tag(concept, patient, time, 'value_numeric')
@@ -64,16 +71,20 @@ module TouchscreenHelper
   end
 
   def touch_options_tag(concept, patient, values, options={}, time=DateTime.now())
+    options = {
+      :tt_pageStyleClass => "NoKeyboard"
+    }.merge(options)                 
     content = ""
     content << text_field_tag("observations[][value_text]", values, options) 
     content << touch_meta_tag(concept, patient, time, 'value_text', options)
     content
   end
 
-  def touch_select_tag(concept, patient, choices, options={}, time=DateTime.now())
+  def touch_select_tag(concept, patient, choices, options={}, time=DateTime.now())    
     options = {  
      :allowFreeText => false 
     }.merge(options)                 
+    options = {:tt_pageStyleClass => "NoKeyboard"}.merge(options) if options[:ajaxURL].blank?
     kind = options[:multiple] ? "value_coded_or_text_multiple" : "value_coded_or_text"
     content = ""
     content << select_tag("observations[][#{kind}]", choices, options) 
@@ -82,14 +93,23 @@ module TouchscreenHelper
   end
 
   def touch_boolean_tag(concept, patient, value, options={}, time=DateTime.now())
+    options = {
+      :tt_pageStyleClass => "NoKeyboard"
+    }.merge(options)                 
     touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO']], value), options, time)
   end
   
   def touch_yes_no_unknown_tag(concept, patient, value, options={}, time=DateTime.now())
+    options = {
+      :tt_pageStyleClass => "NoKeyboard"
+    }.merge(options)                 
     touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']], value), options, time)
   end
   
   def touch_yes_no_tag(concept, patient, value, options={}, time=DateTime.now())
+    options = {
+      :tt_pageStyleClass => "NoKeyboard"
+    }.merge(options)                 
     touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO']], value), options, time)
   end
   
