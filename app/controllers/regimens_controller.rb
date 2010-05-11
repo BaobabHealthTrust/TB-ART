@@ -3,6 +3,7 @@ class RegimensController < ApplicationController
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
     @programs = @patient.patient_programs.all
     @current_regimens_for_programs = current_regimens_for_programs
+    @current_regimen_names_for_programs = current_regimen_names_for_programs
   end
   
   def create
@@ -87,6 +88,13 @@ class RegimensController < ApplicationController
   def current_regimens_for_programs
     @programs.inject({}) do |result, program| 
       result[program.patient_program_id] = program.current_regimen; result 
+    end
+  end
+
+  def current_regimen_names_for_programs
+    @programs.inject({}) do |result, program| 
+    
+      result[program.patient_program_id] = program.current_regimen ? Concept.find_by_concept_id(program.current_regimen).concept_names.tagged(["short"]).map(&:name) : nil; result 
     end
   end
 end

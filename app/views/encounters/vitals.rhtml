@@ -22,6 +22,10 @@
     .xLabel {
       margin-top:-17px;
     }
+    .title {
+      text-decoration:underline;
+      margin-right:10px;
+    }
     .lowWeightForHeight{color:black;background:red;}
     .medWeightForHeight {color:black;background:yellow;}
     .lowBMI {color:black;background:red;}
@@ -52,7 +56,7 @@
      currentWeight = $('weight').value;
      medianWeightHeight = [<%= WeightHeightForAge.median_weight_height(@patient.person.age, @patient.person.gender).join(',') rescue nil -%>];
      currentWeightPercentile = (currentWeight/(medianWeightHeight[0])*100).toFixed(0);
-     currentHeightPercentile = (currentHeight/(medianWeightHeight[1])*100).toFixed(0);
+     currentHeightPercentile = (currentHeight/(medianWeightHeight[1])*100).toFixed(0);     
      if (('<%= @patient.person.age %>') > 14) {
        showBMI();
      } else {
@@ -60,24 +64,25 @@
        showWeightForHeight();
      }
      // Temp, skip the summary
-     // $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '<div id="charts"></div></div>' ;
-     gotoNextPage();
+     $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '<div id="charts"></div></div>' ;
+     //gotoNextPage();
    }
         
   function showWeightHeightForAge(){
     $('weight_for_age').value = currentWeightPercentile;
     $('height_for_age').value = currentHeightPercentile;
    
-    displayText = "Weight for age:";
+    displayText = "<div><span class='title'>Weight for age:</span>";
     if (currentWeightPercentile >= 80){
       displayText += "<span class='goodWeightForAge'>" + currentWeightPercentile + "%</span><br>";
     } else if (currentWeightPercentile >= 75) {
       displayText += "<span class='medWeightForAge'>" + currentWeightPercentile + "%</span>" + " <span class='recommendation'> Moderate wasting </span><br>";
     } else {
-      displayText += "<span class='lowWeightForAge'>" + currentWeightPercentile + "%</span>" + " <span class='recommendation'> Severe wasting,</span><br>";
+      displayText += "<span class='lowWeightForAge'>" + currentWeightPercentile + "%</span>" + " <span class='recommendation'> Severe wasting</span><br>";
     }
- 
-    displayText += "Height for age:";
+    displayText += "</div>";
+     
+    displayText += "<div><span class='title'>Height for age:</span>";
     if (currentHeightPercentile >= 80){
       displayText += "<span class='goodHeightForAge'>" + currentHeightPercentile + "%</span><br>";
     } else if (currentHeightPercentile >= 75) {
@@ -85,6 +90,7 @@
     } else {
       displayText += "<span class='lowHeightForAge'>" + currentHeightPercentile + "%</span>" + " <span class='recommendation'> Severe stunted growth </span><br>";
     }
+    displayText += "</div>";
  
   }
  
@@ -96,16 +102,16 @@
 
     $('weight_for_height').value = weightForHeightPercentile;
  
-    displayText += "Weight for height:";
+    displayText += "<div><span class='title'>Weight for height:</span>";
  
     if (weightForHeightPercentile >= 80) {
       displayText += "<span class='goodWeightForHeight'>" + weightForHeightPercentile + "%</span><br>";
     } else if (weightForHeightPercentile >= 75) {
       displayText += "<span class='medWeightForHeight'>" + weightForHeightPercentile + "%</span>" + " <span class='recommendation'> Moderate wasting</span><br>";
     } else {
-      displayText += "<span class='lowWeightForHeight'>" + weightForHeightPercentile + "%</span> <br/><span class='recommendation'>Severe wasting</span><br>";
+      displayText += "<span class='lowWeightForHeight'>" + weightForHeightPercentile + "%</span> <br/><span class='recommendation'> Severe wasting</span><br>";
     }
- 
+    displayText += "</div>"; 
   }
  
   function showBMI() {
@@ -113,7 +119,7 @@
 
     $('bmi').value = currentBmi;
 
-    displayText = "BMI: ";
+    displayText = "<div><span class='title'>BMI:</span>";
     if (currentBmi > 18.5) {
       displayText += currentBmi;
     } else if (currentBmi > 17.0) {
@@ -121,6 +127,7 @@
     } else {
      displayText += "<span class='lowBMI'>" + currentBmi + "</span><br/><span class='recommendation'>Eligible for therapeutic feeding</span>";
     }
+    displayText += "</div>";
  }
  
   </script>

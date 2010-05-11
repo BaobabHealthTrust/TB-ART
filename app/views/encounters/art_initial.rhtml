@@ -23,7 +23,7 @@
   
   <%= hidden_field_tag("programs[][patient_program_id]", nil) %>
   <%= hidden_field_tag("programs[][program_id]", Program.find_by_name('HIV PROGRAM').id) %>
-  <%= hidden_field_tag("programs[][location_id]", nil) %>
+  <%= hidden_field_tag("programs[][location_id]", Location.current_health_center.id) %>
   <%= hidden_field_tag("programs[][date_enrolled]", Date.today ) %>
   <%= hidden_field_tag("programs[][states][][state]", 76) %><!-- Following -->
   <%= hidden_field_tag("programs[][states][][start_date]", Date.today) %>

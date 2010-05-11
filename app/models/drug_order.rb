@@ -71,12 +71,6 @@ class DrugOrder < ActiveRecord::Base
     equivalent_daily_dose = nil
     drug_order = nil       
     if (frequency == "VARIABLE")
-      if dose.is_a?(Array)
-        total_dose = dose.sum{|amount| amount.to_f rescue 0 }
-        return nil if total_dose.blank?
-        dose = total_dose
-      end  
-      equivalent_daily_dose ||= dose
       if instructions.blank?
         instructions = "#{drug.name}:"
         instructions += " MORNING:#{dose[0]} #{units}" unless dose[0].blank? || dose[0].to_f == 0
@@ -86,6 +80,12 @@ class DrugOrder < ActiveRecord::Base
         instructions += " for #{duration} days" 
         instructions += " (prn)" if prn == 1        
       end  
+      if dose.is_a?(Array)
+        total_dose = dose.sum{|amount| amount.to_f rescue 0 }
+        return nil if total_dose.blank?
+        dose = total_dose
+      end  
+      equivalent_daily_dose ||= dose
     else
       equivalent_daily_dose ||= dose.to_f * DrugOrder.doses_per_day(frequency)
       if instructions.blank?

@@ -714,7 +714,7 @@ display:block;
 .ShortSelectList, 
 .NumbersOnlyWithDecimal,
 .NumbersOnly,
-.DatesOnly { height: 320px !important }
-.NoKeyboard, .NoControls { height: 520px !important } 
+.DatesOnly { height: 340px !important }
+.NoKeyboard { height: 520px !important } 
 .NoKeyboard .inputFrameClass { height: 440px !important } 
 .NoKeyboard .options { height: 395px !important } 

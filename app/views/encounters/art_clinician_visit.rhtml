@@ -1,6 +1,9 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
 </script>  
+<style type="text/css">
+  .small .options li { font-size:1.1em; }
+</style>
 <form id='appointment' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "ART CLINICIAN VISIT" %>
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
@@ -13,49 +16,57 @@
       {:id => "stage_1_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage I Conditions (Adult)" } %>
+       :helpText => "Stage I Conditions (Adult)",
+       :tt_pageStyleClass => "NoKeyboard small" } %>
 
     <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT'),
       {:id => "stage_2_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage II Conditions (Adult)" } %>
+       :helpText => "Stage II Conditions (Adult)",
+       :tt_pageStyleClass => "NoKeyboard small"  } %>
 
     <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT'),
       {:id => "stage_3_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage III Conditions (Adult)" } %>
+       :helpText => "Stage III Conditions (Adult)",
+       :tt_pageStyleClass => "NoKeyboard small"  } %>
 
     <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT'),
       {:id => "stage_4_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage IV Conditions (Adult)" } %>
+       :helpText => "Stage IV Conditions (Adult)",
+       :tt_pageStyleClass => "NoKeyboard small"  } %>
   <% else %>  
     <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I PEDS'),
       {:id => "stage_1_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage I Conditions (Peds)" } %>
+       :helpText => "Stage I Conditions (Peds)",
+       :tt_pageStyleClass => "NoKeyboard small"  } %>
 
     <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
       {:id => "stage_2_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage II Conditions (Peds)" } %>
+       :helpText => "Stage II Conditions (Peds)",
+       :tt_pageStyleClass => "NoKeyboard small"  } %>
 
     <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III PEDS'),
       {:id => "stage_3_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage III Conditions (Peds)" } %>
+       :helpText => "Stage III Conditions (Peds)",
+       :tt_pageStyleClass => "NoKeyboard small"  } %>
 
     <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV PEDS'),
       {:id => "stage_4_conditions",
        :multiple => true,
        :optional => true,
-       :helpText => "Stage IV Conditions (Peds)" } %>
+       :helpText => "Stage IV Conditions (Peds)",
+       :tt_pageStyleClass => "NoKeyboard small"  } %>
   <% end %>   
 
   <label for='new_cd4_count_available'>New CD4 count available?</label>

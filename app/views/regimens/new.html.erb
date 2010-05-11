@@ -4,6 +4,8 @@
   var patient_id = "<%= @patient.patient_id %>";
   var tt_cancel_destination = "/patients/treatment/<%= @patient.patient_id %>"
   var current_regimens_for_programs = <%= @current_regimens_for_programs.to_json -%>;
+  var current_regimen_names_for_programs = <%= @current_regimen_names_for_programs.to_json -%>;
+  alert(current_regimen_names_for_programs);
 
   function set_patient_program_for_suggestions() {    
     var patient_program_id = encodeURIComponent($('patient_program').value); 
@@ -42,6 +44,7 @@
     :textCase => "upper", 
     :allowFreeText => 'false',
     :condition => 'current_regimens_for_programs[$("patient_program").value] != null',
+    :tt_onLoad => '$("infoBar"+tstCurrentPage).innerHTML = current_regimen_names_for_programs[$("patient_program").value]',
     :helpText => "Continue existing regimen?"}%>
   
   <%= select_tag :regimen_concept_id, nil, {

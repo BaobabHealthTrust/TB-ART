@@ -679,3 +679,12 @@ display:block;
   width:750px;  
   border-bottom:2px dotted;
 }  
+
+
+.ShortSelectList, 
+.NumbersOnlyWithDecimal,
+.NumbersOnly,
+.DatesOnly { height: 320px !important }
+.NoKeyboard, .NoControls { height: 520px !important } 
+.NoKeyboard .inputFrameClass { height: 440px !important } 
+.NoKeyboard .options { height: 395px !important } 
