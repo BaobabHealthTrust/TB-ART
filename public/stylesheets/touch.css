@@ -572,6 +572,10 @@ button.yellow span {
   font-size: 2em;
 }
 
+.NoInput .touchscreenTextInput {
+  display:none
+}
+
 .NoControls #viewport,
 .NoControls #keyboard,
 .NoControls .touchscreenTextInput{
@@ -718,3 +722,4 @@ display:block;
 .NoKeyboard { height: 520px !important } 
 .NoKeyboard .inputFrameClass { height: 440px !important } 
 .NoKeyboard .options { height: 395px !important } 
+.NoInput .options { height: 435px !important } 

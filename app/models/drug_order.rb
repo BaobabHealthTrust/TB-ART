@@ -73,10 +73,10 @@ class DrugOrder < ActiveRecord::Base
     if (frequency == "VARIABLE")
       if instructions.blank?
         instructions = "#{drug.name}:"
-        instructions += " MORNING:#{dose[0]} #{units}" unless dose[0].blank? || dose[0].to_f == 0
-        instructions += " AFTERNOON:#{dose[1]} #{units}" unless dose[1].blank? || dose[1].to_f == 0
-        instructions += " EVENING:#{dose[2]} #{units}" unless dose[2].blank? || dose[2].to_f == 0
-        instructions += " NIGHT:#{dose[3]} #{units}" unless dose[3].blank? || dose[3].to_f == 0
+        instructions += " IN THE MORNING (QAM):#{dose[0]} #{units}" unless dose[0].blank? || dose[0].to_f == 0
+        instructions += " ONCE A DAY AT NOON (QNOON):#{dose[1]} #{units}" unless dose[1].blank? || dose[1].to_f == 0
+        instructions += " IN THE EVENING (QPM):#{dose[2]} #{units}" unless dose[2].blank? || dose[2].to_f == 0
+        instructions += " ONCE A DAY AT NIGHT (QHS):#{dose[3]} #{units}" unless dose[3].blank? || dose[3].to_f == 0
         instructions += " for #{duration} days" 
         instructions += " (prn)" if prn == 1        
       end  

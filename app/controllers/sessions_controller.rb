@@ -23,8 +23,11 @@ class SessionsController < ApplicationController
   end
 
   # Update the session with the location information
-  def update
+  def update    
+    # First try by id, then by name
     location = Location.find(params[:location]) rescue nil
+    location ||= Location.find_by_name(params[:location]) rescue nil
+    
     unless location
       flash[:error] = "Invalid workstation location"
       render :action => 'location'

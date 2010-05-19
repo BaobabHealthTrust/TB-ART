@@ -27,7 +27,7 @@
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
           <div class="summary">
             <%= order.to_s.gsub(/\n/, '<br/>') -%>
-            <%= amount_needed = order.drug_order.amount_needed -%>
+            <% amount_needed = order.drug_order.amount_needed -%>
             <% amounts_dispensed = order.drug_order.total_drug_supply(@patient) %>
             <% amounts_dispensed.each do |amount_dispensed| %>
               <div class="subtotal dispensation"><%=h amount_dispensed.to_s %></div>

@@ -1102,6 +1102,12 @@ function gotoPage(destPage, validate){
 								 ": <div class='progressInputValue'>"+progressAreaFormat(currentInput)+"</div>";
 			currentPageIndex.removeAttribute("class");
 		}
+
+		// execute JS code when a field's page has been completed
+		if (currentInput.getAttribute("tt_onComplete")) {
+			eval(currentInput.getAttribute("tt_onComplete"));
+		}
+  
 	}
   if(destPage < tstPages.length){
 		var condition = tstFormElements[tstPages[destPage]].getAttribute("condition");

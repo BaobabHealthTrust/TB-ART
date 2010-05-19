@@ -134,7 +134,7 @@ CREATE TABLE `concept` (
   CONSTRAINT `concept_datatypes` FOREIGN KEY (`datatype_id`) REFERENCES `concept_datatype` (`concept_datatype_id`),
   CONSTRAINT `user_who_changed_concept` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_retired_concept` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6989 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7008 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -337,7 +337,7 @@ CREATE TABLE `concept_name` (
   CONSTRAINT `name_for_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `user_who_created_name` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_this_name` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9712 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9731 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -487,7 +487,7 @@ CREATE TABLE `concept_set` (
   CONSTRAINT `has_a` FOREIGN KEY (`concept_set`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `is_a` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `user_who_created` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1350 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1358 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -754,7 +754,7 @@ CREATE TABLE `encounter` (
   CONSTRAINT `encounter_provider` FOREIGN KEY (`provider_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `encounter_type_id` FOREIGN KEY (`encounter_type`) REFERENCES `encounter_type` (`encounter_type_id`),
   CONSTRAINT `user_who_voided_encounter` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=191075 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=191160 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1336,25 +1336,6 @@ CREATE TABLE `mime_type` (
 SET character_set_client = @saved_cs_client;
 
 --
--- Temporary table structure for view `my_patient_view`
---
-
-DROP TABLE IF EXISTS `my_patient_view`;
-/*!50001 DROP VIEW IF EXISTS `my_patient_view`*/;
-/*!50001 CREATE TABLE `my_patient_view` (
-  `patient_id` int(11),
-  `tribe` int(11),
-  `creator` int(11),
-  `date_created` datetime,
-  `changed_by` int(11),
-  `date_changed` datetime,
-  `voided` smallint(6),
-  `voided_by` int(11),
-  `date_voided` datetime,
-  `void_reason` varchar(255)
-) */;
-
---
 -- Table structure for table `note`
 --
 
@@ -1527,7 +1508,7 @@ CREATE TABLE `obs` (
   CONSTRAINT `obs_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
   CONSTRAINT `person_obs` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`) ON UPDATE CASCADE,
   CONSTRAINT `user_who_voided_obs` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=357093 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=357347 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1634,7 +1615,7 @@ CREATE TABLE `orders` (
   CONSTRAINT `type_of_order` FOREIGN KEY (`order_type_id`) REFERENCES `order_type` (`order_type_id`),
   CONSTRAINT `user_who_discontinued_order` FOREIGN KEY (`discontinued_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_order` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25403 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25427 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1773,7 +1754,7 @@ CREATE TABLE `patient_program` (
   CONSTRAINT `program_for_patient` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`),
   CONSTRAINT `user_who_changed` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_patient_program` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3882 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3888 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1810,7 +1791,7 @@ CREATE TABLE `patient_state` (
   CONSTRAINT `patient_state_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `patient_state_voider` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `state_for_patient` FOREIGN KEY (`state`) REFERENCES `program_workflow_state` (`program_workflow_state_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7065 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7071 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2428,7 +2409,7 @@ CREATE TABLE `relationship` (
   CONSTRAINT `relationship_type_id` FOREIGN KEY (`relationship`) REFERENCES `relationship_type` (`relationship_type_id`),
   CONSTRAINT `relation_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `relation_voider` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1992 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1993 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2756,7 +2737,7 @@ CREATE TABLE `sessions` (
   `updated_at` datetime default NULL,
   PRIMARY KEY  (`id`),
   KEY `sessions_session_id_index` (`session_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18058 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18074 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2781,9 +2762,6 @@ CREATE TABLE `task` (
   `has_obs_value_text` text,
   `has_program_id` int(11) default NULL,
   `has_program_workflow_state_id` int(11) default NULL,
-  `has_identifier_type_id` int(11) default NULL,
-  `has_relationship_type_id` int(11) default NULL,
-  `has_order_type_id` int(11) default NULL,
   `sort_weight` double default NULL,
   `creator` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
@@ -2794,6 +2772,9 @@ CREATE TABLE `task` (
   `changed_by` int(11) default NULL,
   `date_changed` datetime default NULL,
   `uuid` char(38) default NULL,
+  `has_identifier_type_id` int(11) default NULL,
+  `has_relationship_type_id` int(11) default NULL,
+  `has_order_type_id` int(11) default NULL,
   PRIMARY KEY  (`task_id`),
   KEY `task_creator` (`creator`),
   KEY `user_who_voided_task` (`voided_by`),
@@ -2801,7 +2782,7 @@ CREATE TABLE `task` (
   CONSTRAINT `task_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_changed_task` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_who_voided_task` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17461 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3051,16 +3032,6 @@ CREATE TABLE `weight_height_for_ages` (
 SET character_set_client = @saved_cs_client;
 
 --
--- Final view structure for view `my_patient_view`
---
-
-/*!50001 DROP TABLE `my_patient_view`*/;
-/*!50001 DROP VIEW IF EXISTS `my_patient_view`*/;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`openmrs`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `my_patient_view` AS select `patient`.`patient_id` AS `patient_id`,`patient`.`tribe` AS `tribe`,`patient`.`creator` AS `creator`,`patient`.`date_created` AS `date_created`,`patient`.`changed_by` AS `changed_by`,`patient`.`date_changed` AS `date_changed`,`patient`.`voided` AS `voided`,`patient`.`voided_by` AS `voided_by`,`patient`.`date_voided` AS `date_voided`,`patient`.`void_reason` AS `void_reason` from `patient` limit 10 */;
-
---
 -- Final view structure for view `v_encounter_mdt`
 --
 
@@ -3129,4 +3100,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-05-06  4:26:32
+-- Dump completed on 2010-05-15 16:09:50
