@@ -18,12 +18,12 @@ class PatientsControllerTest < ActionController::TestCase
         end  
       end
     
-      should "show the pre art number if there is one and we are on the right location" do
+      should "not show the pre art number if there is one and we are on the right location" do
         logged_in_as :mikmck, :registration do
           GlobalProperty.create(:property => 'dashboard.identifiers', :property_value => "{\"#{Location.current_location.id}\":[\"Pre ART Number\"]}")
           get :show, {:id => patient(:evan).id}
-          assert_match /Pre ART Number/, @response.body
-          assert_match /PART\-311/, @response.body
+          assert_no_match /Pre ART Number/, @response.body
+          assert_no_match /PART\-311/, @response.body
           assert_response :success
         end  
       end

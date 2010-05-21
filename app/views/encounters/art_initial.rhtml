@@ -39,11 +39,11 @@
      :optional => false,
      :helpText => "Taken ART in the last two weeks?" } %>
 
-  <%= touch_text_field_tag "ART NUMBER AT PREVIOUS LOCATION", @patient, nil,
+  <%= touch_identifier_tag @patient, "ARV Number", nil, 
     {:id => "previous_art_number",
      :optional => false,
      :helpText => "ART number at previous location" } %>
-  
+
   <%= touch_yes_no_tag "FOLLOW UP AGREEMENT", @patient, nil,
     {:id => "agrees_to_followup",
      :optional => false,

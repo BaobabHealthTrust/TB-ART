@@ -122,4 +122,17 @@ module TouchscreenHelper
     content << touch_meta_tag(concept, patient, time, 'value_coded_or_text', options)
     content
   end
+  
+  def touch_identifier_tag(patient, type, value, options={}, time=DateTime.now())
+    options = {
+      :field_type => 'alpha',
+      :allowFreeText => true
+    }.merge(options)                 
+    content = ""
+    content << hidden_field_tag("identifiers[][patient_id]", patient.id) 
+    content << hidden_field_tag("identifiers[][location_id]", Location.current_health_center) 
+    content << hidden_field_tag("identifiers[][identifier_type]", PatientIdentifierType.find_by_name(type).patient_identifier_type_id)
+    content << text_field_tag("identifiers[][identifier]", value, options) 
+    content
+  end
 end

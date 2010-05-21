@@ -4,6 +4,7 @@ class PatientIdentifierType < ActiveRecord::Base
   include Openmrs
 
   def next_identifier(options = {})
+    return nil unless options[:patient]
     case self.name
       when "National id"
         health_center_id = Location.current_location.site_id

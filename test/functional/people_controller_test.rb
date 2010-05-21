@@ -67,7 +67,7 @@ class PeopleControllerTest < ActionController::TestCase
         assert_response :success
       #end  
     end
-=end
+
     should "search for patients at remote sites and create them locally if they match **** UNDERCONSTRUCTION****" do
       # tests search action given parameters from barcode scan, find by name or find by identifier whose details are on remote server
       logged_in_as :mikmck, :registration do
@@ -77,7 +77,7 @@ class PeopleControllerTest < ActionController::TestCase
         assert response.body =~ /aaaa/
       end  
     end   
-
+=end
     should "lookup people that are not patients and return them in the search results" do
       logged_in_as :mikmck, :registration do      
         p = patient(:evan).destroy

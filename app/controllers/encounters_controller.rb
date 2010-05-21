@@ -2,10 +2,12 @@ class EncountersController < ApplicationController
 
   def create  
     @patient = Patient.find(params[:encounter][:patient_id])
+
     # Encounter handling
     encounter = Encounter.new(params[:encounter])
     encounter.encounter_datetime = session[:datetime] unless session[:datetime].blank?
     encounter.save    
+
     # Observation handling
     (params[:observations] || []).each do |observation|
       # Check to see if any values are part of this observation
@@ -33,6 +35,7 @@ class EncountersController < ApplicationController
         Observation.create(observation)
       end
     end
+
     # Program handling
     (params[:programs] || []).each do |program|
       # Look up the program if the program id is set      
@@ -46,6 +49,19 @@ class EncountersController < ApplicationController
       # Lots of states bub
       (program[:states] || []).each {|state| @patient_program.transition(state) }
     end
+
+    # Identifier handling
+    (params[:identifiers] || []).each do |identifier|
+      # Look up the identifier if the patient_identfier_id is set      
+      @patient_identifier = PatientIdentifier.find(identifier[:patient_identifier_id]) unless identifier[:patient_identifier_id].blank?
+      # Create or update
+      if @patient_identifier
+        @patient_identifier.update_attributes(identifier)      
+      else
+        @patient_identifier = @patient.patient_identifiers.create(identifier)
+      end
+    end
+
     # Go to the next task in the workflow (or dashboard)
     redirect_to next_task(@patient) 
   end

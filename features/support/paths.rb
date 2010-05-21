@@ -14,8 +14,8 @@ module NavigationHelpers
     when /the login page/
       '/login'
     
-    when /the search page/
-      '/people/search'
+    when /the clinic dashboard/
+      '/clinic'
     
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +

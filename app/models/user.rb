@@ -46,4 +46,10 @@ class User < ActiveRecord::Base
     (0..digest.size-1).each{|i| encoding << digest[i].to_s(16) }
     encoding
   end  
+  
+  # This goes away after 1.6 is here I think, but the users table in 1.5 has no
+  # auto-increment
+  def self.auto_increment
+    User.last.user_id + 1 rescue 0
+  end
 end

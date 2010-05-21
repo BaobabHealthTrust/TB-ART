@@ -7,6 +7,6 @@ When /^I start the task "([^\"]*)"$/ do |task|
 
   case task
     when "Art Clinician Visit":
-      visit '/encounters/new/art_clinician_visit?patient_id='+@patient.patient_id
+      visit "/encounters/new/art_clinician_visit?patient_id=#{@patient.patient_id}"
   end
 end
