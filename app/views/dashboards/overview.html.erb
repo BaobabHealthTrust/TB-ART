@@ -7,9 +7,12 @@
   }
   
   function voiding(node) {
-    $.post('/encounters/void/' + node.parent().attr('encounter'), {}, function(data, status) {
-      if (status == 'success') node.parent().remove();
-    })
+    confirmYesNo("Void this item?", function() {
+      hideConfirmation();
+      $.post('/encounters/void/' + node.parent().attr('encounter'), {}, function(data, status) {
+        if (status == 'success') node.parent().remove();
+      })
+    }, function() { hideConfirmation(); });
   }
 
   jQuery(document).ready(function($) {

@@ -208,6 +208,7 @@ form{
   padding-top: 5px;
   padding-left: 25px;
   width: 620px;
+  display:block;
   -moz-user-select: none;
 }
 
