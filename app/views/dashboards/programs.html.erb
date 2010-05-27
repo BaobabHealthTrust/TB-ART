@@ -5,15 +5,20 @@
     $('#programs li.data').removeClass("active");
     node.addClass("active");
   }
-
-  jQuery(document).ready(function($) {
-    $('#enroll').click(function() { window.location = '/programs/new?patient_id=<%= @patient.id -%>' })
-    $('#programs li.data div.void').click(function() { 
-      node = $(this).parent();
+  
+  function voiding(node) {
+    confirmYesNo("Void this item?", function() {
+      hideConfirmation();
+      node = node.parent();
       $.post('/programs/void/?id=' + node.attr('program'), {}, function(data, status) {
         if (status == 'success') node.remove();
       })       
-    }); 
+    }, function() { hideConfirmation(); });
+  }
+
+  jQuery(document).ready(function($) {
+    $('#enroll').click(function() { window.location = '/programs/new?patient_id=<%= @patient.id -%>' })
+    $('#programs li.data div.void').click(function() { voiding($(this)); return false; }); 
     $('#programs li.data').click(function() { select($(this)); }); 
     recent = $('#programs li.data:first');
     if (recent) select(recent);

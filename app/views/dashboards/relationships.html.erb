@@ -1,13 +1,18 @@
 <%= render :partial => 'dashboards/nav', :locals => {:active => 'relationships'} %>
 <script type="text/javascript">
-  jQuery(document).ready(function($) {
-    $('#relate').click(function() { window.location = '/relationships/search?patient_id=<%= @patient.id -%>' })
-    $('#relationships li.data div.void').click(function() { 
-      node = $(this).parent();
+  function voiding(node) {
+    confirmYesNo("Void this item?", function() {
+      hideConfirmation();
+      node = node.parent();
       $.post('/relationships/void/?id=' + node.attr('relationship'), {}, function(data, status) {
         if (status == 'success') node.remove();
       })       
-    }); 
+    }, function() { hideConfirmation(); });
+  }
+
+  jQuery(document).ready(function($) {
+    $('#relate').click(function() { window.location = '/relationships/search?patient_id=<%= @patient.id -%>' })
+    $('#relationships li.data div.void').click(function() { voiding($(this)); return false; }); 
   }) 
 </script>
 <div id="tab">
