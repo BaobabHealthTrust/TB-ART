@@ -10,3 +10,8 @@ When /^I start the task "([^\"]*)"$/ do |task|
       visit "/encounters/new/art_clinician_visit?patient_id=#{@patient.patient_id}"
   end
 end
+
+When /^I start a new prescription$/ do
+  require_patient
+  visit "/prescriptions/new?patient_id=#{@patient.patient_id}"
+end

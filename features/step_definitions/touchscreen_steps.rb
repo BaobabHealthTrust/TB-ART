@@ -9,6 +9,10 @@ When /^I select the option "([^\"]*)"$/ do |value|
   end
 end
 
+When /^I type "([^\"]*)"$/ do |value|
+  value.upcase.each_char {|c| click_button c }
+end
+
 When /^I press "([^\"]*)" until I see "([^\"]*)"$/ do |button, question|
   limit = 10
   while (!page.has_content?(question)) do
@@ -21,4 +25,12 @@ end
 # We should improve this matcher okay, or use should see directly? 
 Then /^(?:|I )should see the question "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
   page.body.should =~ /#{text}/ #
+end
+
+Then /^the options should be:$/ do |options|
+  actual_options = []
+  all(:css, '#options li').each do |option|
+    actual_options << [option.text]
+  end
+  options.diff!(actual_options)
 end

@@ -16,6 +16,10 @@ module NavigationHelpers
     
     when /the clinic dashboard/
       '/clinic'
+
+    when /the treatment dashboard/
+      require_patient
+      "/patients/treatment/#{@patient.patient_id}"
     
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
