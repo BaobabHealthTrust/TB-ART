@@ -56,9 +56,11 @@
     }
   }
     
+  var whoStage = null;  
+    
   function updateWhoStage() {
     // Everyone is supposed to be HIV positive so start them at 1
-    var whoStage = 1;
+    whoStage = 1;
     for (var i=1; i<=4; i++) {
       if ( $("stage_"+i+"_conditions").value != '') whoStage = i;
       if ( $("stage_"+i+"_conditions_adults") && $("stage_"+i+"_conditions_adults").value != '') whoStage = i;
@@ -69,7 +71,6 @@
   }
   
   function updateReasonForArtEligibility() {
-    var whoStage = parseInt($('who_stage').value);
     var reasonForArtEligibility = "UNKNOWN";    
     if (age > 14) {        
       if(whoStage >= 3) {
@@ -127,8 +128,8 @@
   function summary() {
     updateWhoStage(); 
     updateReasonForArtEligibility();  
-    var display = "<div><span class='title'>WHO Stage:</span><span class='value'>" + $('who_stage').value + "</span></div>";
-    display += "<div><span class='title'>Reason for ART Eligibility:</span><span class='value'>" + $('reason_for_art_eligibility').value + "</span></div>";
+    var display = "<div><span class='title'>WHO Stage: " + $('who_stage').value + "</span></div>";
+    display += "<div><span class='title'>Reason for ART Eligibility: " + $('reason_for_art_eligibility').value + "</span></div>";
     $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + display + '</div>' ;    
   }  
   

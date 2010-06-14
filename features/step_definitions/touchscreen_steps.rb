@@ -13,9 +13,9 @@ When /^I type "([^\"]*)"$/ do |value|
   value.upcase.each_char {|c| click_button c }
 end
 
-When /^I press "([^\"]*)" until I see "([^\"]*)"$/ do |button, question|
+When /^I press "([^\"]*)" until I see "([^\"]*)"$/ do |button, question|  
   limit = 10
-  while (!page.has_content?(question)) do
+  while (page.find('label.helpTextClass').text != question) do
     limit -= 1
     flunk "Pressed '#{button}' too many times" if limit < 1
     click_button button
@@ -25,6 +25,11 @@ end
 # We should improve this matcher okay, or use should see directly? 
 Then /^(?:|I )should see the question "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
   page.body.should =~ /#{text}/ #
+end
+
+Then /^the summary should include "([^\"]*)"$/ do |text|  
+  summary = page.evaluate_script('document.getElementById("tt_page_summary").innerHTML')
+  summary.should =~ /#{text}/ #
 end
 
 Then /^the options should be:$/ do |options|

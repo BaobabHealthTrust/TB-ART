@@ -24,10 +24,10 @@ Feature: Clinician Visit
     And I press "Next"
     Then I should see "New Lymphocyte count available?"
     When I select the option "No"
-    And I press "Next"
+    And I press "Next"    
     Then I should see "Summary"
-    And I should see "WHO STAGE I PEDS"
-    And I should see "UNKNOWN"
+    And the summary should include "WHO Stage: WHO STAGE I PEDS"
+    And the summary should include "Reason for ART Eligibility: UNKNOWN"
 
   @javascript
   Scenario: Staging an adult with a stage 1 condition
@@ -48,4 +48,5 @@ Feature: Clinician Visit
     When I select the option "No"
     And I press "Next"
     Then I should see "Summary"
-    And I should see "WHO STAGE IV ADULT"
+    And the summary should include "WHO Stage: WHO STAGE IV ADULT"
+    And the summary should include "Reason for ART Eligibility: WHO STAGE IV ADULT"
