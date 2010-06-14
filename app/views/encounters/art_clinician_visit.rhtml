@@ -144,7 +144,8 @@
 
   <% if @patient.person.gender == 'F' && @patient.person.age > 14 %>
     <%= touch_yes_no_unknown_tag "IS PATIENT PREGNANT?", @patient, nil,
-      {:optional => true,
+      {:id => "pregnant",
+       :optional => true,
        :helpText => "Is patient pregnant?" } %>
   <% end %>    
 
@@ -206,23 +207,23 @@
        :helpText => "Stage 4 Conditions (adults only)",
        :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
 
-    <label for='new_cd4_percent_available'>New CD4 percent available?</label>
-      <%= select_tag "new_cd4_percent_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'new_cd4_percent_available', :tt_pageStyleClass => 'NoKeyboard' %>
+    <label for='new_cd4_count_available'>New CD4 count available?</label>
+      <%= select_tag "new_cd4_count_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'new_cd4_count_available', :tt_pageStyleClass => 'NoKeyboard' %>
 
     <%= touch_location_tag "CD4 COUNT LOCATION", @patient, nil,
-      {:id => "cd4_percent_location",
-       :condition => '$("new_cd4_percent_available").value == "YES"',
+      {:id => "cd4_count_location",
+       :condition => '$("new_cd4_count_available").value == "YES"',
        :helpText => "CD4 Count Location"} %>
 
     <%= touch_date_tag "CD4 COUNT DATETIME", @patient, (Time.now - 1.month).year,
-      {:id => "cd4_percent_date",
-       :condition => '$("new_cd4_percent_available").value == "YES"',
+      {:id => "cd4_count_date",
+       :condition => '$("new_cd4_count_available").value == "YES"',
        :helpText => "CD4 Count Date",
        :max => "#{(Date.today).strftime('%Y-%m-%d')}"} %>
 
     <%= touch_numeric_tag "CD4 COUNT", @patient, nil,
-      {:id => "cd4_percent",
-       :condition => '$("new_cd4_percent_available").value == "YES"',
+      {:id => "cd4_count",
+       :condition => '$("new_cd4_count_available").value == "YES"',
        :helpText => "CD4 Count",
        :tt_onComplete => 'updateCD4Count()'} %>
 
