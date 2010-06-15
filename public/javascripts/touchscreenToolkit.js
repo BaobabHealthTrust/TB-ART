@@ -1508,16 +1508,16 @@ function getNumericKeyboard(){
 		getButtonString('date','Date') +
 		"</span><span id='buttonLine2' class='buttonLine'>" +
 		getButtons("456") +
-		getCharButtonSetID("%","percent") +
-		getCharButtonSetID("=","equals") +
-		getCharButtonSetID("<","lessthan") +
-		getCharButtonSetID(">","greaterthan") +
-		getButtonString('qwerty','qwerty') +
 		"</span><span id='buttonLine3' class='buttonLine'>" +
 		getButtons("789") +
 		getCharButtonSetID("0","zero") +
 		getCharButtonSetID(".","decimal") +
 		getCharButtonSetID(",","comma") +
+		getCharButtonSetID("%","percent") +
+		getCharButtonSetID("=","equals") +
+		getCharButtonSetID(">","greaterthan") +
+		getCharButtonSetID("<","lessthan") +
+		getButtonString('qwerty','qwerty') +
 		getButtonString('backspace','Delete') +
 		getButtonString('Unknown','Unknown') +
 		getButtonString('SHIFT','SHIFT') +

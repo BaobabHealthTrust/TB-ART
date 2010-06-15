@@ -17,8 +17,26 @@ class Observation < ActiveRecord::Base
     {:conditions => {:concept_id => concept_id}}
   }
 
+  def validate
+    if (value_numeric != '0.0' && value_numeric != '0')
+      value_numeric = value_numeric.to_f
+      value_numeric = nil if value_numeric == 0.0
+    end
+    errors.add_to_base("Value cannot be blank") if value_numeric.blank? &&
+      value_boolean.blank? &&
+      value_coded.blank? &&
+      value_drug.blank? &&
+      value_datetime.blank? &&
+      value_numeric.blank? &&
+      value_modifier.blank? &&
+      value_text.blank?
+  end
+
   def patient_id=(patient_id)
     self.person_id=patient_id
+  end
+  
+  def value_numeric=(val)
   end
 
   def concept_name=(concept_name)

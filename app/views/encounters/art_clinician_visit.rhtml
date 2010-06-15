@@ -7,9 +7,23 @@
   function updateCD4Count() {
     var cd4_available = $('new_cd4_count_available').value == 'YES';
     var cd4_count = cd4_count_available ? $('cd4_count').value : null;
-    var cd4_count_numeric;
+    var cd4_count_numeric, cd4_count_estimate, cd4_count_modifier;
     try { cd4_count_numeric = parseInt(cd4_count); } catch(e) { cd4_count_numeric = null; }
-    if (cd4_count_numeric == null) {
+    if (cd4_count_numeric == null || ''+cd4_count_numeric == 'NaN') {
+      try {
+        var matches = cd4_count.match(/^(\<|\>)([0-9\.]+)$/)
+        cd4_count_modifier = matches[1]; 
+        cd4_count_estimate = parseInt(matches[2]);
+        cd4_count_numeric = cd4_count_estimate;
+        if (cd4_count_modifier == '<') cd4_count_numeric -= 1;
+        if (cd4_count_modifier == '>') cd4_count_numeric += 1;
+      } catch(e) {
+        cd4_count_modifier = null; 
+        cd4_count_estimate = null;
+        cd4_count_numeric = null;
+      }
+    }
+    if (cd4_count_numeric == null || ''+cd4_count_numeric == 'NaN') {
       $('cd4_count_less_than_250').value = "UNKNOWN";
       $('cd4_count_less_than_350').value = "UNKNOWN";
     } else {
@@ -17,18 +31,33 @@
       $('cd4_count_less_than_350').value = (cd4_count_numeric < 350) ? "YES" : "NO";
     }    
   }
-  
+
   function updateCD4Percent() {
     var cd4_percent_available = $('new_cd4_percent_available').value == 'YES';
     var cd4_percent = cd4_percent_available ? $('cd4_percent').value : null;
-    var cd4_percent_numeric = null;
-    try { cd4_percent_numeric = parseInt(cd4_percent); } catch(e) { }
-    if (cd4_percent_numeric == null) {
+    var cd4_percent_numeric, cd4_percent_estimate, cd4_percent_modifier;
+    try { cd4_percent_numeric = parseInt(cd4_percent); } catch(e) { cd4_percent_numeric = null; }
+    if (cd4_percent_numeric == null || ''+cd4_percent_numeric == 'NaN') {
+      try {
+        var matches = cd4_percent.match(/^(\<|\>)([0-9\.]+)$/)
+        cd4_percent_modifier = matches[1]; 
+        cd4_percent_estimate = parseInt(matches[2]);
+        cd4_percent_numeric = cd4_percent_estimate;
+        if (cd4_percent_modifier == '<') cd4_percent_numeric -= 1;
+        if (cd4_percent_modifier == '>') cd4_percent_numeric += 1;
+      } catch(e) {
+        cd4_percent_modifier = null; 
+        cd4_percent_estimate = null;
+        cd4_percent_numeric = null;
+      }
+    }
+    if (cd4_percent_numeric == null || ''+cd4_percent_numeric == 'NaN') {
       $('cd4_percent_less_than_25').value = "UNKNOWN";
     } else {
       $('cd4_percent_less_than_25').value = (cd4_percent_numeric < 25) ? "YES" : "NO";
     }      
   }
+
   
   // These are here in case you are looking up hard coded concept names
   // WHO STAGE I ADULT
@@ -136,6 +165,8 @@
 </script>  
 <style type="text/css">
   .small .options li { font-size:1.1em; }
+  .tt_controls_cd4_count #lessthan, .tt_controls_cd4_count #greaterthan { display:block; float:right }
+  .tt_controls_cd4_percent #lessthan, .tt_controls_cd4_percent #greaterthan { display:block; float:right }
 </style>
 <form id='appointment' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "ART CLINICIAN VISIT" %>

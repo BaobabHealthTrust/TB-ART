@@ -38,7 +38,7 @@ module TouchscreenHelper
     options = precision.merge(options)
     options = {
       :field_type => 'number',
-      :validationRule => "^([0-9]+)|Unknown$",
+      :validationRule => "^([0-9\>\<]+)|Unknown$",
       :validationMessage => "You must enter numbers only (for example 90)",
       :tt_pageStyleClass => "Numeric NumbersOnly"
     }.merge(options)                 
