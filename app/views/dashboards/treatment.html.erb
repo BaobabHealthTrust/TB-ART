@@ -33,13 +33,14 @@
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
           <div class="summary">
             <%= order.to_s.gsub(/\n/, '<br/>') -%>
+            <% units = order.drug_order.units %>
             <% amount_needed = order.drug_order.amount_needed -%>
             <% amounts_dispensed = order.drug_order.total_drug_supply(@patient) %>
             <% amounts_dispensed.each do |amount_dispensed| %>
-              <div class="subtotal dispensation"><%=h amount_dispensed.to_s %></div>
+              <div class="subtotal dispensation"><%=h amount_dispensed.to_s %> <%= units %></div>
             <% end %>
-            <div class="subtotal">TOTAL SUPPLY OF DRUG RECEIVED BY PATIENT: <%= order.drug_order.quantity.to_s %></div>
-            <div class="subtotal">NEED TO DISPENSE: <span class="<%= 'warning' if amount_needed > 0 %>"><%= amount_needed.to_s %></span></div>  
+            <div class="subtotal">TOTAL SUPPLY OF DRUG RECEIVED BY PATIENT: <%= order.drug_order.quantity.to_s %> <%= units %></div>
+            <div class="subtotal">NEED TO DISPENSE: <span class="<%= 'warning' if amount_needed > 0 %>"><%= amount_needed.to_s %> <%= units %></span></div>  
           </div>
         </li>  
       <% end %>
