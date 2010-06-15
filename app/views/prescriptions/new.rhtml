@@ -31,6 +31,7 @@
   function set_diagnosis_for_suggestions() {
     changeNextButtonText('Select Prescription');
     var diagnosis = encodeURIComponent(selectedValue('diagnosis')); 
+    $('infoBar'+tstCurrentPage).innerHTML = "Current Weight: <%= @patient.current_weight -%>KG; Current Height: <%= @patient.current_height -%>CM"
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/prescriptions/suggested?patient_id=<%= @patient.patient_id %>&diagnosis=" + diagnosis + "&search_string=");
     listSuggestions(tstCurrentPage); 
   }

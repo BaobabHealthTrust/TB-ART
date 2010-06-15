@@ -117,6 +117,11 @@ class Patient < ActiveRecord::Base
     obs.first.value_numeric rescue 0
   end
   
+  def current_height
+    obs = person.observations.recent(1).question("HEIGHT (CM)").all
+    obs.first.value_numeric rescue 0
+  end
+  
   def min_weight
     WeightHeight.min_weight(person.gender, person.age_in_months).to_f
   end
