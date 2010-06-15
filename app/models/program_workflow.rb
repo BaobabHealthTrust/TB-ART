@@ -4,4 +4,5 @@ class ProgramWorkflow < ActiveRecord::Base
   include Openmrs
   belongs_to :program, :conditions => {:retired => 0}
   belongs_to :concept, :conditions => {:retired => 0}
+  has_many :program_workflow_states, :conditions => {:retired => 0}
 end

@@ -25,8 +25,14 @@ class PatientProgram < ActiveRecord::Base
         state.end_date = params[:start_date]
         state.save!
       end    
-      # Create the new state
-      state = self.patient_states.new(params)
+      # Find the state by name
+      selected_state = self.program.program_workflows.map(&:program_workflow_states).flatten.select{|pws| pws.concept.name.name == params[:state]}.first rescue nil
+      # Create the new state      
+      state = self.patient_states.new({
+        :state => selected_state.program_workflow_state_id,
+        :start_date => params[:start_date] || Date.today,
+        :end_date => params[:end_date]
+      })
       state.save!
     end  
   end

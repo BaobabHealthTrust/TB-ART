@@ -29,6 +29,7 @@ class DispensationsController < ApplicationController
       :value_numeric => params[:quantity],
       :obs_datetime => Time.now)
     if obs.save
+      @patient.patient_programs.find_by_program_id(Program.find_by_name("HIV PROGRAM")).transition(:state => "ON ANTIRETROVIRALS") if @drug.arv? rescue nil
       @order.drug_order.total_drug_supply(@patient, @encounter)
       redirect_to "/patients/treatment/#{@patient.patient_id}"
     else
