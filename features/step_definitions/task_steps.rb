@@ -8,6 +8,10 @@ When /^I start the task "([^\"]*)"$/ do |task|
   case task
     when "Art Clinician Visit":
       visit "/encounters/new/art_clinician_visit?patient_id=#{@patient.patient_id}"
+    when "Art Initial":
+      visit "/encounters/new/art_initial?patient_id=#{@patient.patient_id}"
+    else
+      flunk "I don't know anything about the '#{task}' task"
   end
 end
 

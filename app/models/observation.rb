@@ -36,9 +36,6 @@ class Observation < ActiveRecord::Base
     self.person_id=patient_id
   end
   
-  def value_numeric=(val)
-  end
-
   def concept_name=(concept_name)
     self.concept_id = ConceptName.find_by_name(concept_name).concept_id
     rescue

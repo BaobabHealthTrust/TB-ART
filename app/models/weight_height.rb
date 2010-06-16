@@ -26,6 +26,7 @@ class WeightHeight
 
   def WeightHeight.method_missing(method, sex, age_in_months)
     # if there is no matching age use the next lowest age
+    raise "Invalid gender for calculating weight and height bands" unless ['f','m'].include?(sex.downcase)
     age_in_months -= 1 while( eval("@@#{method}_#{sex.downcase}[#{age_in_months}]") == nil)
     eval "@@#{method}_#{sex.downcase}[#{age_in_months}]"
   end
