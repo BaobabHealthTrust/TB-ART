@@ -130,7 +130,7 @@ module TouchscreenHelper
     }.merge(options)                 
     content = ""
     content << hidden_field_tag("identifiers[][patient_id]", patient.id) 
-    content << hidden_field_tag("identifiers[][location_id]", Location.current_health_center) 
+    content << hidden_field_tag("identifiers[][location_id]", Location.current_health_center.location_id) 
     content << hidden_field_tag("identifiers[][identifier_type]", PatientIdentifierType.find_by_name(type).patient_identifier_type_id)
     content << text_field_tag("identifiers[][identifier]", value, options) 
     content

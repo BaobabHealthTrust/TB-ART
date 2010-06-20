@@ -36,17 +36,17 @@
      :condition => '$("ever_received_art").value == "YES"',
      :helpText => "Has transfer letter?"} %>
 
+  <%= touch_text_field_tag "ART NUMBER AT PREVIOUS LOCATION", @patient, nil,
+    {:id => "previous_art_number",
+     :condition => '$("ever_received_art").value == "YES"',
+     :optional => false,
+     :helpText => "ART number at previous location" } %>
+
   <%= touch_yes_no_tag "HAS THE PATIENT TAKEN ART IN THE LAST TWO WEEKS", @patient, nil,
     {:id => "taken_art_in_last_two_weeks",
      :optional => false,
      :condition => '$("ever_received_art").value == "YES"',
      :helpText => "Taken ART in the last two weeks?" } %>
-
-  <%= touch_identifier_tag @patient, "ARV Number", nil, 
-    {:id => "previous_art_number",
-     :optional => false,
-     :condition => '$("ever_received_art").value == "YES"',
-     :helpText => "ART number at previous location" } %>
 
   <%= touch_yes_no_tag "FOLLOW UP AGREEMENT", @patient, nil,
     {:id => "agrees_to_followup",
@@ -66,7 +66,7 @@
     {:id => "first_positive_hiv_test_date",
      :helpText => "Date of first positive HIV test"} %>
 
-  <%= touch_text_field_tag "ART NUMBER AT PREVIOUS LOCATION", @patient, nil,
+  <%= touch_identifier_tag @patient, "ARV Number", nil, 
     {:id => "art_number",
      :optional => false,
      :helpText => "ART number at current location" } %>
