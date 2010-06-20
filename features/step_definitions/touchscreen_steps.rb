@@ -22,10 +22,6 @@ When /^I press "([^\"]*)" until I see "([^\"]*)"$/ do |button, question|
   end
 end
 
-When /^I wait ([0-9]+) seconds$/ do |seconds|
-  sleep seconds.to_i
-end
-
 # We should improve this matcher okay, or use should see directly? 
 Then /^(?:|I )should see the question "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
   page.body.should =~ /#{text}/ #

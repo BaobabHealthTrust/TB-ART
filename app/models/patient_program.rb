@@ -7,7 +7,8 @@ class PatientProgram < ActiveRecord::Base
   belongs_to :location, :conditions => {:retired => 0}
   has_many :patient_states, :class_name => 'PatientState', :conditions => {:voided => 0}
 
-  named_scope :current, :conditions => ['date_enrolled > ? AND (date_completed IS NULL OR date_completed > ?)', Time.now, Time.now]
+  named_scope :current, :conditions => ['date_enrolled < NOW() AND (date_completed IS NULL OR date_completed > NOW())']
+  named_scope :local, lambda{|| {:conditions => ['location_id = ?',  Location.current_health_center.location_id]} }
   
   def after_void(reason = nil)
     self.patient_states.each{|row| row.void(reason) }

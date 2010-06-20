@@ -3,6 +3,9 @@ class EncountersController < ApplicationController
   def create  
     @patient = Patient.find(params[:encounter][:patient_id])
 
+    # Go to the dashboard if this is a non-encounter
+    redirect_to "/patients/show/#{@patient.id}" unless params[:encounter]
+
     # Encounter handling
     encounter = Encounter.new(params[:encounter])
     encounter.encounter_datetime = session[:datetime] unless session[:datetime].blank?

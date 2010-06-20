@@ -1,3 +1,5 @@
+require 'mocha'
+
 Given /^the patient is "([^\"]*)"$/ do |name|
   case name
     when "Child"
@@ -15,9 +17,46 @@ Given /^the patient is "([^\"]*)"$/ do |name|
   end
 end
 
+Given /^I initiated this patient yesterday/ do
+  # Taken from "Initiating a child that has never had ART before"
+  steps %Q{
+    When I start the task "Art Initial"
+    Then I should see "Ever received ART?"                                    
+    When I select the option "No"
+    And I press "Next"
+    Then I should see "Agrees to followup?"
+    When I select an option
+    And I press "Next"
+    Then I should see "Type of first positive HIV test"
+    When I select an option
+    And I press "Next"
+    Then I should see "Location of first positive HIV test"
+    When I select an option
+    And I press "Next"
+    Then I should see "Date of first positive HIV test"
+    When I press "Unknown"    
+    And I press "Next" 
+    Then I should see "ART number at current location"
+    When I type "NNO"
+    And I press "0-9"
+    And I type "1234"    
+    And I press "nextButton" 
+  }
+  @patient.encounters.first.update_attributes(:encounter_datetime => Time.now-1.day)
+end
+
 Then /^the patient should have an? "([^\"]*)" encounter$/ do |name|
   todays_encounters = @patient.encounters.current.all(:include => [:type])
   todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}
   todays_encounter_types += todays_encounters.map{|e| e.type.name.gsub(/.*\//,"").gsub(/\..*/,"").humanize rescue ''}
   assert todays_encounter_types.include?(name)
 end
+
+
+Then /^the patient should not have an? "([^\"]*)" encounter$/ do |name|
+  todays_encounters = @patient.encounters.current.all(:include => [:type])
+  todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}
+  todays_encounter_types += todays_encounters.map{|e| e.type.name.gsub(/.*\//,"").gsub(/\..*/,"").humanize rescue ''}
+  assert !todays_encounter_types.include?(name)
+end
+
