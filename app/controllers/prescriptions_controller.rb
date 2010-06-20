@@ -20,31 +20,46 @@ class PrescriptionsController < ApplicationController
   end
   
   def create
-    @suggestion = params[:suggestion]
+    @suggestions = params[:suggestion] || ['New Prescription']
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
     @encounter = @patient.current_treatment_encounter
     @diagnosis = Observation.find(params[:diagnosis]) rescue nil
-    unless (@suggestion.blank? || @suggestion == '0' || @suggestion == 'New Prescription')
-      @order = DrugOrder.find(@suggestion)
-      DrugOrder.clone_order(@encounter, @patient, @diagnosis, @order)
-    else
-      @formulation = (params[:formulation] || '').upcase
-      @drug = Drug.find_by_name(@formulation) rescue nil
-      unless @drug
-        flash[:notice] = "No matching drugs found for formulation #{params[:formulation]}"
-        render :new
-        return
-      end  
-      start_date = Time.now
-      auto_expire_date = Time.now + params[:duration].to_i.days
-      prn = params[:prn].to_i
-      if params[:type_of_prescription] == "variable"      
-        DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, [params[:morning_dose], params[:afternoon_dose], params[:evening_dose], params[:night_dose]], 'VARIABLE', prn)
+    @suggestions.each do |suggestion|
+      unless (suggestion.blank? || suggestion == '0' || suggestion == 'New Prescription')
+        @order = DrugOrder.find(suggestion)
+        DrugOrder.clone_order(@encounter, @patient, @diagnosis, @order)
       else
-        DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:dose_strength], params[:frequency], prn)
+        @formulation = (params[:formulation] || '').upcase
+        @drug = Drug.find_by_name(@formulation) rescue nil
+        unless @drug
+          flash[:notice] = "No matching drugs found for formulation #{params[:formulation]}"
+          render :new
+          return
+        end  
+        start_date = Time.now
+        auto_expire_date = Time.now + params[:duration].to_i.days
+        prn = params[:prn].to_i
+        if params[:type_of_prescription] == "variable"      
+          DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, [params[:morning_dose], params[:afternoon_dose], params[:evening_dose], params[:night_dose]], 'VARIABLE', prn)
+        else
+          DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:dose_strength], params[:frequency], prn)
+        end  
       end  
+    end    
+    redirect_to (params[:auto] == '1' ? "/prescriptions/auto?patient_id=#{@patient.id}" : "/patients/treatment/#{@patient.id}")
+  end
+  
+  def auto
+    @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
+    # Find the next diagnosis that doesn't have a corresponding order
+    @diagnoses = @patient.current_diagnoses
+    @prescriptions = @patient.orders.current.prescriptions.all.map(&:obs_id).uniq
+    @diagnoses = @diagnoses.reject {|diag| @prescriptions.include?(diag.obs_id) }
+    if @diagnoses.empty?
+      redirect_to "/prescriptions/new?patient_id=#{@patient.id}"
+    else
+      redirect_to "/prescriptions/new?patient_id=#{@patient.id}&diagnosis=#{@diagnoses.first.obs_id}&auto=#{@diagnoses.length == 1 ? 0 : 1}"
     end  
-    redirect_to "/patients/treatment/#{@patient.id}"
   end
   
   # Look up the set of matching generic drugs based on the concepts. We 
@@ -124,12 +139,6 @@ class PrescriptionsController < ApplicationController
     drug = Drug.find_by_name(@formulation) rescue nil
     render :text => "per dose" and return unless drug && !drug.units.blank?
     render :text => drug.units
-  end
-  
-  def diagnoses
-    @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @diagnoses = @patient.current_diagnoses
-    render :layout => false
   end
   
   def suggested

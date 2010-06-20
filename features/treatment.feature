@@ -9,19 +9,13 @@ Feature: Treatment
     And the patient is "Child"
     And I am on the treatment dashboard
     When I press "Prescribe"    
-    Then I should see "Prescribe treatment for which diagnosis?"                                    
+    Then I should see "Generic Drug"                                    
     
   @selenium
   Scenario: Prescribing a variable dose 
     Given I am signed in at the clinician station
     And the patient is "Child"
     When I start a new prescription
-    Then I should see "Prescribe treatment for which diagnosis?"
-    When I select the option "NO DIAGNOSIS"
-    And I press "Next"
-    Then I should see "Common prescriptions for this diagnosis"
-    When I select the option "New Prescription"
-    And I press "Select Prescription"
     Then I should see "Generic Drug"
     When I type "PARACETAMOL"
     And I press "Next"

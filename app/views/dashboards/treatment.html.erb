@@ -19,7 +19,7 @@
 
   jQuery(document).ready(function($) {
     $('#dispense').click(function() { window.location = '/dispensations/new?patient_id=<%= @patient.id -%>' })
-    $('#prescribe').click(function() { window.location = '/prescriptions/new?patient_id=<%= @patient.id -%>' })
+    $('#prescribe').click(function() { window.location = '/prescriptions/auto?patient_id=<%= @patient.id -%>' })
     $('#regimen').click(function() { window.location = '/regimens/new?patient_id=<%= @patient.id -%>' })
     $('#treatment li.data div.void').click(function() { voiding($(this)); return false; }); 
   }) 
