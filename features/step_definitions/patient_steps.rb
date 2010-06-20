@@ -45,6 +45,10 @@ Given /^I initiated this patient yesterday/ do
   @patient.encounters.first.update_attributes(:encounter_datetime => Time.now-1.day)
 end
 
+When /^I find the patient$/ do
+  visit "/people/search?identifier=#{@patient.national_id}"
+end
+
 Then /^the patient should have an? "([^\"]*)" encounter$/ do |name|
   todays_encounters = @patient.encounters.current.all(:include => [:type])
   todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}
