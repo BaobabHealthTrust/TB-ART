@@ -13,3 +13,9 @@ contributing your efforts to our mission!
 
 Mateme was built by Baobab Health and Partners in Health in
 Malawi, Africa. It is licensed under the Mozilla Public License.
+
+Getting Started:
+
+In order to get your database setup, look at this file, make changes to the constants at the top if necessary,then run it!
+
+script/initial_database_setup.sh
