@@ -24349,16 +24349,6 @@ drug_order_01188:
   drug_inventory_id: 34
   dose: 1.0
   complex: false
-drug_order_03422: 
-  prn: false
-  quantity: 20
-  order_id: 3422
-  units: 
-  equivalent_daily_dose: 
-  frequency: "1 tablet in the morning; 3 tablets in the afternoon; 2 tablets in the evening; 2 tablets at night; "
-  drug_inventory_id: 95
-  dose: 
-  complex: false
 drug_order_03310: 
   prn: false
   quantity: 
@@ -24378,6 +24368,16 @@ drug_order_01077:
   frequency: 2/day x 7 days/week
   drug_inventory_id: 34
   dose: 1.0
+  complex: false
+drug_order_03422: 
+  prn: false
+  quantity: 20
+  order_id: 3422
+  units: 
+  equivalent_daily_dose: 
+  frequency: "1 tablet in the morning; 3 tablets in the afternoon; 2 tablets in the evening; 2 tablets at night; "
+  drug_inventory_id: 95
+  dose: 
   complex: false
 drug_order_01189: 
   prn: false

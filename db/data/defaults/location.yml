@@ -15,8 +15,8 @@ location_00003:
   city_village: Magaleta
   postal_code: ""
   creator: 5
+  uuid: 88ab02e0-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 3
   county_district: 
   neighborhood_cell: 
@@ -40,8 +40,8 @@ location_00014:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88aaf688-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 14
   county_district: 
   neighborhood_cell: 
@@ -65,8 +65,8 @@ location_00015:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88ab4390-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 15
   county_district: 
   neighborhood_cell: 
@@ -90,8 +90,8 @@ location_00004:
   city_village: Neno Mission
   postal_code: ""
   creator: 5
+  uuid: 88ab0bdc-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 4
   county_district: 
   neighborhood_cell: 
@@ -115,8 +115,8 @@ location_00005:
   city_village: Matandani
   postal_code: ""
   creator: 5
+  uuid: 88ab667c-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 5
   county_district: 
   neighborhood_cell: 
@@ -140,8 +140,8 @@ location_00016:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88ab588a-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 16
   county_district: 
   neighborhood_cell: 
@@ -165,8 +165,8 @@ location_00017:
   city_village: Luwani
   postal_code: ""
   creator: 15878
+  uuid: 88ab818e-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 17
   county_district: 
   neighborhood_cell: 
@@ -190,8 +190,8 @@ location_00006:
   city_village: ""
   postal_code: 
   creator: 15878
+  uuid: 88ab74be-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 6
   county_district: ""
   neighborhood_cell: ""
@@ -215,8 +215,8 @@ location_00007:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88ab9f3e-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 7
   county_district: 
   neighborhood_cell: 
@@ -240,8 +240,8 @@ location_00018:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88ab9246-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 18
   county_district: 
   neighborhood_cell: 
@@ -265,8 +265,8 @@ location_00008:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88abae2a-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 8
   county_district: 
   neighborhood_cell: 
@@ -290,8 +290,8 @@ location_00020:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88abc5c2-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 20
   county_district: 
   neighborhood_cell: 
@@ -315,8 +315,8 @@ location_00009:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88abb8ca-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 9
   county_district: 
   neighborhood_cell: 
@@ -340,8 +340,8 @@ location_00010:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88abe818-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 10
   county_district: 
   neighborhood_cell: 
@@ -365,8 +365,8 @@ location_00021:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88abd206-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 21
   county_district: 
   neighborhood_cell: 
@@ -390,8 +390,8 @@ location_00022:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88ac0a14-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 22
   county_district: 
   neighborhood_cell: 
@@ -415,8 +415,8 @@ location_00011:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88abfc7c-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 11
   county_district: 
   neighborhood_cell: 
@@ -440,8 +440,8 @@ location_00001:
   city_village: ""
   postal_code: ""
   creator: 1
+  uuid: 88ac22a6-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 1
   county_district: 
   neighborhood_cell: 
@@ -465,8 +465,8 @@ location_00012:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88ac163a-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 12
   county_district: 
   neighborhood_cell: 
@@ -490,8 +490,8 @@ location_00013:
   city_village: ""
   postal_code: ""
   creator: 15878
+  uuid: 88ac442a-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 13
   county_district: 
   neighborhood_cell: 
@@ -515,8 +515,8 @@ location_00002:
   city_village: Neno
   postal_code: ""
   creator: 5
+  uuid: 88ac2e36-bd81-11df-9b35-00248c09418a
   date_retired: 
-  parent_location_id: 
   location_id: 2
   county_district: 
   neighborhood_cell: 
