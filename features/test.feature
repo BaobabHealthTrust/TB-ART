@@ -20,7 +20,7 @@ Feature: Signing in
     And I fill in "Gender" with "Male"
     And I press "Finish"
 # Create a new person...
-#    And I press "Finish"
+    And I press "Finish"
     And I fill in "Year of Birth" with "1977"
     And I press "Next"
     And I choose "Aug"
