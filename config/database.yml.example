@@ -7,17 +7,17 @@
 
 development:
   adapter: mysql
-  #database: openmrs_development
-  database: mateme_development
+  database: bart2_development
   username: root
-  password:
+  password: password
   host: localhost
 
-test:
+test: &TEST
   adapter: mysql
-  database: openmrs_test
+  database: bart2_test
   username: root
-  password: 
+  password: password
   host: localhost
 
-
+cucumber:
+  <<: *TEST
