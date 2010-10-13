@@ -1,28 +1,48 @@
 #!/bin/bash
 
-set -v # will echo all of the scripts command to the screen
+usage(){
+  echo "Usage: $0 ENVIRONMENT SITE"
+  echo
+  echo "ENVIRONMENT should be: development|test|production"
+  echo "Available SITES:"
+  ls -1 db/data
+} 
 
-# DB_USER="root --password=XXX"
-DB_USER="root -ppassword"
-DB="mateme_development"
-DB_test="mateme_test"
-SITE="nno"
-RAILS_ENV="development"
+ENV=$1
+SITE=$2
 
-echo "DROP DATABASE $DB;CREATE DATABASE $DB;" | mysql -u $DB_USER
+if [ -z "$ENV" ] || [ -z "$SITE"] ; then
+  usage
+  exit
+fi
+
+set -x # turns on stacktrace mode which gives useful debug information
 
 if [ ! -x config/database.yml ] ; then
   cp config/database.yml.example config/database.yml
 fi
 
-mysql -u $DB_USER $DB < db/schema.sql
-mysql -u $DB_USER $DB < db/migrate/alter_global_property.sql
-mysql -u $DB_USER $DB < db/migrate/create_sessions.sql
-mysql -u $DB_USER $DB < db/migrate/create_weight_for_heights.sql
-mysql -u $DB_USER $DB < db/migrate/create_weight_height_for_ages.sql
+USERNAME=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['username']"`
+PASSWORD=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['password']"`
+DATABASE=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['database']"`
 
-#rake openmrs:bootstrap:load:defaults RAILS_ENV=production
-#rake openmrs:bootstrap:load:site SITE=$SITE RAILS_ENV=production
-rake openmrs:bootstrap:load:defaults 
-rake openmrs:bootstrap:load:site SITE=$SITE
-#rake db:fixtures:load
+echo "DROP DATABASE $DATABASE;CREATE DATABASE $DATABASE;" | mysql --user=$USERNAME --password=$PASSWORD
+
+mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/schema.sql
+mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/openmrs_metadata.sql
+mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/defaults.sql
+mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/data/${SITE}/${SITE}.sql
+mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/data/${SITE}/tasks.sql
+
+
+#mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/migrate/alter_global_property.sql
+#mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/migrate/create_sessions.sql
+#mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/migrate/create_weight_for_heights.sql
+#mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/migrate/create_weight_height_for_ages.sql
+
+#rake openmrs:bootstrap:load:defaults RAILS_ENV=$ENV
+#rake openmrs:bootstrap:load:site SITE=$SITE RAILS_ENV=production#
+
+echo "After completing database setup, you are advised to run the following:"
+echo "rake test"
+echo "rake cucumber"
