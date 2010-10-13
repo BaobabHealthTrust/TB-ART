@@ -16,6 +16,6 @@ Malawi, Africa. It is licensed under the Mozilla Public License.
 
 Getting Started:
 
-In order to get your database setup, look at this file, make changes to the constants at the top if necessary,then run it!
+In order to get your database setup, run this script:
 
 script/initial_database_setup.sh
