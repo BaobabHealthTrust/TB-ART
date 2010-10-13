@@ -13,6 +13,14 @@ module NavigationHelpers
 
     when /the login page/
       '/login'
+
+    when /the clinic dashboard/
+      '/clinic'
+
+    when /the treatment dashboard/
+      require_patient
+      "/patients/treatment/#{@patient.patient_id}"
+    
     
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
