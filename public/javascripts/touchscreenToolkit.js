@@ -244,6 +244,8 @@ function getFormElements(){
   var relevantFormElements = new Array();
 
   for(var i=0;i<formElements.length;i++){
+    if (formElements[i].nodeName == "BR" || formElements[i].nodeName == "LABEL")
+      continue
     if (formElements[i].getAttribute("type") != "hidden" && formElements[i].getAttribute("type") != "submit") {
       relevantFormElements.push(formElements[i])
     }
@@ -272,7 +274,7 @@ function enableTouchscreenInterface(){
 			// create one page for the 3 date elements
       // called 445 times on staging page
 			var formElementName = tstFormElements[i].getAttribute("name");
-      if (formElementName.match(/2i|3i|\[month\]|\[day\]/)){
+      if (formElementName && formElementName.match(/2i|3i|\[month\]|\[day\]/)){
         continue;
       }
 		}
@@ -381,6 +383,8 @@ function populateInputPage(pageNum) {
 			break;
 	}
 	
+  print(tstFormElements[i]);
+  print(touchscreenInputNode);
 	setTouchscreenAttributes(touchscreenInputNode, tstFormElements[i], pageNum);
 
 	if (tstFormElements[i].value) {
@@ -2101,7 +2105,7 @@ var RailsDate = function(aDateElement) {
 RailsDate.prototype = {
 	// return true if the anELement is stores day part of a date 
   isDayOfMonthElement: function() {
-		if (this.element.name.match(/\[day\]|3i|_day$/))
+		if (this.element.name && this.element.name.match(/\[day\]|3i|_day$/))
 			return true;
 
 		return false;
@@ -2109,7 +2113,7 @@ RailsDate.prototype = {
 
 	// return true if the anELement is stores month part of a date 
 	isMonthElement: function() {
-		if (this.element.name.match(/\[month\]|2i/)) 
+		if (this.element.name && this.element.name.match(/\[month\]|2i/)) 
 			return true;
 
 		return false;
@@ -2117,7 +2121,7 @@ RailsDate.prototype = {
 
 	// return true if the anELement is stores year part of a date 
 	isYearElement: function() {
-		if (this.element.name.match(/\[year\]|1i/)) 
+		if (this.element.name && this.element.name.match(/\[year\]|1i/)) 
 			return true;
 
 		return false;
