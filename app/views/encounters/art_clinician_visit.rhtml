@@ -91,9 +91,15 @@
     // Everyone is supposed to be HIV positive so start them at 1
     whoStage = 1;
     for (var i=1; i<=4; i++) {
-      if ( $("stage_"+i+"_conditions").value != '') whoStage = i;
-      if ( $("stage_"+i+"_conditions_adults") && $("stage_"+i+"_conditions_adults").value != '') whoStage = i;
-      if ( $("stage_"+i+"_conditions_peds") && $("stage_"+i+"_conditions_peds").value != '') whoStage = i;
+      try{
+        if ( $("stage_"+i+"_conditions").value != '') whoStage = i;
+      }catch(e){}
+      try{
+        if ( $("stage_"+i+"_conditions_adults") && $("stage_"+i+"_conditions_adults").value != '') whoStage = i;
+      }catch(e){}
+      try{
+        if ( $("stage_"+i+"_conditions_peds") && $("stage_"+i+"_conditions_peds").value != '') whoStage = i;
+      }catch(e){}
     }
     var adultOrPeds = (age > 14) ? "ADULT" : "PEDS";
     $('who_stage').value = whoStageConcept(whoStage, adultOrPeds);      
@@ -137,19 +143,25 @@
           ((presumedSevereHivConditions.indexOf("PNEUMONIA, SEVERE") > -1) && (presumedSevereHivConditions.indexOf("SEPSIS, SEVERE") > -1)))
           presumedSevereHiv = true;
       }
+    
+      try{{
+        presumedSeverHiv == null} catch (e) {
+      } finally {presumedSeverHiv = null}
 
-      if (ageInMonths <= 17 && firstPositiveHivTestType == "HIV RAPID TEST, QUALITATIVE" && presumedSeverHiv)
-        reasonForArtEligibility = "PRESUMED SEVERE HIV";
-      else if (ageInMonths <= 12 && firstPositiveHivTestType == "HIV DNA POLYMERASE CHAIN REACTION")
-        reasonForArtEligibility = "HIV DNA POLYMERASE CHAIN REACTION";
-      else if (whoStage >= 3)
-        reasonForArtEligibility = whoStageConcept(whoStage, "PEDS");  
-      else if ($('cd4_count_less_than_250') && $('cd4_count_less_than_250').value == "YES")
-        reasonForArtEligibility = "CD4 COUNT LESS THAN 250";
-      else if ($('cd4_percent_less_than_25') && $('cd4_percent_less_than_25').value == "YES")
-        reasonForArtEligibility = "CD4 PERCENT LESS THAN 25";
-      else if (whoStage >= 2 && lymphocyteCount < lymphocyteThresholds[age])
-        reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2";              
+      try{
+        if (ageInMonths <= 17 && firstPositiveHivTestType == "HIV RAPID TEST, QUALITATIVE" && presumedSeverHiv)
+          reasonForArtEligibility = "PRESUMED SEVERE HIV";
+        else if (ageInMonths <= 12 && firstPositiveHivTestType == "HIV DNA POLYMERASE CHAIN REACTION")
+          reasonForArtEligibility = "HIV DNA POLYMERASE CHAIN REACTION";
+        else if (whoStage >= 3)
+          reasonForArtEligibility = whoStageConcept(whoStage, "PEDS");  
+        else if ($('cd4_count_less_than_250') && $('cd4_count_less_than_250').value == "YES")
+          reasonForArtEligibility = "CD4 COUNT LESS THAN 250";
+        else if ($('cd4_percent_less_than_25') && $('cd4_percent_less_than_25').value == "YES")
+          reasonForArtEligibility = "CD4 PERCENT LESS THAN 25";
+        else if (whoStage >= 2 && lymphocyteCount < lymphocyteThresholds[age])
+          reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2";              
+      }catch(e){}
     }  
     $('reason_for_art_eligibility').value = reasonForArtEligibility;
   }
@@ -183,61 +195,77 @@
 
   <% if @patient.person.age > 14 %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I ADULT AND PEDS'),
-      {:id => "stage_1_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 1 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small" } %>
+    <% unless concept_set_options('WHO STAGE I ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I ADULT AND PEDS'),
+        {:id => "stage_1_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 1 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small" } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I ADULT'),
-      {:id => "stage_1_conditions_adults",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 1 Conditions (adults only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small" } %>
+    <% unless concept_set_options('WHO STAGE I ADULT').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I ADULT'),
+        {:id => "stage_1_conditions_adults",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 1 Conditions (adults only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small" } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT AND PEDS'),
-      {:id => "stage_2_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 2 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE II ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT AND PEDS'),
+        {:id => "stage_2_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 2 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT'),
-      {:id => "stage_2_conditions_adults",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 2 Conditions (adults only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE II ADULT').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT'),
+        {:id => "stage_2_conditions_adults",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 2 Conditions (adults only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT AND PEDS'),
-      {:id => "stage_3_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 3 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE III ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT AND PEDS'),
+        {:id => "stage_3_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 3 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT'),
-      {:id => "stage_3_conditions_adults",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 3 Conditions (adults only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE III ADULT').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT'),
+        {:id => "stage_3_conditions_adults",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 3 Conditions (adults only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT AND PEDS'),
-      {:id => "stage_4_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 4 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE IV ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT AND PEDS'),
+        {:id => "stage_4_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 4 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT'),
-      {:id => "stage_4_conditions_adults",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 4 Conditions (adults only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE IV ADULT').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT'),
+        {:id => "stage_4_conditions_adults",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 4 Conditions (adults only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
     <label for='new_cd4_count_available'>New CD4 count available?</label>
       <%= select_tag "new_cd4_count_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'new_cd4_count_available', :tt_pageStyleClass => 'NoKeyboard' %>
@@ -266,64 +294,80 @@
   
     <!-- Children under the age of 14 --> 
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I ADULT AND PEDS'),
-      {:id => "stage_1_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 1 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE I ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I ADULT AND PEDS'),
+        {:id => "stage_1_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 1 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
-      {:id => "stage_1_conditions_peds",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 1 Conditions (children only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE II PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
+        {:id => "stage_1_conditions_peds",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 1 Conditions (children only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT AND PEDS'),
-      {:id => "stage_2_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 2 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE II ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II ADULT AND PEDS'),
+        {:id => "stage_2_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 2 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
-      {:id => "stage_2_conditions_peds",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 2 Conditions (children only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE II PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
+        {:id => "stage_2_conditions_peds",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 2 Conditions (children only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT AND PEDS'),
-      {:id => "stage_3_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 3 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE III ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III ADULT AND PEDS'),
+        {:id => "stage_3_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 3 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III PEDS'),
-      {:id => "stage_3_conditions_peds",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 3 Conditions (children only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE III PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE III PEDS'),
+        {:id => "stage_3_conditions_peds",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 3 Conditions (children only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT AND PEDS'),
-      {:id => "stage_4_conditions",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 4 Conditions (adults and children)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE IV ADULT AND PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV ADULT AND PEDS'),
+        {:id => "stage_4_conditions",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 4 Conditions (adults and children)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
-    <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV PEDS'),
-      {:id => "stage_4_conditions_peds",
-       :multiple => true,
-       :optional => true,
-       :helpText => "Stage 4 Conditions (children only)",
-       :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% unless concept_set_options('WHO STAGE IV PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE IV PEDS'),
+        {:id => "stage_4_conditions_peds",
+         :multiple => true,
+         :optional => true,
+         :helpText => "Stage 4 Conditions (children only)",
+         :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
+    <% end %>
 
     <% if @patient.person.age_in_months <= 17 %>
-      <%= touch_select_tag "PRESUMED SEVERE HIV CRITERIA PRESENT", @patient, concept_set_options('PRESUMED SEVERE HIV CRITERIA IN INFANTS'),
+      <%#= touch_select_tag "PRESUMED SEVERE HIV CRITERIA PRESENT", @patient, concept_set_options('PRESUMED SEVERE HIV CRITERIA IN INFANTS'),
         {:id => "presumed_severe_hiv_conditions",
          :multiple => true,
          :optional => true,

@@ -47,14 +47,10 @@ class UserController < ApplicationController
   end
 
   def signup
-    render_text "Please sign up"
+    render :text => "Please sign up"
   end
 
   def remind_password
-  end
-
-  def try_to_log_in
-    User.login(self.name, self.password)
   end
 
   def index

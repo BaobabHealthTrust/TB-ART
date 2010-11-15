@@ -17,6 +17,10 @@ class User < ActiveRecord::Base
   def name
     self.first_name + " " + self.last_name
   end
+
+  def try_to_login
+    User.authenticate(self.username,self.password)
+  end
   
   def set_password
     # We expect that the default OpenMRS interface is used to create users

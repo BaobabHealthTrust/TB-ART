@@ -63,7 +63,7 @@ function $(elementID){
 }
 
 function selectedValue(elementID){
-  element = $(elementID)
+  element = document.getElementById(elementID)
   return elementSelectedValue(element)
 }
 
@@ -108,7 +108,7 @@ function loadTouchscreenToolkit() {
 	addLaunchButton();
 	enableTouchscreenInterface();
 
-	tstKeyboard = $('keyboard');
+	tstKeyboard = document.getElementById('keyboard');
 }
 
 
@@ -149,7 +149,7 @@ function createInputPage(pageNumber){
 	inputPage.setAttribute('class','inputPage ' + pageStyleClass);
 	inputPage.setAttribute('id','page'+pageNumber);
 
-	var backButton = $('backButton');
+	var backButton = document.getElementById('backButton');
 	//create back button if not on first page
 	if (pageNumber>0) {
 		var prevPageNo = pageNumber-1;
@@ -167,7 +167,7 @@ function createInputPage(pageNumber){
 	// hidden trigger button for calendar
 	inputPage.innerHTML += "<div id='trigger1' />";
 
-  staticControls = $('tt_staticControls');
+  staticControls = document.getElementById('tt_staticControls');
   staticControls.setAttribute('class','staticControlsPage'+pageNumber+' '+pageStyleClass )
   
 	return inputPage;
@@ -306,8 +306,8 @@ function enableTouchscreenInterface(){
 
   staticControlWrapper.appendChild(staticControl);
 	
-	tstNextButton = $("nextButton");
-	tstMessageBar = $('messageBar');
+	tstNextButton = document.getElementById("nextButton");
+	tstMessageBar = document.getElementById('messageBar');
 	gotoPage(0, false);
 
 	document.forms[0].style.display = "none";
@@ -346,7 +346,7 @@ function populateInputPage(pageNum) {
 	wrapperPage.setAttribute('id','tt_page_'+identifier);
 	wrapperPage.appendChild(inputPage);
 
-	$('tt_staticControlsWrapper').setAttribute('class','tt_controls_'+identifier);
+	document.getElementById('tt_staticControlsWrapper').setAttribute('class','tt_controls_'+identifier);
 
 	// input 
 	var touchscreenInputNode;
@@ -406,13 +406,13 @@ function populateInputPage(pageNum) {
 
 	// show message if any
 	var flashMessage = "";
-	var flashElement = $("flash_notice");
+	var flashElement = document.getElementById("flash_notice");
   if (flashElement){
 	  flashMessage += flashElement.innerHTML;
 		flashElement.innerHTML = "";
   }
 
-	flashElement = $("flash_error");
+	flashElement = document.getElementById("flash_error");
   if (flashElement){
 	  flashMessage += flashElement.innerHTML;
 		flashElement.innerHTML = "";
@@ -666,10 +666,10 @@ function createProgressArea() {
 }
 
 function toggleShowProgress() {
-	var progressArea = $('progressArea');
-	var progressAreaHeader = $('progressAreaHeader');
-	var progressAreaBody = $('progressAreaBody');
-	var showProgressButton = $('showDataButton');
+	var progressArea = document.getElementById('progressArea');
+	var progressAreaHeader = document.getElementById('progressAreaHeader');
+	var progressAreaBody = document.getElementById('progressAreaBody');
+	var showProgressButton = document.getElementById('showDataButton');
 	
 	if (progressArea.style.display != 'block') {
 		progressAreaBody.style.overflow = 'scroll';
@@ -732,7 +732,7 @@ function elementToTouchscreenInput(aFormElement, aInputDiv) {
 function selectNextOption() {
   try {
     var selected = null;
-    var options = $("options").getElementsByTagName('li');
+    var options = document.getElementById("options").getElementsByTagName('li');
     for (var i=0; i<options.length; i++) {
       if (options[i].style.display == 'none') continue;
       if (selected) {
@@ -753,7 +753,7 @@ function selectNextOption() {
       }
     }
     var currentPage = tstCurrentPage; 
-    var currentInput = $("touchscreenInput"+currentPage);
+    var currentInput = document.getElementById("touchscreenInput"+currentPage);
     currentInput.focus();    
   }catch(e){}
 }
@@ -762,7 +762,7 @@ function selectNextOption() {
 function selectPrevOption() {  
   try {
     var selected = null;
-    var options = $("options").getElementsByTagName('li');
+    var options = document.getElementById("options").getElementsByTagName('li');
     for (var i=options.length-1; i>=0; i--) {
       if (options[i].style.display == 'none') continue;
       if (selected) {
@@ -775,7 +775,7 @@ function selectPrevOption() {
       }
     }
     var currentPage = tstCurrentPage; 
-    var currentInput = $("touchscreenInput"+currentPage);
+    var currentInput = document.getElementById("touchscreenInput"+currentPage);
     currentInput.focus();    
   }catch(e){}
 }
@@ -928,7 +928,7 @@ function handleResult(optionsList, aXMLHttpRequest) {
     }
 		optionsList.innerHTML = "<ul>"+optionsList.innerHTML+"</ul>"
     var inputElement = tstFormElements[tstPages[tstCurrentPage]];
-    assignSelectOptionsFromSuggestions(inputElement, $('options'));
+    assignSelectOptionsFromSuggestions(inputElement, document.getElementById('options'));
     
     var val = tstInputTarget.value;
     if (val == null) val = "";
@@ -938,6 +938,7 @@ function handleResult(optionsList, aXMLHttpRequest) {
 
 function tt_update(sourceElement){
 	var sourceValue = null;
+  x = sourceElement
 	if (!sourceElement) return;
 
 	if (sourceElement.getAttribute("tstValue")) {
@@ -1085,17 +1086,17 @@ function joinDateValues(aDateElement) {
 // args: page number to load, validate: true/false
 function gotoPage(destPage, validate){
 	var currentPage = tstCurrentPage; 
-	var currentInput = $("touchscreenInput"+currentPage);
+	var currentInput = document.getElementById("touchscreenInput"+currentPage);
 
 	if (currentInput) {
-//    if ($('dateselector') != null && typeof ds != 'undefined')
+//    if (document.getElementById'dateselector') != null && typeof ds != 'undefined')
 //      ds.update(currentInput);
 		if (validate) {
 			if (!inputIsValid()) return;
 		}
 		tt_update(currentInput);
 		tstPageValues[currentPage] = currentInput.value;
-		var currentPageIndex = $("progressAreaPage"+currentPage);
+		var currentPageIndex = document.getElementById("progressAreaPage"+currentPage);
 		if (currentPageIndex) {
 			// remove current index mark
 			currentPageIndex.innerHTML = (currentPage+1)+". "+
@@ -1124,7 +1125,7 @@ function gotoPage(destPage, validate){
 			}
 		}
 		try {
-			var thisPage = $('page'+currentPage);
+			var thisPage = document.getElementById('page'+currentPage);
 			var pageWrapper = thisPage.parentNode;
 			pageWrapper.parentNode.removeChild(pageWrapper);
 		} catch(e) {
@@ -1133,7 +1134,7 @@ function gotoPage(destPage, validate){
     inputTargetPageNumber = destPage;
 		tstCurrentPage = destPage;
 		populateInputPage(destPage);	
-    $("progressAreaPage"+destPage).setAttribute("class", "currentIndex");
+    document.getElementById("progressAreaPage"+destPage).setAttribute("class", "currentIndex");
 
 		var nextButton = tstNextButton;
     if (destPage+1 == tstPages.length) {
@@ -1168,7 +1169,7 @@ function gotoPage(destPage, validate){
   }
   else{
 
-		var popupBox = $("popupBox");		
+		var popupBox = document.getElementById("popupBox");		
 		if (popupBox) {
 			popupBox.style.visibility = "visible";
 		}
@@ -1182,7 +1183,7 @@ function inputIsValid() {
 	// don't leave current page if no value has been entered
 	var ttInput = new TTInput(tstCurrentPage);
 	var validateResult = ttInput.validate();
-	var messageBar = $("messageBar");
+	var messageBar = document.getElementById("messageBar");
 	if (validateResult.length > 0 && !tstSearchPage) {
     var message = validateResult;
 		if (ttInput.shouldConfirm) {
@@ -1196,7 +1197,7 @@ function inputIsValid() {
 }
 
 function confirmValue() {
-	var confirmationBar = $("confirmationBar");
+	var confirmationBar = document.getElementById("confirmationBar");
 	confirmationBar.innerHTML = "Username: ";
 	var username = document.createElement("input");
 	username.setAttribute("id", "confirmUsername");
@@ -1207,25 +1208,25 @@ function confirmValue() {
 	confirmationBar.innerHTML += "<div style='display: block;'><input type='submit' value='OK' class='button' style='float: left;' onclick='validateConfirmUsername()' onmousedown='validateConfirmUsername()'/><input type='submit' value='Cancel' class='button' style='float: right; right: 3px;' onmousedown='cancelConfirmValue()' />";
 	
 	confirmationBar.style.display = "block";
-	tstInputTarget = $("confirmUsername");
+	tstInputTarget = document.getElementById("confirmUsername");
 	if (typeof(barcodeFocusTimeoutId) != "undefined")
 		window.clearTimeout(barcodeFocusTimeoutId);
 	tstInputTarget.focus();
 	tstKeyboard.innerHTML = "";
 
-	if (!$("popupKeyboard")) {
+	if (!document.getElementById("popupKeyboard")) {
 		var popupKeyboard = document.createElement("div");
 		popupKeyboard.setAttribute("id", "popupKeyboard");
 		popupKeyboard.setAttribute("class", "keyboard");
 		popupKeyboard.innerHTML = getABCKeyboard();
 		contentContainer.appendChild(popupKeyboard);
 	}
-	$("backspace").style.display = "inline";
+	document.getElementById("backspace").style.display = "inline";
 	hideMessage();
 }
 
 function validateConfirmUsername() {
-	var username = $('confirmUsername');
+	var username = document.getElementById('confirmUsername');
 	if (username.value == tstUsername) {
 		cancelConfirmValue();	
 		gotoPage(tstCurrentPage+1, false);
@@ -1235,17 +1236,17 @@ function validateConfirmUsername() {
 }
 
 function cancelConfirmValue() {
-	$("confirmationBar").style.display = "none";
-	tstInputTarget = $("touchscreenInput"+tstCurrentPage);
+	document.getElementById("confirmationBar").style.display = "none";
+	tstInputTarget = document.getElementById("touchscreenInput"+tstCurrentPage);
 	if (typeof(focusForBarcodeInput) != "undefined")
 		focusForBarcodeInput();
 	
-	contentContainer.removeChild($("popupKeyboard"));
+	contentContainer.removeChild(document.getElementById("popupKeyboard"));
 	showBestKeyboard(tstCurrentPage);
 }
 
 function clearInput(){
-  $('touchscreenInput'+tstCurrentPage).value = "";
+  document.getElementById('touchscreenInput'+tstCurrentPage).value = "";
 
   if(doListSuggestions){
     listSuggestions(tstCurrentPage);
@@ -1267,10 +1268,10 @@ function hideMessage(){
 
 function disableTouchscreenInterface(){
   // delete touchscreen tstPages
-	contentContainer.removeChild($('page'+tstCurrentPage));
-	contentContainer.removeChild($('keyboard'));
-	contentContainer.removeChild($('progressArea'));
-	contentContainer.removeChild($('buttons'));
+	contentContainer.removeChild(document.getElementById('page'+tstCurrentPage));
+	contentContainer.removeChild(document.getElementById('keyboard'));
+	contentContainer.removeChild(document.getElementById('progressArea'));
+	contentContainer.removeChild(document.getElementById('buttons'));
 	document.forms[0].style.display = 'block';
 
 	touchscreenInterfaceEnabled = 0;
@@ -1318,33 +1319,33 @@ function showBestKeyboard(aPageNum) {
 		var thisDate = new RailsDate(inputElement);
 		if (tstSearchPage) {
 			if (thisDate.isDayOfMonthElement()) getDatePicker();
-			else $("keyboard").innerHTML = getNumericKeyboard();
+			else document.getElementById("keyboard").innerHTML = getNumericKeyboard();
 		}	else {
 			getDatePicker();
 		}
 		return;
 	}
-	var optionCount = $('options').getElementsByTagName("li").length;
+	var optionCount = document.getElementById('options').getElementsByTagName("li").length;
 	if ((optionCount > 0 && optionCount < 6 && inputElement.tagName == "SELECT") || (inputElement.getAttribute("multiple") == "multiple")) {
-		$("keyboard").innerHTML = "";
+		document.getElementById("keyboard").innerHTML = "";
 		return;
 	}
 	
 	switch (inputElement.getAttribute("field_type")) {
 		case "alpha":
-			$("keyboard").innerHTML = getABCKeyboard();
+			document.getElementById("keyboard").innerHTML = getABCKeyboard();
 			break;
 		case "number": 
-			$("keyboard").innerHTML = getNumericKeyboard();
+			document.getElementById("keyboard").innerHTML = getNumericKeyboard();
 			break;
 		case "date": 
 			getDatePicker();
 			break;
 		case "boolean":
-			$("keyboard").innerHTML = "";
+			document.getElementById("keyboard").innerHTML = "";
 			break;
 		default:
-			$("keyboard").innerHTML = getABCKeyboard();
+			document.getElementById("keyboard").innerHTML = getABCKeyboard();
 			break;
 	}
 }
@@ -1442,7 +1443,7 @@ function addOption(optionText){
 }
 
 function createKeyboardDiv(){
-	var keyboard = $("keyboard");
+	var keyboard = document.getElementById("keyboard");
 	if (keyboard) keyboard.innerHTML = "";
 	else {
 		keyboard = document.createElement("div");
@@ -1530,7 +1531,7 @@ function getDatePicker() {
 		return;
 	
 	var inputElement = tstFormElements[tstPages[tstCurrentPage]];
-	var keyboardDiv = $('keyboard');
+	var keyboardDiv = document.getElementById('keyboard');
 	keyboardDiv.innerHTML = "";
 	
 	var railsDate = new RailsDate(inputElement);
@@ -1541,7 +1542,7 @@ function getDatePicker() {
 
 	var defaultDate = joinDateValues(inputElement);
 	var arrDate = defaultDate.split('/');
-	$("touchscreenInput"+tstCurrentPage).value = defaultDate;
+	document.getElementById("touchscreenInput"+tstCurrentPage).value = defaultDate;
 	
 	if (!isNaN(Date.parse(defaultDate))) {
 		ds = new DateSelector({element: keyboardDiv, target: tstInputTarget, year: arrDate[2], month: arrDate[1], date: arrDate[0], format: "dd/MM/yyyy" });
@@ -1549,19 +1550,19 @@ function getDatePicker() {
 		ds = new DateSelector({element: keyboardDiv, target: tstInputTarget, format: "dd/MMM/yyyy" });
 	}
 
-	$("options").innerHTML = "";
+	document.getElementById("options").innerHTML = "";
 }
 
 function getYearPicker() {
-	ds = new DateSelector({element: $("keyboard"), target: tstInputTarget, format: "yyyy" });
+	ds = new DateSelector({element: document.getElementById("keyboard"), target: tstInputTarget, format: "yyyy" });
 }
 
 function getMonthPicker() {
-	ds = new DateSelector({element: $("keyboard"), target: tstInputTarget, format: "MM" });
+	ds = new DateSelector({element: document.getElementById("keyboard"), target: tstInputTarget, format: "MM" });
 }
 
 function getDayOfMonthPicker(aYear, aMonth) {
-  var keyboard =$('keyboard')
+  var keyboard =document.getElementById('keyboard')
 	keyboard.innerHTML = "";
   numberOfDays = DateUtil.getLastDate(aYear,aMonth-1).getDate();
 
@@ -1576,11 +1577,11 @@ function getDayOfMonthPicker(aYear, aMonth) {
 	tstInputTarget.setAttribute("singleButtonMode", "true");
 /*
 	if (aYear && aMonth)
-		ds = new DateSelector({element: $("keyboard"), target: tstInputTarget, year: aYear, month: aMonth, format: "dd" });
+		ds = new DateSelector({element: document.getElementById("keyboard"), target: tstInputTarget, year: aYear, month: aMonth, format: "dd" });
 	else if (aMonth) 
-		ds = new DateSelector({element: $("keyboard"), target: tstInputTarget, month: aMonth, format: "dd" });
+		ds = new DateSelector({element: document.getElementById("keyboard"), target: tstInputTarget, month: aMonth, format: "dd" });
 	else
-		ds = new DateSelector({element: $("keyboard"), target: tstInputTarget, format: "dd" });
+		ds = new DateSelector({element: document.getElementById("keyboard"), target: tstInputTarget, format: "dd" });
  */
 }
 
@@ -1637,13 +1638,13 @@ function press(pressedChar){
 				inputTarget.value += "'";
 				break;
 			case 'abc':
-				$('keyboard').innerHTML = getABCKeyboard();
+				document.getElementById('keyboard').innerHTML = getABCKeyboard();
 				break;
 			case 'qwerty':
-				$('keyboard').innerHTML = getQwertyKeyboard();
+				document.getElementById('keyboard').innerHTML = getQwertyKeyboard();
 				break;
 			case 'num':
-				$('keyboard').innerHTML = getNumericKeyboard();
+				document.getElementById('keyboard').innerHTML = getNumericKeyboard();
 				break;
 			case 'date':
 				getDatePicker();
@@ -1673,10 +1674,10 @@ function listSuggestions(inputTargetPageNumber) {
 	if (inputTargetPageNumber == undefined) {
 		return;
 	}
-	var inputElement = $('touchscreenInput'+inputTargetPageNumber); 
+	var inputElement = document.getElementById('touchscreenInput'+inputTargetPageNumber); 
 
 	if(inputElement.getAttribute("ajaxURL") != null && inputElement.getAttribute("ajaxURL")){
-		ajaxRequest($('options'),inputElement.getAttribute("ajaxURL")+inputElement.value);
+		ajaxRequest(document.getElementById('options'),inputElement.getAttribute("ajaxURL")+inputElement.value);
 	}
 	else{
 		var optionsList = document.getElementById('options');
@@ -1710,7 +1711,7 @@ function matchOptions(){
 
 function enableValidKeyboardButtons() {
 	
-	var inputElement = $('touchscreenInput'+inputTargetPageNumber);
+	var inputElement = document.getElementById('touchscreenInput'+inputTargetPageNumber);
 	var patternStr = "(a-zA-Z0-9,.+()%])+";  // defualt validation pattern
 	
 
@@ -1740,10 +1741,10 @@ function enableKeys(validKeys, allKeys) {
 	allKeys = allKeys.toUpperCase();
 	validKeys = validKeys.toUpperCase();
 	var keyButton;
-	var keyboardElement = $("keyboard");
+	var keyboardElement = document.getElementById("keyboard");
 	// disable all keys
 	for (var i=0;i<allKeys.length; i++) {
-		if (keyButton = $(allKeys.substring(i,i+1))) {
+		if (keyButton = document.getElementById(allKeys.substring(i,i+1))) {
 			keyButton.style.backgroundColor = ""; 
 			keyButton.style.color = "gray"; 
 			keyButton.disabled = true; 
@@ -1751,7 +1752,7 @@ function enableKeys(validKeys, allKeys) {
 	}
 	// enable only valid keys
 	for (var i=0;i<validKeys.length; i++) {
-		if (keyButton = $(validKeys.substring(i,i+1))) {
+		if (keyButton = document.getElementById(validKeys.substring(i,i+1))) {
 			keyButton.style.color = "black";
 			keyButton.disabled = false;
 		}
@@ -1856,7 +1857,7 @@ function validateRule(aNumber) {
 
 // Touchscreen Input element
 var TTInput = function(aPageNum) {
-	this.element = $("touchscreenInput"+aPageNum);
+	this.element = document.getElementById("touchscreenInput"+aPageNum);
 	this.formElement = tstFormElements[tstPages[aPageNum]]
 	this.value = this.element.value;
 
@@ -2061,7 +2062,7 @@ TTInput.prototype = {
           break;
         }
 			} else {
-				selectOptions = $("options").getElementsByTagName("LI");
+				selectOptions = document.getElementById("options").getElementsByTagName("LI");
   			for (var i=0; i<selectOptions.length; i++) {
   				if (selectOptions[i].value == this.value || 
   						selectOptions[i].text == this.value ||
@@ -2192,11 +2193,11 @@ RailsDate.prototype = {
 		// detect patient_year, patient_month, patient_day
 		if (!dayElement && this.element.id.search(/_year$/)) {
 			var elementId = this.element.id.replace(/_year$/, "_day");
-			dayElement = $(elementId);
+			dayElement = document.getElementById(elementId);
 			
 		} else if (!dayElement && this.element.id.search(/_month$/)) {
 			var elementId = this.element.id.replace(/_month$/, "_day");
-			dayElement = $(elementId);
+			dayElement = document.getElementById(elementId);
 		}
 
 		return dayElement;
@@ -2270,7 +2271,7 @@ RailsDate.prototype = {
 		// detect patient_day	
 		if (!monthElement && this.element.id.search(/_day$/)) {
 			var elementId = this.element.id.replace(/_day$/, "_month");
-			monthElement = $(elementId);
+			monthElement = document.getElementById(elementId);
 		}
 
 		return monthElement;
@@ -2334,7 +2335,7 @@ RailsDate.prototype = {
 		// detect patient_day	
 		if (!yearElement && this.element.id.search(/_day$/)) {
 			var elementId = this.element.id.replace(/_day$/, "_year");
-			yearElement = $(elementId);
+			yearElement = document.getElementById(elementId);
 		}
 
 		return yearElement;
