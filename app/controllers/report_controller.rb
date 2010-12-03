@@ -168,9 +168,11 @@ class ReportController < ApplicationController
   
   def select
   end
+
   def select_remote_options
     render :layout => false
   end
+
   def remote_report
     s_day = params[:post]['start_date(3i)'].to_i #2
     s_month = params[:post]['start_date(2i)'].to_i #12
@@ -194,5 +196,7 @@ class ReportController < ApplicationController
     make_and_send_pdf('/report/weekly_report', 'weekly_report.pdf')
   end
 
+  def mastercard
+  end
 
 end
