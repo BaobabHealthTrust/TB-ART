@@ -36,6 +36,8 @@ class ActiveSupport::TestCase
   self.set_fixture_class :users => User
   self.set_fixture_class :weight_for_heights => WeightForHeight
   self.set_fixture_class :weight_height_for_ages => WeightHeightForAge
+  self.set_fixture_class :pharmacy_encounter_type => PharmacyEncounterType
+  self.set_fixture_class :pharmacy => Pharmacy
 
   fixtures :users, :location
 

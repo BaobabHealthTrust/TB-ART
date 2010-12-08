@@ -221,7 +221,7 @@ class Person < ActiveRecord::Base
     patient_params = params["patient"]
     params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number/) }
     birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
-    person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate/) }
+    person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate|occupation/) }
 
     person = Person.create(person_params)
 
@@ -234,6 +234,10 @@ class Person < ActiveRecord::Base
     person.names.create(names_params)
     person.addresses.create(address_params)
 
+    person.person_attributes.create(
+      :person_attribute_type_id => PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
+      :value => params["occupation"])
+ 
     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
       :value => params["cell_phone_number"])

@@ -3,7 +3,6 @@ class Pharmacy < ActiveRecord::Base
   set_primary_key "pharmacy_module_id"
   include Openmrs
 
-
   named_scope :active, :conditions => ['voided = 0']
 =begin
   def after_save
@@ -150,7 +149,7 @@ class Pharmacy < ActiveRecord::Base
     encounter_type = PharmacyEncounterType.find_by_name("Tins currently in stock").id
     Pharmacy.active.find(:first,
      :conditions => ["drug_id=? AND pharmacy_encounter_type=?",drug_id,encounter_type],
-     :order => "encounter_date DESC,date_created DESC").value_numeric.to_i rescue 0
+     :order => "encounter_date DESC,date_created DESC").value_numeric rescue 0
   end
 
   def self.current_stock_as_from(drug_id,start_date=Date.today,end_date=Date.today)
@@ -183,17 +182,14 @@ class Pharmacy < ActiveRecord::Base
     return total_stock_to_given_date - total_dispensed_to_given_date
   end
 
-  def self.new_delivery(drug_id,pills,date,encounter_type = nil,expiry_date = nil)
-
-#    raise "#{date} ---- #{drug_id} --- #{pills} --- #{encounter_type} --- #{expiry_date}"
-    
+  def self.new_delivery(drug_id,pills,date = Date.today,encounter_type = nil,expiry_date = nil)
     encounter_type = PharmacyEncounterType.find_by_name("New deliveries").id if encounter_type.blank?
     delivery =  self.new()
     delivery.pharmacy_encounter_type = encounter_type
     delivery.drug_id = drug_id
     delivery.encounter_date = date
     delivery.expiry_date = expiry_date unless expiry_date.blank?
-    delivery.value_numeric = pills
+    delivery.value_numeric = pills.to_f
     delivery.save
 
     if expiry_date
@@ -204,14 +200,15 @@ class Pharmacy < ActiveRecord::Base
     end 
 
 #cul current stock
-    total_dispensed_from_given_date = Pharmacy.dispensed_drugs_since(drug_id,date)
+    new_delivery_encounter =  PharmacyEncounterType.find_by_name('New deliveries')
+    total_dispensed_from_given_date = self.dispensed_drugs_since(drug_id,date)
     first_date = self.active.find(:first,:order => "encounter_date").encounter_date
     total_dispensed = Pharmacy.dispensed_drugs_since(drug_id,first_date)
     total_dispensed_to_given_date = (total_dispensed - total_dispensed_from_given_date)
-
-   
+  
     stock_before_given_date  = nil
-    total_stock_before_given_date = self.active.find(:all,:conditions =>["pharmacy_encounter_type = 2 AND encounter_date < ?",date])
+    total_stock_before_given_date = self.active.find(:all,:conditions =>["pharmacy_encounter_type = ? AND encounter_date < ?",
+                                    new_delivery_encounter.id,date])
     
     if total_stock_before_given_date
       stock_before_given_date = total_stock_before_given_date.map{|stock|stock.value_numeric} || [0]
@@ -227,13 +224,13 @@ class Pharmacy < ActiveRecord::Base
       delivery.save
     end rescue nil
 
-    stock_after_given_date = self.active.find(:all,:conditions =>["pharmacy_encounter_type = 2 AND encounter_date >= ?",
-      date]).map{|stock|stock.value_numeric} || [0]
+    stock_after_given_date = self.active.find(:all,:conditions =>["pharmacy_encounter_type = ? AND Date(encounter_date) >= ?",
+      new_delivery_encounter.id,date]).map{|stock|stock.value_numeric} || [0]
 
     delivery =  self.new()
     delivery.pharmacy_encounter_type = encounter_type
     delivery.drug_id = drug_id
-    delivery.encounter_date = Date.today
+    delivery.encounter_date = date #Date.today
     delivery.value_numeric = (stock_after_given_date.sum - total_dispensed_from_given_date) + (stock_before_given_date.sum -  total_dispensed_to_given_date)
     delivery.save
   end
@@ -254,7 +251,7 @@ class Pharmacy < ActiveRecord::Base
     total
   end
 
-  def first_delivery_date(drug_id)
+  def self.first_delivery_date(drug_id)
     encounter_type = PharmacyEncounterType.find_by_name("New deliveries").id
     Pharmacy.active.find(:first,:conditions => ["drug_id=? AND pharmacy_encounter_type=?",drug_id,encounter_type],
     :order => "encounter_date ASC,date_created ASC").encounter_date rescue nil

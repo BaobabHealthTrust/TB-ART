@@ -274,3 +274,16 @@ User.blueprint do
   changed_by 1
   system_id 'Baobab Admin'
 end
+
+Pharmacy.blueprint do
+  pharmacy_module_id 1
+  pharmacy_encounter_type 2
+  drug_id 5
+  value_numeric 100.0
+  expiry_date Date.today + 2.year
+  encounter_date Time.now
+  creator 1  
+  date_created Time.now
+  voided 0
+end
+
