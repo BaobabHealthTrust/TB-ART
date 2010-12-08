@@ -33,11 +33,15 @@
   var currentWeightPercentile;
   var displayText;
   var medianWeightHeight;
+
+  function $(e) {
+    return document.getElementById(e);
+  }
  
   function growthIndicators(){
      //These values pulled from the tt_onLoad bit in the third form...
-     currentHeight = $('height').value;
-     currentWeight = $('weight').value;
+     currentHeight = document.getElementById('height').value;
+     currentWeight = document.getElementById('weight').value;
      medianWeightHeight = [<%= WeightHeightForAge.median_weight_height(@patient.person.age, @patient.person.gender).join(',') rescue nil -%>];
      currentWeightPercentile = (currentWeight/(medianWeightHeight[0])*100).toFixed(0);
      currentHeightPercentile = (currentHeight/(medianWeightHeight[1])*100).toFixed(0);     
@@ -47,13 +51,13 @@
        showWeightHeightForAge();
        showWeightForHeight();
      }
-     $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div><div id="charts" style="height:185px;margin:2px 6px 6px;padding:2px;width:380px;"></div>' ;
+     document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div><div id="charts" style="height:185px;margin:2px 6px 6px;padding:2px;width:380px;"></div>' ;
      jQuery('#charts').empty().load('/patients/graph/<%= @patient.id -%>?data=weight');     
    }
         
   function showWeightHeightForAge(){
-    $('weight_for_age').value = currentWeightPercentile;
-    $('height_for_age').value = currentHeightPercentile;
+    document.getElementById('weight_for_age').value = currentWeightPercentile;
+    document.getElementById('height_for_age').value = currentHeightPercentile;
    
     displayText = "<div><span class='title'>Weight for age:</span>";
     if (currentWeightPercentile >= 80){
@@ -83,7 +87,7 @@
     var medianWeightHeight = weightForHeights[currentHeightRounded.toFixed(1)];
     var weightForHeightPercentile = (currentWeight/(medianWeightHeight)*100).toFixed(0);
 
-    $('weight_for_height').value = weightForHeightPercentile;
+    document.getElementById('weight_for_height').value = weightForHeightPercentile;
  
     displayText += "<div><span class='title'>Weight for height:</span>";
  
@@ -100,7 +104,7 @@
   function showBMI() {
     currentBmi = (currentWeight/(currentHeight*currentHeight)*10000).toFixed(1);
 
-    $('bmi').value = currentBmi;
+    document.getElementById('bmi').value = currentBmi;
 
     displayText = "<div><span class='title'>BMI:</span>";
     if (currentBmi > 18.5) {

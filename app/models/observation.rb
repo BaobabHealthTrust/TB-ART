@@ -18,9 +18,10 @@ class Observation < ActiveRecord::Base
   }
 
   def validate
-    if (value_numeric != '0.0' && value_numeric != '0')
+    if (value_numeric != '0.0' && value_numeric != '0' && !value_numeric.blank?)
       value_numeric = value_numeric.to_f
-      value_numeric = nil if value_numeric == 0.0
+      #TODO
+      #value_numeric = nil if value_numeric == 0.0
     end
     errors.add_to_base("Value cannot be blank") if value_numeric.blank? &&
       value_boolean.blank? &&

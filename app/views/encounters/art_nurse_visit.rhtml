@@ -13,6 +13,11 @@
   .warning {
     color:red;
   }
+
+  .pills_remaing{
+    left:25px;
+    position:inherit;
+  }
 </style>
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
@@ -72,11 +77,11 @@
        :helpText => "Is patient pregnant?" } %>
   <% end %>    
   
-  <%= touch_yes_no_unknown_tag "IS ABLE TO WALK UNAIDED?", @patient, nil,
+  <%#= touch_yes_no_unknown_tag "IS ABLE TO WALK UNAIDED?", @patient, nil,
     {:optional => true,
      :helpText => "Is patient able to walk unaided?" } %>
 
-  <%= touch_yes_no_unknown_tag "IS AT WORK OR SCHOOL?", @patient, nil,
+  <%#= touch_yes_no_unknown_tag "IS AT WORK OR SCHOOL?", @patient, nil,
     {:optional => true,
      :helpText => "Is patient at work or school?" } %>
 
@@ -91,6 +96,12 @@
      :optional => true,
      :multiple => true,
      :helpText => "Adverse effects (select all that apply)" } %>
+
+  <%= touch_select_tag "TB STATUS", @patient, options_for_select(['TB NOT SUSPECTED', 'TB SUSPECTED','CONFIRMED TB NOT ON TREATMENT', 'CONFIRMED TB ON TREATMENT','UNKOWN']),
+    {:id => 'tb_status',
+     :optional => true,
+     :multiple => false,
+     :helpText => "TB Status" } %>
 
   <% @patient.orders.unfinished.arv.prescriptions.each do |order| %>
     <%= touch_numeric_tag "AMOUNT OF DRUG BROUGHT TO CLINIC", @patient, nil,
