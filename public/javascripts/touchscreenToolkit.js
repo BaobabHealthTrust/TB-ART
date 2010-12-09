@@ -977,7 +977,7 @@ function tt_update(sourceElement){
 					railsDate.update(sourceValue);
 				} else {
           // Hack to handle bug: http://baobabhealth.org/issues/issues/148
-          if(! parseInt(sourceValue)){
+          if(! parseInt(sourceValue) && sourceElement.getAttribute("value")){
             sourceValue = sourceElement.getAttribute("value");
           }
 					targetElement.value = sourceValue;
