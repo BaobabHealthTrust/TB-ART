@@ -383,8 +383,6 @@ function populateInputPage(pageNum) {
 			break;
 	}
 	
-  print(tstFormElements[i]);
-  print(touchscreenInputNode);
 	setTouchscreenAttributes(touchscreenInputNode, tstFormElements[i], pageNum);
 
 	if (tstFormElements[i].value) {
@@ -978,6 +976,10 @@ function tt_update(sourceElement){
 					var railsDate = new RailsDate(targetElement);
 					railsDate.update(sourceValue);
 				} else {
+          // Hack to handle bug: http://baobabhealth.org/issues/issues/148
+          if(! parseInt(sourceValue)){
+            sourceValue = sourceElement.getAttribute("value");
+          }
 					targetElement.value = sourceValue;
 
 					if (targetElement.getAttribute("multiple") == "multiple") {
