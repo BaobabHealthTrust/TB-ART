@@ -11,7 +11,7 @@ usage(){
 ENV=$1
 SITE=$2
 
-if [ -z "$ENV" ] || [ -z "$SITE"] ; then
+if [ -z "$ENV" ] || [ -z "$SITE" ] ; then
   usage
   exit
 fi
