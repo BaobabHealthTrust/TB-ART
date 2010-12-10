@@ -6,7 +6,7 @@
   
   function updateCD4Count() {
     var cd4_available = $('new_cd4_count_available').value == 'YES';
-    var cd4_count = cd4_count_available ? $('cd4_count').value : null;
+    var cd4_count = cd4_available ? $('cd4_count').value : null;
     var cd4_count_numeric, cd4_count_estimate, cd4_count_modifier;
     try { cd4_count_numeric = parseInt(cd4_count); } catch(e) { cd4_count_numeric = null; }
     if (cd4_count_numeric == null || ''+cd4_count_numeric == 'NaN') {
