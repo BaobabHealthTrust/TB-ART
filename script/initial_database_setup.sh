@@ -29,8 +29,10 @@ DATABASE=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}'][
 echo "DROP DATABASE $DATABASE;" | mysql --user=$USERNAME --password=$PASSWORD
 echo "CREATE DATABASE $DATABASE;" | mysql --user=$USERNAME --password=$PASSWORD
 
-mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/schema.sql
-mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/openmrs_metadata.sql
+#mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/schema.sql
+#mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/openmrs_metadata.sql
+mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/openmrs_1_5_2_concept_server_full_db.sql
+mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/schema_bart2_additions.sql
 mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/defaults.sql
 mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/data/${SITE}/${SITE}.sql
 mysql --user=$USERNAME --password=$PASSWORD $DATABASE < db/data/${SITE}/tasks.sql
