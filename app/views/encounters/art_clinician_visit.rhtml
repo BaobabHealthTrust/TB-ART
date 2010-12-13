@@ -303,7 +303,7 @@
          :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
     <% end %>
 
-    <% unless concept_set_options('WHO STAGE II PEDS').blank? %>
+    <% unless concept_set_options('WHO STAGE I PEDS').blank? %>
       <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
         {:id => "stage_1_conditions_peds",
          :multiple => true,
