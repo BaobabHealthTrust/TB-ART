@@ -111,7 +111,7 @@
       if(whoStage >= 3) {
         reasonForArtEligibility = whoStageConcept(whoStage, "ADULT");  
       } else {
-        if ($('pregnant').value == "YES" && $('cd4_count_less_than_350').value == "YES") {
+        if ($('pregnant') && $('pregnant').value == "YES" && $('cd4_count_less_than_350').value == "YES") {
           reasonForArtEligibility = "CD4 COUNT LESS THAN 350";
         } else if ($('cd4_count_less_than_250').value == "YES") {
           reasonForArtEligibility = "CD4 COUNT LESS THAN 250";
