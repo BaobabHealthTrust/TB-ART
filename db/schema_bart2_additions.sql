@@ -15,6 +15,60 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+--
+-- orders table added by mike - we use the obs_id property to associate prescriptions with diagnoses
+--
+
+DROP TABLE IF EXISTS `orders`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `orders` (
+  `order_id` int(11) NOT NULL auto_increment,
+  `order_type_id` int(11) NOT NULL default '0',
+  `concept_id` int(11) NOT NULL default '0',
+  `orderer` int(11) default '0',
+  `encounter_id` int(11) default NULL,
+  `instructions` text,
+  `start_date` datetime default NULL,
+  `auto_expire_date` datetime default NULL,
+  `discontinued` smallint(6) NOT NULL default '0',
+  `discontinued_date` datetime default NULL,
+  `discontinued_by` int(11) default NULL,
+  `discontinued_reason` int(11) default NULL,
+  `creator` int(11) NOT NULL default '0',
+  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `voided` smallint(6) NOT NULL default '0',
+  `voided_by` int(11) default NULL,
+  `date_voided` datetime default NULL,
+  `void_reason` varchar(255) default NULL,
+  `patient_id` int(11) NOT NULL,
+  `accession_number` varchar(255) default NULL,
+  `obs_id` int(11) default NULL,
+  `uuid` char(38) NOT NULL,
+  PRIMARY KEY  (`order_id`),
+  UNIQUE KEY `orders_uuid_index` (`uuid`),
+  KEY `order_creator` (`creator`),
+  KEY `orderer_not_drug` (`orderer`),
+  KEY `orders_in_encounter` (`encounter_id`),
+  KEY `type_of_order` (`order_type_id`),
+  KEY `user_who_discontinued_order` (`discontinued_by`),
+  KEY `user_who_voided_order` (`voided_by`),
+  KEY `discontinued_because` (`discontinued_reason`),
+  KEY `order_for_patient` (`patient_id`),
+  KEY `obs_for_order` (`obs_id`),
+  CONSTRAINT `discontinued_because` FOREIGN KEY (`discontinued_reason`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `obs_for_order` FOREIGN KEY (`obs_id`) REFERENCES `obs` (`obs_id`),
+  CONSTRAINT `orderer_not_drug` FOREIGN KEY (`orderer`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `orders_in_encounter` FOREIGN KEY (`encounter_id`) REFERENCES `encounter` (`encounter_id`),
+  CONSTRAINT `order_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `order_for_patient` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`) ON UPDATE CASCADE,
+  CONSTRAINT `type_of_order` FOREIGN KEY (`order_type_id`) REFERENCES `order_type` (`order_type_id`),
+  CONSTRAINT `user_who_discontinued_order` FOREIGN KEY (`discontinued_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `user_who_voided_order` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25427 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
 --
 -- Table structure for table `art_num_list`
 --
