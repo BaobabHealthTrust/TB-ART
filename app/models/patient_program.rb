@@ -5,17 +5,34 @@ class PatientProgram < ActiveRecord::Base
   belongs_to :patient, :conditions => {:voided => 0}
   belongs_to :program, :conditions => {:retired => 0}
   belongs_to :location, :conditions => {:retired => 0}
-  has_many :patient_states, :class_name => 'PatientState', :conditions => {:voided => 0}
+  has_many :patient_states, :class_name => 'PatientState', :conditions => {:voided => 0}, :dependent => :destroy
 
   named_scope :current, :conditions => ['date_enrolled < NOW() AND (date_completed IS NULL OR date_completed > NOW())']
   named_scope :local, lambda{|| {:conditions => ['location_id = ?',  Location.current_health_center.location_id]} }
-  
+  validates_presence_of :date_enrolled, :program_id
+
+  def validate
+    PatientProgram.find_all_by_patient_id(self.patient_id).each{|patient_program|
+      if self.program == patient_program.program and patient_program.date_enrolled <= self.date_enrolled and (patient_program.date_completed.nil? or self.date_enrolled <= patient_program.date_completed)
+        errors.add "Patient already enrolled in program #{self.program.concept.name.name rescue nil} at #{self.date_enrolled}"
+      end
+    }
+  end
+
   def after_void(reason = nil)
     self.patient_states.each{|row| row.void(reason) }
   end
 
+  def debug
+    puts self.to_yaml
+    return
+    puts "Name: #{self.program.concept.name.name}" rescue nil
+    puts "Date enrolled: #{self.date_enrolled}"
+
+  end
+
   def to_s
-    self.program.concept.name.name + " (at #{location.name})"
+    "#{self.program.concept.name.name rescue nil} (at #{location.name rescue nil})"
   end
   
   def transition(params)
