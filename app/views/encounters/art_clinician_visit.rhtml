@@ -6,7 +6,7 @@
   
   function updateCD4Count() {
     var cd4_available = $('new_cd4_count_available').value == 'YES';
-    var cd4_count = cd4_count_available ? $('cd4_count').value : null;
+    var cd4_count = cd4_available ? $('cd4_count').value : null;
     var cd4_count_numeric, cd4_count_estimate, cd4_count_modifier;
     try { cd4_count_numeric = parseInt(cd4_count); } catch(e) { cd4_count_numeric = null; }
     if (cd4_count_numeric == null || ''+cd4_count_numeric == 'NaN') {
@@ -111,7 +111,7 @@
       if(whoStage >= 3) {
         reasonForArtEligibility = whoStageConcept(whoStage, "ADULT");  
       } else {
-        if ($('pregnant').value == "YES" && $('cd4_count_less_than_350').value == "YES") {
+        if ($('pregnant') && $('pregnant').value == "YES" && $('cd4_count_less_than_350').value == "YES") {
           reasonForArtEligibility = "CD4 COUNT LESS THAN 350";
         } else if ($('cd4_count_less_than_250').value == "YES") {
           reasonForArtEligibility = "CD4 COUNT LESS THAN 250";
@@ -143,10 +143,10 @@
           ((presumedSevereHivConditions.indexOf("PNEUMONIA, SEVERE") > -1) && (presumedSevereHivConditions.indexOf("SEPSIS, SEVERE") > -1)))
           presumedSevereHiv = true;
       }
-   /* 
-      try{{
+      
+      try{
         presumedSeverHiv == null} catch (e) {
-      } finally {presumedSeverHiv = null}*/
+      } finally {presumedSeverHiv = null}
 
       try{
         if (ageInMonths <= 17 && firstPositiveHivTestType == "HIV RAPID TEST, QUALITATIVE" && presumedSeverHiv)
@@ -303,8 +303,8 @@
          :tt_pageStyleClass => "NoKeyboard NoInput small"  } %>
     <% end %>
 
-    <% unless concept_set_options('WHO STAGE II PEDS').blank? %>
-      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE II PEDS'),
+    <% unless concept_set_options('WHO STAGE I PEDS').blank? %>
+      <%= touch_select_tag "WHO STAGES CRITERIA PRESENT", @patient, concept_set_options('WHO STAGE I PEDS'),
         {:id => "stage_1_conditions_peds",
          :multiple => true,
          :optional => true,
