@@ -86,6 +86,8 @@ class PatientsController < ApplicationController
 
   def mastercard
     @patient_id = params[:patient_id] 
+    @data_demo = Mastercard.demographics(Patient.find(@patient_id))
+    @visits = Mastercard.visits(Patient.find(@patient_id))
     render :layout => "menu"
   end
   

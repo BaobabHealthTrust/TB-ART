@@ -117,9 +117,10 @@ class Person < ActiveRecord::Base
       },
       "addresses" => {
         "county_district" => "",
-        "city_village" => self.addresses[0].city_village
+        "city_village" => self.addresses[0].city_village,
+        "location" => self.addresses[0].address2
       },
-    }}
+    "occupation" => self.get_attribute('Occupation')}}
  
     if not self.patient.patient_identifiers.blank? 
       demographics["person"]["patient"] = {"identifiers" => {}}
@@ -298,6 +299,11 @@ class Person < ActiveRecord::Base
 
     result ? JSON.parse(result) : nil
 
+  end
+
+  def get_attribute(attribute)
+    PersonAttribute.find(:first,:conditions =>["voided = 0 AND person_attribute_type_id = ? AND person_id = ?",
+        PersonAttributeType.find_by_name(attribute).id,self.id]).value rescue nil
   end
 
   

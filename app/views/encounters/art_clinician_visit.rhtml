@@ -143,10 +143,10 @@
           ((presumedSevereHivConditions.indexOf("PNEUMONIA, SEVERE") > -1) && (presumedSevereHivConditions.indexOf("SEPSIS, SEVERE") > -1)))
           presumedSevereHiv = true;
       }
-    
+   /* 
       try{{
         presumedSeverHiv == null} catch (e) {
-      } finally {presumedSeverHiv = null}
+      } finally {presumedSeverHiv = null}*/
 
       try{
         if (ageInMonths <= 17 && firstPositiveHivTestType == "HIV RAPID TEST, QUALITATIVE" && presumedSeverHiv)

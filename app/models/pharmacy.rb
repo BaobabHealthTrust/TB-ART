@@ -202,7 +202,7 @@ class Pharmacy < ActiveRecord::Base
 #cul current stock
     new_delivery_encounter =  PharmacyEncounterType.find_by_name('New deliveries')
     total_dispensed_from_given_date = self.dispensed_drugs_since(drug_id,date)
-    first_date = self.active.find(:first,:order => "encounter_date").encounter_date
+    first_date = self.first_delivery_date(drug_id) #active.find(:first,:order => "encounter_date").encounter_date
     total_dispensed = Pharmacy.dispensed_drugs_since(drug_id,first_date)
     total_dispensed_to_given_date = (total_dispensed - total_dispensed_from_given_date)
   
@@ -230,7 +230,7 @@ class Pharmacy < ActiveRecord::Base
     delivery =  self.new()
     delivery.pharmacy_encounter_type = encounter_type
     delivery.drug_id = drug_id
-    delivery.encounter_date = date #Date.today
+    delivery.encounter_date = Date.today
     delivery.value_numeric = (stock_after_given_date.sum - total_dispensed_from_given_date) + (stock_before_given_date.sum -  total_dispensed_to_given_date)
     delivery.save
   end
