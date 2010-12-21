@@ -1,0 +1,12 @@
+Please add more information about these files here:
+
+These files are used to setup your database with the appropriate schema and required data.
+
+Use script/initial_database_setup.sh to load them
+
+For instance:
+
+script/initial_database_setup.sh development nno
+
+
+View this script to determine the order that these sql files are loaded.

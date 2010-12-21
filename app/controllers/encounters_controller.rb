@@ -1,7 +1,6 @@
 class EncountersController < ApplicationController
 
   def create  
-#    raise params.inspect
     @patient = Patient.find(params[:encounter][:patient_id])
 
     # Go to the dashboard if this is a non-encounter

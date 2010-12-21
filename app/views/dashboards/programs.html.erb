@@ -26,7 +26,7 @@
 </script>
 <div id="tab">
   <div class="panel" style="width:380px;float:left">
-    <h2>Programs</h2>
+    <h2>Programs (possibly filtered)</h2>
     <ul id="programs" class="list" style="height:270px;width:100%;">
       <% for program in @programs do %>
         <li class="data <%= cycle('even', 'odd') %>" program="<%= program.id %>">
