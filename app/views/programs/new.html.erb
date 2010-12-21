@@ -20,6 +20,11 @@
   }
   
 </script>
+
+<% if flash[:error] %>
+  <p id='flash_error'><%= flash[:error]%></p>
+<% end %>
+
 <form id='program' action="/programs/create" method='post'> 
   <%= hidden_field_tag :patient_id, @patient.id %>
 

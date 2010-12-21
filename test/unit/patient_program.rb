@@ -18,6 +18,7 @@ class PatientProgramTest < ActiveSupport::TestCase
       patient_program2 = Factory(:patient_program)
       patient_program2.program = program
       assert !patient_program2.valid?
+      puts patient_program2.errors.full_messages
     end
 
     should "allow overlap for same program different date ranges" do

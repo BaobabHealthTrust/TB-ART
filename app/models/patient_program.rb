@@ -14,7 +14,7 @@ class PatientProgram < ActiveRecord::Base
   def validate
     PatientProgram.find_all_by_patient_id(self.patient_id).each{|patient_program|
       if self.program == patient_program.program and patient_program.date_enrolled <= self.date_enrolled and (patient_program.date_completed.nil? or self.date_enrolled <= patient_program.date_completed)
-        errors.add "Patient already enrolled in program #{self.program.concept.name.name rescue nil} at #{self.date_enrolled}"
+        errors.add_to_base "Patient already enrolled in program #{self.program.name rescue nil} at #{self.date_enrolled.to_date}"
       end
     }
   end

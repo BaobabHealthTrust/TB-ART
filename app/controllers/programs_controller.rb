@@ -19,7 +19,8 @@ class ProgramsController < ApplicationController
       redirect_to session[:return_to] and return unless session[:return_to].blank?
       redirect_to :controller => :patients, :action => :programs, :patient_id => @patient.patient_id
     else 
-      render :action => "new" 
+      flash.now[:error] = @patient_program.errors.full_messages.join(". ")
+      render :action => "new"
     end
   end
 
