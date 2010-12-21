@@ -122,6 +122,21 @@ class Patient < ActiveRecord::Base
     obs.first.value_numeric rescue 0
   end
   
+  def initial_weight
+    obs = person.observations.recent(1).question("WEIGHT (KG)").all
+    obs.last.value_numeric rescue 0
+  end
+  
+  def initial_height
+    obs = person.observations.recent(1).question("HEIGHT (CM)").all
+    obs.last.value_numeric rescue 0
+  end
+
+  def initial_bmi
+    obs = person.observations.recent(1).question("BMI").all
+    obs.last.value_numeric rescue nil
+  end
+
   def min_weight
     WeightHeight.min_weight(person.gender, person.age_in_months).to_f
   end

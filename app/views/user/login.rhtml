@@ -43,7 +43,7 @@
       <%= hidden_field_tag('location', current_health_center_id, :helpText=> "Workstation Location", :tt_pageonload=>"loadBarcodePage", :field_type => "number") %><br>
     <% elsif ask_location == "true" %>  
       <label for="user_location">Location</label>
-      <%= text_field_tag('location', '', :helpText=> "Scan location barcode", :tt_pageonload=>"loadBarcodePage") %><br>
+      <%= text_field_tag('location_name', '', :helpText=> "Scan location barcode", :tt_pageonload=>"loadBarcodePage") %><br>
     <% end %>  
     <%= submit_tag value="Submit"%>
   <% end %>

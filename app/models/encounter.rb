@@ -18,6 +18,7 @@ class Encounter < ActiveRecord::Base
   end
 
   def after_void(reason = nil)
+    self.orders.each{|row| Pharmacy.voided_stock_adjustment(order) if row.order_type_id == 1 }
     self.observations.each{|row| row.void(reason) }
     self.orders.each{|row| row.void(reason) }
   end

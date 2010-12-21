@@ -17,6 +17,7 @@
       jQuery(document).ready(function($) {    
         $('#visit').click(function() { window.location = '/patients/print_visit?patient_id=<%= @patient.id -%>' })
         $('#print').click(function() { window.location = '/patients/print_registration?patient_id=<%= @patient.id -%>' })
+        $('#mastercard').click(function() { window.location = '/patients/mastercard?patient_id=<%= @patient.id -%>' })
         $('#finish').click(function() { window.location = "/clinic" })
         $('#additional').click(function() { window.location = '/encounter_types?patient_id=<%= @patient.id -%>' })
 
@@ -50,6 +51,7 @@
             <button id="additional" class="yellow"><span>Tasks</span></button>
             <button id="print" class="yellow"><span>Print ID</span></button>
             <button id="visit" class="yellow"><span>Print Visit</span></button>    
+            <button id="mastercard" class="yellow"><span>Mastercard</span></button>    
           </div>          
         </div>    
       </div>  

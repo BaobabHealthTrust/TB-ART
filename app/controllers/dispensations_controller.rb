@@ -31,6 +31,7 @@ class DispensationsController < ApplicationController
     if obs.save
       @patient.patient_programs.find_by_program_id(Program.find_by_name("HIV PROGRAM")).transition(:state => "ON ANTIRETROVIRALS") if @drug.arv? rescue nil
       @order.drug_order.total_drug_supply(@patient, @encounter)
+      Pharmacy.dispensed_stock_adjustment(@patient.current_treatment_encounter)
       redirect_to "/patients/treatment/#{@patient.patient_id}"
     else
       flash[:error] = "Could not dispense the drug for the prescription"

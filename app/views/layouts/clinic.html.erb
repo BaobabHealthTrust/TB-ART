@@ -17,7 +17,7 @@
       jQuery(document).ready(function($) {    
         $('#logout').click(function() { window.location = '/logout' })
         $('#find').click(function() { window.location = '/people/search' })
-        if ($('#staging')) $('#staging').click(function() { window.location = 'http://staging/clinic' })        
+        //if ($('#staging')) $('#staging').click(function() { window.location = 'http://staging/clinic' })        
       }) 
     </script>
     <style type="text/css">
@@ -62,7 +62,7 @@
             <button id="logout" class="red left"><span>Logout</span></button>
             <button id="find" class="green"><span>Find Name</span></button>
             <% if User.current_user.admin? %>
-            <button id="staging" class="yellow"><span>Staging</span></button>
+            <!--button id="staging" class="yellow"><span>Staging</span></button-->
             <% end %>
           </div>          
         </div>    

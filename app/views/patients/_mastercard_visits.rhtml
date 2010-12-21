@@ -1,0 +1,83 @@
+<style>
+a {
+border: 0 none;
+cursor: pointer;
+font-weight: bold;
+/*padding: 0 15px 0 0;*/
+text-align: center;
+height: 30px;
+line-height: 30px;
+width: auto;
+}
+
+a.rounded {
+background: transparent url("images/buttons/btn_right_hover_green.png") no-repeat scroll right top;
+clear: left;
+font-size: 0.8em;
+}
+
+a span {
+display: block;
+padding: 0 0 0 15px;
+position: relative;
+white-space: nowrap;
+height: 30px;
+line-height: 30px;
+}
+
+a.rounded span {
+background: transparent url("/images/buttons/btn_left_hover_green.png") no-repeat scroll left top;
+color: #FFFFFF;
+}
+
+a.rounded:hover {
+background-position: 100% -30px;
+}
+
+a.rounded:hover span {
+background-position: 0% -30px;
+}
+
+a::-moz-focus-inner {
+border: none;
+}
+</style>
+<div class='scrollTableContainer'>
+<table class='dataTable' cellspacing='0'>
+<thead>
+<tr>
+  <th>&nbsp;</th>
+  <th>Height</th>
+  <th>Weight</th>
+  <th>Regimen</th>
+  <th>Outcome</th>
+  <th>TB Status</th>
+  <th>Symptoms</th>
+  <th>Pill count</th>
+  <th>Drugs</th>
+  <th>Visit</th>
+  <!--th>CPT</th>
+  <th>CD4 count</th-->
+</tr>
+</thead>
+<tbody>
+<% date = Date.today
+   @visits.map{|date,data| %>
+    <tr>
+      <td><a href href='' class='rounded'><span><%=date%></span></a></td>
+      <td><%= data.height || '&nbsp;'%></td>
+      <td><%= data.weight || '&nbsp;'%></td>
+      <td><%= data.reg || '&nbsp;'%></td>
+      <td><%= '&nbsp;'%></td>
+      <td><%= data.tb_status || '&nbsp;'%></td>
+      <td><%= '&nbsp;'%></td>
+      <td><%= data.pills || '&nbsp;'%></td>
+      <td><%= data.gave || '&nbsp;'%></td>
+      <td style=""><%= data.visit_by || '&nbsp;'%></td>
+      <!--td><%#= '&nbsp;'%></td>
+      <td><%#= '&nbsp;'%></td-->
+    </tr>
+<%}%>
+</tbody>
+</table>
+</div>
