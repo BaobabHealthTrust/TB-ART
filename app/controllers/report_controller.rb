@@ -199,4 +199,14 @@ class ReportController < ApplicationController
   def mastercard
   end
 
+  def data_cleaning
+
+      @reports = {
+                    'Missing Prescriptions'=>'dispensations_without_prescriptions',
+                    'Missing Dispensations'=>'prescriptions_without_dispensations',
+                    'Multiple Start Reasons at Different times'=>'patients_with_multiple_start_reasons'
+                 }
+      render :layout => "menu"
+  end
+
 end

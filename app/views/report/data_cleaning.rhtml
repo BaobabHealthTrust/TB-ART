@@ -1,0 +1,24 @@
+<script >
+    tt_cancel_destination = "/clinic/administration"
+</script>
+<%= stylesheet_link_tag 'extra_buttons' %>
+<div align = center>
+      <br />
+      <h1><u>Data Cleaning Reports</u></h1>
+      
+      <div>
+
+        <table id="tcont  ent">
+            <% @reports.each do |helptext,report_type| %>
+            <tr>
+                <td>  
+                      <%= link_to_onmousedown "#{helptext}",{:controller =>"cohort_tool", :action => 'select',
+                                                                      :report_type => "#{report_type}"}, :class => 'report_button' %> 
+                      
+                </td>
+            </tr>
+            <%end rescue nil%>
+        </table>
+        
+      </div>
+</div>
