@@ -3,7 +3,14 @@
   jQuery(document).ready(function($) {
   }) 
 </script>
-<div id="tab">
-  <div class="panel">
-  </div>        
-</div>
+
+<%= stylesheet_link_tag 'extra_buttons' %>
+    <table id="tcontent">
+            <% @reports = {'/Report/data_cleaning' => 'Data Clining Tools'}%>
+            <% @reports.each do |path,name| %>
+                    <tr>
+                      <td><a href="<%=path%>" class='report_button'><%=name%></a></td>
+                    </tr>
+            <%end rescue nil%>
+    </table>
+
