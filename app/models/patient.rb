@@ -111,6 +111,12 @@ class Patient < ActiveRecord::Base
     id ||= national_id_with_dashes
     id
   end
+
+  def get_identifier(type = 'National id')
+    identifier_type = PatientIdentifierType.find_by_name(type)
+    return if identifier_type.blank?
+    self.patient_identifiers.find_all_by_identifier_type(identifier_type.id).map{|i|i.identifier}.join(' , ') rescue nil
+  end
   
   def current_weight
     obs = person.observations.recent(1).question("WEIGHT (KG)").all

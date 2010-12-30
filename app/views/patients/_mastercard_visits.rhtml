@@ -44,6 +44,7 @@ border: none;
 </style>
 <div class='scrollTableContainer'>
 <table class='dataTable' cellspacing='0'>
+<% unless @visits.blank? %>
 <thead>
 <tr>
   <th>&nbsp;</th>
@@ -51,6 +52,7 @@ border: none;
   <th>Weight</th>
   <th>Regimen</th>
   <th>Outcome</th>
+  <th>Adherence</th>
   <th>TB Status</th>
   <th>Symptoms</th>
   <th>Pill count</th>
@@ -69,8 +71,9 @@ border: none;
       <td><%= data.weight || '&nbsp;'%></td>
       <td><%= data.reg || '&nbsp;'%></td>
       <td><%= '&nbsp;'%></td>
+      <td><%= data.adherence || '&nbsp;'%></td>
       <td><%= data.tb_status || '&nbsp;'%></td>
-      <td><%= '&nbsp;'%></td>
+      <td><%= data.s_eff || '&nbsp;'%></td>
       <td><%= data.pills || '&nbsp;'%></td>
       <td><%= data.gave || '&nbsp;'%></td>
       <td style=""><%= data.visit_by || '&nbsp;'%></td>
@@ -80,4 +83,11 @@ border: none;
 <%}%>
 </tbody>
 </table>
+<% else %>
+<table>
+  <tr>
+    <td style='text-align:center;font-weight:bold;background-color:lightgrey;'>No ART Nurse visits</td>
+  </tr>
+</table>
+<% end %>
 </div>

@@ -8,9 +8,9 @@ class Mastercard
   def self.demographics(patient_obj)
     visits = self.new()
     person_demographics = patient_obj.person.demographics
-
     
     visits.patient_id = patient_obj.id
+    visits.arv_number = patient_obj.get_identifier('ARV Number')
     visits.address = person_demographics['person']['addresses']['city_village']
     visits.national_id = person_demographics['person']['patient']['identifiers']['National id']
     visits.name = person_demographics['person']['names']['given_name'] + ' ' + person_demographics['person']['names']['family_name'] rescue nil
@@ -30,7 +30,9 @@ class Mastercard
     visits.hiv_test_location = visits.hiv_test_location.to_s.split(':')[1].strip rescue nil
     visits.guardian = patient_obj.person.relationships.map{|r|Person.find(r.person_b).name}.join(' : ') rescue 'NONE'
     visits.reason_for_art_eligibility = patient_obj.person.observations.recent(1).question("REASON FOR ART ELIGIBILITY").all rescue nil
-    visits.reason_for_art_eligibility = visits.reason_for_art_eligibility.to_s.split(':')[1].strip rescue nil
+    visits.reason_for_art_eligibility = visits.reason_for_art_eligibility.map{|c|ConceptName.find(c.value_coded_name_id).name}.join(',')
+    visits.transfer_in = patient_obj.person.observations.recent(1).question("HAS TRANSFER LETTER").all rescue nil
+    visits.transfer_in.blank? == true ? visits.transfer_in = 'NO' : visits.transfer_in = 'YES'
 
     treatment_encounter = Encounter.find(:first,
                                           :joins => "INNER JOIN orders ON encounter.encounter_id = orders.encounter_id",
@@ -67,7 +69,7 @@ class Mastercard
     patient_visits = {}
     yes = ConceptName.find_by_name("YES")
     observations = Observation.find(:all,:conditions =>["voided = 0 AND person_id = ?",patient_obj.patient_id],:order =>"obs_datetime")
-    ["HEIGHT","WEIGHT","REGIMEN","OUTCOME","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT"].map do |field|
+    ["HEIGHT","WEIGHT","REGIMEN","OUTCOME","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT",'ADHERENCE'].map do |field|
       observations.map do |obs|
          visit_date = obs.obs_datetime.to_date
          patient_visits[visit_date] = self.new() if patient_visits[visit_date].blank?
@@ -112,10 +114,18 @@ class Mastercard
             }
           when "OUTCOME"
           when "SYMPTOMS"
+            concept_name = obs.concept.name.name rescue []
+            next unless concept_name == 'SYMPTOM PRESENT'
+            symptoms = obs.to_s.split(':').map{|sy|sy.strip.capitalize unless sy == 'SYMPTOM PRESENT'}.compact rescue []
+            patient_visits[visit_date].s_eff = symptoms.join("<br/>") unless symptoms.blank?
           when "PILLS BROUGHT"
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'AMOUNT OF DRUG BROUGHT TO CLINIC'
             patient_visits[visit_date].pills = obs.value_numeric
+          when "ADHERENCE"
+            concept_name = obs.concept.name.name rescue []
+            next unless concept_name == 'WHAT WAS THE PATIENTS ADHERENCE FOR THIS DRUG ORDER'
+            patient_visits[visit_date].adherence = obs.value_text + '%' unless obs.value_text.blank?
          end
       end
     end

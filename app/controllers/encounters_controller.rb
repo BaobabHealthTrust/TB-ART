@@ -1,6 +1,17 @@
 class EncountersController < ApplicationController
 
   def create  
+    if params['ever_received_art'] == 'NO' and params['encounter']['encounter_type_name'] == 'ART_INITIAL'
+      observations = []
+      (params[:observations] || []).each do |observation|
+        next if observation['concept_name'] == 'HAS TRANSFER LETTER'
+        next if observation['concept_name'] == 'HAS THE PATIENT TAKEN ART IN THE LAST TWO WEEKS'
+        next if observation['concept_name'] == 'ART NUMBER AT PREVIOUS LOCATION'
+        observations << observation
+      end
+      params[:observations] = observations unless observations.blank?
+    end
+
     @patient = Patient.find(params[:encounter][:patient_id])
 
     # Go to the dashboard if this is a non-encounter
