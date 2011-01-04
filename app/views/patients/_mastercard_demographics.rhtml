@@ -65,8 +65,8 @@
   left: 0px;
   }
 
-  /*prevent Mozilla scrollbar from hiding cell content*/
-  div.scrollTableContainer td:last-child {padding-right: 20px;}
+  /*prevent Mozilla scrollbar from hiding cell content
+  div.scrollTableContainer td:last-child {padding-right: 20px;}*/
 
 
 
@@ -83,7 +83,7 @@
       <th colspan='14'>National ID</th>
     </tr>
     <tr>
-      <td colspan='2'>XXX 123</td>
+      <td colspan='2'><%@data_demo.arv_number || '&nbsp;'%></td>
       <td colspan='14'><%=@data_demo.national_id%></td>
     </tr>
     <tr>
@@ -102,7 +102,7 @@
       <td colspan='2' style='text-align:center;'><%=@data_demo.init_wt%></td>
       <td colspan='2' style='text-align:center;'><%=@data_demo.init_ht%></td>
       <td colspan='0' style='text-align:center;'><%=@data_demo.bmi%></td>
-      <td colspan='7' style='text-align:center;'>No</td>
+      <td colspan='7' style='text-align:center;'><%=@data_demo.transfer_in%></td>
     </tr>
     <tr>
       <th colspan='2'>Location</th>

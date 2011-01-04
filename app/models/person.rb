@@ -220,7 +220,7 @@ class Person < ActiveRecord::Base
     address_params = params["addresses"]
     names_params = params["names"]
     patient_params = params["patient"]
-    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number/) }
+    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number/) }
     birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
     person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate|occupation/) }
 
@@ -242,6 +242,14 @@ class Person < ActiveRecord::Base
     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
       :value => params["cell_phone_number"])
+ 
+    person.person_attributes.create(
+      :person_attribute_type_id => PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
+      :value => params["office_phone_number"]) unless params["office_phone_number"].blank?
+ 
+    person.person_attributes.create(
+      :person_attribute_type_id => PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
+      :value => params["home_phone_number"]) unless params["home_phone_number"].blank?
  
 # TODO handle the birthplace attribute
  
