@@ -31,7 +31,7 @@ class CohortToolController < ApplicationController
   
   def prescriptions_without_dispensations
       @report_type = params[:quarter]
-      render :layout => 'clinic'
+      render :layout => 'report'
   end
   
 end
