@@ -2,11 +2,20 @@
     tt_cancel_destination = "/clinic/administration"
 </script>
 <%= stylesheet_link_tag 'extra_buttons' %>
+<%= javascript_include_tag 'jquery' %>
+
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+  document.getElementById('finishButton').innerHTML= "<span>Back<span>";
+  })
+</script>
+
+
 <div align = center>
       <br />
       <h1><u>Data Cleaning Reports</u></h1>
       
-      <div>
+      <div id="right" style="border: 1px solid black; width:279px">
 
         <table id="tcont  ent">
             <% @reports.each do |helptext,report_type| %>
