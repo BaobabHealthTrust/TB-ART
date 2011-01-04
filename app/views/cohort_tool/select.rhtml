@@ -1,0 +1,46 @@
+<style>
+#quarterdiv {
+   width: 279px;
+   height: 350px;
+   overflow: auto;
+   border: 1px solid black;
+   border-bottom : 20px solid grey;
+   border-top : 20px solid grey;
+   background-color : lime;
+}
+</style>
+
+
+<script >
+    tt_cancel_destination = "/Report/data_cleaning"
+</script>
+<%= javascript_include_tag 'jquery' %>
+<%= stylesheet_link_tag 'extra_buttons' %>
+
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+  document.getElementById('finishButton').innerHTML= "<span>Back<span>";
+  }) 
+</script>
+
+
+<div align = center>
+      <br />
+      <h1><u><%=@header.to_s.gsub!('_',' ').to_s.split(" ").each{|word| word.capitalize!}.join(" ") %></u></h1>
+      
+      <div id="quarterdiv" style="">
+
+        <table id="tcont  ent" width="250px">
+            <% @quarters.each do |quarter| %>
+            
+            <tr>
+                <td>  
+                      <%= link_to_onmousedown "#{quarter}",{:controller =>"cohort_tool", :action => "#{@report_type}",
+                                                             :report_type => "#{@report_type}", :quarter => "#{quarter}"}, :class => 'report_button' %> 
+                </td>
+            </tr>
+            <%end rescue nil%>
+        </table>
+        
+      </div>
+</div>
