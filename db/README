@@ -1,5 +1,7 @@
 Please add more information about these files here:
 
+Note that the yml files are not being loaded and probably should be deleted.
+
 These files are used to setup your database with the appropriate schema and required data.
 
 Use script/initial_database_setup.sh to load them
