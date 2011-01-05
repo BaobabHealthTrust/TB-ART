@@ -1,6 +1,6 @@
 class Mastercard 
 
- attr_accessor :date, :weight, :height, :bmi, :outcome, :reg, :s_eff, :sk , :pn, :hp, :pills, :gave, :cpt, :cd4,:estimated_date,:next_app, :tb_status, :doses_missed, :visit_by, :date_of_outcome, :reg_type, :adherence, :patient_visits, :sputum_count, :end_date, :art_status, :encounter_id 
+ attr_accessor :date, :weight, :height, :bmi, :outcome, :reg, :s_eff, :sk , :pn, :hp, :pills, :gave, :cpt, :cd4,:estimated_date,:next_app, :tb_status, :doses_missed, :visit_by, :date_of_outcome, :reg_type, :adherence, :patient_visits, :sputum_count, :end_date, :art_status, :encounter_id , :notes
 
  attr_accessor :patient_id,:arv_number, :national_id ,:name ,:age ,:sex, :init_wt, :init_ht ,:init_bmi ,:transfer_in ,:address, :landmark, :occupation, :guardian, :agrees_to_followup, :hiv_test_location, :hiv_test_date, :reason_for_art_eligibility, :date_of_first_line_regimen ,:tb_within_last_two_yrs, :eptb ,:ks,:pulmonary_tb
 
@@ -65,11 +65,17 @@ class Mastercard
     visits
   end
 
-  def self.visits(patient_obj)
+  def self.visits(patient_obj,visit_date = nil)
     patient_visits = {}
     yes = ConceptName.find_by_name("YES")
-    observations = Observation.find(:all,:conditions =>["voided = 0 AND person_id = ?",patient_obj.patient_id],:order =>"obs_datetime")
-    ["HEIGHT","WEIGHT","REGIMEN","OUTCOME","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT",'ADHERENCE'].map do |field|
+    if visit_date.blank?
+      observations = Observation.find(:all,:conditions =>["voided = 0 AND person_id = ?",patient_obj.patient_id],:order =>"obs_datetime")
+    else
+      observations = Observation.find(:all,
+        :conditions =>["voided = 0 AND person_id = ? AND Date(obs_datetime) = ?",
+        patient_obj.patient_id,visit_date.to_date],:order =>"obs_datetime")
+    end    
+    ["HEIGHT","WEIGHT","REGIMEN","OUTCOME","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT",'ADHERENCE','NOTES'].map do |field|
       observations.map do |obs|
          visit_date = obs.obs_datetime.to_date
          patient_visits[visit_date] = self.new() if patient_visits[visit_date].blank?
@@ -126,6 +132,11 @@ class Mastercard
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'WHAT WAS THE PATIENTS ADHERENCE FOR THIS DRUG ORDER'
             patient_visits[visit_date].adherence = obs.value_text + '%' unless obs.value_text.blank?
+          when "NOTES"
+            concept_name = obs.concept.name.name.strip rescue []
+            next unless concept_name == 'CLINICAL NOTES CONSTRUCT'
+            patient_visits[visit_date].notes+= '<br/>' + obs.value_text unless patient_visits[visit_date].notes.blank?
+            patient_visits[visit_date].notes = obs.value_text if patient_visits[visit_date].notes.blank?
          end
       end
     end

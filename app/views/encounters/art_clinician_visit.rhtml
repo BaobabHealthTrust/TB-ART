@@ -418,6 +418,9 @@
 
   <% end %>   
 
+  <%= touch_text_field_tag("CLINICAL NOTES CONSTRUCT", @patient, nil,
+    {:optional => true,:helpText => "Clinical notes (optional)"}, time=DateTime.now()) %>
+
   <%= touch_hidden_tag "WHO STAGE", @patient, "", :id => "who_stage" %>
   <%= touch_hidden_tag "REASON FOR ART ELIGIBILITY", @patient, "", :id => "reason_for_art_eligibility" %>
   

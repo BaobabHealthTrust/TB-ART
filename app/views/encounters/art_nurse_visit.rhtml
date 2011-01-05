@@ -18,6 +18,8 @@
     left:25px;
     position:inherit;
   }
+
+  #notes{background-color:red;}
 </style>
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
@@ -134,6 +136,9 @@
   <%= touch_yes_no_unknown_tag "REFER TO ART CLINICIAN", @patient, nil,
     {:optional => false,
      :helpText => "Refer to clinician?" } %>
+
+  <%= touch_text_field_tag("CLINICAL NOTES CONSTRUCT", @patient, nil,
+    {:optional => true,:helpText => "Clinical notes (optional)"}, time=DateTime.now()) %>
 
   <%= submit_tag "Finish" %>    
 </form>
