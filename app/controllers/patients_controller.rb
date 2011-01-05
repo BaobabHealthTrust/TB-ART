@@ -91,6 +91,14 @@ class PatientsController < ApplicationController
     render :layout => "menu"
   end
   
+  def visit
+    @patient_id = params[:patient_id] 
+    @date = params[:date].to_date
+    @patient = Patient.find(@patient_id)
+    @visits = Mastercard.visits(@patient,@date)
+    render :layout => "menu"
+  end
+  
 private
   
   
