@@ -16,7 +16,7 @@
     <script type="text/javascript">
       jQuery(document).ready(function($) {    
         $('#logout').click(function() { window.location = '/Report/data_cleaning' })
-        $('#find').click(function() { window.location = '/cohort_tool/select?report_type=prescriptions_without_dispensations' })
+        $('#find').click(function() { window.location = '/cohort_tool/select?report_type=dispensations_without_prescriptions' })
         //if ($('#staging')) $('#staging').click(function() { window.location = 'http://staging/clinic' })        
       }) 
     </script>
@@ -43,11 +43,11 @@
     
   </head>
   <body id="mateme">  
-    <div id="container">      
+    <div id="container" >      
       <div id="content">
-        
-        
-        <%= yield %>  
+      
+        <%= yield %>
+
         <div id="footer" class="dark">
           <div id="buttons" class="buttons" style="top:0px">
             <button id="logout" class="red left"><span>Finish</span></button>
