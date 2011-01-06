@@ -24,8 +24,34 @@ class Location < ActiveRecord::Base
        "%#{search}%","#{search}"]) + [self.current_health_center]).uniq
   end
 
+  def children
+    return [] if self.name.match(/ - /)
+    Location.find(:all, :conditions => ["name LIKE ?","%" + self.name + " - %"])
+  end
+
+  def parent
+    return nil unless self.name.match(/(.*) - /)
+    Location.find_by_name($1)
+  end
+
+  def site_name
+    self.name.gsub(/ -.*/,"")
+  end
+
+  def related_locations_including_self
+    if self.parent
+      return self.parent.children + [self]
+    else
+      return self.children + [self]
+    end
+  end
+
+  def related_to_location?(location)
+    self.site_name == location.site_name
+  end
+
   def self.current_health_center
-    @@current_health_center ||= Location.find(GlobalProperty.find_by_property("current_health_center").property_value) rescue self.current_location
+    @@current_health_center ||= Location.find(GlobalProperty.find_by_property("current_health_center_id").property_value) rescue self.current_location
   end
 
 end
