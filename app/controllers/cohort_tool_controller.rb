@@ -26,17 +26,42 @@ class CohortToolController < ApplicationController
   end
   
   def prescriptions_without_dispensations
-      @report_type = quarter_start_and_end_dates()
+      date_range = quarter_start_and_end_dates()
+      start_date = date_range.to_s.split("split").first
+      end_date = date_range.to_s.split("split").last
       render :layout => 'report'
   end
   
   def  dispensations_without_prescriptions
-        @report_type = quarter_start_and_end_dates()
-        render :layout => 'report'
+       
+       #These parameters are used by the mastercard go back to the report
+       @report_quarter = params[:quarter]
+       #########################################################
+       
+       date_range = quarter_start_and_end_dates()
+       start_date = date_range.to_s.split("split").first
+       end_date = date_range.to_s.split("split").last
+       dispensations_without_prescription_data = Observation.find(:all, :select =>  "person_id, value_drug, date_created", 
+                                                              :conditions =>["order_id IS NULL and date_created >= ? and date_created <= ? and
+                                                               concept_id = 2834" ,start_date , end_date])
+       @report = []
+       dispensations_without_prescription_data.each do |dispensation|
+       # @report format::: ID, ARVNumber, National_ID, Visit Date, Dispensed_Drug
+       #raise PatientIdentifier.inspect
+       arv_number = PatientIdentifier.find(:first, :select => "identifier", 
+                                           :conditions =>["patient_id = ? and identifier_type = ?", dispensation[:person_id], '4'])
+       national_id = PatientIdentifier.find(:first, :select => "identifier", 
+                                           :conditions =>["patient_id = ? and identifier_type = ?", dispensation[:person_id], '3']) 
+       @report << [dispensation[:person_id].to_s, arv_number[:identifier].to_s, national_id[:identifier], 
+                   dispensation[:date_created].strftime("%Y-%m-%d %H:%M:%S") , Drug.find(dispensation[:value_drug]).name]
+       end
+       render :layout => 'report'
   end
   
   def  patients_with_multiple_start_reasons
-        @report_type = quarter_start_and_end_dates()
+       date_range = quarter_start_and_end_dates()
+       start_date = date_range.to_s.split("split").first
+       end_date = date_range.to_s.split("split").last
         render :layout => 'report'
   end
   
@@ -77,7 +102,7 @@ class CohortToolController < ApplicationController
            quarter_end = quarter_end.change(:year => quarter_year.to_i, :month => end_month.to_i, 
                                             :day => last_day_of_month(quarter_year.to_i, end_month.to_i)).end_of_day.strftime("%Y-%m-%d %H:%M:%S").to_s
            quarter_start = Date.new(1945,01,01).to_date
-           return  quarter_start.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S").to_s + " " + quarter_end.to_s
+           return  quarter_start.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S").to_s + "split" + quarter_end.to_s
       end
       
       quarter_start = quarter_start.change(:year => quarter_year.to_i, :month => start_month.to_i,
@@ -85,12 +110,13 @@ class CohortToolController < ApplicationController
       
       quarter_end = quarter_end.change(:year => quarter_year.to_i, :month => end_month.to_i, 
                                         :day => last_day_of_month(quarter_year.to_i, end_month.to_i)).end_of_day.strftime("%Y-%m-%d %H:%M:%S").to_s
-      quarter_start.to_s + " " + quarter_end.to_s
+      quarter_start.to_s + "split" + quarter_end.to_s
   end
   
   def last_day_of_month(year, month_number)
         (Date.new(year,12,31).to_date<<(12-month_number)).day
   end
+  
   
 end
 
