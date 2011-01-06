@@ -65,17 +65,17 @@ class Mastercard
     visits
   end
 
-  def self.visits(patient_obj,visit_date = nil)
+  def self.visits(patient_obj,encounter_date = nil)
     patient_visits = {}
     yes = ConceptName.find_by_name("YES")
-    if visit_date.blank?
+    if encounter_date.blank?
       observations = Observation.find(:all,:conditions =>["voided = 0 AND person_id = ?",patient_obj.patient_id],:order =>"obs_datetime")
     else
       observations = Observation.find(:all,
         :conditions =>["voided = 0 AND person_id = ? AND Date(obs_datetime) = ?",
-        patient_obj.patient_id,visit_date.to_date],:order =>"obs_datetime")
+        patient_obj.patient_id,encounter_date.to_date],:order =>"obs_datetime")
     end    
-    ["HEIGHT","WEIGHT","REGIMEN","OUTCOME","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT",'ADHERENCE','NOTES'].map do |field|
+    ["HEIGHT","WEIGHT","REGIMEN","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT",'ADHERENCE','NOTES'].map do |field|
       observations.map do |obs|
          visit_date = obs.obs_datetime.to_date
          patient_visits[visit_date] = self.new() if patient_visits[visit_date].blank?
@@ -118,7 +118,6 @@ class Mastercard
               patient_visits[visit_date].gave+="<br/>#{drug.name} (#{quantity})" unless patient_visits[visit_date].gave.blank?
               patient_visits[visit_date].gave = "#{drug.name} (#{quantity})" if patient_visits[visit_date].gave.blank?
             }
-          when "OUTCOME"
           when "SYMPTOMS"
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'SYMPTOM PRESENT'
@@ -140,6 +139,30 @@ class Mastercard
          end
       end
     end
+
+    #patients currents/available states (patients outcome/s)
+    if encounter_date.blank?
+      patient_states = PatientState.find(:all,
+                                    :joins => "INNER JOIN patient_program p ON p.patient_program_id = patient_state.patient_program_id",
+                                    :conditions =>["patient_state.voided = 0 AND p.voided = 0 AND p.program_id = 1"],
+                                    :order => "patient_state_id ASC")
+    else
+      patient_states = PatientState.find(:all,
+                                    :joins => "INNER JOIN patient_program p ON p.patient_program_id = patient_state.patient_program_id",
+                                    :conditions =>["patient_state.voided = 0 AND p.voided = 0 AND p.program_id = 1 AND p.date_enrolled = ?",
+                                    encounter_date.to_date],:order => "patient_state_id ASC")  
+    end  
+
+
+    patient_states.each do |state| 
+      visit_date = state.start_date.to_date
+      patient_visits[visit_date] = self.new() if patient_visits[visit_date].blank?
+      patient_visits[visit_date].outcome = state.program_workflow_state.concept.name.name rescue 'Unknown state'
+    end
+
+
+
+
     patient_visits
   end
 
