@@ -17,7 +17,7 @@
       jQuery(document).ready(function($) {    
         $('#visit').click(function() { window.location = '/patients/print_visit?patient_id=<%= @patient.id -%>' })
         $('#print').click(function() { window.location = '/patients/print_registration?patient_id=<%= @patient.id -%>' })
-        $('#mastercard').click(function() { window.location = '/patients/mastercard?patient_id=<%= @patient.id -%>' })
+        $('#mastercard').click(function() { window.location = '/patients/mastercard?patient_id=<%= @patient.id -%>?source=<%= @source -%>' })
         $('#finish').click(function() { window.location = "/clinic" })
         $('#additional').click(function() { window.location = '/encounter_types?patient_id=<%= @patient.id -%>' })
 
