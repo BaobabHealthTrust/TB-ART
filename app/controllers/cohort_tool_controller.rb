@@ -98,4 +98,10 @@ class CohortToolController < ApplicationController
     end
   end
 
+  def records_that_were_updated
+    @quater     = params[:quater]
+    @encounters = CohortTool.records_that_were_updated(@quater)
+
+    render :layout => false
+  end
 end
