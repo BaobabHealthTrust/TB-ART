@@ -88,13 +88,13 @@ class Patient < ActiveRecord::Base
     label.print(1)
   end
   
-  def visit_label
+  def visit_label(date = Date.today)
     label = ZebraPrinter::StandardLabel.new
     label.font_size = 3
     label.font_horizontal_multiplier = 1
     label.font_vertical_multiplier = 1
     label.left_margin = 50
-    encs = encounters.current.find(:all)
+    encs = encounters.find(:all,:conditions =>["DATE(encounter_datetime) = ?",date])
     return nil if encs.blank?
     
     label.draw_multi_text("Visit: #{encs.first.encounter_datetime.strftime("%d/%b/%Y %H:%M")}", :font_reverse => true)    
