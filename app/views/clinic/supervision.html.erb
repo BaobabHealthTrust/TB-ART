@@ -3,7 +3,10 @@
   jQuery(document).ready(function($) {
   }) 
 </script>
-<div id="tab">
-  <div class="panel">
-  </div>        
-</div>
+<table id="tab_content">
+<% @supervision_tools.each do |report_name,report_type| %>
+<tr>
+  <td><a href="<%="/cohort_tool/select?report_type=#{report_type}"%>" class='report_button'><%=report_name%></a></td>
+</tr>
+<%end rescue nil%>
+</table>
