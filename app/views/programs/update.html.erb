@@ -1,0 +1,37 @@
+<script>
+  var tt_cancel_destination = "/patients/programs/<%= @patient.patient_id %>"
+
+  function set_workflow_for_states() {
+    var workflow_id = <%= @program_workflow_id %>
+    $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/states?workflow=" + workflow_id);
+    listSuggestions(tstCurrentPage); 
+  }
+
+</script>
+<form id='program' action="/programs/update" method = 'post'>
+  <%= hidden_field_tag :patient_id, @patient.id %>
+  <%= hidden_field_tag :patient_program_id, @patient_program_id %>
+
+  <%= select_tag 'current_state', params[:current_state],
+      {:id => 'initial_state',
+       :field_type => 'alpha',
+       :helpText => "Current state",
+       :tt_onLoad => "set_workflow_for_states();", 
+       :ajaxURL => "",
+       :allowFreeText => false } %>
+
+  <%= text_field_tag 'current_date', params[:current_date] || (Time.now).year,
+        {:id => 'current_date',
+         :field_type => 'date',
+         :helpText => "Current state start date",
+         :tt_pageStyleClass => "Date DatesOnly"} %>
+
+
+  <%= select_tag 'location_id', params[:location_id],
+      {:id => 'location_id',
+       :field_type => 'alpha',
+       :helpText => "Location",
+       :ajaxURL => '/programs/locations?q=',
+       :allowFreeText => false } %>
+
+</form>

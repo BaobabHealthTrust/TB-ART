@@ -74,6 +74,10 @@ class PatientsController < ApplicationController
     print_and_redirect("/patients/visit_label/?patient_id=#{@patient.id}", next_task(@patient))  
   end
   
+  def print_mastercard_record
+    print_and_redirect("/patients/mastercard_record_label/?patient_id=#{@patient.id}&date=#{params[:date]}", "/patients/visit?date=#{params[:date]}&patient_id=#{params[:patient_id]}")  
+  end
+  
   def national_id_label
     print_string = @patient.national_id_label rescue (raise "Unable to find patient (#{params[:patient_id]}) or generate a national id label for that patient")
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:patient_id]}#{rand(10000)}.lbl", :disposition => "inline")
@@ -84,11 +88,24 @@ class PatientsController < ApplicationController
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:patient_id]}#{rand(10000)}.lbl", :disposition => "inline")
   end
 
+  def mastercard_record_label
+    print_string = @patient.visit_label(params[:date].to_date) 
+    send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:patient_id]}#{rand(10000)}.lbl", :disposition => "inline")
+  end
+
   def mastercard
     @patient_id = params[:patient_id] 
     @data_demo = Mastercard.demographics(Patient.find(@patient_id))
     @visits = Mastercard.visits(Patient.find(@patient_id))
     render :layout => "menu"
+  end
+  
+  def visit
+    @patient_id = params[:patient_id] 
+    @date = params[:date].to_date
+    @patient = Patient.find(@patient_id)
+    @visits = Mastercard.visits(@patient,@date)
+    render :layout => "summary"
   end
   
 private

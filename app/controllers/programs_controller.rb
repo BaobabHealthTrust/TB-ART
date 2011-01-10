@@ -52,4 +52,25 @@ class ProgramsController < ApplicationController
     @names = @states.map{|state| "<li value='#{state.id}'>#{state.concept.name.name}</li>" }
     render :text => @names.join('')  
   end
+
+  def update
+    if request.method == :post
+      patient_program = PatientProgram.find(params[:patient_program_id])
+      patient_state = patient_program.patient_states.build(
+        :state => params[:current_state],
+        :start_date => params[:current_date]) 
+      if patient_state.save
+        redirect_to :controller => :patients, :action => :programs, :patient_id => params[:patient_id]
+      else
+        redirect_to :controller => :patients, :action => :programs, :patient_id => params[:patient_id]
+      end
+    else
+      patient_program = PatientProgram.find(params[:id])
+      @patient = patient_program.patient
+      @patient_program_id = patient_program.patient_program_id
+      program_workflow = ProgramWorkflow.all(:conditions => ['program_id = ?', patient_program.program_id], :include => :concept)
+      @program_workflow_id = program_workflow.first.program_workflow_id
+    end
+  end 
+
 end

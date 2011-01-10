@@ -6,6 +6,7 @@ class Patient < ActiveRecord::Base
   has_one :person, :foreign_key => :person_id, :conditions => {:voided => 0}
   has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
   has_many :patient_programs, :conditions => {:voided => 0}
+  has_many :programs, :through => :patient_programs
   has_many :relationships, :foreign_key => :person_a, :dependent => :destroy, :conditions => {:voided => 0}
   has_many :orders, :conditions => {:voided => 0}
   has_many :encounters, :conditions => {:voided => 0} do 
@@ -87,13 +88,13 @@ class Patient < ActiveRecord::Base
     label.print(1)
   end
   
-  def visit_label
+  def visit_label(date = Date.today)
     label = ZebraPrinter::StandardLabel.new
     label.font_size = 3
     label.font_horizontal_multiplier = 1
     label.font_vertical_multiplier = 1
     label.left_margin = 50
-    encs = encounters.current.find(:all)
+    encs = encounters.find(:all,:conditions =>["DATE(encounter_datetime) = ?",date])
     return nil if encs.blank?
     
     label.draw_multi_text("Visit: #{encs.first.encounter_datetime.strftime("%d/%b/%Y %H:%M")}", :font_reverse => true)    

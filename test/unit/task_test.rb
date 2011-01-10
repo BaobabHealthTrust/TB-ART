@@ -8,7 +8,7 @@ class TaskTest < ActiveSupport::TestCase
       @patient = patient(:evan)
       @task = Factory(:task)
       @default = @task.url.gsub(/\{patient\}/, '1')
-      GlobalProperty.create(:property => 'current_health_center', :property_value => location(:neno_district_hospital).id)
+      GlobalProperty.create(:property => 'current_health_center_id', :property_value => location(:neno_district_hospital).id)
     end
   
     should "be able to create a task" do

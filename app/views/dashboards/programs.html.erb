@@ -4,6 +4,7 @@
     $('#states').empty().load('/programs/status/' + node.attr('program'))
     $('#programs li.data').removeClass("active");
     node.addClass("active");
+    setUpdateStateButtonPath(node.attr('program'));
   }
   
   function voiding(node) {
@@ -23,6 +24,12 @@
     recent = $('#programs li.data:first');
     if (recent) select(recent);
   }) 
+
+  <% unless @programs.blank? %>
+   function setUpdateStateButtonPath(program_id) {
+      $('#status').click(function() { window.location = '/programs/update/' + program_id })
+    }
+  <% end %>
 </script>
 <div id="tab">
   <div class="panel" style="width:380px;float:left">
@@ -45,5 +52,8 @@
     <ul id="states" class="list" style="height:270px;width:100%;">
     </ul>
     <!-- button id="status" class="silver" style="float:right;margin-top:10px;"><span>New Status</span></button -->    
+      <% unless @programs.blank? %>
+        <button id="status" class="silver" style="margin-top:10px;float:right;"><span>Update state</span></button>    
+      <% end %>
   </div>
 </div>

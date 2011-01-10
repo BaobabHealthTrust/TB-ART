@@ -8,13 +8,13 @@ class PatientProgram < ActiveRecord::Base
   has_many :patient_states, :class_name => 'PatientState', :conditions => {:voided => 0}, :dependent => :destroy
 
   named_scope :current, :conditions => ['date_enrolled < NOW() AND (date_completed IS NULL OR date_completed > NOW())']
-  named_scope :local, lambda{|| {:conditions => ['location_id = ?',  Location.current_health_center.location_id]} }
+  named_scope :local, lambda{|| {:conditions => ['location_id IN (?)',  Location.current_health_center.children.map{|l|l.id} + [Location.current_health_center.id] ]}}
   validates_presence_of :date_enrolled, :program_id
 
   def validate
     PatientProgram.find_all_by_patient_id(self.patient_id).each{|patient_program|
-      if self.program == patient_program.program and patient_program.date_enrolled <= self.date_enrolled and (patient_program.date_completed.nil? or self.date_enrolled <= patient_program.date_completed)
-        errors.add_to_base "Patient already enrolled in program #{self.program.name rescue nil} at #{self.date_enrolled.to_date}"
+      if self.program == patient_program.program and self.location.related_to_location?(patient_program.location) and patient_program.date_enrolled <= self.date_enrolled and (patient_program.date_completed.nil? or self.date_enrolled <= patient_program.date_completed)
+        errors.add_to_base "Patient already enrolled in program #{self.program.name rescue nil} at #{self.date_enrolled.to_date} at #{self.location.parent.name rescue self.location.name}"
       end
     }
   end
