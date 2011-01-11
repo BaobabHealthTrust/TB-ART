@@ -107,6 +107,55 @@ class PatientsController < ApplicationController
     @visits = Mastercard.visits(@patient,@date)
     render :layout => "summary"
   end
+
+  def next_available_arv_number
+    next_available_arv_number = PatientIdentifier.next_available_arv_number
+    render :text => next_available_arv_number.gsub(Location.current_arv_code,'').strip rescue nil
+  end
+  
+  def assigned_arv_number
+    assigned_arv_number = PatientIdentifier.find(:all,:conditions => ["voided = 0 AND identifier_type = ?",
+    PatientIdentifierType.find_by_name("ARV Number").id]).collect{|i|
+      i.identifier.gsub(Location.current_arv_code,'').strip.to_i
+    } rescue nil
+    render :text => assigned_arv_number.sort.to_json rescue nil 
+  end
+
+  def mastercard_modify
+    if request.method == :get
+      @patient_id = params[:patient_id]
+      case params[:field]
+        when 'arv_number'
+          @edit_page = "arv_number"
+        when "name"
+      end
+    else
+      @patient_id = params[:patient_id]
+      case params[:field]
+        when 'arv_number'
+          type = params['identifiers'][0][:identifier_type]
+          patient = Patient.find(params[:patient_id])
+          patient_identifiers = PatientIdentifier.find(:all,
+                                :conditions => ["voided = 0 AND identifier_type = ? AND patient_id = ?",type.to_i,patient.id])
+
+          patient_identifiers.map{|identifier|  
+            identifier.voided = 1
+            identifier.void_reason = "given another number"
+            identifier.date_voided  = Time.now()
+            identifier.voided_by = User.current_user.id  
+            identifier.save
+          }
+              
+          identifier = params['identifiers'][0][:identifier].strip
+          if identifier.match(/(.*)[A-Z]/i).blank?
+            params['identifiers'][0][:identifier] = "#{Location.current_arv_code} #{identifier}"
+          end
+          patient.patient_identifiers.create(params[:identifiers])
+          redirect_to :action => "mastercard",:patient_id => patient.id and return
+        when "name"
+      end
+    end
+  end
   
 private
   

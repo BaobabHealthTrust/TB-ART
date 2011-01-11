@@ -14,7 +14,7 @@
   function hide_new_relationship_button() {
     $('tt_extraButtons').innerHTML = "";    
   }
-  
+ 
 </script>  
 <form id='appointment' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "HIV RECEPTION" %>
@@ -41,6 +41,13 @@
     <%= hidden_field_tag("observations[][concept_name]", "PATIENT PRESENT") %>
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
+
+  <%
+    show_arv_number = GlobalProperty.find_by_property('show_arv_number').property_value rescue 'true'
+    unless show_arv_number == 'false'
+  %>
+    <%= render :partial => "/patients/arv_number" %>
+  <% end %>
   
   <%= submit_tag "Finish" %>    
 </form>

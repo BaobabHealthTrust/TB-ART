@@ -54,4 +54,10 @@ class Location < ActiveRecord::Base
     @@current_health_center ||= Location.find(GlobalProperty.find_by_property("current_health_center_id").property_value) rescue self.current_location
   end
 
+  def self.current_arv_code
+    description = current_health_center.description rescue []
+    return if description.blank?
+    description.split("arv code:")[1].strip rescue nil
+  end
+
 end
