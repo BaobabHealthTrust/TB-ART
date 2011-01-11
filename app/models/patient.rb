@@ -167,5 +167,9 @@ class Patient < ActiveRecord::Base
       return true if drug_order.drug.arv?
     }
     false
-  end  
+  end
+
+  def name
+    "#{self.person.name}"
+  end
 end
