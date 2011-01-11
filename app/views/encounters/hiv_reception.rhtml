@@ -42,11 +42,12 @@
     <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
     <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>  
 
-  <%
-    show_arv_number = GlobalProperty.find_by_property('show_arv_number').property_value rescue 'true'
-    unless show_arv_number == 'false'
+  <%unless @patient.given_arvs_before? 
+      show_arv_number = GlobalProperty.find_by_property('show_arv_number').property_value rescue 'true'
+      unless show_arv_number == 'false'
   %>
-    <%= render :partial => "/patients/arv_number" %>
+        <%= render :partial => "/patients/arv_number" %>
+    <% end %>
   <% end %>
   
   <%= submit_tag "Finish" %>    

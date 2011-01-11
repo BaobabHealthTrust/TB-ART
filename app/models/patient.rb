@@ -160,4 +160,12 @@ class Patient < ActiveRecord::Base
     WeightHeight.max_height(person.gender, person.age_in_months).to_f
   end
   
+  def given_arvs_before?
+    self.orders.each{|order|
+      drug_order = order.drug_order
+      next unless drug_order.quantity > 0
+      return true if drug_order.drug.arv?
+    }
+    false
+  end  
 end
