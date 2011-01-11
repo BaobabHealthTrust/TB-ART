@@ -65,10 +65,19 @@ class EncountersController < ApplicationController
     end
 
     # Identifier handling
+    arv_number_identifier_type = PatientIdentifierType.find_by_name('ARV Number').id
     (params[:identifiers] || []).each do |identifier|
       # Look up the identifier if the patient_identfier_id is set      
       @patient_identifier = PatientIdentifier.find(identifier[:patient_identifier_id]) unless identifier[:patient_identifier_id].blank?
       # Create or update
+      type = identifier[:identifier_type].to_i rescue nil
+      unless (arv_number_identifier_type != type) and @patient_identifier
+        arv_number = identifier[:identifier].strip
+        if arv_number.match(/(.*)[A-Z]/i).blank?
+          identifier[:identifier] = "#{Location.current_arv_code} #{arv_number}"
+        end
+      end
+
       if @patient_identifier
         @patient_identifier.update_attributes(identifier)      
       else
