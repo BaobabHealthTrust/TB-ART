@@ -35,7 +35,7 @@ class RegimensController < ApplicationController
           order.dose, 
           order.frequency, 
           order.prn, 
-          regimen_name + ": " + order.instructions,
+          "#{drug.name}: #{order.instructions} (#{regimen_name})",
           order.equivalent_daily_dose)    
       end
     end  
