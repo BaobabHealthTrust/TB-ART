@@ -24,6 +24,7 @@ class RegimensController < ApplicationController
         :obs_datetime => Time.now)    
       orders.each do |order|
         drug = Drug.find(order.drug_inventory_id)
+        regimen_name = (order.regimen.concept.concept_names.tagged("short").first || order.regimen.concept.name).name
         DrugOrder.write_order(
           encounter, 
           @patient, 
@@ -34,7 +35,7 @@ class RegimensController < ApplicationController
           order.dose, 
           order.frequency, 
           order.prn, 
-          order.instructions,
+          regimen_name + ": " + order.instructions,
           order.equivalent_daily_dose)    
       end
     end  
