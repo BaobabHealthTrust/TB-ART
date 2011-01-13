@@ -106,27 +106,6 @@ UNLOCK TABLES;
 -- UNLOCK TABLES;
 
 --
--- Dumping data for table `task`
---
-
-LOCK TABLES `task` WRITE;
-/*!40000 ALTER TABLE `task` DISABLE KEYS */;
-INSERT INTO `task` VALUES 
-  (17450,'/encounters/new/registration?patient_id={patient}','REGISTRATION','Registration clerk needs to do registration if it hasn\'t happened yet','Registration',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,1,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd5b8184-1ca1-11df-82c4-0026181bb84d'),
-  (17451,'/encounters/new/registration?patient_id={patient}','REGISTRATION','Everyone needs to do registration if it hasn\'t happened yet','*',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,2,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd7ab4be-1ca1-11df-82c4-0026181bb84d'),
-  (17452,'/encounters/new/vitals?patient_id={patient}','VITALS','If we are at the vitals location and no vitals have been taken, then we need to do it','Vitals',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd934d9e-1ca1-11df-82c4-0026181bb84d'),
-  (17453,'/encounters/new/outpatient_diagnosis?patient_id={patient}','OUTPATIENT DIAGNOSIS','If we are at the outpatient diagnosis location and no diagnosis has been made, then we need to do it','Outpatient',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-18 17:25:11',0,NULL,NULL,NULL,1,'2010-02-18 17:25:11','cdaf4f76-1ca1-11df-82c4-0026181bb84d'),
-  (17454,'/patients/show/{patient}',NULL,'If everything is done, go to the dashboard for the patient','*',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,10,1,'2010-02-18 17:25:11',0,NULL,NULL,NULL,1,'2010-02-18 17:25:11','cdbfda9e-1ca1-11df-82c4-0026181bb84d'),
-  (17455,'/prescriptions/new?patient_id={patient}','TREATMENT','If we are at outpatient diagnosis and a diagnosis has been made but no treatment, then go to treatment.','Outpatient',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,5,1,'2010-02-26 11:10:56',0,NULL,NULL,NULL,1,'2010-02-26 11:10:56','d8cf35a4-22b6-11df-b344-0026181bb84d'),
-  (17456,'/encounters/new/art_initial?show&patient_id={patient}','ART_INITIAL','If patient is not ON ANTIRETROVIRALS at the current location, go to ART_INITIAL.','HIV Reception',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,1,4,1,'2010-02-26 11:25:51',0,NULL,NULL,NULL,1,'2010-02-26 11:25:51','eeba2f84-22b8-11df-b344-0026181bb84d'),
-  (17457,'/encounters/new/hiv_reception?show&patient_id={patient}','HIV RECEPTION','If patient has not had an HIV Reception encounter yet, create one.','HIV Reception',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,0,5,1,'2010-02-26 11:47:13',0,NULL,NULL,NULL,1,'2010-02-26 11:47:13','ea6de076-22bb-11df-b344-0026181bb84d'),
-  (17458,'/encounters/new/vitals?patient_id={patient}','VITALS','If the patient is at HIV Reception and has not had vitals taken, take vitals.','HIV Reception',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,6,1,'2010-02-26 13:45:50',0,NULL,NULL,NULL,1,'2010-02-26 13:45:50','7cc4fc2e-22cc-11df-b344-0026181bb84d'),
-  (17459,'/encounters/new/art_clinician_visit?show&patient_id={patient}','ART CLINICIAN VISIT','At the HIV Clinician Station, if the patient does not have an ART CLINICIAN VISIT, do it.','HIV Clinician Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-26 14:00:23',0,NULL,NULL,NULL,1,'2010-02-26 14:00:23','84dd80dc-22ce-11df-b344-0026181bb84d'),
-  (17460,'/encounters/new/art_nurse_visit?show&patient_id={patient}','ART NURSE VISIT','At HIV Nurse Station, if the patient does not have an ART NURSE VISIT, do it.','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-26 14:11:46',0,NULL,NULL,NULL,1,'2010-02-26 14:11:46','1c15bac2-22d0-11df-b344-0026181bb84d');
-/*!40000 ALTER TABLE `task` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Dumping data for table `weight_for_heights`
 --
 

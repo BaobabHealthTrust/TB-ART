@@ -6,7 +6,7 @@ class Location < ActiveRecord::Base
   cattr_accessor :current_location
 
   def site_id
-    self.description.match(/\(ID=(\d+)\)/)[1] 
+    Location.current_health_center.description.match(/\(ID=(\d+)\)/)[1] 
   rescue 
     raise "The id for this location has not been set (#{Location.current_location.name}, #{Location.current_location.id})"   
   end
