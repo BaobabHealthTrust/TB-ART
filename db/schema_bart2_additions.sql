@@ -122,6 +122,12 @@ CREATE TABLE `concept_synonym` (
 DROP TABLE IF EXISTS `drug_substance`;
 
 --
+-- Table structure for table `drug_ingredient` is NOT USED
+--
+
+DROP TABLE IF EXISTS `drug_ingredient`;
+
+--
 -- Table structure for table `external_source`
 --
 
