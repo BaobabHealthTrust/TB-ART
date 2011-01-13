@@ -53,7 +53,7 @@
      :optional => false,
      :helpText => "Agrees to followup?" } %>
 
-  <%= touch_select_tag "FIRST POSITIVE HIV TEST TYPE", @patient, options_for_select([['HIV RAPID TEST, QUALITATIVE','HIV RAPID TEST, QUALITATIVE'],['HIV DNA POLYMERASE CHAIN REACTION','HIV DNA POLYMERASE CHAIN REACTION']]),
+  <%= touch_select_tag "FIRST POSITIVE HIV TEST TYPE", @patient, options_for_select([['HIV RAPID TEST, QUALITATIVE','HIV RAPID TEST, QUALITATIVE'],['HIV DNA POLYMERASE CHAIN REACTION','HIV DNA POLYMERASE CHAIN REACTION'],['UNKNOWN','UNKNOWN']]),
     {:id => "first_positive_hiv_test_type",
      :optional => false,
      :helpText => "Type of first positive HIV test" } %>
