@@ -29,6 +29,10 @@ class Encounter < ActiveRecord::Base
     raise "#{encounter_type_name} not a valid encounter_type" if self.type.nil?
   end
 
+  def voided_observations
+    Observation.find_by_sql("SELECT * FROM obs WHERE obs.encounter_id = #{self.encounter_id} AND obs.voided = 1")
+  end
+
   def name
     self.type.name rescue "N/A"
   end
