@@ -3,6 +3,7 @@ class Encounter < ActiveRecord::Base
   set_primary_key :encounter_id
   include Openmrs
   has_many :observations, :dependent => :destroy, :conditions => {:voided => 0}
+  has_many :drug_orders,  :through   => :orders,  :foreign_key => 'order_id'
   has_many :orders, :dependent => :destroy, :conditions => {:voided => 0}
   belongs_to :type, :class_name => "EncounterType", :foreign_key => :encounter_type, :conditions => {:retired => 0}
   belongs_to :provider, :class_name => "User", :foreign_key => :provider_id, :conditions => {:voided => 0}
@@ -26,6 +27,10 @@ class Encounter < ActiveRecord::Base
   def encounter_type_name=(encounter_type_name)
     self.type = EncounterType.find_by_name(encounter_type_name)
     raise "#{encounter_type_name} not a valid encounter_type" if self.type.nil?
+  end
+
+  def voided_observations
+    Observation.find_by_sql("SELECT * FROM obs WHERE obs.encounter_id = #{self.encounter_id} AND obs.voided = 1")
   end
 
   def name
