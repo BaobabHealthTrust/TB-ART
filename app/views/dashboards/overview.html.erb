@@ -38,6 +38,11 @@
             <div class="program">There are no current programs for this patient</div>
           </li>        
         <% end %>        
+        <% for prog in @programs do %>
+          <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">  
+            <div class="patient_state"><%=h prog.patient_states.last.to_s.humanize %></div>
+          </li>  
+        <% end %>
       </ul>
     </div>
     <div id="treatment" class="panel">

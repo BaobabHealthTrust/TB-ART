@@ -4,6 +4,9 @@ class ProgramsController < ApplicationController
   def new
     session[:return_to] = nil
     session[:return_to] = params[:return_to] unless params[:return_to].blank?
+    program_names = PatientProgram.find(:all,:conditions =>["voided = 0 AND patient_id = ? AND location_id = ?",
+                                    params[:patient_id],Location.current_health_center.id]).map{|pat_program|pat_program.program.name}
+    @enrolled_program_names = program_names.to_json                                
     @patient_program = PatientProgram.new
   end
 
@@ -60,6 +63,30 @@ class ProgramsController < ApplicationController
         :state => params[:current_state],
         :start_date => params[:current_date]) 
       if patient_state.save
+        if patient_state.program_workflow_state.concept.name.name == 'PATIENT TRANSFERRED OUT' 
+          encounter = Encounter.new(params[:encounter])
+          encounter.encounter_datetime = session[:datetime] unless session[:datetime].blank?
+          encounter.save
+          
+          (params[:observations] || [] ).each do |observation|
+            #for now i do this
+            obs = {}
+            obs[:concept_name] = observation[:concept_name] 
+            obs[:value_coded_or_text] = observation[:value_coded_or_text] 
+            obs[:encounter_id] = encounter.id
+            obs[:obs_datetime] = encounter.encounter_datetime || Time.now()
+            obs[:person_id] ||= encounter.patient_id  
+            Observation.create(obs)
+          end
+     
+          observation = {} 
+          observation[:concept_name] = 'TRANSFER OUT TO'
+          observation[:encounter_id] = encounter.id
+          observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
+          observation[:person_id] ||= encounter.patient_id
+          observation[:value_numeric] = params[:transfer_out_location_id]
+          Observation.create(observation)
+        end  
         redirect_to :controller => :patients, :action => :programs, :patient_id => params[:patient_id]
       else
         redirect_to :controller => :patients, :action => :programs, :patient_id => params[:patient_id]
@@ -70,6 +97,8 @@ class ProgramsController < ApplicationController
       @patient_program_id = patient_program.patient_program_id
       program_workflow = ProgramWorkflow.all(:conditions => ['program_id = ?', patient_program.program_id], :include => :concept)
       @program_workflow_id = program_workflow.first.program_workflow_id
+      @states = ProgramWorkflowState.all(:conditions => ['program_workflow_id = ?', @program_workflow_id], :include => :concept)
+      @names = @states.map{|state| state.concept.name.name }
     end
   end 
 

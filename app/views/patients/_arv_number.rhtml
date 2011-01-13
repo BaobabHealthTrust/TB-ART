@@ -14,7 +14,7 @@
     style.value = "position: absolute; z-index: 100; left: 47px; font-size: 44px;"
     prefix.setAttributeNode(style)
     inputElement.setAttribute("style","text-align:right;")
-    prefix.innerHTML = "<%=Location.current_arv_code%>"
+    prefix.innerHTML = "<%=Location.current_arv_code rescue nil %>"
     inputElement.parentNode.insertBefore(prefix, inputElement)
 
     if (suggest_arv_number=="true"){
