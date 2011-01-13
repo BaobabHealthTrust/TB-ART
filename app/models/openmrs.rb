@@ -35,7 +35,7 @@ module Openmrs
 
   def before_create
     super
-    self.location_id = Location.current_location.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Location.current_location != nil
+    self.location_id = Location.current_health_center.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Location.current_health_center != nil
     self.creator = User.current_user.id if self.attributes.has_key?("creator") and (self.creator.blank? || self.creator == 0)and User.current_user != nil
     self.date_created = Time.now if self.attributes.has_key?("date_created")
     self.uuid = ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid'] if self.attributes.has_key?("uuid")

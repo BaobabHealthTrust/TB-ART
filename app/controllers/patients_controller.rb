@@ -6,7 +6,7 @@ class PatientsController < ApplicationController
     @prescriptions = @patient.orders.unfinished.prescriptions.all
     @programs = @patient.patient_programs.all
     # This code is pretty hacky at the moment
-    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
     @restricted.each do |restriction|    
       @encounters = restriction.filter_encounters(@encounters)
       @prescriptions = restriction.filter_orders(@prescriptions)
@@ -18,7 +18,7 @@ class PatientsController < ApplicationController
   def treatment
     @prescriptions = @patient.orders.current.prescriptions.all
     @historical = @patient.orders.historical.prescriptions.all
-    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
     @restricted.each do |restriction|
       @prescriptions = restriction.filter_orders(@prescriptions)
       @historical = restriction.filter_orders(@historical)
@@ -28,7 +28,7 @@ class PatientsController < ApplicationController
 
   def relationships
     @relationships = @patient.relationships rescue []
-    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
     @restricted.each do |restriction|
       @relationships = restriction.filter_relationships(@relationships)
     end
@@ -49,7 +49,7 @@ class PatientsController < ApplicationController
 
   def programs
     @programs = @patient.patient_programs.all
-    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_location.location_id})
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
     @restricted.each do |restriction|
       @programs = restriction.filter_programs(@programs)
     end

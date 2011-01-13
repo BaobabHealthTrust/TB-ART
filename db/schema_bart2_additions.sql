@@ -70,17 +70,10 @@ CREATE TABLE `orders` (
 SET character_set_client = @saved_cs_client;
 
 --
--- Table structure for table `art_num_list`
+-- Table structure for table `art_num_list` is NOT USED
 --
 
 DROP TABLE IF EXISTS `art_num_list`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `art_num_list` (
-  `identifier` varchar(50) NOT NULL DEFAULT '',
-  PRIMARY KEY (`identifier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `complex_obs`
@@ -123,34 +116,16 @@ CREATE TABLE `concept_synonym` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `drug_substance`
+-- Table structure for table `drug_substance` is NOT USED
 --
 
 DROP TABLE IF EXISTS `drug_substance`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `drug_substance` (
-  `drug_substance_id` int(11) NOT NULL AUTO_INCREMENT,
-  `concept_id` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(50) DEFAULT NULL,
-  `dose_strength` double DEFAULT NULL,
-  `maximum_daily_dose` double DEFAULT NULL,
-  `minimum_daily_dose` double DEFAULT NULL,
-  `route` int(11) DEFAULT NULL,
-  `units` varchar(50) DEFAULT NULL,
-  `creator` int(11) NOT NULL DEFAULT '0',
-  `date_created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `retired` tinyint(1) NOT NULL DEFAULT '0',
-  `retired_by` int(11) DEFAULT NULL,
-  `date_retired` datetime DEFAULT NULL,
-  `retire_reason` datetime DEFAULT NULL,
-  PRIMARY KEY (`drug_substance_id`),
-  KEY `drug_ingredient_creator` (`creator`),
-  KEY `primary_drug_ingredient_concept` (`concept_id`),
-  KEY `route_concept` (`route`),
-  KEY `user_who_retired_drug` (`retired_by`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `drug_ingredient` is NOT USED
+--
+
+DROP TABLE IF EXISTS `drug_ingredient`;
 
 --
 -- Table structure for table `external_source`

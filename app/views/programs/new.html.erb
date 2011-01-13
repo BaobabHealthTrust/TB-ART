@@ -6,6 +6,7 @@
 </style>
 <script>
   var tt_cancel_destination = "/patients/programs/<%= @patient.patient_id %>"  
+  var enrolled_program_names = <%=@enrolled_program_names%>
   
   function set_program_for_workflows() {
     var program_id = encodeURIComponent($('program_id').value); 
@@ -18,7 +19,14 @@
     $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', "/programs/states?workflow=" + workflow_id);
     listSuggestions(tstCurrentPage); 
   }
-  
+ 
+  function validProgram(){
+    selected_program = ($('tt_page_select_program').getElementsByTagName("input")[0].value)
+    for (var i = 0 ; i < enrolled_program_names.length ; i++ ){
+      if(enrolled_program_names[i] == selected_program){return false}
+    }
+    return true
+  }
 </script>
 
 <% if flash[:error] %>
@@ -30,7 +38,9 @@
 
   <%= select_tag 'program_id', options_for_select(
     Program.all.inject({}){|result, element| result[element.name] = element.program_id; result }, nil), 
-    {:helpText => "Select Program"} %> 
+    {:helpText => "Select Program",
+     :validationJS =>"validProgram()",
+     :validationMessage => "Patient already enrolled in program" } %> 
 
   <%= select_tag 'location_id', params[:location_id],
     {:id => 'location_id', 

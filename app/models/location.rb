@@ -55,9 +55,7 @@ class Location < ActiveRecord::Base
   end
 
   def self.current_arv_code
-    description = current_health_center.description rescue []
-    return if description.blank?
-    description.split("arv code:")[1].strip rescue nil
+    current_health_center.neighborhood_cell rescue nil
   end
 
 end

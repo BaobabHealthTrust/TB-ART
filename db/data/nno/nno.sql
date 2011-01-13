@@ -16,122 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `location`
---
-
-DROP TABLE IF EXISTS `location`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `location` (
-  `location_id` int(11) NOT NULL auto_increment,
-  `name` varchar(255) NOT NULL default '',
-  `description` varchar(255) default NULL,
-  `address1` varchar(50) default NULL,
-  `address2` varchar(50) default NULL,
-  `city_village` varchar(50) default NULL,
-  `state_province` varchar(50) default NULL,
-  `postal_code` varchar(50) default NULL,
-  `country` varchar(50) default NULL,
-  `latitude` varchar(50) default NULL,
-  `longitude` varchar(50) default NULL,
-  `creator` int(11) NOT NULL default '0',
-  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `county_district` varchar(50) default NULL,
-  `neighborhood_cell` varchar(50) default NULL,
-  `region` varchar(50) default NULL,
-  `subregion` varchar(50) default NULL,
-  `township_division` varchar(50) default NULL,
-  `retired` tinyint(1) NOT NULL default '0',
-  `retired_by` int(11) default NULL,
-  `date_retired` datetime default NULL,
-  `retire_reason` varchar(255) default NULL,
-  `location_type_id` int(11) default NULL,
-  `parent_location` int(11) default NULL,
-  `uuid` char(38) NOT NULL,
-  PRIMARY KEY  (`location_id`),
-  UNIQUE KEY `location_uuid_index` (`uuid`),
-  KEY `user_who_created_location` (`creator`),
-  KEY `name_of_location` (`name`),
-  KEY `user_who_retired_location` (`retired_by`),
-  KEY `retired_status` (`retired`),
-  KEY `type_of_location` (`location_type_id`),
-  KEY `parent_location` (`parent_location`),
-  CONSTRAINT `location_type` FOREIGN KEY (`location_type_id`) REFERENCES `location_type` (`location_type_id`),
-  CONSTRAINT `parent_location` FOREIGN KEY (`parent_location`) REFERENCES `location` (`location_id`),
-  CONSTRAINT `user_who_created_location` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `user_who_retired_location` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `location`
---
-
-LOCK TABLES `location` WRITE;
-/*!40000 ALTER TABLE `location` DISABLE KEYS */;
-INSERT INTO `location` VALUES (1,'Unknown Location',NULL,'','','','','','',NULL,NULL,1,'2005-09-22 00:00:00',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'8d6c993e-c2cc-11de-8d13-0010c6dffd0f'),(2,'Neno District Hospital','Neno District Hospital, formerly Neno Rural Hospital (ID=750)','','','Neno','Neno','','','','',1,'2007-11-29 16:23:00',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5e7b138-2d56-11df-b63b-0026181bb84d'),(3,'Magaleta Rural Health Center','Magaleta Rural Health Center (ID=751)','','','Magaleta','Neno','','','','',1,'2007-11-29 16:23:37',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5e7b2fa-2d56-11df-b63b-0026181bb84d'),(4,'Neno Mission HC','Neno Mission Health Center (ID=752)','','','Neno Mission','Neno','','','','',1,'2007-11-29 16:25:15',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5e7b4a8-2d56-11df-b63b-0026181bb84d'),(5,'Matandani Rural Health Center','(ID=753)','','','Matandani','Neno','','','','',1,'2007-11-29 16:25:44',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5e7b642-2d56-11df-b63b-0026181bb84d'),(6,'Malawi','The Country of Malawi','',NULL,'','',NULL,NULL,NULL,NULL,1,'2008-01-16 19:45:13','','',NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5e7b7e6-2d56-11df-b63b-0026181bb84d'),(7,'Neno District Hospital - Registration','Registration desk at Neno Rural Hospital (ID=750)','','','','','','','','',1,'2008-05-02 15:03:45',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f28a18-2d56-11df-b63b-0026181bb84d'),(8,'Neno District Hospital - Vitals','Vitals recorded at Neno District Hospital (ID=750)','','','','','','','','',1,'2008-05-02 15:04:11',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f28d60-2d56-11df-b63b-0026181bb84d'),(9,'Neno District Hospital - ART Clinic (NNO)','ART Clinic at Neno District Hospital (ID=750)','','','','','','','','',1,'2008-05-02 15:04:36',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f28fb8-2d56-11df-b63b-0026181bb84d'),(10,'Neno District Hospital - Outpatient','Outpatient Department at Neno District Hospital (ID=750)','','','','','','','','',1,'2008-05-02 15:05:20',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f291fc-2d56-11df-b63b-0026181bb84d'),(11,'Mwanza District Hospital','Mwanza District Hospital','','','','','','','','',1,'2008-05-06 09:32:32',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f29436-2d56-11df-b63b-0026181bb84d'),(12,'QECH','Queen Elizabeth Central Hospital','','','','','','','','',1,'2008-05-06 09:32:59',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f29666-2d56-11df-b63b-0026181bb84d'),(13,'KCH','Kamuzu Central Hospital','','','','','','','','',1,'2008-05-06 09:33:43',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f29896-2d56-11df-b63b-0026181bb84d'),(14,'Mlambe Hospital','Mlambe Hospital in Lunzu','','','','','','','','',1,'2008-05-06 09:34:54',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f29ac6-2d56-11df-b63b-0026181bb84d'),(15,'Mulanje District Hospital','Mulanje District Hospital','','','','','','','','',1,'2008-05-06 09:35:32',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f29cf6-2d56-11df-b63b-0026181bb84d'),(16,'Lisungwi Community Hospital','Lisungwi Community Hospital (ID=754)','','','','','','','','',1,'2008-06-14 00:46:04',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f29f26-2d56-11df-b63b-0026181bb84d'),(17,'Luwani RHC','Luwani Rural Health Center','','','Luwani','','','','','',1,'2008-08-19 15:07:55',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2a156-2d56-11df-b63b-0026181bb84d'),(18,'Chifunga RHC','Chifunga Rural Health Center','','','','','','','','',1,'2008-09-09 11:18:05',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2a386-2d56-11df-b63b-0026181bb84d'),(20,'Nsambe RHC','Nsambe Rural Health Center','','','','','','','','',1,'2008-09-09 11:18:49',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2a5b6-2d56-11df-b63b-0026181bb84d'),(21,'Nkhula Falls RHC','Nkhula Falls Rural Health Center','','','','','','','','',1,'2008-09-09 11:19:11',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2a886-2d56-11df-b63b-0026181bb84d'),(22,'Matope RHC','Matope Rural Health Center','','','','','','','','',1,'2008-09-09 11:20:09',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2aab6-2d56-11df-b63b-0026181bb84d'),(23,'Thyollo District Hospital','Thyollo District Hospital','',NULL,'','',NULL,NULL,NULL,NULL,1,'2009-02-12 14:46:08','','',NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2ace6-2d56-11df-b63b-0026181bb84d'),(24,'Neno District Hospital - Antenatal','Antenatal clinic at Neno Rural Hospital (ID=750)','Neno District Hospital',NULL,'Donda','Neno',NULL,NULL,NULL,NULL,1,'2009-08-21 10:32:21','Checkuchecku','',NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2af20-2d56-11df-b63b-0026181bb84d'),(25,'Kuntumanji','Traditional authority','','','','','','','','',1,'2009-10-12 16:59:44',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2b15a-2d56-11df-b63b-0026181bb84d'),(26,'Lisungwi Community Hospital - Antenatal','Antenatal at Lisungwi Community Hospital (ID=754)','','','','','','','','',1,'2009-12-08 14:46:49',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2b38a-2d56-11df-b63b-0026181bb84d'),(27,'Lisungwi Community Hospital - ART Clinic (LSI)','ART at Lisungwi Community Hospital (ID=754)','','','','','','','','',1,'2009-12-08 14:47:48',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2b5ba-2d56-11df-b63b-0026181bb84d'),(28,'Lisungwi Community Hospital - Outpatient','Outpatient at Lisungwi Community Hospital (ID=754)','','','','','','','','',1,'2009-12-08 14:48:25',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2cf1e-2d56-11df-b63b-0026181bb84d'),(29,'Lisungwi Community Hospital - Registration','Registration at Lisungwi Community Hospital (ID=754)','','','','','','','','',1,'2009-12-08 14:49:02',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2d16c-2d56-11df-b63b-0026181bb84d'),(30,'Lisungwi Community Hospital - Vitals','Vitals at Lisungwi Community Hospital (ID=754)','','','','','','','','',1,'2009-12-08 14:49:46',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2d3a6-2d56-11df-b63b-0026181bb84d'),(31,'Neno District Hospital - HIV Reception (NNO)','HIV Reception at Neno District Hospital (ID=750)','','','','','','','','',1,'2010-01-10 23:27:10',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2d5e0-2d56-11df-b63b-0026181bb84d'),(32,'Neno District Hospital - HIV Nurse Station (NNO)','HIV nurse station Neno District Hospital (ID=750)','','','','','','','','',1,'2010-01-10 23:28:23',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2d810-2d56-11df-b63b-0026181bb84d'),(33,'Neno District Hospital - HIV Clinician Station (NNO)','HIV Clinician Station at Neno District Hospital (ID=750)','','','','','','','','',1,'2010-01-10 23:29:08',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2da54-2d56-11df-b63b-0026181bb84d'),(34,'Ligowe RHC','Ligowe Rural Health Center','','','Ligowe','Neno','','','','',1,'2010-01-27 16:44:03',NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,'b5f2dc84-2d56-11df-b63b-0026181bb84d');
-/*!40000 ALTER TABLE `location` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `program`
---
-
-DROP TABLE IF EXISTS `program`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program` (
-  `program_id` int(11) NOT NULL auto_increment,
-  `concept_id` int(11) NOT NULL default '0',
-  `creator` int(11) NOT NULL default '0',
-  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `changed_by` int(11) default NULL,
-  `date_changed` datetime default NULL,
-  `retired` smallint(6) NOT NULL default '0',
-  `name` varchar(50) NOT NULL,
-  `description` varchar(500) default NULL,
-  `uuid` char(38) NOT NULL,
-  PRIMARY KEY  (`program_id`),
-  UNIQUE KEY `program_uuid_index` (`uuid`),
-  KEY `program_concept` (`concept_id`),
-  KEY `program_creator` (`creator`),
-  KEY `user_who_changed_program` (`changed_by`),
-  CONSTRAINT `program_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
-  CONSTRAINT `program_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `user_who_changed_program` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `program`
---
-
-LOCK TABLES `program` WRITE;
-/*!40000 ALTER TABLE `program` DISABLE KEYS */;
-INSERT INTO `program` VALUES (1,1482,1,'2007-12-19 11:55:28',1,'2010-01-26 11:30:04',0,'HIV PROGRAM','','b618edc0-2d56-11df-b63b-0026181bb84d'),(2,1648,1,'2008-07-23 07:42:38',1,'2008-07-23 07:49:30',0,'TB PROGRAM','Tuberculosis Program','b618f180-2d56-11df-b63b-0026181bb84d'),(3,3568,1,'2008-08-18 18:42:19',1,'2009-11-03 16:27:34',0,'VHW PROGRAM','','b618f3c4-2d56-11df-b63b-0026181bb84d'),(4,3594,1,'2008-09-17 21:54:32',1,'2008-09-23 21:13:58',0,'Early Infant Diagnosis Program','','b618f5e0-2d56-11df-b63b-0026181bb84d'),(5,2842,1,'2008-09-23 23:21:05',1,'2008-09-23 23:25:22',0,'MDR-TB PROGRAM','MDR-TB PROGRAM used by the mdrb module.','b618f7fc-2d56-11df-b63b-0026181bb84d'),(6,3591,1,'2008-09-28 08:49:39',1,'2008-10-06 16:42:27',0,'KAPOSIS SARCOMA PROGRAM','Program for patients recieving chemotherapy for Kaposi\'s Sarcoma.','b618fa18-2d56-11df-b63b-0026181bb84d'),(7,1845,1,'2008-10-21 10:28:03',1,'2008-10-21 10:38:54',0,'FOOD PROGRAM','Patients receiving nutrition assistance','b618fc34-2d56-11df-b63b-0026181bb84d'),(8,6141,1,'2009-04-02 03:47:00',1,'2009-12-11 10:05:47',0,'ART PROGRAM','','b618fe46-2d56-11df-b63b-0026181bb84d'),(9,6142,1,'2009-04-02 03:47:43',1,'2009-12-11 10:12:07',0,'PRE-ART PROGRAM','','b6190058-2d56-11df-b63b-0026181bb84d');
-/*!40000 ALTER TABLE `program` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `program_encounter_type_map`
---
-
-DROP TABLE IF EXISTS `program_encounter_type_map`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program_encounter_type_map` (
-  `program_encounter_type_map_id` int(11) NOT NULL auto_increment,
-  `program_id` int(11) default NULL,
-  `encounter_type_id` int(11) default NULL,
-  PRIMARY KEY  (`program_encounter_type_map_id`),
-  KEY `program_mapping` (`program_id`,`encounter_type_id`),
-  KEY `referenced_encounter_type` (`encounter_type_id`),
-  CONSTRAINT `referenced_encounter_type` FOREIGN KEY (`encounter_type_id`) REFERENCES `encounter_type` (`encounter_type_id`),
-  CONSTRAINT `referenced_program_encounter_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
 -- Dumping data for table `program_encounter_type_map`
 --
 
@@ -140,25 +24,6 @@ LOCK TABLES `program_encounter_type_map` WRITE;
 INSERT INTO `program_encounter_type_map` VALUES (1,1,9),(2,1,10),(3,1,11),(4,1,12),(5,1,51),(6,1,52),(7,1,53),(8,1,54),(9,2,14),(10,2,15),(11,4,20),(12,4,21),(14,6,17),(13,6,24);
 /*!40000 ALTER TABLE `program_encounter_type_map` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `program_location_restriction`
---
-
-DROP TABLE IF EXISTS `program_location_restriction`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program_location_restriction` (
-  `program_location_restriction_id` int(11) NOT NULL auto_increment,
-  `program_id` int(11) default NULL,
-  `location_id` int(11) default NULL,
-  PRIMARY KEY  (`program_location_restriction_id`),
-  KEY `program_mapping` (`program_id`,`location_id`),
-  KEY `referenced_location` (`location_id`),
-  CONSTRAINT `referenced_location` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`),
-  CONSTRAINT `referenced_program` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `program_location_restriction`
@@ -171,25 +36,6 @@ INSERT INTO `program_location_restriction` VALUES (1,1,7),(5,1,8),(2,2,7),(6,2,8
 UNLOCK TABLES;
 
 --
--- Table structure for table `program_orders_map`
---
-
-DROP TABLE IF EXISTS `program_orders_map`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program_orders_map` (
-  `program_orders_map_id` int(11) NOT NULL auto_increment,
-  `program_id` int(11) default NULL,
-  `concept_id` int(11) default NULL,
-  PRIMARY KEY  (`program_orders_map_id`),
-  KEY `program_mapping` (`program_id`,`concept_id`),
-  KEY `referenced_concept_id` (`concept_id`),
-  CONSTRAINT `referenced_concept_id` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
-  CONSTRAINT `referenced_program_orders_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
 -- Dumping data for table `program_orders_map`
 --
 
@@ -198,25 +44,6 @@ LOCK TABLES `program_orders_map` WRITE;
 INSERT INTO `program_orders_map` VALUES (2,1,625),(3,1,628),(11,1,630),(4,1,631),(9,1,633),(1,1,792),(17,1,794),(18,1,795),(15,1,796),(10,1,797),(19,1,802),(16,1,814),(7,1,1610),(8,1,1612),(6,1,1613),(5,1,2833),(12,1,2988),(14,1,2994),(13,1,6880),(24,2,438),(35,2,450),(20,2,656),(22,2,745),(21,2,767),(40,2,768),(29,2,955),(38,2,1194),(27,2,1406),(25,2,1411),(31,2,1413),(30,2,1414),(33,2,1415),(26,2,1417),(28,2,1418),(32,2,1419),(39,2,1614),(34,2,1633),(36,2,2459),(37,2,2460),(23,2,5829),(41,6,3623),(42,6,3624),(43,6,3625);
 /*!40000 ALTER TABLE `program_orders_map` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `program_patient_identifier_type_map`
---
-
-DROP TABLE IF EXISTS `program_patient_identifier_type_map`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program_patient_identifier_type_map` (
-  `program_patient_identifier_type_map_id` int(11) NOT NULL auto_increment,
-  `program_id` int(11) default NULL,
-  `patient_identifier_type_id` int(11) default NULL,
-  PRIMARY KEY  (`program_patient_identifier_type_map_id`),
-  KEY `program_mapping` (`program_id`,`patient_identifier_type_id`),
-  KEY `referenced_patient_identifier_type` (`patient_identifier_type_id`),
-  CONSTRAINT `referenced_patient_identifier_type` FOREIGN KEY (`patient_identifier_type_id`) REFERENCES `patient_identifier_type` (`patient_identifier_type_id`),
-  CONSTRAINT `referenced_program_patient_identifier_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `program_patient_identifier_type_map`
@@ -229,25 +56,6 @@ INSERT INTO `program_patient_identifier_type_map` VALUES (1,1,4),(2,1,5),(3,1,13
 UNLOCK TABLES;
 
 --
--- Table structure for table `program_relationship_type_map`
---
-
-DROP TABLE IF EXISTS `program_relationship_type_map`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program_relationship_type_map` (
-  `program_relationship_type_map_id` int(11) NOT NULL auto_increment,
-  `program_id` int(11) default NULL,
-  `relationship_type_id` int(11) default NULL,
-  PRIMARY KEY  (`program_relationship_type_map_id`),
-  KEY `program_mapping` (`program_id`,`relationship_type_id`),
-  KEY `referenced_relationship_type` (`relationship_type_id`),
-  CONSTRAINT `referenced_program_relationship_type_map` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`),
-  CONSTRAINT `referenced_relationship_type` FOREIGN KEY (`relationship_type_id`) REFERENCES `relationship_type` (`relationship_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
 -- Dumping data for table `program_relationship_type_map`
 --
 
@@ -256,112 +64,6 @@ LOCK TABLES `program_relationship_type_map` WRITE;
 INSERT INTO `program_relationship_type_map` VALUES (1,1,7),(2,1,8),(3,2,7),(4,2,8),(5,4,7),(6,4,8),(7,6,7),(8,6,8);
 /*!40000 ALTER TABLE `program_relationship_type_map` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `program_workflow`
---
-
-DROP TABLE IF EXISTS `program_workflow`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program_workflow` (
-  `program_workflow_id` int(11) NOT NULL auto_increment,
-  `program_id` int(11) NOT NULL default '0',
-  `concept_id` int(11) NOT NULL default '0',
-  `creator` int(11) NOT NULL default '0',
-  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` smallint(6) NOT NULL default '0',
-  `changed_by` int(11) default NULL,
-  `date_changed` datetime default NULL,
-  `uuid` char(38) NOT NULL,
-  PRIMARY KEY  (`program_workflow_id`),
-  UNIQUE KEY `program_workflow_uuid_index` (`uuid`),
-  KEY `program_for_workflow` (`program_id`),
-  KEY `workflow_concept` (`concept_id`),
-  KEY `workflow_creator` (`creator`),
-  KEY `workflow_voided_by` (`changed_by`),
-  CONSTRAINT `program_for_workflow` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`),
-  CONSTRAINT `workflow_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `workflow_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
-  CONSTRAINT `workflow_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `program_workflow`
---
-
-LOCK TABLES `program_workflow` WRITE;
-/*!40000 ALTER TABLE `program_workflow` DISABLE KEYS */;
-INSERT INTO `program_workflow` VALUES (1,1,1484,1,'2007-12-19 11:59:17',0,1,'2010-01-26 11:30:04','b61a51e2-2d56-11df-b63b-0026181bb84d'),(2,1,1377,1,'2007-12-19 11:59:17',1,1,'2010-01-26 11:30:04','b61a56e2-2d56-11df-b63b-0026181bb84d'),(3,2,1568,1,'2008-07-23 07:42:38',0,1,'2008-07-23 07:49:30','b61a5908-2d56-11df-b63b-0026181bb84d'),(4,4,1484,1,'2008-09-17 21:54:32',1,1,'2008-09-23 21:13:58','b61a659c-2d56-11df-b63b-0026181bb84d'),(5,4,3627,1,'2008-09-17 22:12:18',0,1,'2008-09-23 21:13:58','b61a67a4-2d56-11df-b63b-0026181bb84d'),(6,5,3508,1,'2008-09-23 23:21:05',0,1,'2008-09-23 23:25:22','b61a6998-2d56-11df-b63b-0026181bb84d'),(7,5,3502,1,'2008-09-23 23:21:05',0,1,'2008-09-23 23:25:22','b61a6b8c-2d56-11df-b63b-0026181bb84d'),(8,5,3506,1,'2008-09-23 23:21:05',0,1,'2008-09-23 23:25:22','b61a6d8a-2d56-11df-b63b-0026181bb84d'),(9,6,1484,1,'2008-09-28 08:49:39',0,1,'2008-10-06 16:42:27','b61a6f7e-2d56-11df-b63b-0026181bb84d'),(10,7,1846,1,'2008-10-21 10:38:54',0,NULL,NULL,'b61a7168-2d56-11df-b63b-0026181bb84d'),(11,8,1484,1,'2009-04-02 03:47:00',0,1,'2009-12-11 10:05:47','b61a737a-2d56-11df-b63b-0026181bb84d'),(12,9,3627,1,'2009-04-02 03:47:43',0,1,'2009-12-11 10:12:07','b61a7578-2d56-11df-b63b-0026181bb84d'),(13,1,6313,1,'2009-06-04 06:23:46',1,1,'2010-01-26 11:30:04','b61a776c-2d56-11df-b63b-0026181bb84d'),(14,1,6310,1,'2009-06-04 06:23:46',1,1,'2010-01-26 11:30:04','b61a7992-2d56-11df-b63b-0026181bb84d'),(15,3,6368,1,'2009-11-03 16:24:50',0,1,'2009-11-03 16:27:34','b61a7b86-2d56-11df-b63b-0026181bb84d');
-/*!40000 ALTER TABLE `program_workflow` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `program_workflow_state`
---
-
-DROP TABLE IF EXISTS `program_workflow_state`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `program_workflow_state` (
-  `program_workflow_state_id` int(11) NOT NULL auto_increment,
-  `program_workflow_id` int(11) NOT NULL default '0',
-  `concept_id` int(11) NOT NULL default '0',
-  `initial` smallint(6) NOT NULL default '0',
-  `terminal` smallint(6) NOT NULL default '0',
-  `creator` int(11) NOT NULL default '0',
-  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` smallint(6) NOT NULL default '0',
-  `changed_by` int(11) default NULL,
-  `date_changed` datetime default NULL,
-  `uuid` char(38) NOT NULL,
-  PRIMARY KEY  (`program_workflow_state_id`),
-  UNIQUE KEY `program_workflow_state_uuid_index` (`uuid`),
-  KEY `workflow_for_state` (`program_workflow_id`),
-  KEY `state_concept` (`concept_id`),
-  KEY `state_creator` (`creator`),
-  KEY `state_voided_by` (`changed_by`),
-  CONSTRAINT `state_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `state_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
-  CONSTRAINT `state_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `workflow_for_state` FOREIGN KEY (`program_workflow_id`) REFERENCES `program_workflow` (`program_workflow_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `program_workflow_state`
---
-
-LOCK TABLES `program_workflow_state` WRITE;
-/*!40000 ALTER TABLE `program_workflow_state` DISABLE KEYS */;
-INSERT INTO `program_workflow_state` VALUES (1,1,1490,1,0,1,'2007-12-19 12:09:08',0,1,'2010-01-26 11:30:04','b61bd9c2-2d56-11df-b63b-0026181bb84d'),(2,1,1744,0,1,1,'2007-12-19 12:09:08',0,1,'2010-01-26 11:30:04','b61c1630-2d56-11df-b63b-0026181bb84d'),(3,1,1742,0,1,1,'2007-12-19 12:09:08',0,1,'2010-01-26 11:30:04','b61c189c-2d56-11df-b63b-0026181bb84d'),(4,1,1713,0,0,1,'2007-12-19 12:09:08',1,1,'2010-01-26 11:35:37','b61c1ac2-2d56-11df-b63b-0026181bb84d'),(5,1,1483,0,0,1,'2007-12-19 12:09:08',1,1,'2010-01-26 11:35:37','b61c1cde-2d56-11df-b63b-0026181bb84d'),(6,1,1579,0,0,1,'2007-12-19 12:09:08',0,1,'2010-01-26 11:30:04','b61c1ef0-2d56-11df-b63b-0026181bb84d'),(7,1,1577,1,0,1,'2007-12-19 12:09:08',0,1,'2010-01-26 11:30:04','b61c210c-2d56-11df-b63b-0026181bb84d'),(8,1,1574,1,0,1,'2007-12-19 12:09:08',0,1,'2010-01-26 11:30:04','b61c2328-2d56-11df-b63b-0026181bb84d'),(9,1,1485,1,0,1,'2007-12-19 12:09:08',1,1,'2010-01-26 11:35:37','b61c2530-2d56-11df-b63b-0026181bb84d'),(10,1,1708,1,0,1,'2007-12-19 12:09:08',1,1,'2010-01-26 11:35:37','b61c285a-2d56-11df-b63b-0026181bb84d'),(11,1,1710,1,0,1,'2007-12-19 12:09:08',1,1,'2010-01-26 11:35:37','b61c2a94-2d56-11df-b63b-0026181bb84d'),(12,1,1743,0,1,1,'2007-12-19 12:09:08',0,1,'2010-01-26 11:30:04','b61c2cb0-2d56-11df-b63b-0026181bb84d'),(13,2,1951,1,0,1,'2007-12-19 12:17:53',0,1,'2010-01-26 11:30:04','b61c2ec2-2d56-11df-b63b-0026181bb84d'),(14,2,1744,0,1,1,'2007-12-19 12:17:53',0,1,'2010-01-26 11:30:04','b61c30ca-2d56-11df-b63b-0026181bb84d'),(15,2,1743,0,0,1,'2007-12-19 12:17:53',0,1,'2010-01-26 11:30:04','b61c32dc-2d56-11df-b63b-0026181bb84d'),(16,2,1742,0,1,1,'2007-12-19 12:17:53',0,1,'2010-01-26 11:30:04','b61c34ee-2d56-11df-b63b-0026181bb84d'),(17,2,2001,1,0,1,'2007-12-19 12:17:53',0,1,'2010-01-26 11:30:04','b61c36f6-2d56-11df-b63b-0026181bb84d'),(18,3,1067,1,0,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c38fe-2d56-11df-b63b-0026181bb84d'),(19,3,1432,1,0,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c3b24-2d56-11df-b63b-0026181bb84d'),(20,3,1714,0,1,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c3d40-2d56-11df-b63b-0026181bb84d'),(21,3,1742,0,1,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c3f52-2d56-11df-b63b-0026181bb84d'),(22,3,1744,0,1,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c415a-2d56-11df-b63b-0026181bb84d'),(23,3,1743,0,1,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c436c-2d56-11df-b63b-0026181bb84d'),(24,3,1746,0,1,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c457e-2d56-11df-b63b-0026181bb84d'),(25,3,2458,1,0,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c6aae-2d56-11df-b63b-0026181bb84d'),(26,3,843,0,1,1,'2008-07-23 07:49:30',0,NULL,NULL,'b61c6cd4-2d56-11df-b63b-0026181bb84d'),(27,5,1490,1,0,1,'2008-09-17 22:13:53',0,1,'2008-09-23 21:13:58','b61c6ef0-2d56-11df-b63b-0026181bb84d'),(28,5,3626,0,1,1,'2008-09-17 22:13:53',0,1,'2008-09-23 21:13:58','b61c710c-2d56-11df-b63b-0026181bb84d'),(29,5,1577,0,1,1,'2008-09-17 22:13:53',0,1,'2008-09-23 21:13:58','b61c7314-2d56-11df-b63b-0026181bb84d'),(30,5,1743,0,1,1,'2008-09-17 22:13:53',0,1,'2008-09-23 21:13:58','b61c7526-2d56-11df-b63b-0026181bb84d'),(31,5,1744,0,1,1,'2008-09-17 22:13:53',0,1,'2008-09-23 21:13:58','b61c7738-2d56-11df-b63b-0026181bb84d'),(32,5,1742,0,1,1,'2008-09-17 22:13:53',0,1,'2008-09-23 21:13:58','b61c7940-2d56-11df-b63b-0026181bb84d'),(33,5,3644,0,0,1,'2008-09-23 21:13:58',0,NULL,NULL,'b61c7b52-2d56-11df-b63b-0026181bb84d'),(34,5,3643,0,0,1,'2008-09-23 21:13:58',0,NULL,NULL,'b61c7d64-2d56-11df-b63b-0026181bb84d'),(35,6,1585,0,0,1,'2008-09-23 23:23:10',0,1,'2008-09-23 23:25:22','b61c7f80-2d56-11df-b63b-0026181bb84d'),(36,6,1714,0,0,1,'2008-09-23 23:23:10',0,1,'2008-09-23 23:25:22','b61c8192-2d56-11df-b63b-0026181bb84d'),(37,6,1587,0,0,1,'2008-09-23 23:23:10',0,1,'2008-09-23 23:25:22','b61c83a4-2d56-11df-b63b-0026181bb84d'),(38,6,1567,0,0,1,'2008-09-23 23:23:10',0,1,'2008-09-23 23:25:22','b61c85ac-2d56-11df-b63b-0026181bb84d'),(39,6,1565,0,0,1,'2008-09-23 23:23:10',0,1,'2008-09-23 23:25:22','b61c87be-2d56-11df-b63b-0026181bb84d'),(40,6,1744,0,0,1,'2008-09-23 23:23:10',0,1,'2008-09-23 23:25:22','b61c89da-2d56-11df-b63b-0026181bb84d'),(41,6,3507,0,0,1,'2008-09-23 23:23:10',0,1,'2008-09-23 23:25:22','b61c8bd8-2d56-11df-b63b-0026181bb84d'),(42,7,3501,0,0,1,'2008-09-23 23:24:19',0,1,'2008-09-23 23:25:22','b61c8de0-2d56-11df-b63b-0026181bb84d'),(43,7,3500,0,0,1,'2008-09-23 23:24:19',0,1,'2008-09-23 23:25:22','b61c8ff2-2d56-11df-b63b-0026181bb84d'),(44,7,3499,0,0,1,'2008-09-23 23:24:19',0,1,'2008-09-23 23:25:22','b61c9204-2d56-11df-b63b-0026181bb84d'),(45,7,1714,0,0,1,'2008-09-23 23:24:19',0,1,'2008-09-23 23:25:22','b61c940c-2d56-11df-b63b-0026181bb84d'),(46,8,3505,0,0,1,'2008-09-23 23:25:22',0,NULL,NULL,'b61c9614-2d56-11df-b63b-0026181bb84d'),(47,8,3504,0,0,1,'2008-09-23 23:25:22',0,NULL,NULL,'b61c981c-2d56-11df-b63b-0026181bb84d'),(48,8,3503,0,0,1,'2008-09-23 23:25:22',0,NULL,NULL,'b61cbc20-2d56-11df-b63b-0026181bb84d'),(49,8,1107,0,0,1,'2008-09-23 23:25:22',0,NULL,NULL,'b61cbe3c-2d56-11df-b63b-0026181bb84d'),(50,9,3501,1,0,1,'2008-09-28 08:50:35',0,1,'2008-10-06 16:42:27','b61cc044-2d56-11df-b63b-0026181bb84d'),(51,9,3626,0,1,1,'2008-09-28 08:50:35',0,1,'2008-10-06 16:42:27','b61cc256-2d56-11df-b63b-0026181bb84d'),(52,9,1743,0,1,1,'2008-09-28 08:50:35',0,1,'2008-10-06 16:42:27','b61cc4fe-2d56-11df-b63b-0026181bb84d'),(53,9,1744,0,1,1,'2008-09-28 08:50:35',0,1,'2008-10-06 16:42:27','b61cc71a-2d56-11df-b63b-0026181bb84d'),(54,9,1742,0,1,1,'2008-09-28 08:50:35',0,1,'2008-10-06 16:42:27','b61cc922-2d56-11df-b63b-0026181bb84d'),(55,9,1714,0,1,1,'2008-09-28 12:26:17',0,1,'2008-10-06 16:42:27','b61ccb34-2d56-11df-b63b-0026181bb84d'),(56,9,1713,0,0,1,'2008-10-05 12:21:26',0,1,'2008-10-06 16:42:27','b61ccd46-2d56-11df-b63b-0026181bb84d'),(57,9,1579,0,0,1,'2008-10-05 12:21:26',0,1,'2008-10-06 16:42:27','b61ccf4e-2d56-11df-b63b-0026181bb84d'),(58,9,1490,1,0,1,'2008-10-06 16:42:27',0,NULL,NULL,'b61cd160-2d56-11df-b63b-0026181bb84d'),(59,1,3490,0,1,1,'2009-02-03 15:52:51',0,1,'2010-01-26 11:30:04','b61cd4f8-2d56-11df-b63b-0026181bb84d'),(60,1,5240,0,1,1,'2009-06-02 09:38:28',0,1,'2010-01-26 11:30:04','b61cd732-2d56-11df-b63b-0026181bb84d'),(61,14,6312,1,0,1,'2009-06-04 06:24:29',0,1,'2010-01-26 11:30:04','b61cd962-2d56-11df-b63b-0026181bb84d'),(62,14,6311,0,0,1,'2009-06-04 06:24:29',0,1,'2010-01-26 11:30:04','b61cdb92-2d56-11df-b63b-0026181bb84d'),(63,13,6314,1,0,1,'2009-06-04 06:26:25',0,1,'2010-01-26 11:30:04','b61cddc2-2d56-11df-b63b-0026181bb84d'),(64,13,6316,0,0,1,'2009-06-04 06:26:25',0,1,'2010-01-26 11:30:04','b61cdff2-2d56-11df-b63b-0026181bb84d'),(65,13,6317,0,0,1,'2009-06-04 06:26:25',0,1,'2010-01-26 11:30:04','b61ce222-2d56-11df-b63b-0026181bb84d'),(66,13,6315,0,0,1,'2009-06-04 06:26:25',0,1,'2010-01-26 11:30:04','b61ce43e-2d56-11df-b63b-0026181bb84d'),(67,15,6370,1,0,1,'2009-11-03 16:27:34',0,NULL,NULL,'b61ce678-2d56-11df-b63b-0026181bb84d'),(68,15,6369,0,1,1,'2009-11-03 16:27:34',0,NULL,NULL,'b61ce8a8-2d56-11df-b63b-0026181bb84d'),(69,15,1742,0,1,1,'2009-11-03 16:27:34',0,NULL,NULL,'b61ceb00-2d56-11df-b63b-0026181bb84d'),(70,11,1577,1,0,1,'2009-12-11 10:01:14',0,1,'2009-12-11 10:05:47','b61ced44-2d56-11df-b63b-0026181bb84d'),(71,11,1742,0,1,1,'2009-12-11 10:01:14',0,1,'2009-12-11 10:05:47','b61d11de-2d56-11df-b63b-0026181bb84d'),(72,11,1744,0,1,1,'2009-12-11 10:01:14',0,1,'2009-12-11 10:05:47','b61d142c-2d56-11df-b63b-0026181bb84d'),(73,11,5240,0,1,1,'2009-12-11 10:01:14',0,1,'2009-12-11 10:05:47','b61d1666-2d56-11df-b63b-0026181bb84d'),(74,11,1579,0,0,1,'2009-12-11 10:01:14',0,1,'2009-12-11 10:05:47','b61d1896-2d56-11df-b63b-0026181bb84d'),(75,11,3490,0,1,1,'2009-12-11 10:01:14',0,1,'2009-12-11 10:05:47','b61d1ad0-2d56-11df-b63b-0026181bb84d'),(76,12,1490,1,0,1,'2009-12-11 10:12:07',0,NULL,NULL,'b61d1e04-2d56-11df-b63b-0026181bb84d'),(77,12,1577,0,1,1,'2009-12-11 10:12:07',0,NULL,NULL,'b61d205c-2d56-11df-b63b-0026181bb84d'),(78,12,1742,0,1,1,'2009-12-11 10:12:07',0,NULL,NULL,'b61d2296-2d56-11df-b63b-0026181bb84d'),(79,12,1744,0,1,1,'2009-12-11 10:12:07',0,NULL,NULL,'b61d24d0-2d56-11df-b63b-0026181bb84d'),(80,12,5240,0,1,1,'2009-12-11 10:12:07',0,NULL,NULL,'b61d2714-2d56-11df-b63b-0026181bb84d'),(81,12,1579,0,0,1,'2009-12-11 10:12:07',0,NULL,NULL,'b61d2958-2d56-11df-b63b-0026181bb84d'),(82,12,3490,0,1,1,'2009-12-11 10:12:07',0,NULL,NULL,'b61d2b92-2d56-11df-b63b-0026181bb84d');
-/*!40000 ALTER TABLE `program_workflow_state` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `regimen`
---
-
-DROP TABLE IF EXISTS `regimen`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `regimen` (
-  `regimen_id` int(11) NOT NULL auto_increment,
-  `concept_id` int(11) NOT NULL default '0',
-  `min_weight` int(3) NOT NULL default '0',
-  `max_weight` int(3) NOT NULL default '200',
-  `creator` int(11) NOT NULL default '0',
-  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `retired` smallint(6) NOT NULL default '0',
-  `retired_by` int(11) default NULL,
-  `date_retired` datetime default NULL,
-  `program_id` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`regimen_id`),
-  KEY `map_concept` (`concept_id`),
-  CONSTRAINT `map_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `regimen`
@@ -374,45 +76,6 @@ INSERT INTO `regimen` VALUES (1,6878,3,6,1,'2010-02-17 20:12:50',0,NULL,NULL,1),
 UNLOCK TABLES;
 
 --
--- Table structure for table `regimen_drug_order`
---
-
-DROP TABLE IF EXISTS `regimen_drug_order`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `regimen_drug_order` (
-  `regimen_drug_order_id` int(11) NOT NULL auto_increment,
-  `regimen_id` int(11) NOT NULL default '0',
-  `drug_inventory_id` int(11) default '0',
-  `dose` double default NULL,
-  `equivalent_daily_dose` double default NULL,
-  `units` varchar(255) default NULL,
-  `frequency` varchar(255) default NULL,
-  `prn` tinyint(1) NOT NULL default '0',
-  `complex` tinyint(1) NOT NULL default '0',
-  `quantity` int(11) default NULL,
-  `instructions` text,
-  `creator` int(11) NOT NULL default '0',
-  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `voided` smallint(6) NOT NULL default '0',
-  `voided_by` int(11) default NULL,
-  `date_voided` datetime default NULL,
-  `void_reason` varchar(255) default NULL,
-  `uuid` char(38) NOT NULL,
-  PRIMARY KEY  (`regimen_drug_order_id`),
-  UNIQUE KEY `regimen_drug_order_uuid_index` (`uuid`),
-  KEY `regimen_drug_order_creator` (`creator`),
-  KEY `user_who_voided_regimen_drug_order` (`voided_by`),
-  KEY `map_regimen` (`regimen_id`),
-  KEY `map_drug_inventory` (`drug_inventory_id`),
-  CONSTRAINT `map_drug_inventory` FOREIGN KEY (`drug_inventory_id`) REFERENCES `drug` (`drug_id`),
-  CONSTRAINT `map_regimen` FOREIGN KEY (`regimen_id`) REFERENCES `regimen` (`regimen_id`),
-  CONSTRAINT `regimen_drug_order_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `user_who_voided_regimen_drug_order` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
 -- Dumping data for table `regimen_drug_order`
 --
 
@@ -423,103 +86,24 @@ INSERT INTO `regimen_drug_order` VALUES (1,1,72,1,2,'tab(s)','TWICE A DAY (BD)',
 UNLOCK TABLES;
 
 --
--- Table structure for table `role`
---
-
-DROP TABLE IF EXISTS `role`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `role` (
-  `role` varchar(50) NOT NULL default '',
-  `description` varchar(255) NOT NULL default '',
-  `uuid` char(38) NOT NULL,
-  PRIMARY KEY  (`role`),
-  UNIQUE KEY `role_uuid_index` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
-
---
 -- Dumping data for table `role`
 --
 
-LOCK TABLES `role` WRITE;
+-- LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES ('Accompagnateur','Community health worker','b6228da8-2d56-11df-b63b-0026181bb84d'),('Accompagnateur Leader','Responsible for overseeing up to 30 Accompagnateurs','b6229190-2d56-11df-b63b-0026181bb84d'),('Anonymous','Privileges for non-authenticated users.','774b2af3-6437-4e5a-a310-547554c7c65c'),('Authenticated','Privileges gained once authentication has been established.','f7fd42ef-880e-40c5-972d-e4ae7c990de2'),('Clinician','Users who are a part of direct patient care.','b622982a-2d56-11df-b63b-0026181bb84d'),('Data Assistant','Clerks who perform data entry.','b6229a46-2d56-11df-b63b-0026181bb84d'),('Data Element Contributor','Role for users who contribute to the management of data elements in OpenMRS.','b6229c94-2d56-11df-b63b-0026181bb84d'),('Data Manager','User who maintains clinical data stored within the OpenMRS repository.','b6229ee2-2d56-11df-b63b-0026181bb84d'),('Doctor','People in direct care of patient. According to the Malawian context, this is a user who has acquired medical training to level of MBBS.','b622a0ea-2d56-11df-b63b-0026181bb84d'),('Informatics Manager','User who maintains the local installation of the OpenMRS repository.','b622a2fc-2d56-11df-b63b-0026181bb84d'),('Lab','Lab technicians and assistants','b622a522-2d56-11df-b63b-0026181bb84d'),('Medical Assistant','Medical Assistants','b622a720-2d56-11df-b63b-0026181bb84d'),('Nurse','Nursing Officers and Technicians','b622a932-2d56-11df-b63b-0026181bb84d'),('Program Manager','Has permission to view most/all data, but no permission for entry or editing.','b622ab26-2d56-11df-b63b-0026181bb84d'),('Provider','Health care provider','8d94f280-c2cc-11de-8d13-0010c6dffd0f'),('regstration_clerk','This is a user responsible for registering patients at the patient registration station. mostly used in Baobab applications. This is probably an equivalent of Data Assistant','b622af54-2d56-11df-b63b-0026181bb84d'),('Social Worker','Social Worker','b622b184-2d56-11df-b63b-0026181bb84d'),('Superuser','This is a user who has access to all Baobab developed applications\' functionality','b622b396-2d56-11df-b63b-0026181bb84d'),('System Developer','Developers of the OpenMRS .. have additional access to change fundamental structure of the database model.','8d94f852-c2cc-11de-8d13-0010c6dffd0f');
+-- INSERT INTO `role` VALUES ('Accompagnateur','Community health worker','b6228da8-2d56-11df-b63b-0026181bb84d'),('Accompagnateur Leader','Responsible for overseeing up to 30 Accompagnateurs','b6229190-2d56-11df-b63b-0026181bb84d'),('Anonymous','Privileges for non-authenticated users.','774b2af3-6437-4e5a-a310-547554c7c65c'),('Authenticated','Privileges gained once authentication has been established.','f7fd42ef-880e-40c5-972d-e4ae7c990de2'),('Clinician','Users who are a part of direct patient care.','b622982a-2d56-11df-b63b-0026181bb84d'),('Data Assistant','Clerks who perform data entry.','b6229a46-2d56-11df-b63b-0026181bb84d'),('Data Element Contributor','Role for users who contribute to the management of data elements in OpenMRS.','b6229c94-2d56-11df-b63b-0026181bb84d'),('Data Manager','User who maintains clinical data stored within the OpenMRS repository.','b6229ee2-2d56-11df-b63b-0026181bb84d'),('Doctor','People in direct care of patient. According to the Malawian context, this is a user who has acquired medical training to level of MBBS.','b622a0ea-2d56-11df-b63b-0026181bb84d'),('Informatics Manager','User who maintains the local installation of the OpenMRS repository.','b622a2fc-2d56-11df-b63b-0026181bb84d'),('Lab','Lab technicians and assistants','b622a522-2d56-11df-b63b-0026181bb84d'),('Medical Assistant','Medical Assistants','b622a720-2d56-11df-b63b-0026181bb84d'),('Nurse','Nursing Officers and Technicians','b622a932-2d56-11df-b63b-0026181bb84d'),('Program Manager','Has permission to view most/all data, but no permission for entry or editing.','b622ab26-2d56-11df-b63b-0026181bb84d'),('Provider','Health care provider','8d94f280-c2cc-11de-8d13-0010c6dffd0f'),('regstration_clerk','This is a user responsible for registering patients at the patient registration station. mostly used in Baobab applications. This is probably an equivalent of Data Assistant','b622af54-2d56-11df-b63b-0026181bb84d'),('Social Worker','Social Worker','b622b184-2d56-11df-b63b-0026181bb84d'),('Superuser','This is a user who has access to all Baobab developed applications\' functionality','b622b396-2d56-11df-b63b-0026181bb84d'),('System Developer','Developers of the OpenMRS .. have additional access to change fundamental structure of the database model.','8d94f852-c2cc-11de-8d13-0010c6dffd0f');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `role_privilege`
---
-
-DROP TABLE IF EXISTS `role_privilege`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `role_privilege` (
-  `role` varchar(50) NOT NULL default '',
-  `privilege` varchar(50) NOT NULL default '',
-  PRIMARY KEY  (`privilege`,`role`),
-  KEY `role_privilege` (`role`),
-  CONSTRAINT `privilege_definitons` FOREIGN KEY (`privilege`) REFERENCES `privilege` (`privilege`),
-  CONSTRAINT `role_privilege` FOREIGN KEY (`role`) REFERENCES `role` (`role`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
+-- UNLOCK TABLES;
 
 --
 -- Dumping data for table `role_privilege`
 --
 
-LOCK TABLES `role_privilege` WRITE;
+-- LOCK TABLES `role_privilege` WRITE;
 /*!40000 ALTER TABLE `role_privilege` DISABLE KEYS */;
-INSERT INTO `role_privilege` VALUES ('Anonymous','View Concepts'),('Authenticated','View Concept Classes'),('Authenticated','View Concept Datatypes'),('Authenticated','View Encounter Types'),('Authenticated','View Field Types'),('Authenticated','View Global Properties'),('Authenticated','View Identifier Types'),('Authenticated','View Locations'),('Authenticated','View Order Types'),('Authenticated','View Person Attribute Types'),('Authenticated','View Privileges'),('Authenticated','View Relationship Types'),('Authenticated','View Relationships'),('Authenticated','View Roles'),('Data Assistant','Add Encounters'),('Data Assistant','Add Observations'),('Data Assistant','Add Orders'),('Data Assistant','Add Patients'),('Data Assistant','Add Relationships'),('Data Assistant','Analysis Shortcut'),('Data Assistant','Analyze'),('Data Assistant','Delete Encounters'),('Data Assistant','Delete Observations'),('Data Assistant','Delete Orders'),('Data Assistant','Delete Patients'),('Data Assistant','Delete People'),('Data Assistant','Delete Relationships'),('Data Assistant','Edit Encounters'),('Data Assistant','Edit Observations'),('Data Assistant','Edit Orders'),('Data Assistant','Edit Patient Programs'),('Data Assistant','Edit Patients'),('Data Assistant','Edit People'),('Data Assistant','Edit Relationships'),('Data Assistant','Find Patient Shortcut'),('Data Assistant','Form Entry'),('Data Assistant','Manage Forms'),('Data Assistant','Manage Groups'),('Data Assistant','Patient Dashboard - View Demographics Section'),('Data Assistant','Patient Dashboard - View Encounters Section'),('Data Assistant','Patient Dashboard - View Forms Section'),('Data Assistant','Patient Dashboard - View Graphs Section'),('Data Assistant','Patient Dashboard - View Overview Section'),('Data Assistant','Patient Dashboard - View Patient Summary'),('Data Assistant','Patient Dashboard - View Regimen Section'),('Data Assistant','View Concepts'),('Data Assistant','View Encounters'),('Data Assistant','View Forms'),('Data Assistant','View Navigation Menu'),('Data Assistant','View Observations'),('Data Assistant','View Orders'),('Data Assistant','View Patient Cohorts'),('Data Assistant','View Patient Identifiers'),('Data Assistant','View Patient Sets'),('Data Assistant','View Patients'),('Data Assistant','View People'),('Data Assistant','View Programs'),('Data Assistant','View Unpublished Forms'),('Data Element Contributor','Manage Forms'),('Data Element Contributor','Patient Dashboard - View Demographics Section'),('Data Element Contributor','Patient Dashboard - View Encounters Section'),('Data Element Contributor','Patient Dashboard - View Forms Section'),('Data Element Contributor','Patient Dashboard - View Graphs Section'),('Data Element Contributor','Patient Dashboard - View Overview Section'),('Data Element Contributor','Patient Dashboard - View Patient Summary'),('Data Element Contributor','Patient Dashboard - View Regimen Section'),('Data Element Contributor','View Administration Functions'),('Data Element Contributor','View Concept Classes'),('Data Element Contributor','View Concept Datatypes'),('Data Element Contributor','View Concept Proposals'),('Data Element Contributor','View Concept Sources'),('Data Element Contributor','View Concepts'),('Data Element Contributor','View Encounter Types'),('Data Element Contributor','View Encounters'),('Data Element Contributor','View Field Types'),('Data Element Contributor','View Forms'),('Data Element Contributor','View Identifier Types'),('Data Element Contributor','View Locations'),('Data Element Contributor','View Navigation Menu'),('Data Element Contributor','View Observations'),('Data Element Contributor','View Order Types'),('Data Element Contributor','View Patient Cohorts'),('Data Element Contributor','View Patient Identifiers'),('Data Element Contributor','View Patient Programs'),('Data Element Contributor','View Patient Sets'),('Data Element Contributor','View Patients'),('Data Element Contributor','View People'),('Data Element Contributor','View Person Attribute Types'),('Data Element Contributor','View Programs'),('Data Element Contributor','View Relationship Types'),('Data Element Contributor','View Relationships'),('Data Element Contributor','View Report Objects'),('Data Element Contributor','View Reports'),('Data Element Contributor','View Users'),('Data Manager','Add Observations'),('Data Manager','Add Patients'),('Data Manager','Add Reports'),('Data Manager','Delete Observations'),('Data Manager','Delete Reports'),('Data Manager','Edit Observations'),('Data Manager','Edit Patients'),('Data Manager','Edit Reports'),('Data Manager','Form Entry'),('Data Manager','Manage Concepts'),('Data Manager','Manage Locations'),('Data Manager','View Forms'),('Data Manager','View Observations'),('Data Manager','View Patient Identifiers'),('Data Manager','View Patients'),('Data Manager','View Reports'),('Informatics Manager','Add Encounters'),('Informatics Manager','Add Observations'),('Informatics Manager','Add Patients'),('Informatics Manager','Add Reports'),('Informatics Manager','Add Users'),('Informatics Manager','Delete Encounters'),('Informatics Manager','Delete Patients'),('Informatics Manager','Delete Reports'),('Informatics Manager','Delete Users'),('Informatics Manager','Edit Encounters'),('Informatics Manager','Edit Patients'),('Informatics Manager','Edit Reports'),('Informatics Manager','Edit Users'),('Informatics Manager','Form Entry'),('Informatics Manager','Manage Concepts'),('Informatics Manager','Manage Locations'),('Informatics Manager','View Concepts'),('Informatics Manager','View Encounters'),('Informatics Manager','View Forms'),('Informatics Manager','View Orders'),('Informatics Manager','View Patient Identifiers'),('Informatics Manager','View Patients'),('Informatics Manager','View Reports'),('Informatics Manager','View Users'),('Program Manager','Analyze'),('Program Manager','Find Patient Shortcut'),('Program Manager','Patient Dashboard - View Demographics Section'),('Program Manager','Patient Dashboard - View Encounters Section'),('Program Manager','Patient Dashboard - View Forms Section'),('Program Manager','Patient Dashboard - View Graphs Section'),('Program Manager','Patient Dashboard - View Overview Section'),('Program Manager','Patient Dashboard - View Patient Summary'),('Program Manager','Patient Dashboard - View Regimen Section'),('Program Manager','View Administration Functions'),('Program Manager','View Concepts'),('Program Manager','View Encounters'),('Program Manager','View Forms'),('Program Manager','View Navigation Menu'),('Program Manager','View Observations'),('Program Manager','View Orders'),('Program Manager','View Patient Identifiers'),('Program Manager','View Patient Sets'),('Program Manager','View Patients'),('Program Manager','View Programs'),('Program Manager','View Reports'),('Program Manager','View Unpublished Forms'),('Program Manager','View Users');
+-- INSERT INTO `role_privilege` VALUES ('Anonymous','View Concepts'),('Authenticated','View Concept Classes'),('Authenticated','View Concept Datatypes'),('Authenticated','View Encounter Types'),('Authenticated','View Field Types'),('Authenticated','View Global Properties'),('Authenticated','View Identifier Types'),('Authenticated','View Locations'),('Authenticated','View Order Types'),('Authenticated','View Person Attribute Types'),('Authenticated','View Privileges'),('Authenticated','View Relationship Types'),('Authenticated','View Relationships'),('Authenticated','View Roles'),('Data Assistant','Add Encounters'),('Data Assistant','Add Observations'),('Data Assistant','Add Orders'),('Data Assistant','Add Patients'),('Data Assistant','Add Relationships'),('Data Assistant','Analysis Shortcut'),('Data Assistant','Analyze'),('Data Assistant','Delete Encounters'),('Data Assistant','Delete Observations'),('Data Assistant','Delete Orders'),('Data Assistant','Delete Patients'),('Data Assistant','Delete People'),('Data Assistant','Delete Relationships'),('Data Assistant','Edit Encounters'),('Data Assistant','Edit Observations'),('Data Assistant','Edit Orders'),('Data Assistant','Edit Patient Programs'),('Data Assistant','Edit Patients'),('Data Assistant','Edit People'),('Data Assistant','Edit Relationships'),('Data Assistant','Find Patient Shortcut'),('Data Assistant','Form Entry'),('Data Assistant','Manage Forms'),('Data Assistant','Manage Groups'),('Data Assistant','Patient Dashboard - View Demographics Section'),('Data Assistant','Patient Dashboard - View Encounters Section'),('Data Assistant','Patient Dashboard - View Forms Section'),('Data Assistant','Patient Dashboard - View Graphs Section'),('Data Assistant','Patient Dashboard - View Overview Section'),('Data Assistant','Patient Dashboard - View Patient Summary'),('Data Assistant','Patient Dashboard - View Regimen Section'),('Data Assistant','View Concepts'),('Data Assistant','View Encounters'),('Data Assistant','View Forms'),('Data Assistant','View Navigation Menu'),('Data Assistant','View Observations'),('Data Assistant','View Orders'),('Data Assistant','View Patient Cohorts'),('Data Assistant','View Patient Identifiers'),('Data Assistant','View Patient Sets'),('Data Assistant','View Patients'),('Data Assistant','View People'),('Data Assistant','View Programs'),('Data Assistant','View Unpublished Forms'),('Data Element Contributor','Manage Forms'),('Data Element Contributor','Patient Dashboard - View Demographics Section'),('Data Element Contributor','Patient Dashboard - View Encounters Section'),('Data Element Contributor','Patient Dashboard - View Forms Section'),('Data Element Contributor','Patient Dashboard - View Graphs Section'),('Data Element Contributor','Patient Dashboard - View Overview Section'),('Data Element Contributor','Patient Dashboard - View Patient Summary'),('Data Element Contributor','Patient Dashboard - View Regimen Section'),('Data Element Contributor','View Administration Functions'),('Data Element Contributor','View Concept Classes'),('Data Element Contributor','View Concept Datatypes'),('Data Element Contributor','View Concept Proposals'),('Data Element Contributor','View Concept Sources'),('Data Element Contributor','View Concepts'),('Data Element Contributor','View Encounter Types'),('Data Element Contributor','View Encounters'),('Data Element Contributor','View Field Types'),('Data Element Contributor','View Forms'),('Data Element Contributor','View Identifier Types'),('Data Element Contributor','View Locations'),('Data Element Contributor','View Navigation Menu'),('Data Element Contributor','View Observations'),('Data Element Contributor','View Order Types'),('Data Element Contributor','View Patient Cohorts'),('Data Element Contributor','View Patient Identifiers'),('Data Element Contributor','View Patient Programs'),('Data Element Contributor','View Patient Sets'),('Data Element Contributor','View Patients'),('Data Element Contributor','View People'),('Data Element Contributor','View Person Attribute Types'),('Data Element Contributor','View Programs'),('Data Element Contributor','View Relationship Types'),('Data Element Contributor','View Relationships'),('Data Element Contributor','View Report Objects'),('Data Element Contributor','View Reports'),('Data Element Contributor','View Users'),('Data Manager','Add Observations'),('Data Manager','Add Patients'),('Data Manager','Add Reports'),('Data Manager','Delete Observations'),('Data Manager','Delete Reports'),('Data Manager','Edit Observations'),('Data Manager','Edit Patients'),('Data Manager','Edit Reports'),('Data Manager','Form Entry'),('Data Manager','Manage Concepts'),('Data Manager','Manage Locations'),('Data Manager','View Forms'),('Data Manager','View Observations'),('Data Manager','View Patient Identifiers'),('Data Manager','View Patients'),('Data Manager','View Reports'),('Informatics Manager','Add Encounters'),('Informatics Manager','Add Observations'),('Informatics Manager','Add Patients'),('Informatics Manager','Add Reports'),('Informatics Manager','Add Users'),('Informatics Manager','Delete Encounters'),('Informatics Manager','Delete Patients'),('Informatics Manager','Delete Reports'),('Informatics Manager','Delete Users'),('Informatics Manager','Edit Encounters'),('Informatics Manager','Edit Patients'),('Informatics Manager','Edit Reports'),('Informatics Manager','Edit Users'),('Informatics Manager','Form Entry'),('Informatics Manager','Manage Concepts'),('Informatics Manager','Manage Locations'),('Informatics Manager','View Concepts'),('Informatics Manager','View Encounters'),('Informatics Manager','View Forms'),('Informatics Manager','View Orders'),('Informatics Manager','View Patient Identifiers'),('Informatics Manager','View Patients'),('Informatics Manager','View Reports'),('Informatics Manager','View Users'),('Program Manager','Analyze'),('Program Manager','Find Patient Shortcut'),('Program Manager','Patient Dashboard - View Demographics Section'),('Program Manager','Patient Dashboard - View Encounters Section'),('Program Manager','Patient Dashboard - View Forms Section'),('Program Manager','Patient Dashboard - View Graphs Section'),('Program Manager','Patient Dashboard - View Overview Section'),('Program Manager','Patient Dashboard - View Patient Summary'),('Program Manager','Patient Dashboard - View Regimen Section'),('Program Manager','View Administration Functions'),('Program Manager','View Concepts'),('Program Manager','View Encounters'),('Program Manager','View Forms'),('Program Manager','View Navigation Menu'),('Program Manager','View Observations'),('Program Manager','View Orders'),('Program Manager','View Patient Identifiers'),('Program Manager','View Patient Sets'),('Program Manager','View Patients'),('Program Manager','View Programs'),('Program Manager','View Reports'),('Program Manager','View Unpublished Forms'),('Program Manager','View Users');
 /*!40000 ALTER TABLE `role_privilege` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `task`
---
-
-DROP TABLE IF EXISTS `task`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `task` (
-  `task_id` int(11) NOT NULL auto_increment,
-  `url` varchar(255) default NULL,
-  `encounter_type` varchar(255) default NULL,
-  `description` text,
-  `location` varchar(255) default NULL,
-  `gender` varchar(50) default NULL,
-  `has_obs_concept_id` int(11) default NULL,
-  `has_obs_value_coded` int(11) default NULL,
-  `has_obs_value_drug` int(11) default NULL,
-  `has_obs_value_datetime` datetime default NULL,
-  `has_obs_value_numeric` double default NULL,
-  `has_obs_value_text` text,
-  `has_program_id` int(11) default NULL,
-  `has_program_workflow_state_id` int(11) default NULL,
-  `has_identifier_type_id` int(11) default NULL,
-  `has_relationship_type_id` int(11) default NULL,
-  `has_order_type_id` int(11) default NULL,
-  `skip_if_has` smallint(6) default '0',
-  `sort_weight` double default NULL,
-  `creator` int(11) NOT NULL,
-  `date_created` datetime NOT NULL,
-  `voided` smallint(6) default '0',
-  `voided_by` int(11) default NULL,
-  `date_voided` datetime default NULL,
-  `void_reason` varchar(255) default NULL,
-  `changed_by` int(11) default NULL,
-  `date_changed` datetime default NULL,
-  `uuid` char(38) default NULL,
-  PRIMARY KEY  (`task_id`),
-  KEY `task_creator` (`creator`),
-  KEY `user_who_voided_task` (`voided_by`),
-  KEY `user_who_changed_task` (`changed_by`),
-  CONSTRAINT `task_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `user_who_changed_task` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `user_who_voided_task` FOREIGN KEY (`voided_by`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17461 DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
+-- UNLOCK TABLES;
 
 --
 -- Dumping data for table `task`
@@ -543,19 +127,6 @@ INSERT INTO `task` VALUES
 UNLOCK TABLES;
 
 --
--- Table structure for table `weight_for_heights`
---
-
-DROP TABLE IF EXISTS `weight_for_heights`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `weight_for_heights` (
-  `supinecm` double NOT NULL,
-  `median_weight_height` double NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
 -- Dumping data for table `weight_for_heights`
 --
 
@@ -564,28 +135,6 @@ LOCK TABLES `weight_for_heights` WRITE;
 INSERT INTO `weight_for_heights` VALUES (85,12),(85.5,12.1),(86,12.2),(86.5,12.3),(87,12.4),(87.5,12.5),(88,12.6),(88.5,12.8),(89,12.9),(89.5,13),(90,13.1),(90.5,13.2),(91,13.3),(91.5,13.4),(92,13.6),(92.5,13.7),(93,13.8),(93.5,13.9),(94,14),(94.5,14.2),(95,14.3),(95.5,14.4),(96,14.5),(96.5,14.7),(97,14.8),(97.5,14.9),(98,15),(98.5,15.2),(99,15.3),(99.5,15.4),(100,15.6),(100.5,15.7),(101,15.8),(101.5,16),(102,16.1),(102.5,16.2),(103,16.4),(103.5,16.5),(104,16.7),(104.5,16.8),(105,16.9),(105.5,17.1),(106,17.2),(106.5,17.4),(107,17.5),(107.5,17.7),(108,17.8),(108.5,18),(109,18.1),(109.5,18.3),(110,18.4),(110.5,18.6),(111,18.8),(111.5,18.9),(112,19.1),(112.5,19.3),(113,19.4),(113.5,19.6),(114,19.8),(114.5,19.9),(115,20.1),(115.5,20.3),(116,20.5),(116.5,20.7),(117,20.8),(117.5,21),(118,21.2),(118.5,21.4),(119,21.6),(119.5,21.8),(120,22),(120.5,22.2),(121,22.4),(121.5,22.6),(122,22.8),(122.5,23.1),(123,23.3),(123.5,23.5),(124,23.7),(124.5,24),(125,24.2),(125.5,24.4),(126,24.7),(126.5,24.9),(127,25.2),(127.5,25.4),(128,25.7),(128.5,26),(129,26.2),(129.5,26.5),(130,26.8);
 /*!40000 ALTER TABLE `weight_for_heights` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `weight_height_for_ages`
---
-
-DROP TABLE IF EXISTS `weight_height_for_ages`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `weight_height_for_ages` (
-  `age_in_months` smallint(6) default NULL,
-  `sex` char(12) default NULL,
-  `median_height` double default NULL,
-  `standard_low_height` double default NULL,
-  `standard_high_height` double default NULL,
-  `median_weight` double default NULL,
-  `standard_low_weight` double default NULL,
-  `standard_high_weight` double default NULL,
-  `age_sex` char(4) default NULL,
-  KEY `index_weight_height_for_ages_on_age_in_months` (`age_in_months`),
-  KEY `index_weight_height_for_ages_on_sex` (`sex`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `weight_height_for_ages`
@@ -599,7 +148,6 @@ UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 -- global_property table added by Mike January 2011
-
 
 --
 -- Table structure for table `global_property`
