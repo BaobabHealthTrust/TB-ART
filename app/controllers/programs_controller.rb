@@ -5,7 +5,8 @@ class ProgramsController < ApplicationController
     session[:return_to] = nil
     session[:return_to] = params[:return_to] unless params[:return_to].blank?
     program_names = PatientProgram.find(:all,:conditions =>["voided = 0 AND patient_id = ? AND location_id = ?",
-                                    params[:patient_id],Location.current_health_center.id]).map{|pat_program|pat_program.program.name}
+                                    params[:patient_id],Location.current_health_center.id]).map{|pat_program|
+                                    pat_program.program.name if pat_program.date_completed.blank?}
     @enrolled_program_names = program_names.to_json                                
     @patient_program = PatientProgram.new
   end
@@ -87,6 +88,18 @@ class ProgramsController < ApplicationController
           observation[:value_numeric] = params[:transfer_out_location_id]
           Observation.create(observation)
         end  
+       
+        updated_state = patient_state.program_workflow_state.concept.name.name 
+        if updated_state == 'PATIENT TRANSFERRED OUT' or updated_state == 'PATIENT DIED'
+          #could not get the commented block of code to update - so I just kinda wrote a hack :(
+          # will improve during code clean up!
+          #unless patient_program.update_attributes({:date_completed => Time.now()})
+           # flash[:notice] = "OOps! Program completed date was not updated!."
+          #end
+          date_completed = session[:datetime].to_time rescue Time.now()
+          PatientProgram.update_all "date_completed = '#{date_completed.strftime('%Y-%m-%d %H:%M:%S')}'",
+                                     "patient_program_id = #{patient_program.patient_program_id}"
+        end
         redirect_to :controller => :patients, :action => :programs, :patient_id => params[:patient_id]
       else
         redirect_to :controller => :patients, :action => :programs, :patient_id => params[:patient_id]
@@ -99,6 +112,8 @@ class ProgramsController < ApplicationController
       @program_workflow_id = program_workflow.first.program_workflow_id
       @states = ProgramWorkflowState.all(:conditions => ['program_workflow_id = ?', @program_workflow_id], :include => :concept)
       @names = @states.map{|state| state.concept.name.name }
+      @program_date_completed = patient_program.date_completed.to_date rescue nil
+      @program_name = patient_program.program.name
     end
   end 
 

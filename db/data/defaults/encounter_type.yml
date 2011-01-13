@@ -1,6 +1,6 @@
 --- 
 encounter_type_00052: 
-  name: ART CLINICIAN VISIT
+  name: HIV STAGING
   retire_reason: 
   encounter_type_id: 52
   retired_by: 

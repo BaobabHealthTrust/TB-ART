@@ -1,5 +1,7 @@
 <script>
   var tt_cancel_destination = "/patients/programs/<%= @patient.patient_id %>"
+  var program_date_completed = "<%= @program_date_completed %>"
+
   var current_state_input_box = null
   function set_workflow_for_states() {
     var workflow_id = <%= @program_workflow_id %>
@@ -8,6 +10,11 @@
     listSuggestions(tstCurrentPage); 
   }
 
+  function validProgram(){
+    selected_state = ($('tt_page_current_state').getElementsByTagName("input")[0].value)
+    if(program_date_completed != ""){return false}
+    return true
+  } 
 </script>
 <form id='program' action="/programs/update" method = 'post'>
   <%= hidden_field_tag :patient_id, @patient.id %>
@@ -20,6 +27,8 @@
        :helpText => "Current state",
        :tt_onLoad => "resetNextButtonCaption();set_workflow_for_states();", 
        :ajaxURL => "",
+       :validationJS =>"validProgram()",
+       :validationMessage => "#{@program_name}<br/>is closed<br/>Closed on: #{@program_date_completed}",
        :allowFreeText => false } %>
 
   <%= text_field_tag 'current_date', params[:current_date] || (Time.now).year,
