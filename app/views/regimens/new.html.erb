@@ -34,7 +34,7 @@
  
   <%= hidden_field_tag :patient_id, @patient.id %>
   
-  <%= select_tag :patient_program, options_for_select(@programs.map{|program| [program.program.name, program.patient_program_id]}), {
+  <%= select_tag :patient_program, options_for_select(@programs.map{|program| [program.program.name, program.patient_program_id] if PatientProgram.find(program.patient_program_id).date_completed == nil}), {
     :textCase => "upper", 
     :allowFreeText => 'false',
     :helpText => "Prescribe regimen for which program?"}%>

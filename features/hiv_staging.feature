@@ -1,13 +1,13 @@
-Feature: Clinician Visit
+Feature: HV Staging
   As a clinician
   I want to be able to evaluate an ART patient using the system
   So that I can record their ART reason for eligibility and staging criteria
 
   @javascript
-  Scenario: View the ART clinician encounter
+  Scenario: View the HIV Staging encounter
     Given I am signed in at the clinician station
     And the patient is "Child"
-    When I start the task "Art Clinician Visit"
+    When I start the task "Hiv staging"
     Then I should see "Stage 1 Conditions (adults and children)"                                    
     
   @javascript
@@ -33,7 +33,7 @@ Feature: Clinician Visit
   Scenario: Staging an adult with a stage 1 condition
     Given I am signed in at the clinician station
     And the patient is "Woman"
-    When I start the task "Art Clinician Visit"
+    When I start the task "Hiv staging"
     Then I should see "Is patient pregnant?"                                        
     And I select the option "No"
     And I press "Next"
