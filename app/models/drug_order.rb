@@ -10,14 +10,14 @@ class DrugOrder < ActiveRecord::Base
   
   def to_s 
     return order.instructions unless order.instructions.blank? rescue nil
-    s = "#{drug.name}: #{self.dose} #{self.units} #{frequency} for #{duration} days"
+    s = "#{drug.name}: #{self.dose} #{self.units} #{frequency} for #{duration||'some'} days"
     s << " (prn)" if prn == 1
     s
   end
   
   def to_short_s
     return order.instructions unless order.instructions.blank? rescue nil
-    s = "#{drug.name}: #{self.dose} #{self.units} #{frequency} for #{duration} days"
+    s = "#{drug.name}: #{self.dose} #{self.units} #{frequency} for #{duration||'some'} days"
     s << " (prn)" if prn == 1
     s
   end
@@ -89,7 +89,7 @@ class DrugOrder < ActiveRecord::Base
     else
       equivalent_daily_dose ||= dose.to_f * DrugOrder.doses_per_day(frequency)
       if instructions.blank?
-        instructions = "#{drug.name}: #{dose} #{units} #{frequency} for #{duration} days"
+        instructions = "#{drug.name}: #{dose} #{units} #{frequency} for #{duration||'some'} days"
         instructions += " (prn)" if prn == 1
       end
     end
