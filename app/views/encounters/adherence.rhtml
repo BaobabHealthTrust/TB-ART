@@ -1,0 +1,27 @@
+<form action="/encounters/create" method='post'>
+  <%= hidden_field_tag "encounter[encounter_type_name]", "ART ADHERENCE" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+<% @patient.orders.unfinished.arv.prescriptions.each do |order| %>
+    <%= touch_numeric_tag "AMOUNT OF DRUG BROUGHT TO CLINIC", @patient, nil,
+      {:id => "amount_brought_#{order.order_id}",
+       :units => "#{order.drug_order.units}",
+       :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} brought to clinic",
+       :order_id => order.order_id} %>
+    <%= touch_numeric_tag "AMOUNT OF DRUG REMAINING AT HOME", @patient, nil,
+      {:id => "amount_other_#{order.order_id}",
+       :units => "#{order.drug_order.units}",
+       :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} left at home",
+       :order_id => order.order_id } %>
+    <%= touch_text_field_tag "WHAT WAS THE PATIENTS ADHERENCE FOR THIS DRUG ORDER", @patient, nil,
+      {:id => "adherence_#{order.order_id}",
+       :helpText => "Adherence summary for #{order.drug_order.drug.name}",
+       :tt_onLoad => "adherence(#{order.id}, '#{order.start_date.strftime('%Y-%m-%d')}', '#{order.auto_expire_date.strftime('%Y-%m-%d')}', #{order.drug_order.equivalent_daily_dose || 0}, #{order.drug_order.quantity || 0})",
+       :optional => "true",
+       :order_id => order.order_id,
+       :tt_pageStyleClass => "NoControls"} %>
+  <% end %>
+
+</form>

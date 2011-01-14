@@ -91,9 +91,10 @@ module ApplicationHelper
   end
   
   def concept_set_options(concept_name)
-    concept_id = ConceptName.find_by_name(concept_name).concept_id
+    concept_id = ConceptName.find(:first,:joins =>"INNER JOIN concept USING (concept_id)",
+                                  :conditions =>["retired = 0 AND name = ?",concept_name]).concept_id
     set = ConceptSet.find_all_by_concept_set(concept_id, :order => 'sort_weight')
-    options = set.map{|item| [item.concept.name.name, item.concept.name.name] }
+    options = set.map{|item|next if item.concept.blank? ; [item.concept.name.name, item.concept.name.name] }
     options_for_select(options)
   end
 end
