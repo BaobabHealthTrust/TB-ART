@@ -50,6 +50,6 @@ table.scrollable{
   <%= "#{controller.action_name.humanize.titleize} for #{Location.current_location.name} </br> Dates: <b>#{@start_date.strftime("%d/%m/%y")} to #{@end_date.strftime("%d/%m/%y")} </b>" -%>
 </div>
 <div style="position:absolute;top:10px;right:10px;">
-<button onmousedown="javascript:history.go(-3)">Finish</button>
+<button onmousedown="javascript:if(typeof(tt_cancel_destination) == 'undefined') tt_cancel_destination='/clinic'; window.location = tt_cancel_destination">Finish</button>
 <!--button onmousedown="popupBox()">Update</button-->
 </div>
