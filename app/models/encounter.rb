@@ -30,7 +30,8 @@ class Encounter < ActiveRecord::Base
   end
 
   def voided_observations
-    Observation.find_by_sql("SELECT * FROM obs WHERE obs.encounter_id = #{self.encounter_id} AND obs.voided = 1")
+    voided_obs = Observation.find_by_sql("SELECT * FROM obs WHERE obs.encounter_id = #{self.encounter_id} AND obs.voided = 1")
+    (!voided_obs.empty?) ? voided_obs : nil
   end
 
   def name
