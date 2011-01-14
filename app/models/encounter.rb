@@ -34,6 +34,11 @@ class Encounter < ActiveRecord::Base
     (!voided_obs.empty?) ? voided_obs : nil
   end
 
+  def voided_orders
+    voided_orders = Order.find_by_sql("SELECT * FROM orders WHERE orders.encounter_id = #{self.encounter_id} AND orders.voided = 1")
+    (!voided_orders.empty?) ? voided_orders : nil
+  end
+
   def name
     self.type.name rescue "N/A"
   end
