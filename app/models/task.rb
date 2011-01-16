@@ -26,7 +26,8 @@ class Task < ActiveRecord::Base
       # Check for an observation made today with a specific value, skip this task unless that observation exists
       # For example, if this task is the art_clinician task we want to skip it unless REFER TO CLINICIAN = yes
       if task.has_obs_concept_id.present?
-        obs = Observation.first(:conditions => [
+        if (task.has_obs_scope.blank? || task.has_obs_scope == 'TODAY')
+          obs = Observation.first(:conditions => [
           'encounter_id IN (?) AND concept_id = ? AND (value_coded = ? OR value_drug = ? OR value_datetime = ? OR value_numeric = ? OR value_text = ?)',
           todays_encounters.map(&:encounter_id),
           task.has_obs_concept_id,
@@ -35,6 +36,17 @@ class Task < ActiveRecord::Base
           task.has_obs_value_datetime,
           task.has_obs_value_numeric,
           task.has_obs_value_text])
+        end
+        
+        # Only the most recent obs
+        # For example, if there are mutliple REFER TO CLINICIAN = yes, than only take the most recent one
+        if (task.has_obs_scope == 'RECENT')
+          o = patient.person.observations.recent(1).first(:conditions => ['encounter_id IN (?) AND concept_id =?', todays_encounters.map(&:encounter_id), task.has_obs_concept_id])
+          obs = 0 if (o.value_coded == task.has_obs_value_coded && o.value_drug == task.has_obs_value_drug &&
+            o.value_datetime == task.has_obs_value_datetime && o.value_numeric == task.has_obs_value_numeric &&
+            o.value_text == task.has_obs_value_text )
+        end
+          
         skip = true unless obs.present?
       end
 
