@@ -9,6 +9,7 @@ class Task < ActiveRecord::Base
     todays_encounters = patient.encounters.current.all(:include => [:type])
     todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}
     all_tasks.each do |task|
+
       # Is the task for this location?
       next unless task.location.blank? || task.location == '*' || location.name.match(/#{task.location}/)
 
@@ -34,7 +35,7 @@ class Task < ActiveRecord::Base
           task.has_obs_value_datetime,
           task.has_obs_value_numeric,
           task.has_obs_value_text])
-        skip = true unless obs.present?  
+        skip = true unless obs.present?
       end
 
       # Check for a particular current order type, skip this task unless the order exists
@@ -72,7 +73,7 @@ class Task < ActiveRecord::Base
         skip = true unless patient.relationships.first(
           :conditions => ['relationship.relationship = ?', task.has_relationship_type_id])
       end
-
+ 
       # Check for a particular identifier at this location
       # For example, this patient can only get to the Pre-ART room if they already have a pre-ART number, otherwise they need to go back to registration
       if task.has_identifier_type_id.present?
@@ -80,16 +81,29 @@ class Task < ActiveRecord::Base
           :conditions => ['patient_identifier.identifier_type = ? AND patient_identifier.location_id = ?', task.has_identifier_type_id, Location.current_health_center.location_id])
       end
       
+      if task.has_encounter_type_today.present?
+        enc = nil
+        todays_encounters.each do | e |
+          if (e.name == task.has_encounter_type_today)
+            enc = e
+          end
+        end
+        skip = true unless enc.present?
+      end
+      
       # Reverse the condition if the task wants the negative (for example, if the patient doesn't have a specific program yet, then run this task)
       skip = !skip if task.skip_if_has == 1
 
       # We need to skip this task for some reason
       next if skip
-
+ 
       # Nothing failed, this is the next task, lets replace any macros
       task.url = task.url.gsub(/\{patient\}/, "#{patient.patient_id}")
       task.url = task.url.gsub(/\{person\}/, "#{patient.person.person_id rescue nil}")
       task.url = task.url.gsub(/\{location\}/, "#{location.location_id}")
+      
+      logger.debug "next_task: #{task.id} - #{task.description}"
+      
       return task
     end
   end  
