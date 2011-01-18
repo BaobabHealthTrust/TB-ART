@@ -88,6 +88,8 @@ class PatientsController < ApplicationController
     #the parameter are used to re-construct the url when the mastercard is called from a Data cleaning report
     @source = params[:source]
     @quarter = params[:quarter]
+    @arv_start_number = params[:arv_start_number]
+    @arv_end_number = params[:arv_end_number]
     
     @patient_id = params[:patient_id] 
     @data_demo = Mastercard.demographics(Patient.find(@patient_id))
