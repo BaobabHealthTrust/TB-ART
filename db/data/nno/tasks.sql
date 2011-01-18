@@ -18,11 +18,13 @@ CREATE TABLE `task` (
   `has_obs_value_datetime` datetime default NULL,
   `has_obs_value_numeric` double default NULL,
   `has_obs_value_text` text,
+  `has_obs_scope` text,
   `has_program_id` int(11) default NULL,
   `has_program_workflow_state_id` int(11) default NULL,
   `has_identifier_type_id` int(11) default NULL,
   `has_relationship_type_id` int(11) default NULL,
   `has_order_type_id` int(11) default NULL,
+  `has_encounter_type_today` varchar(255) default NULL,
   `skip_if_has` smallint(6) default '0',
   `sort_weight` double default NULL,
   `creator` int(11) NOT NULL,
@@ -52,32 +54,36 @@ LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
 INSERT INTO `task` VALUES 
 -- everywhere
-  (5,'/patients/show/{patient}',NULL,'If everything is done, go to the dashboard for the patient','*',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,10,1,'2010-02-18 17:25:11',0,NULL,NULL,NULL,1,'2010-02-18 17:25:11','cdbfda9e-1ca1-11df-82c4-0026181bb84d'),
+  (5,'/patients/show/{patient}',NULL,'Nothing left, go to dashboard','*',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,100,1,'2010-02-18 17:25:11',0,NULL,NULL,NULL,1,'2010-02-18 17:25:11','cdbfda9e-1ca1-11df-82c4-0026181bb84d'),
+  (2,'/encounters/new/registration?patient_id={patient}','REGISTRATION','Registration for every location','*',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,2,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd7ab4be-1ca1-11df-82c4-0026181bb84d'),
 -- registration
-  (1,'/encounters/new/registration?patient_id={patient}','REGISTRATION','Registration clerk needs to do registration if it hasn\'t happened yet','Registration',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,1,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd5b8184-1ca1-11df-82c4-0026181bb84d'),
-  (2,'/encounters/new/registration?patient_id={patient}','REGISTRATION','Everyone needs to do registration if it hasn\'t happened yet','*',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,2,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd7ab4be-1ca1-11df-82c4-0026181bb84d'),
+  (1,'/encounters/new/registration?patient_id={patient}','REGISTRATION','Always do a Registration here','Registration',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,1,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd5b8184-1ca1-11df-82c4-0026181bb84d'),
 -- vitals
-  (3,'/encounters/new/vitals?patient_id={patient}','VITALS','If we are at the vitals location and no vitals have been taken, then we need to do it','Vitals',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd934d9e-1ca1-11df-82c4-0026181bb84d'),
+  (10,'/encounters/new/vitals?patient_id={patient}','VITALS','Always tke the vitals here','Vitals',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,1,1,'2010-02-18 17:25:10',0,NULL,NULL,NULL,1,'2010-02-18 17:25:10','cd934d9e-1ca1-11df-82c4-0026181bb84d'),
 -- opd
-  (4,'/encounters/new/outpatient_diagnosis?patient_id={patient}','OUTPATIENT DIAGNOSIS','If we are at the outpatient diagnosis location and no diagnosis has been made, then we need to do it','Outpatient',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-18 17:25:11',0,NULL,NULL,NULL,1,'2010-02-18 17:25:11','cdaf4f76-1ca1-11df-82c4-0026181bb84d'),
-  (6,'/prescriptions/new?patient_id={patient}','TREATMENT','If we are at outpatient diagnosis and a diagnosis has been made but no treatment, then go to treatment.','Outpatient',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,5,1,'2010-02-26 11:10:56',0,NULL,NULL,NULL,1,'2010-02-26 11:10:56','d8cf35a4-22b6-11df-b344-0026181bb84d'),
+  (21,'/encounters/new/outpatient_diagnosis?patient_id={patient}','OUTPATIENT DIAGNOSIS','Always make a diagnosis here','Outpatient',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,1,1,'2010-02-18 17:25:11',0,NULL,NULL,NULL,1,'2010-02-18 17:25:11','cdaf4f76-1ca1-11df-82c4-0026181bb84d'),
+  (22,'/prescriptions/new?patient_id={patient}','TREATMENT','Always do a treatment here','Outpatient',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,2,1,'2010-02-26 11:10:56',0,NULL,NULL,NULL,1,'2010-02-26 11:10:56','d8cf35a4-22b6-11df-b344-0026181bb84d'),
 -- hiv reception
-  (7,'/encounters/new/art_initial?show&patient_id={patient}','ART_INITIAL','Not enrolled in HIV programn','HIV Reception',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,1,4,1,'2010-02-26 11:25:51',0,NULL,NULL,NULL,1,'2010-02-26 11:25:51','eeba2f84-22b8-11df-b344-0026181bb84d'),
-  (8,'/encounters/new/hiv_reception?show&patient_id={patient}','HIV RECEPTION','Enrolled in HIV program','HIV Reception',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,0,5,1,'2010-02-26 11:47:13',0,NULL,NULL,NULL,1,'2010-02-26 11:47:13','ea6de076-22bb-11df-b344-0026181bb84d'),
-  (9,'/encounters/new/vitals?patient_id={patient}','VITALS','Patient present at HIV Reception (PATIENT_PRESENT=YES) and has not had vitals taken','HIV Reception',NULL,1805,1065,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,6,1,'2010-02-26 13:45:50',0,NULL,NULL,NULL,1,'2010-02-26 13:45:50','7cc4fc2e-22cc-11df-b344-0026181bb84d'),
+  (31,'/encounters/new/art_initial?show&patient_id={patient}','ART_INITIAL','Not enrolled in HIV programn','HIV Reception',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',1,NULL,NULL,NULL,NULL,NULL,1,1,1,'2010-02-26 11:25:51',0,NULL,NULL,NULL,1,'2010-02-26 11:25:51','eeba2f84-22b8-11df-b344-0026181bb84d'),
+  (32,'/encounters/new/hiv_reception?show&patient_id={patient}','HIV RECEPTION','Always','HIV Reception',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,2,1,'2010-02-26 11:47:13',0,NULL,NULL,NULL,1,'2010-02-26 11:47:13','ea6de076-22bb-11df-b344-0026181bb84d'),
+  /* (34,'/encounters/new/vitals?patient_id={patient}','HIV STAGING','TODO: Transfer in','HIV Reception',NULL,1805,1065,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,3,1,'2010-02-26 13:45:50',0,NULL,NULL,NULL,1,'2010-02-26 13:45:50','7cc4fc2e-22cc-11df-b344-0026181bb84d'), */
+  (33,'/encounters/new/vitals?patient_id={patient}','VITALS','PATIENT_PRESENT = YES','HIV Reception',NULL,1805,1065,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-26 13:45:50',0,NULL,NULL,NULL,1,'2010-02-26 13:45:50','7cc4fc2e-22cc-11df-b344-0026181bb84d'),
 -- hiv nurse station
-  (11,'/encounters/new/art_nurse_visit?show&patient_id={patient}','ART NURSE VISIT','At HIV Nurse Station, if the patient does not have an ART NURSE VISIT, do it.','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2010-02-26 14:11:46',0,NULL,NULL,NULL,1,'2010-02-26 14:11:46','1c15bac2-22d0-11df-b344-0026181bb84d'),
-  (13,'/regimens/new?patient_id={patient}','TREATMENT','Prescribe regimen if reason for ART eligibility is not UNKNOWN','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,7,NULL,NULL,NULL,0,5,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (41,'/patients/show/{patient}',NULL,'Stop here if ART ELIGIBILITY = UNKNOWN','HIV Nurse Station',NULL,7563,1067,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,1,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+-- todo: break out of endless loop for dispensing, instead go to dashboard
+  /* (42,'/dispensations/new?patient_id={patient}','DISPENSE','If TREATMENT today','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,'TREATMENT',0,1,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL), */
+  (42,'/patients/show/{patient}',NULL,'If TREATMENT today','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,'TREATMENT',0,1,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (43,'/encounters/new/art_visit?show&patient_id={patient}','ART VISIT','In state On ART','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',1,7,NULL,NULL,NULL,NULL,0,2,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (44,'/encounters/new/art_adherence?show&patient_id={patient}','ART ADHERENCE','In state On ART','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',1,7,NULL,NULL,NULL,NULL,0,3,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (45,'/regimens/new?patient_id={patient}','TREATMENT','If ART Visit today AND REFER TO ART CLINICIAN = NO','HIV Nurse Station',NULL,6969,1066,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,'ART VISIT',0,4,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (46,'/patients/show/{patient}','TREATMENT','If ART Visit today AND REFER TO ART CLINICIAN = YES','HIV Nurse Station',NULL,6969,1066,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,'ART VISIT',0,5,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (47,'/encounters/new/appointment?patient_id={patient}','APPOINTMENT','If DISPENSE today','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,'DISPENSE',0,6,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
 -- hiv clinician station
-  (10,'/encounters/new/hiv_staging?show&patient_id={patient}','HIV STAGING','Not in state On ART','HIV Clinician Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,7,NULL,NULL,NULL,1,4,1,'2010-02-26 14:00:23',0,NULL,NULL,NULL,1,'2010-02-26 14:00:23','84dd80dc-22ce-11df-b344-0026181bb84d'),
-  (16,'/encounters/new/art_nurse_visit?show&patient_id={patient}','ART NURSE VISIT','In state On ART (Followup visits)','HIV Clinician Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,7,NULL,NULL,NULL,0,5,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
-  (17,'/encounters/new/art_nurse_visit?show&patient_id={patient}','ART NURSE VISIT','After staging and ART eligibility, let the Clinician do the job (First visit)','HIV Clinician Station',NULL,7563,1067,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,5,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
-  (12,'/regimens/new?patient_id={patient}','TREATMENT','Prescribe regimen if state is On ART (Followup visit)','HIV Clinician Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,7,NULL,NULL,NULL,0,6,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
-  (18,'/regimens/new?patient_id={patient}','TREATMENT','Prescribe regimen if reason for ART eligibility is not UNKNOWN (First visit)','HIV Clinician Station',NULL,7563,1067,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,6,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL);
-
--- Deactivated for now as Dispensing is not fully thought through 
--- (14,'/encounters/new/appointment?patient_id={patient}','APPOINTMENT','Always give out a new appointment','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,7,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
--- (15,'/dispensations/new?patient_id={patient}','DISPENSE','Dispense','HIV Nurse Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,6,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL);
+  (51,'/encounters/new/hiv_staging?show&patient_id={patient}','HIV STAGING','Not in state On ART','HIV Clinician Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',1,7,NULL,NULL,NULL,NULL,1,1,1,'2010-02-26 14:00:23',0,NULL,NULL,NULL,1,'2010-02-26 14:00:23','84dd80dc-22ce-11df-b344-0026181bb84d'),
+  (52,'/patients/show/{patient}',NULL,'ART ELIGIBILITY = UNKNOWN','HIV Clinician Station',NULL,7563,1067,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,0,2,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (53,'/encounters/new/art_visit?show&patient_id={patient}','ART VISIT','NOT ART ELIGIBILITY = UNKNOWN','HIV Clinician Station',NULL,7563,1067,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,NULL,1,3,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (55,'/encounters/new/art_visit?show&patient_id={patient}',NULL,'REFER TO CLINICIAN = YES','HIV Clinician Station',NULL,6969,1065,NULL,NULL,NULL,NULL,'RECENT',NULL,NULL,NULL,NULL,NULL,NULL,0,4,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL),
+  (54,'/regimens/new?patient_id={patient}','TREATMENT','ART VISIT today','HIV Clinician Station',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'TODAY',NULL,NULL,NULL,NULL,NULL,'ART VISIT',0,5,1,'2011-01-13 00:00:00',0,NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
