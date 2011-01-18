@@ -145,13 +145,13 @@ class Mastercard
     if encounter_date.blank?
       patient_states = PatientState.find(:all,
                                     :joins => "INNER JOIN patient_program p ON p.patient_program_id = patient_state.patient_program_id",
-                                    :conditions =>["patient_state.voided = 0 AND p.voided = 0 AND p.program_id = ?",program_id],
-                                    :order => "patient_state_id ASC")
+                                    :conditions =>["patient_state.voided = 0 AND p.voided = 0 AND p.program_id = ? AND p.patient_id = ?",
+                                    program_id,patient_obj.patient_id],:order => "patient_state_id ASC")
     else
       patient_states = PatientState.find(:all,
                                     :joins => "INNER JOIN patient_program p ON p.patient_program_id = patient_state.patient_program_id",
-                                    :conditions =>["patient_state.voided = 0 AND p.voided = 0 AND p.program_id = ? AND start_date = ?",
-                                    program_id,encounter_date.to_date],:order => "patient_state_id ASC")  
+                                    :conditions =>["patient_state.voided = 0 AND p.voided = 0 AND p.program_id = ? AND start_date = ? AND p.patient_id =?",
+                                    program_id,encounter_date.to_date,patient_obj.patient_id],:order => "patient_state_id ASC")  
     end  
 
 
