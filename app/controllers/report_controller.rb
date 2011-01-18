@@ -204,7 +204,8 @@ class ReportController < ApplicationController
       @reports = {
                     'Missing Prescriptions'=>'dispensations_without_prescriptions',
                     'Missing Dispensations'=>'prescriptions_without_dispensations',
-                    'Multiple Start Reasons at Different times'=>'patients_with_multiple_start_reasons'
+                    'Multiple Start Reasons at Different times'=>'patients_with_multiple_start_reasons',
+                    'Out of range ARV number'=>'out_of_range_arv_number'
                  }
       render :layout => "menu"
   end
