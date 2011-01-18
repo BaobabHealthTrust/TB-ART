@@ -31,4 +31,24 @@ module Report
     return date_range
   end
 
+  def self.generate_cohort_quarters(start_date, end_date)
+    cohort_quarters   = []
+    current_quarter   = ""
+    quarter_end_dates = ["#{end_date.year}-03-31".to_date, "#{end_date.year}-06-30".to_date, "#{end_date.year}-09-30".to_date, "#{end_date.year}-12-31".to_date]
+
+    quarter_end_dates.each_with_index do |quarter_end_date, quarter|
+      (current_quarter = (quarter + 1) and break) if end_date < quarter_end_date
+    end
+
+    quarter_number  =  current_quarter
+    cohort_quarters += ["cumulative"]
+    current_date    =  end_date
+
+    begin
+      cohort_quarters += ["Q#{quarter_number}_#{current_date.year}"]
+      (quarter_number > 1) ? quarter_number -= 1: (current_date = current_date - 1.year and quarter_number = 4)
+    end while (current_date.year >= start_date.year)
+
+    cohort_quarters
+  end
 end
