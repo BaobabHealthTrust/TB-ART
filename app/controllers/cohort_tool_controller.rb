@@ -19,11 +19,11 @@ class CohortToolController < ApplicationController
           redirect_to :action   => "visit_by_day",
                       :name     => params[:report],
                       :pat_name => "Visits by day",
-                      :quater   => params[:report].gsub("_"," ")
+                      :quarter  => params[:report].gsub("_"," ")
         return
 
         when "non_eligible_patients_in_cohort"
-          date = Report.cohort_date_range(params[:report])
+          date = Report.generate_cohort_date_range(params[:report])
 
           redirect_to :action       => "cohort_debugger",
                       :controller   => "reports",
@@ -37,44 +37,44 @@ class CohortToolController < ApplicationController
           redirect_to :action           => "in_arv_number_range",
                       :arv_number_end   => params[:arv_number_end],
                       :arv_number_start => params[:arv_number_start],
-                      :quater           => params[:report].gsub("_"," ")
+                      :quarter          => params[:report].gsub("_"," ")
         return
 
         when "internal_consistency_checks"
           redirect_to :action => "internal_consistency_checks",
-                      :quater => params[:report].gsub("_"," ")
+                      :quarter => params[:report].gsub("_"," ")
         return
 
         when "summary_of_records_that_were_updated"
-          redirect_to :action => "records_that_were_updated",
-                      :quater => params[:report].gsub("_"," ")
+          redirect_to :action   => "records_that_were_updated",
+                      :quarter  => params[:report].gsub("_"," ")
         return
 
         when "adherence_histogram_for_all_patients_in_the_quarter"
-          redirect_to :action => "adherence",
-                      :quater => params[:report].gsub("_"," ")
+          redirect_to :action   => "adherence",
+                      :quarter  => params[:report].gsub("_"," ")
         return
 
         when "patients_with_adherence_greater_than_hundred"
-          redirect_to :action => "patients_with_adherence_greater_than_hundred",
-                      :quater => params[:report].gsub("_"," ")
+          redirect_to :action  => "patients_with_adherence_greater_than_hundred",
+                      :quarter => params[:report].gsub("_"," ")
         return
 
         when "patients_with_multiple_start_reasons"
           redirect_to :action       => "patients_with_multiple_start_reasons",
-                      :quater       => params[:report].gsub("_"," "),
+                      :quarter      => params[:report].gsub("_"," "),
                       :report_type  => params[:report_type]
         return
 
         when "dispensations_without_prescriptions"
           redirect_to :action       => "dispensations",
-                      :quater       => params[:report].gsub("_"," "),
+                      :quarter      => params[:report].gsub("_"," "),
                       :report_type  => params[:report_type]
         return
 
         when "prescriptions_without_dispensations"
           redirect_to :action       => "dispensations",
-                      :quater       => params[:report].gsub("_"," "),
+                      :quarter      => params[:report].gsub("_"," "),
                       :report_type  => params[:report_type]
         return
 
@@ -92,7 +92,7 @@ class CohortToolController < ApplicationController
                       :action     => "report",
                       :start_date => start_date,
                       :end_date   => end_date,
-                      :quater     => params[:report].gsub("_"," ")
+                      :quarter    => params[:report].gsub("_"," ")
         return
       end
     end
