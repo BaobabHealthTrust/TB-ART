@@ -21,12 +21,16 @@ class Encounter < ActiveRecord::Base
   def after_void(reason = nil)
     self.orders.each{|row| Pharmacy.voided_stock_adjustment(order) if row.order_type_id == 1 }
     self.observations.each{|row| row.void(reason) }
-    self.orders.each{|row| row.void(reason) }
+    selfnd_by_sql("SELECT * FROM encounter ORDER BY encounter_datetime DESC LIMIT 1").orders.each{|row| row.void(reason) }
   end
 
   def encounter_type_name=(encounter_type_name)
     self.type = EncounterType.find_by_name(encounter_type_name)
     raise "#{encounter_type_name} not a valid encounter_type" if self.type.nil?
+  end
+
+  def self.initial_encounter
+    self.find_by_sql("SELECT * FROM encounter ORDER BY encounter_datetime LIMIT 1").first
   end
 
   def voided_observations
