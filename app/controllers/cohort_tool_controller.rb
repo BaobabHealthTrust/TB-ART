@@ -1,12 +1,18 @@
 class CohortToolController < ApplicationController
 
   def select
-    @report_type = params[:report_type]
+    @cohort_quarters = [""]
+    @report_type     = params[:report_type]
 
     if @report_type == "in_arv_number_range"
       @arv_number_start = params[:arv_number_start]
       @arv_number_end   = params[:arv_number_end]
     end
+
+  start_date  = Encounter.initial_encounter.encounter_datetime
+  end_date    = Date.today
+
+  @cohort_quarters  += Report.generate_cohort_quarters(start_date, end_date)
   end
 
   def reports
