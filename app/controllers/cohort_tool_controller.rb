@@ -105,8 +105,13 @@ class CohortToolController < ApplicationController
   end
 
   def records_that_were_updated
-    @quater     = params[:quater]
-    @encounters = CohortTool.records_that_were_updated(@quater)
+    @quarter    = params[:quarter]
+
+    date_range  = Report.generate_cohort_date_range(@quarter)
+    @start_date = date_range.first
+    @end_date   = date_range.last
+
+    @encounters = CohortTool.records_that_were_updated(@quarter)
 
     render :layout => false
   end
