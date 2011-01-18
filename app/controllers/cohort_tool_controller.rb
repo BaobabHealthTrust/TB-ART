@@ -4,7 +4,6 @@ class CohortToolController < ApplicationController
     @report_type = params[:report_type]
     @header = params[:report_type] + ' '
     generate_list_of_quarter(2006)
-    render :layout => "menu"
   end
   
   def generate_list_of_quarter(start_year)
@@ -15,23 +14,32 @@ class CohortToolController < ApplicationController
       quarter_year = date_today.year + 1
       total_possible_number_of_quarters = 4 * total_number_of_year_btn_start_and_end_year-1
       
-      for i in 0..total_possible_number_of_quarters
+      if Time.now.month.to_i < 4 then
+         start_quarter = 3
+         quarter_year-=1
+      elsif Time.now.month.to_i < 7 then
+         start_quarter = 2
+         quarter_year-=1
+      elsif Time.now.month.to_i < 10 then
+         start_quarter = 1
+         quarter_year-=1
+      else
+         start_quarter = 0
+      end
+            
+      for i in start_quarter..total_possible_number_of_quarters
         if ((i%4) != 0)
-          @quarters << 'Q' + "#{(i % 4)+1}" + ' ' + quarter_year.to_s
+          @quarters << 'Q' + "#{4-(i % 4)}" + ' ' + quarter_year.to_s
         else
           quarter_year -= 1
-          @quarters << 'Q' + "#{(i % 4) + 1}" + ' ' + quarter_year.to_s
+          @quarters << 'Q' + "#{4-(i % 4)}" + ' ' + quarter_year.to_s
         end
-      end 
+      end
   end
   
   def prescriptions_without_dispensations
-  
-      #The parameter is used by the mastercard go back to the report
-      @report_quarter = params[:quarter]
-      @report_type = params[:report_type]
-      #########################################################
-       
+      
+      include_url_params_for_back_button 
       date_range = quarter_start_and_end_dates()
       start_date = date_range.to_s.split("split").first
       end_date = date_range.to_s.split("split").last
@@ -41,7 +49,6 @@ class CohortToolController < ApplicationController
                                                  start_date , end_date ])
        @report = []
        prescriptions_without_dispensations_data.each do |prescription|
-         # @report format::: ID, ARVNumber, National_ID, Visit Date, Prescribed_drug
          arv_number = PatientIdentifier.find(:first, :select => "identifier", 
                                                :conditions =>["patient_id = ? and identifier_type = ?", prescription[:patient_id],
                                                PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id])
@@ -57,11 +64,7 @@ class CohortToolController < ApplicationController
   
   def  dispensations_without_prescriptions
        
-       #The parameter is used by the mastercard go back to the report
-       @report_quarter = params[:quarter]
-       @report_type = params[:report_type]
-       #########################################################
-       
+       include_url_params_for_back_button
        date_range = quarter_start_and_end_dates()
        start_date = date_range.to_s.split("split").first
        end_date = date_range.to_s.split("split").last
@@ -71,7 +74,6 @@ class CohortToolController < ApplicationController
                                                                ConceptName.find_by_name('PILLS DISPENSED').concept_id])
        @report = []
        dispensations_without_prescription_data.each do |dispensation|
-       # @report format::: ID, ARVNumber, National_ID, Visit Date, Dispensed_Drug
        arv_number = PatientIdentifier.find(:first, :select => "identifier", 
                                            :conditions =>["patient_id = ? and identifier_type = ?", dispensation[:person_id],
                                            PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id])
@@ -85,16 +87,12 @@ class CohortToolController < ApplicationController
   end
   
   def  patients_with_multiple_start_reasons
-  
-       #The parameter is used by the mastercard go back to the report
-       @report_quarter = params[:quarter]
-       @report_type = params[:report_type]
-       #########################################################
        
+       include_url_params_for_back_button
        date_range = quarter_start_and_end_dates()
        start_date = date_range.to_s.split("split").first
        end_date = date_range.to_s.split("split").last
-       ####################################################TO DO##############################################################
+       ################################################TO DO
       patients_with_multiple_start_reasons_data = Observation.find_by_sql(["select person_id, concept_id, date_created, value_coded_name_id from obs
                                                  where (select COUNT(*) from obs k where k.concept_id = ? and k.person_id = obs.person_id) >= 1 and  
                                                  date_created >= ? and date_created <= ? and obs.concept_id = ?", 
@@ -103,10 +101,7 @@ class CohortToolController < ApplicationController
        @report = []
        national_id = {}
        arv_number = {}
-       
-       x = 0
        patients_with_multiple_start_reasons_data.each do |reason|
-         # @report format::: ID, ARVNumber, National_ID, Visit Date, Prescribed_drug
          arv_number = PatientIdentifier.find(:first, :select => "identifier", 
                                                :conditions =>["patient_id = ? and identifier_type = ?", reason[:person_id],
                                                PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id]) || {}
@@ -116,8 +111,42 @@ class CohortToolController < ApplicationController
          @report << [reason[:person_id].to_s, arv_number[:identifier], national_id[:identifier], 
                      reason[:date_created].strftime("%Y-%m-%d %H:%M:%S") , ConceptName.find(reason[:value_coded_name_id]).name]
         end
-       #############################################TO DO######################################################################
+       #############################################TO DO
         render :layout => 'report'
+  end
+  
+  def out_of_range_arv_number
+      
+      @report = [] 
+      include_url_params_for_back_button
+      date_range = quarter_start_and_end_dates()
+      start_date = date_range.to_s.split("split").first
+      end_date = date_range.to_s.split("split").last
+      patient_identifier_type_id = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
+      arv_start_number = params[:arv_start_number].to_i
+      arv_end_number = params[:arv_end_number].to_i
+      @out_of_range_arv_number_data = PatientIdentifier.find_by_sql(["SELECT patient_id, identifier, date_created FROM patient_identifier WHERE identifier_type = ? AND  identifier >= ?
+                                                                      AND identifier <= ? AND (NOT EXISTS(SELECT * FROM patient_identifier WHERE 
+                                                                      identifier_type = ? AND date_created >= ? AND date_created <= ?))",
+                                                                      patient_identifier_type_id,  arv_start_number,  arv_end_number, 
+                                                                      patient_identifier_type_id, start_date, end_date])     
+      dob = Time.new
+      age = 0
+      @out_of_range_arv_number_data.each do |arv_num_data|
+      name = PersonName.find_by_person_id(arv_num_data[:patient_id].to_i).given_name + " " +
+             PersonName.find_by_person_id(arv_num_data[:patient_id].to_i).family_name
+      gender = Person.find_by_person_id(arv_num_data[:patient_id].to_i).gender
+      dob    = Person.find_by_person_id(arv_num_data[:patient_id].to_i).birthdate
+      if !dob.nil? then
+         age = (Time.now.to_i - dob.end_of_day.to_i)/31536000
+      end
+      national_id = PatientIdentifier.find(:first, :select => "identifier", 
+                                               :conditions =>["patient_id = ? and identifier_type = ?", arv_num_data[:patient_id],
+                                               PatientIdentifierType.find_by_name('National id').patient_identifier_type_id]) || {}
+      @report <<[arv_num_data[:patient_id], arv_num_data[:identifier], name, 
+                national_id[:identifier],gender,age,dob,arv_num_data[:date_created].strftime("%Y-%m-%d %H:%M:%S")]
+      end
+      render :layout => 'report'
   end
   
   def quarter_start_and_end_dates()
@@ -170,6 +199,11 @@ class CohortToolController < ApplicationController
   
   def last_day_of_month(year, month_number)
         (Date.new(year,12,31).to_date<<(12-month_number)).day
+  end
+  
+  def include_url_params_for_back_button
+       @report_quarter = params[:quarter]
+       @report_type = params[:report_type]
   end
   
 end
