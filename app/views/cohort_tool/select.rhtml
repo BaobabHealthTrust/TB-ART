@@ -1,46 +1,38 @@
-<style>
-#quarterdiv {
-   width: 279px;
-   height: 350px;
-   overflow: auto;
-   border: 1px solid black;
-   border-bottom : 20px solid grey;
-   border-top : 20px solid grey;
-   background-color : lime;
-}
-</style>
-
-
-<script >
-    tt_cancel_destination = "/Report/data_cleaning"
+<script>
+  var tt_cancel_destination = "/Report/data_cleaning";
 </script>
-<%= javascript_include_tag 'jquery' %>
-<%= stylesheet_link_tag 'extra_buttons' %>
+<form method='GET' action="<%=@report_type%>" >
+<%if 'out_of_range_arv_number' == @report_type  then%>
+ <%= text_field_tag :arv_start_number, params[:arv_start_number], {:field_type => 'number', :helpText => 'ARV Start Number', :allowFreeText => false }%>
+ <%= text_field_tag :arv_end_number, params[:arv_end_number], {:field_type => 'number', :helpText => 'ARV End Number', :allowFreeText => false }%>
+ 
+<%end%>
+Quarter: <%= select_tag :quarter, options_for_select(@quarters), {:helpText => "Select Quater"} %>
+<%= hidden_field_tag :report_type, "#{@report_type}" %>
+
+</form>
 
 <script type="text/javascript">
-  jQuery(document).ready(function($) {
-  document.getElementById('finishButton').innerHTML= "<span>Back<span>";
-  }) 
+  var end_date = null 
+  var next_button = null
+  var date_int = ''
+    
+  function setMin(){
+    next_button = document.getElementById('nextButton');
+    next_button.setAttribute('onmousedown',"setValue();gotoNextPage();");
+    if(date_int){
+      document.getElementById("touchscreenInput0").value = date_int
+    }
+  }
+
+  function setValue(){
+    date_int = document.getElementById('touchscreenInput0').value;
+  }
+
+  function getStartDate(){
+    end_date = document.getElementById('touchscreenInput1');
+    end_date.setAttribute("absolutemin",date_int);
+  }
 </script>
 
 
-<div align = center>
-      <br />
-      <h1><u><%=@header.to_s.gsub!('_',' ').to_s.split(" ").each{|word| word.capitalize!}.join(" ") %></u></h1>
-      
-      <div id="quarterdiv" style="">
-
-        <table id="tcont  ent" width="250px">
-            <% @quarters.each do |quarter| %>
-            
-            <tr>
-                <td>  
-                      <%= link_to_onmousedown "#{quarter}",{:controller =>"cohort_tool", :action => "#{@report_type}",
-                                                             :report_type => "#{@report_type}", :quarter => "#{quarter}"}, :class => 'report_button' %> 
-                </td>
-            </tr>
-            <%end rescue nil%>
-        </table>
-        
-      </div>
-</div>
