@@ -1,0 +1,12 @@
+<script>
+  var tt_cancel_destination = "/clinic/supervision"
+</script>
+<form action="reports" method="post">
+<select tt_onLoad="changeButtons()" class="LongSelectList" name="report" helpText="Select a report">
+  <%@cohort_quarters.map{|quarter|%>
+    <option value="<%="#{quarter}"%>"> <%="#{quarter.humanize}"%> </option>
+  <% } %>
+</select>
+
+<%= hidden_field_tag :report_type, @report_type %>
+</form>
