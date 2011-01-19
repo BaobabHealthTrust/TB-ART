@@ -219,4 +219,32 @@ class CohortTool < ActiveRecord::Base
     results
   end
 
+  def self.changed_from(observations)
+    changed_obs = ''
+
+    observations.collect do |obs|
+      ["value_coded","value_datetime","value_modifier","value_numeric","value_text"].each do |value|
+        case value
+          when "value_coded"
+            next if obs.value_coded.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_datetime"
+            next if obs.value_datetime.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_numeric"
+            next if obs.value_numeric.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_text"
+            next if obs.value_text.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_modifier"
+            next if obs.value_modifier.blank?
+            changed_obs += "#{obs.to_s}</br>"
+        end
+      end
+    end
+
+    changed_obs.gsub("00:00:00 +0200","")[0..-6]
+  end
+
 end
