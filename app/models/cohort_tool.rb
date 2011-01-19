@@ -247,4 +247,42 @@ class CohortTool < ActiveRecord::Base
     changed_obs.gsub("00:00:00 +0200","")[0..-6]
   end
 
+  def self.changed_to(enc)
+    encounter_type = enc.encounter_type
+
+    encounter = Encounter.find(:first,
+                 :joins       => "INNER JOIN obs ON encounter.encounter_id=obs.encounter_id",
+                 :conditions  => ["encounter_type=? AND encounter.patient_id=? AND Date(encounter.encounter_datetime)=?",
+                                  encounter_type,enc.patient_id, enc.encounter_datetime.to_date],
+                 :group       => "encounter.encounter_type",
+                 :order       => "encounter.encounter_datetime DESC")
+
+    observations = encounter.observations rescue nil
+    return if observations.blank?
+
+    changed_obs = ''
+    observations.collect do |obs|
+      ["value_coded","value_datetime","value_modifier","value_numeric","value_text"].each do |value|
+        case value
+          when "value_coded"
+            next if obs.value_coded.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_datetime"
+            next if obs.value_datetime.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_numeric"
+            next if obs.value_numeric.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_text"
+            next if obs.value_text.blank?
+            changed_obs += "#{obs.to_s}</br>"
+          when "value_modifier"
+            next if obs.value_modifier.blank?
+            changed_obs += "#{obs.to_s}</br>"
+        end
+      end
+    end
+
+    changed_obs.gsub("00:00:00 +0200","")[0..-6]
+  end
 end
