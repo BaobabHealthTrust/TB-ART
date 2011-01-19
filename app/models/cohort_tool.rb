@@ -119,4 +119,104 @@ class CohortTool < ActiveRecord::Base
     patients
   end
 
+  def self.sort(values)
+    name              = ''
+    patient_id        = ''
+    arv_number        = ''
+    national_id       = ''
+    encounter_name    = ''
+    voided_date       = ''
+    reason            = ''
+    obs_names         = ''
+    changed_from_obs  = {}
+    changed_to_obs    = {}
+    changed_data      = {}
+
+    values.each do |value|
+      value_name =  value.first
+      value_data =  value.last
+
+      case value_name
+        when "id"
+          patient_id = value_data
+        when "arv_number"
+          arv_number = value_data
+        when "name"
+          name = value_data
+        when "national_id"
+          national_id = value_data
+        when "encounter_name"
+          encounter_name = value_data
+        when "voided_date"
+          voided_date = value_data
+        when "reason"
+          reason = value_data
+        when "change_from"
+          value_data.split("</br>").each do |obs|
+            obs_name  = obs.split(':')[0].strip
+            obs_value = obs.split(':')[1].strip rescue ''
+
+            changed_from_obs[obs_name] = obs_value
+          end unless value_data.blank?
+        when "change_to"
+
+          value_data.split("</br>").each do |obs|
+            obs_name  = obs.split(':')[0].strip
+            obs_value = obs.split(':')[1].strip rescue ''
+
+            changed_to_obs[obs_name] = obs_value
+          end unless value_data.blank?
+      end
+    end
+
+    changed_from_obs.each do |a,b|
+      changed_to_obs.each do |x,y|
+
+        if (a == x)
+          next if b == y
+          changed_data[a] = "#{b} to #{y}"
+
+          changed_from_obs.delete(a)
+          changed_to_obs.delete(x)
+        end
+      end
+    end
+
+    changed_to_obs.each do |a,b|
+      changed_from_obs.each do |x,y|
+        if (a == x)
+          next if b == y
+          changed_data[a] = "#{b} to #{y}"
+
+          changed_to_obs.delete(a)
+          changed_from_obs.delete(x)
+        end
+      end
+    end
+
+    changed_data.each do |k,v|
+      from  = v.split("to")[0].strip rescue ''
+      to    = v.split("to")[1].strip rescue ''
+
+      if obs_names.blank?
+        obs_names = "#{k}||#{from}||#{to}||#{voided_date}||#{reason}"
+      else
+        obs_names += "</br>#{k}||#{from}||#{to}||#{voided_date}||#{reason}"
+      end
+    end
+
+    results = {
+        "id"              => patient_id,
+        "arv_number"      => arv_number,
+        "name"            => name,
+        "national_id"     => national_id,
+        "encounter_name"  => encounter_name,
+        "voided_date"     => voided_date,
+        "obs_name"        => obs_names,
+        "reason"          => reason
+      }
+
+    results
+  end
+
 end
