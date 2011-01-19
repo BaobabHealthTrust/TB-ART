@@ -105,4 +105,18 @@ class CohortTool < ActiveRecord::Base
     self.show_tabuler_format(voided_records)
   end
 
+  def self.show_tabuler_format(records)
+
+    patients = {}
+
+    records.each do |key,value|
+
+      sorted_values = self.sort(value)
+
+      patients["#{key},#{value['id']}"] = sorted_values
+    end
+
+    patients
+  end
+
 end
