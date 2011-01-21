@@ -38,7 +38,6 @@ class CohortToolController < ApplicationController
   end
   
   def prescriptions_without_dispensations
-      
       include_url_params_for_back_button 
       date_range = quarter_start_and_end_dates()
       start_date = date_range.to_s.split("split").first
@@ -63,7 +62,6 @@ class CohortToolController < ApplicationController
   end
   
   def  dispensations_without_prescriptions
-       
        include_url_params_for_back_button
        date_range = quarter_start_and_end_dates()
        start_date = date_range.to_s.split("split").first
@@ -87,7 +85,6 @@ class CohortToolController < ApplicationController
   end
   
   def  patients_with_multiple_start_reasons
-       
        include_url_params_for_back_button
        date_range = quarter_start_and_end_dates()
        start_date = date_range.to_s.split("split").first
@@ -116,7 +113,6 @@ class CohortToolController < ApplicationController
   end
   
   def out_of_range_arv_number
-      
       @report = [] 
       include_url_params_for_back_button
       date_range = quarter_start_and_end_dates()
@@ -147,6 +143,46 @@ class CohortToolController < ApplicationController
                 national_id[:identifier],gender,age,dob,arv_num_data[:date_created].strftime("%Y-%m-%d %H:%M:%S")]
       end
       render :layout => 'report'
+  end
+  
+  def data_consistency_check
+      include_url_params_for_back_button
+      date_range = quarter_start_and_end_dates()
+      start_date = date_range.to_s.split("split").first
+      end_date = date_range.to_s.split("split").last
+      
+      
+     @dead_patients_data = PatientIdentifier.find_by_sql(["      
+                   SELECT dead.patient_id, dead.date_changed as dealth_date, living.date_changed
+                   FROM
+                          (SELECT dead_z.patient_program_id, dead_k.state, dead_z.patient_id, 
+                                  dead_k.date_changed
+                           FROM patient_state dead_k INNER JOIN patient_program dead_z 
+                           ON   dead_k.patient_program_id = dead_z.patient_program_id
+                           WHERE  EXISTS (SELECT * FROM program_workflow_state p WHERE dead_k.state = program_workflow_state_id and
+                                          concept_id = 1742) ) dead, 
+                          (SELECT living_z.patient_program_id, living_k.state, living_z.patient_id, living_k.date_changed  
+                           FROM patient_state living_k INNER JOIN patient_program living_z
+                           on living_k.patient_program_id = living_z.patient_program_id
+                           WHERE  NOT EXISTS (SELECT * FROM program_workflow_state p WHERE living_k.state = program_workflow_state_id and
+                                          concept_id = 1742)) living
+                    WHERE living.patient_id = dead.patient_id and dead.date_changed < living.date_changed
+                           "])
+      raise @dead_patients_data.to_yaml
+      @dead_patients_data  
+      @male_patients_data
+      @patients_drug_data
+      @patients_date_data
+      @checks = [['Dead patients with Visits', 0, 'view'],['Male patients with a pregnant observation', 0, 'view'],
+                 ['Patients who moved from 2nd to 1st line drugs', 0, 'view'],['patients with start dates > first receive drug dates', 0, 'view']] 
+  
+      render :layout => 'report'
+  end
+  
+  def list
+    @report = []
+    include_url_params_for_back_button
+    render :layout => 'report'
   end
   
   def quarter_start_and_end_dates()
