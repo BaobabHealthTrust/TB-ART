@@ -3,8 +3,8 @@
 //  jQuery(document).ready(function($) {
 //  }) 
 </script>
-
-<table id="tab_content">
+<%= stylesheet_link_tag 'extra_buttons' %>
+<table id="tcontent">
 <% @reports.each do |name,path| %>
 <tr>
   <td><a href="<%=path%>" class='report_button'><%=name%></a></td>

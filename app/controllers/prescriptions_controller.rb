@@ -45,7 +45,7 @@ class PrescriptionsController < ApplicationController
           DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:dose_strength], params[:frequency], prn)
         end  
       end  
-    end    
+    end 
     redirect_to (params[:auto] == '1' ? "/prescriptions/auto?patient_id=#{@patient.id}" : "/patients/treatment/#{@patient.id}")
   end
   

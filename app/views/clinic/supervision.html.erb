@@ -6,7 +6,9 @@
 <table id="tab_content">
 <% @supervision_tools.each do |report_name,report_type| %>
 <tr>
-  <td><a href="<%="/cohort_tool/select?report_type=#{report_type}"%>" class='report_button'><%=report_name%></a></td>
+  <td><a href="<%="/cohort_tool/select?report_type=#{report_type}&dashboard=#{@landing_dashboard}"%>" class='report_button'><%=report_name%></a></td>
 </tr>
 <%end rescue nil%>
 </table>
+
+

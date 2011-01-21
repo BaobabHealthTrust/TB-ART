@@ -20,6 +20,8 @@ class ClinicController < ApplicationController
                           ["Visits by Day",           "visits_by_day"],
                           ["Non-eligible Patients in Cohort", "non_eligible_patients_in_cohort"]]
 
+   @landing_dashboard = 'clinic_supervision'
+
     render :template => 'clinic/supervision', :layout => 'clinic' 
   end
 
@@ -36,6 +38,8 @@ class ClinicController < ApplicationController
   end
 
   def administration
+    @reports = [['/report/data_cleaning','Data Clining Tools']]
+    @landing_dashboard = 'clinic_administration'
     render :template => 'clinic/administration', :layout => 'clinic' 
   end
 

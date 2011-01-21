@@ -41,11 +41,11 @@ module Report
     end
 
     quarter_number  =  current_quarter
-    cohort_quarters += ["cumulative"]
+    cohort_quarters += ["Cumulative"]
     current_date    =  end_date
 
     begin
-      cohort_quarters += ["Q#{quarter_number}_#{current_date.year}"]
+      cohort_quarters += ["Q#{quarter_number} #{current_date.year}"]
       (quarter_number > 1) ? quarter_number -= 1: (current_date = current_date - 1.year and quarter_number = 4)
     end while (current_date.year >= start_date.year)
 
