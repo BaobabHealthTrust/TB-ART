@@ -168,7 +168,7 @@ class CohortToolController < ApplicationController
                                           concept_id = 1742)) living
                     WHERE living.patient_id = dead.patient_id and dead.date_changed < living.date_changed
                            "])
-      raise @dead_patients_data.to_yaml
+      @dead_patients_data.to_yaml
       @dead_patients_data  
       @male_patients_data
       @patients_drug_data
@@ -176,7 +176,7 @@ class CohortToolController < ApplicationController
       @checks = [['Dead patients with Visits', 0, 'view'],['Male patients with a pregnant observation', 0, 'view'],
                  ['Patients who moved from 2nd to 1st line drugs', 0, 'view'],['patients with start dates > first receive drug dates', 0, 'view']] 
   
-      render :layout => 'report'
+      Render :layout => 'report'
   end
   
   def list
