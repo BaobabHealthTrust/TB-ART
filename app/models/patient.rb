@@ -166,4 +166,38 @@ class Patient < ActiveRecord::Base
   def name
     "#{self.person.name}"
   end
+
+ def self.dead_with_visits
+
+  patient_died_concept = ConceptName.find_by_name('PATIENT DIED').concept_id
+
+  dead_patients = "SELECT dead_patient_program.patient_program_id,
+    dead_state.state, dead_patient_program.patient_id, dead_state.date_changed
+    FROM patient_state dead_state INNER JOIN patient_program dead_patient_program
+    ON   dead_state.patient_program_id = dead_patient_program.patient_program_id
+    WHERE  EXISTS
+      (SELECT * FROM program_workflow_state p
+        WHERE dead_state.state = program_workflow_state_id AND concept_id = #{patient_died_concept}) "
+
+  living_patients = "SELECT living_patient_program.patient_program_id,
+    living_state.state, living_patient_program.patient_id, living_state.date_changed
+    FROM patient_state living_state
+    INNER JOIN patient_program living_patient_program
+    ON living_state.patient_program_id = living_patient_program.patient_program_id
+    WHERE  NOT EXISTS
+      (SELECT * FROM program_workflow_state p
+        WHERE living_state.state = program_workflow_state_id AND concept_id =  #{patient_died_concept})"
+
+  dead_patients_with_observations_visits = "SELECT s.person_id,s.obs_datetime AS date_dealth, c.obs_datetime AS date_living
+    FROM obs c INNER JOIN obs s
+    ON s.person_id = c.person_id
+    WHERE s.concept_id != c.concept_id AND s.concept_id =  #{patient_died_concept} AND s.obs_datetime < c.obs_datetime"                                      
+
+  all_dead_patients_with_visits = " SELECT dead.patient_id, dead.date_changed AS dealth_date, living.date_changed
+    FROM (#{dead_patients}) dead,  (#{living_patients}) living
+    WHERE living.patient_id = dead.patient_id AND dead.date_changed < living.date_changed
+    UNION ALL #{dead_patients_with_observations_visits}"
+
+    self.find_by_sql([all_dead_patients_with_visits])
+  end
 end
