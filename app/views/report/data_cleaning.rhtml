@@ -1,0 +1,33 @@
+<script >
+    tt_cancel_destination = "/clinic/administration"
+</script>
+<%= stylesheet_link_tag 'extra_buttons' %>
+<%= javascript_include_tag 'jquery' %>
+
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+  document.getElementById('finishButton').innerHTML= "<span>Back<span>";
+  })
+</script>
+
+
+<div align = center>
+      <br />
+      <h1><u>Data Cleaning Reports</u></h1>
+      
+      <div id="right" style="border: 1px solid black; width:279px">
+
+        <table id="tcont  ent">
+            <% @reports.each do |helptext,report_type| %>
+            <tr>
+                <td>  
+                      <%= link_to_onmousedown "#{helptext}",{:controller =>"cohort_tool", :action => 'select',
+                                                                      :report_type => "#{report_type}", :dashboard => "#{@landing_dashboard}"}, :class => 'report_button' %> 
+                      
+                </td>
+            </tr>
+            <%end%>
+        </table>
+        
+      </div>
+</div>

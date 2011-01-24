@@ -3,7 +3,13 @@
   jQuery(document).ready(function($) {
   }) 
 </script>
-<div id="tab">
-  <div class="panel">
-  </div>        
-</div>
+
+<%= stylesheet_link_tag 'extra_buttons' %>
+    <table id="tcontent" >
+            <% @reports.each do |path,report_name| %>
+                    <tr>
+                      <td><a href="<%="#{path}?&dashboard=#{@landing_dashboard}"%>" class='report_button'><%=report_name%></a></td>
+                    </tr>
+            <%end%>
+    </table>
+

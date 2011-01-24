@@ -111,7 +111,7 @@ class Mastercard
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'AMOUNT DISPENSED'
             drugs_quantity = []
-            drugs_quantity << [Drug.find(obs.order.drug_order.drug_inventory_id),obs.order.drug_order.quantity]
+            drugs_quantity << [Drug.find(obs.order.drug_order.drug_inventory_id),obs.order.drug_order.quantity] rescue []
             next if drugs_quantity.blank?
             patient_visits[visit_date].reg =  drugs_quantity[0].first.concept.name.name
             drugs_quantity.map{|drug,quantity|
