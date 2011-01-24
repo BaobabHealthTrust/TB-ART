@@ -22,7 +22,7 @@ class CohortToolController < ApplicationController
 
       case  params[:report_type]
         when "visits_by_day"
-          redirect_to :action   => "visit_by_day",
+          redirect_to :action   => "visits_by_day",
                       :name     => params[:report],
                       :pat_name => "Visits by day",
                       :quarter  => params[:report].gsub("_"," ")
