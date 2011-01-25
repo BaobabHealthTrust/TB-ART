@@ -203,4 +203,15 @@ class Patient < ActiveRecord::Base
 
     self.find_by_sql([all_dead_patients_with_visits])
   end
+
+  def self.males_allegedly_pregnant(start_date, end_date)
+    pregnant_patient_concept_id = ConceptName.find_by_name('PATIENT PREGNANT').concept_id
+
+    PatientIdentifier.find_by_sql(["SELECT person.person_id,obs.obs_datetime
+                                   FROM obs INNER JOIN person
+                                   ON obs.person_id = person.person_id
+                                   WHERE person.gender = 'M' AND
+                                   obs.concept_id = ? AND obs.obs_datetime >= ? AND obs.obs_datetime <= ?",
+                                    pregnant_patient_concept_id, start_date, end_date])
+  end
 end
