@@ -214,4 +214,12 @@ class Patient < ActiveRecord::Base
                                    obs.concept_id = ? AND obs.obs_datetime >= ? AND obs.obs_datetime <= ?",
                                     pregnant_patient_concept_id, start_date, end_date])
   end
+
+  def self.with_drug_start_dates_less_than_program_enrollment_dates(start_date, end_date)
+
+    PatientIdentifier.find_by_sql("SELECT person.person_id,obs.obs_datetime
+                                   FROM obs INNER JOIN person
+                                   ON obs.person_id = person.person_id
+                                   WHERE person.gender = 'M' AND obs.concept_id = 1742")
+  end
 end
