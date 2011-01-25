@@ -48,4 +48,10 @@ class PatientIdentifier < ActiveRecord::Base
     end
     return "#{current_arv_code} #{next_available_number}"
   end
+
+  def self.identifier(patient_id, patient_identifier_type_id)
+    patient_identifier = self.find(:first, :select => "identifier",
+                                   :conditions  =>["patient_id = ? and identifier_type = ?", patient_id, patient_identifier_type_id])
+    return patient_identifier
+  end
 end
