@@ -29,5 +29,30 @@ class Order < ActiveRecord::Base
   def to_s
     "#{drug_order}"
   end
+
+  def self.prescriptions_without_dispensations_data(start_date , end_date)
+      pills_dispensed_id      = ConceptName.find_by_name('PILLS DISPENSED').concept_id
+      arv_number_id           = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
+      national_identifier_id  = PatientIdentifierType.find_by_name('National id').patient_identifier_type_id
+
+      missed_dispensations_data = self.find_by_sql(["SELECT order_id, patient_id, date_created from orders 
+                   WHERE NOT EXISTS (SELECT * FROM obs
+                   WHERE orders.order_id = obs.order_id AND obs.concept_id = ?)
+                    AND date_created >= ? AND date_created <= ?", pills_dispensed_id, start_date , end_date ])
+
+        prescriptions_without_dispensations = []
+
+        missed_dispensations_data.each do |prescription|
+         drug_id      = DrugOrder.find(prescription[:order_id]).drug_inventory_id
+         arv_number   = PatientIdentifier.identifier(prescription[:patient_id], arv_number_id)
+         national_id  = PatientIdentifier.identifier(prescription[:patient_id], national_identifier_id)
+         drug_name    = Drug.find(drug_id).name
+
+         prescriptions_without_dispensations << [prescription[:patient_id].to_s, arv_number[:identifier].to_s, national_id[:identifier].to_s, 
+                     prescription[:date_created].strftime("%Y-%m-%d %H:%M:%S") , drug_name]
+        end
+
+        prescriptions_without_dispensations
+  end
 end
 
