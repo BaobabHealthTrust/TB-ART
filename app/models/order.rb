@@ -54,5 +54,29 @@ class Order < ActiveRecord::Base
 
         prescriptions_without_dispensations
   end
+
+  def self.dispensations_without_prescriptions_data(start_date , end_date)
+      pills_dispensed_id      = ConceptName.find_by_name('PILLS DISPENSED').concept_id
+      arv_number_id           = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
+      national_identifier_id  = PatientIdentifierType.find_by_name('National id').patient_identifier_type_id
+
+      missed_prescriptions_data = Observation.find(:all, :select =>  "person_id, value_drug, date_created",
+                                                  :conditions =>["order_id IS NULL
+                                                    AND date_created >= ? AND date_created <= ? AND
+                                                        concept_id = ?" ,start_date , end_date, pills_dispensed_id])
+
+        dispensations_without_prescriptions = []
+
+        missed_prescriptions_data.each do |dispensation|
+         drug_name    = Drug.find(dispensation[:value_drug]).name
+         arv_number   = PatientIdentifier.identifier(dispensation[:person_id], arv_number_id)
+         national_id  = PatientIdentifier.identifier(dispensation[:person_id], national_identifier_id)
+
+         dispensations_without_prescriptions << [dispensation[:person_id].to_s, arv_number[:identifier].to_s, national_id[:identifier].to_s,
+                     dispensation[:date_created].strftime("%Y-%m-%d %H:%M:%S") , drug_name]
+        end
+
+        dispensations_without_prescriptions
+  end
 end
 
