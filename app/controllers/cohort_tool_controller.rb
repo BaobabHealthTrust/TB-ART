@@ -22,7 +22,7 @@ class CohortToolController < ApplicationController
     if params[:report]
       case  params[:report_type]
         when "visits_by_day"
-          redirect_to :action   => "visit_by_day",
+          redirect_to :action   => "visits_by_day",
                       :name     => params[:report],
                       :pat_name => "Visits by day",
                       :quarter  => params[:report].gsub("_"," ")
@@ -115,6 +115,18 @@ class CohortToolController < ApplicationController
 
     render :layout => false
   end
+
+  def visits_by_day
+    encounters = CohortTool.visits_by_day(params[:quarter])
+    data  = ""
+    encounters.each{|x,y|data+="#{x}:#{y};"}
+    visit_by_days = data[0..-2] || ''
+    @results  = Report.stats_to_show(visit_by_days) unless visit_by_days.blank?
+    @totals_by_week_day = CohortTool.totals_by_week_day(@results) unless @results.blank?
+    @stats_name = "Visits by day"
+    @quarter    = params[:quarter]
+    render :layout => false
+  end
   
   def prescriptions_without_dispensations
       include_url_params_for_back_button
@@ -191,6 +203,6 @@ class CohortToolController < ApplicationController
        @report_quarter = params[:quarter]
        @report_type = params[:report_type]
   end
-  
+
 end
 
