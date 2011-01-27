@@ -92,4 +92,20 @@ class Encounter < ActiveRecord::Base
       return rows.inject({}) {|result, row| result[encounter_types_hash[row['encounter_type']]] = row['number']; result }
     end     
   end
+
+  def self.visits_by_day(start_date,end_date)
+    required_encounters = ["ART ADHERENCE", "ART INITIAL", "ART VISIT",
+                           "HIV STAGING", "HIV RECEPTION", "VITALS"]
+
+    required_encounters_ids = required_encounters.inject([]) do |encounters_ids, encounter_type|
+      encounters_ids << EncounterType.find_by_name(encounter_type).id rescue nil
+      encounters_ids
+    end
+
+    Encounter.find(:all,
+      :joins      => "INNER JOIN obs ON obs.encounter_id = encounter.encounter_id",
+      :conditions => ["obs.voided = 0 AND encounter_type IN (?) AND encounter_datetime >=? AND encounter_datetime <=?",required_encounters_ids,start_date,end_date],
+      :group      => "encounter.patient_id,DATE(encounter_datetime)",
+      :order      => "encounter.encounter_datetime ASC")
+  end
 end
