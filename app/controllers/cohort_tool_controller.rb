@@ -43,12 +43,14 @@ class CohortToolController < ApplicationController
           redirect_to :action           => "out_of_range_arv_number",
                       :arv_end_number   => params[:arv_end_number],
                       :arv_start_number => params[:arv_start_number],
-                      :quarter          => params[:report].gsub("_"," ")
+                      :quarter          => params[:report].gsub("_"," "),
+                      :report_type      => params[:report_type]
         return
 
         when "data_consistency_check"
-          redirect_to :action => "data_consistency_check",
-                      :quarter => params[:report]
+          redirect_to :action       => "data_consistency_check",
+                      :quarter      => params[:report],
+                      :report_type  => params[:report_type]
         return
 
         when "summary_of_records_that_were_updated"
@@ -117,14 +119,15 @@ class CohortToolController < ApplicationController
   end
 
   def visits_by_day
-    encounters = CohortTool.visits_by_day(params[:quarter])
-    data  = ""
-    encounters.each{|x,y|data+="#{x}:#{y};"}
-    visit_by_days = data[0..-2] || ''
-    @results  = Report.stats_to_show(visit_by_days) unless visit_by_days.blank?
-    @totals_by_week_day = CohortTool.totals_by_week_day(@results) unless @results.blank?
-    @stats_name = "Visits by day"
     @quarter    = params[:quarter]
+
+    date_range  = Report.generate_cohort_date_range(@quarter)
+    @start_date = date_range.first
+    @end_date   = date_range.last
+
+    @encounters        = Encounter.visits_by_day(@start_date, @end_date)
+    @weekly_encounters = CohortTool.weekly_visits(@encounters)
+
     render :layout => false
   end
   
@@ -189,7 +192,6 @@ class CohortToolController < ApplicationController
                  ['Male patients with a pregnant observation', males_allegedly_pregnant.length],
                  ['Patients who moved from 2nd to 1st line drugs', 0],
                  ['patients with start dates > first receive drug dates', patients_with_wrong_start_dates.length]]
-
       render :layout => 'report'
   end
   

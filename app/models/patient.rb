@@ -193,9 +193,9 @@ class Patient < ActiveRecord::Base
     FROM obs active_visits INNER JOIN obs death_observations
     ON death_observations.person_id = active_visits.person_id
     WHERE death_observations.concept_id != active_visits.concept_id AND death_observations.concept_id =  #{patient_died_concept} AND death_observations.obs_datetime < active_visits.obs_datetime
-      AND active_visits.obs_datetime >='#{start_date}' AND death_observations.obs_datetime <= '#{end_date}'"
+      AND death_observations.obs_datetime >='#{start_date}' AND death_observations.obs_datetime <= '#{end_date}'"
 
-  all_dead_patients_with_visits = " SELECT dead.patient_id, dead.date_changed AS dealth_date, living.date_changed
+  all_dead_patients_with_visits = " SELECT dead.patient_id, dead.date_changed AS date_of_death, living.date_changed
     FROM (#{dead_patients}) dead,  (#{living_patients}) living
     WHERE living.patient_id = dead.patient_id AND dead.date_changed < living.date_changed
     UNION ALL #{dead_patients_with_observations_visits}"
