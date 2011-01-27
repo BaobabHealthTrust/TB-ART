@@ -117,14 +117,15 @@ class CohortToolController < ApplicationController
   end
 
   def visits_by_day
-    encounters = CohortTool.visits_by_day(params[:quarter])
-    data  = ""
-    encounters.each{|x,y|data+="#{x}:#{y};"}
-    visit_by_days = data[0..-2] || ''
-    @results  = Report.stats_to_show(visit_by_days) unless visit_by_days.blank?
-    @totals_by_week_day = CohortTool.totals_by_week_day(@results) unless @results.blank?
-    @stats_name = "Visits by day"
     @quarter    = params[:quarter]
+
+    date_range  = Report.generate_cohort_date_range(@quarter)
+    @start_date = date_range.first
+    @end_date   = date_range.last
+
+    @encounters        = Encounter.visits_by_day(@start_date, @end_date)
+    @weekly_encounters = CohortTool.weekly_visits(@encounters)
+
     render :layout => false
   end
   
