@@ -43,12 +43,14 @@ class CohortToolController < ApplicationController
           redirect_to :action           => "out_of_range_arv_number",
                       :arv_end_number   => params[:arv_end_number],
                       :arv_start_number => params[:arv_start_number],
-                      :quarter          => params[:report].gsub("_"," ")
+                      :quarter          => params[:report].gsub("_"," "),
+                      :report_type      => params[:report_type]
         return
 
         when "data_consistency_check"
-          redirect_to :action => "data_consistency_check",
-                      :quarter => params[:report]
+          redirect_to :action       => "data_consistency_check",
+                      :quarter      => params[:report],
+                      :report_type  => params[:report_type]
         return
 
         when "summary_of_records_that_were_updated"
@@ -190,7 +192,6 @@ class CohortToolController < ApplicationController
                  ['Male patients with a pregnant observation', males_allegedly_pregnant.length],
                  ['Patients who moved from 2nd to 1st line drugs', 0],
                  ['patients with start dates > first receive drug dates', patients_with_wrong_start_dates.length]]
-
       render :layout => 'report'
   end
   
