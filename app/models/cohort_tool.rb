@@ -285,4 +285,30 @@ class CohortTool < ActiveRecord::Base
 
     changed_obs.gsub("00:00:00 +0200","")[0..-6]
   end
+
+  def self.visits_by_day(quarter)
+    date        = Report.generate_cohort_date_range(quarter)
+    start_date  = (date.first.to_s + " 00:00:00")
+    end_date    = (date.last.to_s + " 23:59:59")
+
+    excluded_encounters = []
+    excluded_encounters << EncounterType.find_by_name("Barcode scan").id rescue nil
+    excluded_encounters << EncounterType.find_by_name("TB Reception").id rescue nil
+    excluded_encounters << EncounterType.find_by_name("General Reception").id rescue nil
+    excluded_encounters << EncounterType.find_by_name("Move file from dormant to active").id rescue nil
+    excluded_encounters << EncounterType.find_by_name("Update outcome").id rescue nil
+
+    visits_by_day = Hash.new(0)
+
+    encounters = Encounter.find(:all,
+                           :joins      => "INNER JOIN obs ON obs.encounter_id = encounter.encounter_id",
+                           :conditions => ["obs.voided = 0 AND encounter_type NOT IN (?) AND encounter_datetime >=? AND encounter_datetime <=?", excluded_encounters,start_date,end_date],
+                           :group      => "encounter.patient_id,DATE(encounter_datetime)",
+                           :order      => "encounter.encounter_datetime ASC")
+
+    encounters.map{|encounter|
+      visits_by_day[encounter.encounter_datetime.strftime("%d-%b-%Y")] += 1
+    }
+    visits_by_day
+  end
 end

@@ -101,4 +101,29 @@ class Observation < ActiveRecord::Base
     coded_answer_name ||= self.answer_concept.concept_names.first.name rescue nil
     "#{coded_answer_name}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}#{' ['+order.to_s+']' if order_id && tags.include?('order')}"
   end
+
+  def self.patients_with_multiple_start_reasons(start_date , end_date)
+    art_eligibility_id      = ConceptName.find_by_name('REASON FOR ART ELIGIBILITY').concept_id
+    arv_number_id           = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
+    national_identifier_id  = PatientIdentifierType.find_by_name('National id').patient_identifier_type_id
+
+    patients = self.find_by_sql(["SELECT person_id, concept_id, date_created, value_coded_name_id FROM obs
+                                           WHERE (SELECT COUNT(*) FROM obs observation
+                                                  WHERE observation.concept_id = ?
+                                                    AND observation.person_id = obs.person_id) >= 1
+                                                    AND date_created >= ? AND date_created <= ?
+                                                    AND obs.concept_id = ?", art_eligibility_id, start_date , end_date, art_eligibility_id])
+    patients_data = []
+
+    patients.each do |reason|
+      arv_number   = PatientIdentifier.identifier(reason[:person_id], arv_number_id).identifier           rescue []
+      national_id  = PatientIdentifier.identifier(reason[:person_id], national_identifier_id).identifier  rescue []
+      start_reason = ConceptName.find(reason[:value_coded_name_id]).name
+
+      patients_data << [reason[:person_id].to_s, arv_number, national_id,
+                 reason[:date_created].strftime("%Y-%m-%d %H:%M:%S") , start_reason]
+    end
+
+    patients_data
+  end
 end

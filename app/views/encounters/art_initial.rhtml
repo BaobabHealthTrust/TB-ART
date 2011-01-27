@@ -89,6 +89,7 @@
 
   <%= touch_date_tag "FIRST POSITIVE HIV TEST DATE", @patient, nil,
     {:id => "first_positive_hiv_test_date",
+    :absoluteMax => Date.today,
      :helpText => "Date of first positive HIV test"} %>
 
   <%#= touch_identifier_tag @patient, "ARV Number", nil, 

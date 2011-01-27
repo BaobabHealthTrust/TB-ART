@@ -166,4 +166,59 @@ class Patient < ActiveRecord::Base
   def name
     "#{self.person.name}"
   end
+
+ def self.dead_with_visits(start_date, end_date)
+
+  patient_died_concept = ConceptName.find_by_name('PATIENT DIED').concept_id
+
+  dead_patients = "SELECT dead_patient_program.patient_program_id,
+    dead_state.state, dead_patient_program.patient_id, dead_state.date_changed
+    FROM patient_state dead_state INNER JOIN patient_program dead_patient_program
+    ON   dead_state.patient_program_id = dead_patient_program.patient_program_id
+    WHERE  EXISTS
+      (SELECT * FROM program_workflow_state p
+        WHERE dead_state.state = program_workflow_state_id AND concept_id = #{patient_died_concept})
+          AND dead_state.date_changed >='#{start_date}' AND dead_state.date_changed <= '#{end_date}'"
+
+  living_patients = "SELECT living_patient_program.patient_program_id,
+    living_state.state, living_patient_program.patient_id, living_state.date_changed
+    FROM patient_state living_state
+    INNER JOIN patient_program living_patient_program
+    ON living_state.patient_program_id = living_patient_program.patient_program_id
+    WHERE  NOT EXISTS
+      (SELECT * FROM program_workflow_state p
+        WHERE living_state.state = program_workflow_state_id AND concept_id =  #{patient_died_concept})"
+
+  dead_patients_with_observations_visits = "SELECT death_observations.person_id,death_observations.obs_datetime AS date_of_death, active_visits.obs_datetime AS date_living
+    FROM obs active_visits INNER JOIN obs death_observations
+    ON death_observations.person_id = active_visits.person_id
+    WHERE death_observations.concept_id != active_visits.concept_id AND death_observations.concept_id =  #{patient_died_concept} AND death_observations.obs_datetime < active_visits.obs_datetime
+      AND death_observations.obs_datetime >='#{start_date}' AND death_observations.obs_datetime <= '#{end_date}'"
+
+  all_dead_patients_with_visits = " SELECT dead.patient_id, dead.date_changed AS date_of_death, living.date_changed
+    FROM (#{dead_patients}) dead,  (#{living_patients}) living
+    WHERE living.patient_id = dead.patient_id AND dead.date_changed < living.date_changed
+    UNION ALL #{dead_patients_with_observations_visits}"
+
+    self.find_by_sql([all_dead_patients_with_visits])
+  end
+
+  def self.males_allegedly_pregnant(start_date, end_date)
+    pregnant_patient_concept_id = ConceptName.find_by_name('PATIENT PREGNANT').concept_id
+
+    PatientIdentifier.find_by_sql(["SELECT person.person_id,obs.obs_datetime
+                                   FROM obs INNER JOIN person
+                                   ON obs.person_id = person.person_id
+                                   WHERE person.gender = 'M' AND
+                                   obs.concept_id = ? AND obs.obs_datetime >= ? AND obs.obs_datetime <= ?",
+                                    pregnant_patient_concept_id, start_date, end_date])
+  end
+
+  def self.with_drug_start_dates_less_than_program_enrollment_dates(start_date, end_date)
+
+    PatientIdentifier.find_by_sql("SELECT person.person_id,obs.obs_datetime
+                                   FROM obs INNER JOIN person
+                                   ON obs.person_id = person.person_id
+                                   WHERE person.gender = 'M' AND obs.concept_id = 1742")
+  end
 end

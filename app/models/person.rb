@@ -25,7 +25,7 @@ class Person < ActiveRecord::Base
   end
 
   def name
-    "#{self.names.first.given_name} #{self.names.first.family_name}" rescue nil
+    "#{self.names.first.given_name} #{self.names.first.family_name}".titleize rescue nil
   end  
 
   def address

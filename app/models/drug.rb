@@ -6,8 +6,12 @@ class Drug < ActiveRecord::Base
   belongs_to :form, :foreign_key => 'dosage_form', :class_name => 'Concept', :conditions => {:retired => 0}
   
   def arv?
-    arv_concept = ConceptName.find_by_name("ANTIRETROVIRAL DRUGS").concept_id
+    Drug.arv_drugs.map(&:concept_id).include?(self.concept_id)
+  end
+
+  def self.arv_drugs
+    arv_concept       = ConceptName.find_by_name("ANTIRETROVIRAL DRUGS").concept_id
     arv_drug_concepts = ConceptSet.all(:conditions => ['concept_set = ?', arv_concept])
-    arv_drug_concepts.map(&:concept_id).include?(self.concept_id)
+    arv_drug_concepts
   end
 end
