@@ -37,10 +37,10 @@ body{
   position:absolute;
   left:50%;
   top:50%;
-  width:800px;
-  height:599px;
-  margin-left:-400px;
-  margin-top:-300px;
+  width:1000px;
+  height:750px;
+  margin-left:-500px;
+  margin-top:-380px;
 
 }
 
@@ -141,7 +141,7 @@ button {
 #tab {
   margin-top:1px;
   background-color:#ddd;
-  height:416px;
+  height:565px;
   border-top:1px solid black;
   border-bottom:1px solid black;
 }
@@ -163,7 +163,7 @@ ul.list {
   margin-top:0;
   background-color:white;
   overflow:auto;
-  height:100px;
+  height:112px;
 }  
 ul.small {
   font-size:1.1em;
@@ -183,7 +183,7 @@ ul.list li div.encounter {
 } 
 
 div.panel {
-  width:380px;
+  width:480px;
   float:left;  
   margin:6px;
   margin-top:2px;

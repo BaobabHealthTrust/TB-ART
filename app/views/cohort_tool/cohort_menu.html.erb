@@ -1,0 +1,14 @@
+<script>
+  var tt_cancel_destination = "/clinic/reports"  
+</script>
+<form id='quater' action="cohort" method='post'> 
+  <%
+    quater = ['']
+    quater << "Q1 2011"
+    quater << "Q4 2010"
+    quater << "Q3 2010"
+    quater << "Q2 2010"
+  %>
+  <%= select_tag 'quater', options_for_select( quater ), {:helpText => "Select Quater"} %>
+
+</form>

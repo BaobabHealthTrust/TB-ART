@@ -161,7 +161,7 @@ class CohortToolController < ApplicationController
       end_date    = date_range.last
       @report     = Observation.patients_with_multiple_start_reasons(start_date , end_date)
 
-        render :layout => 'report'
+      render :layout => 'report'
   end
   
   def out_of_range_arv_number
@@ -204,6 +204,14 @@ class CohortToolController < ApplicationController
   def include_url_params_for_back_button
        @report_quarter = params[:quarter]
        @report_type = params[:report_type]
+  end
+  
+  def cohort
+    @quater = params[:quater]
+    render :layout => 'cohort'
+  end
+
+  def cohort_menu
   end
 
 end
