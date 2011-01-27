@@ -208,8 +208,6 @@ class CohortToolController < ApplicationController
   
   def cohort
     @quater = params[:quater]
-    #@survival_analysis = CohortTool.survival_analysis(@quater)
-    @cohort = CohortTool.cohort(@quater)
     render :layout => 'cohort'
   end
 
