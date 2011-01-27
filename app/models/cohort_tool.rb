@@ -364,6 +364,8 @@ class CohortTool < ActiveRecord::Base
     date_range = Report.generate_cohort_date_range(period)
     start_date = date_range[0] ; end_date = date_range[1]
     cohort = Cohort.new()
+
+    cohort.total_registered = Cohort.total_registered(start_date,end_date)
   end
 
 end

@@ -41,7 +41,7 @@
 
   html>/**/body div.scrollTableContainer table>tbody {
   overflow: auto;
-  height: 366px;
+  height: 509px;
   overflow-x: hidden;
   }
 
