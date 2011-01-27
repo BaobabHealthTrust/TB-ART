@@ -25,9 +25,9 @@
   }) 
 </script>
 <div id="tab">
-  <div id="treatment" class="panel" style="width:780px">
+  <div id="treatment" class="panel" style="width:980px">
     <h2>Today's Treatment (possibly filtered)</h2>
-    <ul id="prescriptions" class="list" style="height:135px;width:100%;">
+    <ul id="prescriptions" class="list" style="height:200px;width:100%;">
       <% @prescriptions.each do |order| %>
         <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
@@ -49,7 +49,7 @@
       <% end %>
     </ul>
     <h2>Historical Treatment</h2>
-    <ul id="prescriptions" class="list" style="height:135px;width:100%;">
+    <ul id="prescriptions" class="list" style="height:200px;width:100%;">
       <% @historical.reverse.each do |order| %>
         <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
