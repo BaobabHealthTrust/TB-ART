@@ -216,9 +216,34 @@ class Patient < ActiveRecord::Base
 
   def self.with_drug_start_dates_less_than_program_enrollment_dates(start_date, end_date)
 
-    PatientIdentifier.find_by_sql("SELECT person.person_id,obs.obs_datetime
-                                   FROM obs INNER JOIN person
-                                   ON obs.person_id = person.person_id
-                                   WHERE person.gender = 'M' AND obs.concept_id = 1742")
+      arv_drugs_concepts = Drug.arv_drugs.inject([]) {|result, drug| result << drug.concept_id}
+      on_arv_concept_id  = ConceptName.find_by_name('ON ANTIRETROVIRALS').concept_id
+      hvi_program_id     = Program.find_by_name('HIV PROGRAM').program_id
+
+      patients_on_antiretrovirals_sql = "
+           (SELECT p.patient_id, s.date_created as Date_Started_ARV
+            FROM patient_program p INNER JOIN patient_state s
+            ON  p.patient_program_id = s.patient_program_id
+            WHERE s.state IN (SELECT program_workflow_state_id
+                              FROM program_workflow_state g
+                              WHERE g.concept_id = #{on_arv_concept_id})
+                              AND p.program_id = #{hvi_program_id}
+           ) patients_on_antiretrovirals"
+
+      antiretrovirals_obs_sql = "
+           (SELECT * FROM obs
+            WHERE  value_drug IN (SELECT drug_id FROM drug
+            WHERE concept_id IN ( #{arv_drugs_concepts.join(', ')} ) )
+           ) antiretrovirals_obs"
+
+      drug_start_dates_less_than_program_enrollment_dates_sql= "
+        SELECT patients_on_antiretrovirals.patient_id, antiretrovirals_obs.person_id,
+               patients_on_antiretrovirals.Date_Started_ARV, antiretrovirals_obs.obs_datetime, antiretrovirals_obs.value_drug
+        FROM #{patients_on_antiretrovirals_sql}, #{antiretrovirals_obs_sql}
+        WHERE patients_on_antiretrovirals.Date_Started_ARV > antiretrovirals_obs.obs_datetime 
+              AND patients_on_antiretrovirals.patient_id = antiretrovirals_obs.person_id
+              AND patients_on_antiretrovirals.Date_Started_ARV >='#{start_date.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")}' AND patients_on_antiretrovirals.Date_Started_ARV <= '#{end_date.end_of_day.strftime("%Y-%m-%d %H:%M:%S")} '"
+        raise PatientIdentifier.find_by_sql(drug_start_dates_less_than_program_enrollment_dates_sql).count.to_s + "---#{end_date.end_of_day.strftime("%Y-%m-%d %H:%M:%S")}end : #{start_date.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")}start "
+
   end
 end
