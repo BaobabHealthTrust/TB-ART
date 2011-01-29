@@ -7,7 +7,18 @@
 
   function showReport() {
     cohort = document.getElementsByClassName('scrollTableContainer')[0]
-    
+    survival_analysis = document.getElementsByClassName('survival-analysis')[0]
+    switch_button = $('switch_view')
+    if (switch_button.innerHTML.sub('<span>','').sub('</span>','') == 'Survival Analysis'){
+      cohort.style.display = 'none'
+      switch_button.innerHTML = "<span>Cohort</span>"
+      survival_analysis.style.display = 'inline'
+    } else {
+      cohort.style.display = 'inline'
+      switch_button.innerHTML = "<span>Survival Analysis</span>"
+      survival_analysis.style.display = 'none'
+    } 
+     
   }
 </script>
 <style>
@@ -33,6 +44,10 @@
 
   div.scrollTableContainer {
     border-style:solid;
+  }
+
+  .survival-analysis th, .survival-analysis td {
+    text-align:left;
   }
 </style>
 
@@ -467,7 +482,7 @@
 
 
 
-<!--div class = 'survival-analysis'>
+<div class = 'survival-analysis'>
 <table>
 <#% @survival_analysis.each do | key , values | %>
   <tr>
@@ -477,12 +492,12 @@
   <#% values.each{| value |%>
     <tr>
       <td>New patients</td>
-      <td>179</td>
+      <td style = "text-align:right;">179</td>
     </tr>
   <#% } %>
 <#% end rescue nil%>
 </table>
-</div-->
+</div>
 
 
 
