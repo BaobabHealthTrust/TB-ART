@@ -478,24 +478,42 @@
 </table>
 </div>
 
-
-
-
-
 <div class = 'survival-analysis'>
 <table>
-<#% @survival_analysis.each do | key , values | %>
+<% @survival_analysis.each do | key , values | %>
   <tr>
-    <th>12 mon</th>
+    <th><%=key%></th>
     <th>&nbsp;</th>
   </tr>
-  <#% values.each{| value |%>
-    <tr>
-      <td>New patients</td>
-      <td style = "text-align:right;">179</td>
-    </tr>
-  <#% } %>
-<#% end rescue nil%>
+  <tr>
+    <td>New patients registered for ART</td>
+    <td style = "text-align:right;"><%=values['New patients registered for ART']%></td>
+  </tr>
+  <tr>
+    <td>Number Alive and on ART</td>
+    <td style = "text-align:right;"><%=values['Number Alive and on ART']%></td>
+  </tr>
+  <tr>
+    <td>Number Dead</td>
+    <td style = "text-align:right;"><%=values['Number Dead']%></td>
+  </tr>
+  <tr>
+    <td>Number Defaulted</td>
+    <td style = "text-align:right;"><%=values['Unknown']%></td>
+  </tr>
+  <tr>
+    <td>Number Stopped Treatment</td>
+    <td style = "text-align:right;"><%=values['Number Stopped Treatment']%></td>
+  </tr>
+  <tr>
+    <td>Number Transferred out</td>
+    <td style = "text-align:right;"><%=values['Number Transferred out']%></td>
+  </tr>
+  <tr>
+    <td>Number Unknown</td>
+    <td style = "text-align:right;"><%=values['Unknown']%></td>
+  </tr>
+<% end rescue nil%>
 </table>
 </div>
 

@@ -208,6 +208,9 @@ class CohortToolController < ApplicationController
   
   def cohort
     @quater = params[:quater]
+    start_date,end_date = Report.generate_cohort_date_range(@quater)
+    cohort = SurvivalAnalysis.new(start_date,end_date)
+    @survival_analysis = cohort.survival_analysis
     render :layout => 'cohort'
   end
 
