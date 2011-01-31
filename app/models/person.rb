@@ -322,7 +322,7 @@ class Person < ActiveRecord::Base
         get_phone_number_sql = "SELECT person_attribute_type_id ,value FROM person_attribute
                                 WHERE person_attribute_type_id IN (#{home_phone_id}, #{cell_phone_id},
                                       #{office_phone_id}) and person_id = #{self.id} "
-        PersonAttribute.find_by_sql(get_phone_number_sql).each {|data| numbers << [PersonAttributeType.find(data[:person_attribute_type_id]).name.to_s + "=>" + data[:value].to_s]}
+        PersonAttribute.find_by_sql(get_phone_number_sql).each {|data| numbers << [PersonAttributeType.find(data[:person_attribute_type_id]).name.to_s + ": " + data[:value].to_s]}
         numbers
   end
   
