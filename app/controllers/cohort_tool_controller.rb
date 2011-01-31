@@ -125,7 +125,7 @@ class CohortToolController < ApplicationController
     @start_date = date_range.first
     @end_date   = date_range.last
 
-    @encounters        = Encounter.visits_by_day(@start_date, @end_date)
+    @encounters        = Encounter.visits_by_day(@start_date.beginning_of_day, @end_date.end_of_day)
     @weekly_encounters = CohortTool.weekly_visits(@encounters)
 
     render :layout => false
