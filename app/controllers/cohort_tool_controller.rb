@@ -183,13 +183,17 @@ class CohortToolController < ApplicationController
       date_range  = Report.generate_cohort_date_range(params[:quarter])
       start_date  = date_range.first.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")
       end_date    = date_range.last.end_of_day.strftime("%Y-%m-%d %H:%M:%S")
+
       @dead_patients_with_visits       = Patient.dead_with_visits(start_date, end_date)
       @males_allegedly_pregnant        = Patient.males_allegedly_pregnant(start_date, end_date)
       @patients_with_wrong_start_dates = Patient.with_drug_start_dates_less_than_program_enrollment_dates(start_date, end_date)
-
+      session[:data_consistency_check] = { :dead_patients_with_visits => @dead_patients_with_visits,
+                                           :males_allegedly_pregnant  => @males_allegedly_pregnant,
+                                           :patients_with_wrong_start_dates => @patients_with_wrong_start_dates
+                                         }
       @checks = [['Dead patients with Visits', @dead_patients_with_visits.length],
                  ['Male patients with a pregnant observation', @males_allegedly_pregnant.length],
-                 ['Patients who moved from 2nd to 1st line drugs','N/A'],
+                 ['Patients who moved from 2nd to 1st line drugs', 0],
                  ['patients with start dates > first receive drug dates', @patients_with_wrong_start_dates.length]]
       render :layout => 'report'
   end
@@ -197,6 +201,20 @@ class CohortToolController < ApplicationController
   def list
     @report = []
     include_url_params_for_back_button
+
+    case params[:check_type]
+       when 'Dead patients with Visits' then
+            @report  =  session[:data_consistency_check][:dead_patients_with_visits]
+       when 'Patients who moved from 2nd to 1st line drugs'then
+
+       when 'Male patients with a pregnant observation' then
+             @report =  session[:data_consistency_check][:males_allegedly_pregnant]
+       when 'patients with start dates > first receive drug dates' then
+             @report =  session[:data_consistency_check][:patients_with_wrong_start_dates]
+       else
+
+    end
+
     render :layout => 'report'
   end
 
