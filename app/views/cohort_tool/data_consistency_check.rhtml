@@ -36,7 +36,7 @@
 <tr>
     <td align='left'><%= data_row[0] %></td>
     <td align='center'><%= link_to_onmousedown "#{data_row[1]}",{:controller =>"cohort_tool", :action => 'list', :report_type => "data_consistency_check",
-                           :check_type => "#{data_row[0]}" ,:source =>"data_consistency_check", :quarter => "#{@report_quarter}"}%></td> 
+                           :check_type => "#{data_row[0]}", :source =>"data_consistency_check", :quarter => "#{@report_quarter}"}%></td> 
     <td><%= data_row[2]%></td>
     
 </tr>
