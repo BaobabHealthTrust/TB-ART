@@ -94,13 +94,16 @@ class Encounter < ActiveRecord::Base
   end
 
   def self.visits_by_day(start_date,end_date)
-    required_encounters = ["ART ADHERENCE", "ART INITIAL", "ART VISIT",
-                           "HIV STAGING", "HIV RECEPTION", "VITALS"]
+    required_encounters = ["ART ADHERENCE", "ART_FOLLOWUP",   "ART_INITIAL",
+                           "ART VISIT",     "HIV RECEPTION",  "HIV STAGING",
+                           "PART_FOLLOWUP", "PART_INITIAL",   "VITALS"]
 
     required_encounters_ids = required_encounters.inject([]) do |encounters_ids, encounter_type|
       encounters_ids << EncounterType.find_by_name(encounter_type).id rescue nil
       encounters_ids
     end
+
+    required_encounters_ids.sort!
 
     Encounter.find(:all,
       :joins      => "INNER JOIN obs ON obs.encounter_id = encounter.encounter_id",
