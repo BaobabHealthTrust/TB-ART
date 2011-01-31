@@ -288,27 +288,17 @@ class CohortTool < ActiveRecord::Base
 
   def self.visits_by_day(quarter)
     date        = Report.generate_cohort_date_range(quarter)
-    start_date  = (date.first.to_s + " 00:00:00")
-    end_date    = (date.last.to_s + " 23:59:59")
+    start_date  = date.first.beginning_of_day
+    end_date    = date.last.end_of_day
 
-    excluded_encounters = []
-    excluded_encounters << EncounterType.find_by_name("Barcode scan").id rescue nil
-    excluded_encounters << EncounterType.find_by_name("TB Reception").id rescue nil
-    excluded_encounters << EncounterType.find_by_name("General Reception").id rescue nil
-    excluded_encounters << EncounterType.find_by_name("Move file from dormant to active").id rescue nil
-    excluded_encounters << EncounterType.find_by_name("Update outcome").id rescue nil
+    encounters    = Encounter.visits_by_day(start_date, end_date)
+    visits_by_day = {}
 
-    visits_by_day = Hash.new(0)
+    encounters.map do |encounter|
+      this_day = encounter.encounter_datetime.strftime("%d-%b-%Y")
+      (visits_by_day[this_day].nil?) ? visits_by_day[this_day] = 1 : visits_by_day[this_day] += 1
+    end
 
-    encounters = Encounter.find(:all,
-                           :joins      => "INNER JOIN obs ON obs.encounter_id = encounter.encounter_id",
-                           :conditions => ["obs.voided = 0 AND encounter_type NOT IN (?) AND encounter_datetime >=? AND encounter_datetime <=?", excluded_encounters,start_date,end_date],
-                           :group      => "encounter.patient_id,DATE(encounter_datetime)",
-                           :order      => "encounter.encounter_datetime ASC")
-
-    encounters.map{|encounter|
-      visits_by_day[encounter.encounter_datetime.strftime("%d-%b-%Y")] += 1
-    }
     visits_by_day
   end
 
