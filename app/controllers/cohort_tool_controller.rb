@@ -135,8 +135,8 @@ class CohortToolController < ApplicationController
       include_url_params_for_back_button
 
       date_range  = Report.generate_cohort_date_range(params[:quarter])
-      start_date  = date_range.first
-      end_date    = date_range.last
+      start_date  = date_range.first.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")
+      end_date    = date_range.last.end_of_day.strftime("%Y-%m-%d %H:%M:%S")
       @report     = Order.prescriptions_without_dispensations_data(start_date , end_date)
 
       render :layout => 'report'
@@ -146,8 +146,8 @@ class CohortToolController < ApplicationController
        include_url_params_for_back_button
 
       date_range  = Report.generate_cohort_date_range(params[:quarter])
-      start_date  = date_range.first
-      end_date    = date_range.last
+      start_date  = date_range.first.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")
+      end_date    = date_range.last.end_of_day.strftime("%Y-%m-%d %H:%M:%S")
       @report     = Order.dispensations_without_prescriptions_data(start_date , end_date)
 
        render :layout => 'report'
@@ -157,8 +157,8 @@ class CohortToolController < ApplicationController
        include_url_params_for_back_button
 
       date_range  = Report.generate_cohort_date_range(params[:quarter])
-      start_date  = date_range.first
-      end_date    = date_range.last
+      start_date  = date_range.first.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")
+      end_date    = date_range.last.end_of_day.strftime("%Y-%m-%d %H:%M:%S")
       @report     = Observation.patients_with_multiple_start_reasons(start_date , end_date)
 
       render :layout => 'report'
@@ -169,8 +169,8 @@ class CohortToolController < ApplicationController
       include_url_params_for_back_button
 
       date_range        = Report.generate_cohort_date_range(params[:quarter])
-      start_date        = date_range.first
-      end_date          = date_range.last
+      start_date  = date_range.first.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")
+      end_date    = date_range.last.end_of_day.strftime("%Y-%m-%d %H:%M:%S")
       arv_number_range  = [params[:arv_start_number].to_i, params[:arv_end_number].to_i]
 
       @report = PatientIdentifier.out_of_range_arv_numbers(arv_number_range, start_date, end_date)
@@ -181,17 +181,16 @@ class CohortToolController < ApplicationController
   def data_consistency_check
       include_url_params_for_back_button
       date_range  = Report.generate_cohort_date_range(params[:quarter])
-      start_date  = date_range.first
-      end_date    = date_range.last
+      start_date  = date_range.first.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")
+      end_date    = date_range.last.end_of_day.strftime("%Y-%m-%d %H:%M:%S")
+      @dead_patients_with_visits       = Patient.dead_with_visits(start_date, end_date)
+      @males_allegedly_pregnant        = Patient.males_allegedly_pregnant(start_date, end_date)
+      @patients_with_wrong_start_dates = Patient.with_drug_start_dates_less_than_program_enrollment_dates(start_date, end_date)
 
-      dead_patients_with_visits       = Patient.dead_with_visits(start_date, end_date)
-      males_allegedly_pregnant        = Patient.males_allegedly_pregnant(start_date, end_date)
-      patients_with_wrong_start_dates = Patient.with_drug_start_dates_less_than_program_enrollment_dates(start_date, end_date)
-
-      @checks = [['Dead patients with Visits', dead_patients_with_visits.length],
-                 ['Male patients with a pregnant observation', males_allegedly_pregnant.length],
-                 ['Patients who moved from 2nd to 1st line drugs', 0],
-                 ['patients with start dates > first receive drug dates', patients_with_wrong_start_dates.length]]
+      @checks = [['Dead patients with Visits', @dead_patients_with_visits.length],
+                 ['Male patients with a pregnant observation', @males_allegedly_pregnant.length],
+                 ['Patients who moved from 2nd to 1st line drugs','N/A'],
+                 ['patients with start dates > first receive drug dates', @patients_with_wrong_start_dates.length]]
       render :layout => 'report'
   end
   
