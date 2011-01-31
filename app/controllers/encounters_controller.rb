@@ -90,7 +90,17 @@ class EncountersController < ApplicationController
   end
 
   def new
-    @patient = Patient.find(params[:patient_id] || session[:patient_id]) 
+    @patient = Patient.find(params[:patient_id] || session[:patient_id])
+
+    use_regimen_short_names = GlobalProperty.find_by_property(
+      "use_regimen_short_names").property_value rescue "false"
+    show_other_regimen = GlobalProperty.find_by_property(
+      "show_other_regimen").property_value rescue 'false'
+
+    @answer_array = arv_regimen_answers(:patient => @patient,
+      :use_short_names    => use_regimen_short_names == "true",
+      :show_other_regimen => show_other_regimen      == "true")
+
     redirect_to "/" and return unless @patient
     redirect_to next_task(@patient) and return unless params[:encounter_type]
     redirect_to :action => :create, 'encounter[encounter_type_name]' => params[:encounter_type].upcase, 'encounter[patient_id]' => @patient.id and return if ['registration'].include?(params[:encounter_type])
@@ -149,5 +159,43 @@ class EncountersController < ApplicationController
     @encounter = Encounter.find(params[:id])
     @encounter.void
     head :ok
+  end
+
+  # List ARV Regimens as options for a select HTML element
+  # <tt>options</tt> is a hash which should have the following keys and values
+  #
+  # <tt>patient</tt>: a Patient whose regimens will be listed
+  # <tt>use_short_names</tt>: true, false (whether to use concept short names or
+  #  names)
+  #
+  def arv_regimen_answers(options = {})
+    answer_array = Array.new
+    regimen_types = ['FIRST LINE ANTIRETROVIRAL REGIMEN', 
+                     'ALTERNATIVE FIRST LINE ANTIRETROVIRAL REGIMEN',
+                     'SECOND LINE ANTIRETROVIRAL REGIMEN'
+                    ]
+
+    regimen_types.collect{|regimen_type|
+      Concept.find_by_name(regimen_type).concept_members.flatten.collect{|member|
+        next if member.concept.name.name.include?("Triomune Baby") and !options[:patient].child?
+        next if member.concept.name.name.include?("Triomune Junior") and !options[:patient].child?
+        if options[:use_short_names]
+          include_fixed = member.concept.name.name.match("(fixed)")
+          answer_array << [member.concept.shortname, member.concept_id] unless include_fixed
+          answer_array << ["#{member.concept.shortname} (fixed)", member.concept_id] if include_fixed
+          member.concept.shortname
+        else
+          answer_array << [member.concept.name.name.titleize, member.concept_id] unless member.concept.name.name.include?("+")
+          answer_array << [member.concept.name.name, member.concept_id] if member.concept.name.name.include?("+")
+        end
+      }
+    }
+    
+    if options[:show_other_regimen]
+      answer_array << "Other" if !answer_array.blank?
+    end
+    answer_array
+
+    # raise answer_array.inspect
   end
 end
