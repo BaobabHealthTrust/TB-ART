@@ -168,8 +168,9 @@ class Patient < ActiveRecord::Base
   end
 
  def self.dead_with_visits(start_date, end_date)
-
-  patient_died_concept = ConceptName.find_by_name('PATIENT DIED').concept_id
+  national_identifier_id  = PatientIdentifierType.find_by_name('National id').patient_identifier_type_id
+  arv_number_id           = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
+  patient_died_concept    = ConceptName.find_by_name('PATIENT DIED').concept_id
 
   dead_patients = "SELECT dead_patient_program.patient_program_id,
     dead_state.state, dead_patient_program.patient_id, dead_state.date_changed
@@ -200,50 +201,83 @@ class Patient < ActiveRecord::Base
     WHERE living.patient_id = dead.patient_id AND dead.date_changed < living.date_changed
     UNION ALL #{dead_patients_with_observations_visits}"
 
-    self.find_by_sql([all_dead_patients_with_visits])
+    patients = self.find_by_sql([all_dead_patients_with_visits])
+    patients_data  = []
+    patients.each do |patient_data_row|
+    patient        = Person.find(patient_data_row[:patient_id].to_i)
+    national_id    = PatientIdentifier.identifier(patient_data_row[:patient_id], national_identifier_id).identifier rescue ""
+    arv_number     = PatientIdentifier.identifier(patient_data_row[:patient_id], arv_number_id).identifier rescue ""
+    patients_data <<[patient_data_row[:patient_id], arv_number, patient.name,
+                    national_id,patient.gender,patient.age,patient.birthdate, patient.phone_numbers, patient_data_row[:date_changed]]
+    end
+    patients_data
   end
 
   def self.males_allegedly_pregnant(start_date, end_date)
+    national_identifier_id  = PatientIdentifierType.find_by_name('National id').patient_identifier_type_id
+    arv_number_id           = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
     pregnant_patient_concept_id = ConceptName.find_by_name('PATIENT PREGNANT').concept_id
 
-    PatientIdentifier.find_by_sql(["SELECT person.person_id,obs.obs_datetime
+    patients = PatientIdentifier.find_by_sql(["SELECT person.person_id,obs.obs_datetime
                                    FROM obs INNER JOIN person
                                    ON obs.person_id = person.person_id
                                    WHERE person.gender = 'M' AND
                                    obs.concept_id = ? AND obs.obs_datetime >= ? AND obs.obs_datetime <= ?",
-                                    pregnant_patient_concept_id, start_date, end_date])
+                                    pregnant_patient_concept_id, '2008-12-23 00:00:00', end_date])
+
+    patients_data  = []
+    patients.each do |patient_data_row|
+    patient        = Person.find(patient_data_row[:person_id].to_i)
+    national_id    = PatientIdentifier.identifier(patient_data_row[:person_id], national_identifier_id).identifier rescue ""
+    arv_number     = PatientIdentifier.identifier(patient_data_row[:person_id], arv_number_id).identifier rescue ""
+    patients_data <<[patient_data_row[:person_id], arv_number, patient.name,
+                    national_id,patient.gender,patient.age,patient.birthdate, patient.phone_numbers, patient_data_row[:obs_datetime]]
+    end
+    patients_data
   end
 
   def self.with_drug_start_dates_less_than_program_enrollment_dates(start_date, end_date)
 
-      arv_drugs_concepts = Drug.arv_drugs.inject([]) {|result, drug| result << drug.concept_id}
-      on_arv_concept_id  = ConceptName.find_by_name('ON ANTIRETROVIRALS').concept_id
-      hvi_program_id     = Program.find_by_name('HIV PROGRAM').program_id
+    arv_drugs_concepts      = Drug.arv_drugs.inject([]) {|result, drug| result << drug.concept_id}
+    on_arv_concept_id       = ConceptName.find_by_name('ON ANTIRETROVIRALS').concept_id
+    hvi_program_id          = Program.find_by_name('HIV PROGRAM').program_id
+    national_identifier_id  = PatientIdentifierType.find_by_name('National id').patient_identifier_type_id
+    arv_number_id           = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
 
-      patients_on_antiretrovirals_sql = "
-           (SELECT p.patient_id, s.date_created as Date_Started_ARV
-            FROM patient_program p INNER JOIN patient_state s
-            ON  p.patient_program_id = s.patient_program_id
-            WHERE s.state IN (SELECT program_workflow_state_id
-                              FROM program_workflow_state g
-                              WHERE g.concept_id = #{on_arv_concept_id})
-                              AND p.program_id = #{hvi_program_id}
-           ) patients_on_antiretrovirals"
+    patients_on_antiretrovirals_sql = "
+         (SELECT p.patient_id, s.date_created as Date_Started_ARV
+          FROM patient_program p INNER JOIN patient_state s
+          ON  p.patient_program_id = s.patient_program_id
+          WHERE s.state IN (SELECT program_workflow_state_id
+                            FROM program_workflow_state g
+                            WHERE g.concept_id = #{on_arv_concept_id})
+                            AND p.program_id = #{hvi_program_id}
+         ) patients_on_antiretrovirals"
 
-      antiretrovirals_obs_sql = "
-           (SELECT * FROM obs
-            WHERE  value_drug IN (SELECT drug_id FROM drug
-            WHERE concept_id IN ( #{arv_drugs_concepts.join(', ')} ) )
-           ) antiretrovirals_obs"
+    antiretrovirals_obs_sql = "
+         (SELECT * FROM obs
+          WHERE  value_drug IN (SELECT drug_id FROM drug
+          WHERE concept_id IN ( #{arv_drugs_concepts.join(', ')} ) )
+         ) antiretrovirals_obs"
 
-      drug_start_dates_less_than_program_enrollment_dates_sql= "
-        SELECT patients_on_antiretrovirals.patient_id, antiretrovirals_obs.person_id,
-               patients_on_antiretrovirals.Date_Started_ARV, antiretrovirals_obs.obs_datetime, antiretrovirals_obs.value_drug
-        FROM #{patients_on_antiretrovirals_sql}, #{antiretrovirals_obs_sql}
-        WHERE patients_on_antiretrovirals.Date_Started_ARV > antiretrovirals_obs.obs_datetime 
-              AND patients_on_antiretrovirals.patient_id = antiretrovirals_obs.person_id
-              AND patients_on_antiretrovirals.Date_Started_ARV >='#{start_date.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")}' AND patients_on_antiretrovirals.Date_Started_ARV <= '#{end_date.end_of_day.strftime("%Y-%m-%d %H:%M:%S")} '"
-        raise PatientIdentifier.find_by_sql(drug_start_dates_less_than_program_enrollment_dates_sql).count.to_s + "---#{end_date.end_of_day.strftime("%Y-%m-%d %H:%M:%S")}end : #{start_date.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")}start "
+    drug_start_dates_less_than_program_enrollment_dates_sql= "
+      SELECT patients_on_antiretrovirals.patient_id, patients_on_antiretrovirals.date_started_ARV,
+             antiretrovirals_obs.obs_datetime, antiretrovirals_obs.value_drug
+      FROM #{patients_on_antiretrovirals_sql}, #{antiretrovirals_obs_sql}
+      WHERE patients_on_antiretrovirals.Date_Started_ARV > antiretrovirals_obs.obs_datetime
+            AND patients_on_antiretrovirals.patient_id = antiretrovirals_obs.person_id
+            AND patients_on_antiretrovirals.Date_Started_ARV >='#{start_date}' AND patients_on_antiretrovirals.Date_Started_ARV <= '#{end_date}'"
 
+    patients       = self.find_by_sql(drug_start_dates_less_than_program_enrollment_dates_sql)
+    patients_data  = []
+    patients.each do |patient_data_row|
+    patient     = Person.find(patient_data_row[:patient_id].to_i)
+    national_id = PatientIdentifier.identifier(patient_data_row[:patient_id], national_identifier_id).identifier rescue ""
+    arv_number  = PatientIdentifier.identifier(patient_data_row[:patient_id], arv_number_id).identifier rescue ""
+    patients_data <<[patient_data_row[:patient_id], arv_number, patient.name,
+                    national_id,patient.gender,patient.age,patient.birthdate, patient.phone_numbers, patient_data_row[:date_started_ARV]]
+    end
+    patients_data
   end
+
 end
