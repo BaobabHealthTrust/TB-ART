@@ -13,10 +13,12 @@ class Cohort
     :tb_confirmed_on_treatment_patients,:tb_status_unknown_patients
   attr_accessor :patients_with_pill_count_less_than_seven,:patients_with_pill_count_more_than_seven
 
+  attr_accessor :start_date, :end_date
+
   # Initialize class
   def initialize(start_date, end_date)
-    @start_date = "#{start_date}" # 00:00:00"
-    @end_date = "#{end_date}" # 23:59:59"
+    @start_date = "#{start_date} 00:00:00"
+    @end_date = "#{end_date} 23:59:59"
   end
 
   # Get patients reinitiated on art count
@@ -34,4 +36,28 @@ class Cohort
         ConceptName.find(:all, :conditions => ["name = 'YES'"]).collect{|c| c.concept_id},
         @start_date.to_date.strftime("%Y-%m-%d"), @end_date.to_date.strftime("%Y-%m-%d")]).length rescue 0
   end
+
+  def outcomes(start_date=@start_date, end_date=@end_date, outcome_end_date=@end_date, program_id = nil, min_age=nil, max_age=nil,states = [])
+
+    if min_age or max_age
+      conditions = "AND TRUNCATE(DATEDIFF(p.date_enrolled, person.birthdate)/365,0) >= #{min_age}
+                    AND TRUNCATE(DATEDIFF(p.date_enrolled, person.birthdate)/365,0) <= #{max_age}"
+    end
+
+    PatientState.find_by_sql("SELECT * FROM (
+                              SELECT s.patient_program_id, patient_id,patient_state_id,start_date,n.name name,state
+                              FROM patient_state s
+                              INNER JOIN patient_program p ON p.patient_program_id = s.patient_program_id
+                              INNER JOIN program_workflow_state w ON w.program_workflow_id = p.program_id AND w.program_workflow_state_id = s.state
+                              INNER JOIN concept_name n ON w.concept_id = n.concept_id
+                              INNER JOIN person ON person.person_id = p.patient_id
+                              WHERE p.voided = 0 AND s.voided = 0 #{conditions}
+                              AND (p.date_enrolled >= '#{start_date}' AND p.date_enrolled <= '#{end_date}')
+                              AND p.program_id = #{program_id} AND s.start_date <= '#{outcome_end_date}'
+                              ORDER BY 
+                              patient_id DESC, patient_state_id DESC , start_date DESC) K
+                              GROUP BY K.patient_program_id
+                              ORDER BY K.patient_state_id DESC , K.start_date DESC").map{| state | states << [state.patient_id , state.name] }
+  end
+
 end
