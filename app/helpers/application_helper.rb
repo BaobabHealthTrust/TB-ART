@@ -40,6 +40,10 @@ module ApplicationHelper
     GlobalProperty.find_by_property("vitals.temperature").property_value == "yes" rescue false
   end  
 
+  def ask_standard_art_side_effects
+    GlobalProperty.find_by_property("art_visit.standard_art_side_effects").property_value == "yes" rescue false
+  end  
+
   def month_name_options
     i=0
     options_array = [[]] +Date::ABBR_MONTHNAMES[1..-1].collect{|month|[month,i+=1]} + [["Unknown","Unknown"]]

@@ -36,17 +36,25 @@
        :helpText => "Is patient pregnant?" } %>
   <% end %>    
   
-  <%= touch_select_tag "SYMPTOM PRESENT", @patient, concept_set_options('MALAWI ART SYMPTOM SET'),
-    {:id => 'symptoms',
-     :optional => true,
-     :multiple => true,
-     :helpText => "Symptoms (select all that apply)" } %>
+  <% if ask_standard_art_side_effects %>
+    <%= touch_select_tag "MALAWI ART SIDE EFFECTS", @patient, concept_set_options('MALAWI ART SIDE EFFECTS'),
+      {:id => 'side_effects',
+       :optional => true,
+       :multiple => true,
+       :helpText => "Side effects (select all that apply)" } %>
+  <% else %>
+    <%= touch_select_tag "SYMPTOM PRESENT", @patient, concept_set_options('MALAWI ART SYMPTOM SET'),
+      {:id => 'symptoms',
+       :optional => true,
+       :multiple => true,
+       :helpText => "Symptoms (select all that apply)" } %>
 
-  <%= touch_select_tag "ADVERSE EFFECT", @patient, options_for_select([['SKIN RASH', 'SKIN RASH'], ['PERIPHERAL NEUROPATHY', 'PERIPHERAL NEUROPATHY']]),
-    {:id => 'symptoms',
-     :optional => true,
-     :multiple => true,
-     :helpText => "Adverse effects (select all that apply)" } %>
+    <%= touch_select_tag "ADVERSE EFFECT", @patient, options_for_select([['SKIN RASH', 'SKIN RASH'], ['PERIPHERAL NEUROPATHY', 'PERIPHERAL NEUROPATHY']]),
+      {:id => 'symptoms',
+       :optional => true,
+       :multiple => true,
+       :helpText => "Adverse effects (select all that apply)" } %>
+  <% end %>
 
   <%= touch_select_tag "TB STATUS", @patient, options_for_select(['TB NOT SUSPECTED', 'TB SUSPECTED','CONFIRMED TB NOT ON TREATMENT', 'CONFIRMED TB ON TREATMENT','UNKOWN']),
     {:id => 'tb_status',
