@@ -30,22 +30,12 @@
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
-  <%= touch_text_field_tag "DIAGNOSIS", @patient, "HIV", :condition => 'false' %>
-
   <% if @patient.person.gender == 'F' && @patient.person.age > 14 %>
     <%= touch_yes_no_unknown_tag "IS PATIENT PREGNANT?", @patient, nil,
       {:optional => true,
        :helpText => "Is patient pregnant?" } %>
   <% end %>    
   
-  <%#= touch_yes_no_unknown_tag "IS ABLE TO WALK UNAIDED?", @patient, nil,
-    {:optional => true,
-     :helpText => "Is patient able to walk unaided?" } %>
-
-  <%#= touch_yes_no_unknown_tag "IS AT WORK OR SCHOOL?", @patient, nil,
-    {:optional => true,
-     :helpText => "Is patient at work or school?" } %>
-
   <%= touch_select_tag "SYMPTOM PRESENT", @patient, concept_set_options('MALAWI ART SYMPTOM SET'),
     {:id => 'symptoms',
      :optional => true,
