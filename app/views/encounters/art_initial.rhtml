@@ -22,7 +22,7 @@
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
   
   <label for='ever_received_art'>Ever received ART?</label>
-    <%= touch_select_tag("EVER RECEIVED ART?", @patient, options_for_select([['Yes','YES'],['No','NO']]), {:id => 'ever_received_art'}) %>
+    <%= touch_select_tag("EVER RECEIVED ART", @patient, options_for_select([['Yes','YES'],['No','NO']]), {:id => 'ever_received_art'}) %>
   
   <%= hidden_field_tag("programs[][patient_program_id]", nil) %>
   <%= hidden_field_tag("programs[][program_id]", Program.find_by_name('HIV PROGRAM').id) %>
