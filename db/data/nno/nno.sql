@@ -165,4 +165,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-01-04 17:30:59
+--
+-- Change admin from System Developer to Informatics Manager
+--
+update user_role set role ='Informatics Manager' where user_id=1;
