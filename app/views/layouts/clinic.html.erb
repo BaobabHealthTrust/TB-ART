@@ -19,6 +19,7 @@
         $('#find').click(function() { window.location = '/people/search' })
         //if ($('#staging')) $('#staging').click(function() { window.location = 'http://staging/clinic' })        
         $('#new_desk').click(function() { window.location = '/location' })        
+        $('#next_day').click(function() { window.location = '/admin/next_day' })        
       }) 
     </script>
     <style type="text/css">
@@ -64,7 +65,10 @@
             <button id="find" class="green"><span>Find Name</span></button>
             <% if User.current_user.admin? %>
             <!--button id="staging" class="yellow"><span>Staging</span></button-->
-            <button id="new_desk" class="yellow left"><span>Swap desk</span></button>
+			  <% if development_environment? %>
+            	<button id="new_desk" class="yellow left"><span>Swap desk</span></button>
+            	<button id="next_day" class="red left"><span>Next day</span></button>
+			  <% end %>
             <% end %>
           </div>          
         </div>    

@@ -101,4 +101,8 @@ module ApplicationHelper
     options = set.map{|item|next if item.concept.blank? ; [item.concept.name.name, item.concept.name.name] }
     options_for_select(options)
   end
+  
+  def development_environment?
+    ENV['RAILS_ENV'] == 'development'
+  end
 end
