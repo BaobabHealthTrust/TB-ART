@@ -365,7 +365,7 @@ class CohortTool < ActiveRecord::Base
     start_date = date_range[0] ; end_date = date_range[1]
     cohort = Cohort.new()
 
-    cohort.total_registered = Cohort.total_registered(start_date,end_date)
+    cohort.total_registered = SurvivalAnalysis.report(cohort)
   end
 
 end
