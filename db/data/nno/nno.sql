@@ -126,26 +126,6 @@ INSERT INTO `weight_height_for_ages` VALUES (49,'0',103.56714630127,4.2925901412
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
--- global_property table added by Mike January 2011
-
---
--- Table structure for table `global_property`
---
-
-DROP TABLE IF EXISTS `global_property`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `global_property` (
-  `property` varchar(255) NOT NULL DEFAULT '',
-  `property_value` mediumtext,
-  `description` text,
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uuid` char(38) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `global_property_uuid_index` (`uuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=223 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Dumping data for table `global_property`
 --
@@ -164,8 +144,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
---
--- Change admin from System Developer to Informatics Manager
---
-update user_role set role ='Informatics Manager' where user_id=1;
