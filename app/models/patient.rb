@@ -157,6 +157,7 @@ class Patient < ActiveRecord::Base
   def given_arvs_before?
     self.orders.each{|order|
       drug_order = order.drug_order
+      next if drug_order == nil
       next unless drug_order.quantity > 0
       return true if drug_order.drug.arv?
     }
