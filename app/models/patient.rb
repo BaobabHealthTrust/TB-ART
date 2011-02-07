@@ -246,4 +246,17 @@ class Patient < ActiveRecord::Base
         raise PatientIdentifier.find_by_sql(drug_start_dates_less_than_program_enrollment_dates_sql).count.to_s + "---#{end_date.end_of_day.strftime("%Y-%m-%d %H:%M:%S")}end : #{start_date.beginning_of_day.strftime("%Y-%m-%d %H:%M:%S")}start "
 
   end
+
+  def self.appointment_dates(start_date, end_date = nil)
+
+    end_date = start_date if end_date.nil?
+
+    appointment_date_concept_id = Concept.find_by_name("APPOINTMENT DATE").concept_id rescue nil
+
+    appointments = Patient.find(:all,
+                :joins      => 'INNER JOIN obs ON patient.patient_id = obs.person_id',
+                :conditions => ["DATE(obs.value_datetime) >= ? AND DATE(obs.value_datetime) <= ? AND obs.concept_id = ? AND obs.voided = 0", start_date.to_date, end_date.to_date, appointment_date_concept_id],
+                :group      => "obs.person_id")
+    appointments
+  end
 end
