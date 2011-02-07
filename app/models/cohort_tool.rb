@@ -358,4 +358,23 @@ class CohortTool < ActiveRecord::Base
     cohort.total_registered = Cohort.total_registered(start_date,end_date)
   end
 
+  def self.week_day_visits(visits)
+
+    weekly_visits = visits.inject({}) do |week, visit|
+
+      day       = visit.encounter_datetime.strftime("%a")
+      beginning = visit.encounter_datetime.beginning_of_week.to_date
+
+      # add a new week
+      week[beginning] = {day => []} if week[beginning].nil?
+
+      #add a new visit to the week
+      (week[beginning][day].nil?) ? week[beginning][day] = [visit] : week[beginning][day].push(visit)
+
+      week
+    end
+
+    return weekly_visits
+  end
+
 end
