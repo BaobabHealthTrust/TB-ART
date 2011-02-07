@@ -22,7 +22,7 @@
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
   
   <label for='ever_received_art'>Ever received ART?</label>
-    <%= touch_select_tag("EVER RECEIVED ART?", @patient, options_for_select([['Yes','YES'],['No','NO']]), {:id => 'ever_received_art'}) %>
+    <%= touch_select_tag("EVER RECEIVED ART", @patient, options_for_select([['Yes','YES'],['No','NO']]), {:id => 'ever_received_art'}) %>
   
   <%= hidden_field_tag("programs[][patient_program_id]", nil) %>
   <%= hidden_field_tag("programs[][program_id]", Program.find_by_name('HIV PROGRAM').id) %>
@@ -32,7 +32,6 @@
 
   <%= touch_yes_no_tag "HAS TRANSFER LETTER", @patient, nil,
     {:id => "has_transfer_letter",
-     :optional => false,
      :condition => '$("ever_received_art").value == "YES"',
      :helpText => "Has transfer letter?"} %>
 
@@ -45,42 +44,36 @@
   <%= touch_text_field_tag "ART NUMBER AT PREVIOUS LOCATION", @patient, nil,
     {:id => "previous_art_number",
      :condition => '$("ever_received_art").value == "YES"',
-     :optional => false,
      :helpText => "ART number at previous location" } %>
 
   <%= touch_date_tag "DATE ART LAST TAKEN", @patient, nil,
     {:id => "date_art_last_taken",
-     :optional => false,
+     :absoluteMax => Date.today,
      :condition => '$("ever_received_art").value == "YES"',
      :helpText => "Date ART last taken"} %>
 
   <%= touch_yes_no_unknown_tag "HAS THE PATIENT TAKEN ART IN THE LAST TWO MONTHS", @patient, nil,
     {:id => "taken_art_in_last_two_months",
-     :optional => false,
      :condition => '$("date_art_last_taken").value.toUpperCase() == "UNKNOWN"',
      :helpText => "Taken ART in the last two months?" } %>
 
   <%= touch_yes_no_unknown_tag "HAS THE PATIENT TAKEN ART IN THE LAST TWO WEEKS", @patient, nil,
     {:id => "taken_art_in_last_two_weeks",
-     :optional => false,
      :condition => '$("taken_art_in_last_two_months").value == "YES" && $("date_art_last_taken").value.toUpperCase() == "UNKNOWN"',
      :helpText => "Taken ART in the last two weeks?" } %>
 
   <%= touch_select_tag "LAST ART DRUGS TAKEN", @patient, options_for_select(@answer_array),
     {:id => "last_art_drugs_taken",
      :condition => '$("ever_received_art").value == "YES"',
-     :optional => false,
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Last ART drugs taken" } %>
 
   <%= touch_yes_no_tag "FOLLOW UP AGREEMENT", @patient, nil,
     {:id => "agrees_to_followup",
-     :optional => false,
-     :helpText => "Agrees to followup?" } %>
+    :helpText => "Agrees to followup?" } %>
 
   <%= touch_select_tag "FIRST POSITIVE HIV TEST TYPE", @patient, options_for_select([['HIV RAPID TEST, QUALITATIVE','HIV RAPID TEST, QUALITATIVE'],['HIV DNA POLYMERASE CHAIN REACTION','HIV DNA POLYMERASE CHAIN REACTION'],['UNKNOWN','UNKNOWN']]),
     {:id => "first_positive_hiv_test_type",
-     :optional => false,
      :helpText => "Type of first positive HIV test" } %>
 
   <%= touch_location_tag "FIRST POSITIVE HIV TEST LOCATION", @patient, nil,
@@ -90,7 +83,7 @@
   <%= touch_date_tag "FIRST POSITIVE HIV TEST DATE", @patient, nil,
     {:id => "first_positive_hiv_test_date",
     :absoluteMax => Date.today,
-     :helpText => "Date of first positive HIV test"} %>
+    :helpText => "Date of first positive HIV test"} %>
 
   <%#= touch_identifier_tag @patient, "ARV Number", nil, 
     {:id => "art_number",
@@ -100,7 +93,6 @@
   <% if @patient.person.gender == 'F' && @patient.person.age > 15 %>
     <%= touch_yes_no_tag "REFERRED BY PMTCT", @patient, nil,
       {:id => "referred_by_pmtct",
-       :optional => false,
        :helpText => "Referred by PMTCT?" } %>
   <% end %>  
   

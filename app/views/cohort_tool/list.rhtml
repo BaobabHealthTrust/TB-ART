@@ -35,6 +35,7 @@
   <th>Gender</th>
   <th>Age</th>
   <th>DOB</th>
+  <th>Phone Number</th>
   <th>Date Started</th>
 </tr>
 <%@report.each do |data_row|%>
@@ -48,7 +49,12 @@
     <td align='center'><%= data_row[4] %></td>
     <td align='center'><%= data_row[5]%></td>
     <td align='center'><%= data_row[6] %></td>
-    <td align='center'><%= data_row[7] %></td>
+    <%phone_numbers = "" %>
+    <%data_row[7].each do |phone|%>  
+                  <%phone_numbers += phone.to_s + "<br />" %>
+                  <%end%>
+   <td align='right'><%= phone_numbers%></td>
+    <td align='center'><%= data_row[8]%></td>
 </tr>
 <%end rescue nill%>
 </table>

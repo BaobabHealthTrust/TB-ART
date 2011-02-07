@@ -44,11 +44,11 @@ class Order < ActiveRecord::Base
 
         missed_dispensations_data.each do |prescription|
          drug_id      = DrugOrder.find(prescription[:order_id]).drug_inventory_id
-         arv_number   = PatientIdentifier.identifier(prescription[:patient_id], arv_number_id)
-         national_id  = PatientIdentifier.identifier(prescription[:patient_id], national_identifier_id)
+         arv_number   = PatientIdentifier.identifier(prescription[:patient_id], arv_number_id).identifier rescue ""
+         national_id  = PatientIdentifier.identifier(prescription[:patient_id], national_identifier_id).identifier rescue ""
          drug_name    = Drug.find(drug_id).name
 
-         prescriptions_without_dispensations << [prescription[:patient_id].to_s, arv_number[:identifier].to_s, national_id[:identifier].to_s, 
+         prescriptions_without_dispensations << [prescription[:patient_id].to_s, arv_number , national_id,
                      prescription[:date_created].strftime("%Y-%m-%d %H:%M:%S") , drug_name]
         end
 
