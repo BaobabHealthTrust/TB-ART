@@ -56,7 +56,7 @@
        :helpText => "Adverse effects (select all that apply)" } %>
   <% end %>
 
-  <%= touch_select_tag "TB STATUS", @patient, options_for_select(['TB NOT SUSPECTED', 'TB SUSPECTED','CONFIRMED TB NOT ON TREATMENT', 'CONFIRMED TB ON TREATMENT','UNKOWN']),
+  <%= touch_select_tag "TB STATUS", @patient, concept_set_options('TB STATUS'),
     {:id => 'tb_status',
      :optional => true,
      :multiple => false,
