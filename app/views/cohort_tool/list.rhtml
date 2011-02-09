@@ -49,10 +49,11 @@
     <td align='center'><%= data_row[4] %></td>
     <td align='center'><%= data_row[5]%></td>
     <td align='center'><%= data_row[6] %></td>
-    <%phone_numbers = "" %>
-    <%data_row[7].each do |phone|%>  
-                  <%phone_numbers += phone.to_s + "<br />" %>
-                  <%end%>
+    <%phone_numbers = ""
+      data_row[7].map do |phone_type, phone_number|
+        phone_numbers += phone_type.to_s.humanize + " : " + phone_number.to_s + "<br />"
+      end
+    %>
    <td align='right'><%= phone_numbers%></td>
     <td align='center'><%= data_row[8]%></td>
 </tr>
