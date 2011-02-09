@@ -19,8 +19,11 @@ class PersonAttribute < ActiveRecord::Base
 
     phone_number_objects = PersonAttribute.find_by_sql(phone_number_query)
 
+    # create a has of 'symbols' and 'values' like:
+    #   {cell_phone_number => '0123456789', home_phone_number => '0987654321'}
     person_phone_numbers = phone_number_objects.reduce({}) do |result, number|
-      result[number.attribute_type.strip!] = number.value
+      attribute_type          = number.attribute_type.downcase.gsub(" ", "_").to_sym
+      result[attribute_type]  = number.value
       result
     end
 
