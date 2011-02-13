@@ -299,4 +299,31 @@ class Patient < ActiveRecord::Base
     arv_number_id = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
     PatientIdentifier.identifier(self.patient_id, arv_number_id).identifier rescue nil
   end
+
+  def set_received_regimen(encounter,drug_order)
+    dispense_finish = true
+
+    ( drug_order.encounter.orders || [] ).each do | order |
+      dispense_finish = false if order.drug_order.quantity <= 0
+    end
+
+    return unless dispense_finish
+    regimen_prescribed = Observation.find(:first,:conditions => ["person_id = ? AND encounter_id = ? AND concept_id = ?",
+                            self.id,drug_order.encounter.id,ConceptName.find_by_name('WHAT TYPE OF ANTIRETROVIRAL REGIMEN').concept_id]).value_coded rescue nil
+
+    if regimen_prescribed
+      if (Observation.find(:first,:conditions => ["person_id = ? AND encounter_id = ? AND concept_id = ?",
+          self.id,encounter.id,ConceptName.find_by_name('ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT').concept_id])).blank? 
+        obs = Observation.new(
+          :concept_name => "ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT",
+          :person_id => self.id,
+          :encounter_id => encounter.id,
+          :value_text => ConceptName.find_by_concept_id(regimen_prescribed).name,
+          :value_coded => regimen_prescribed,
+          :obs_datetime => Time.now)
+        obs.save 
+      end
+    end
+  end
+
 end

@@ -167,6 +167,14 @@ class PatientsController < ApplicationController
       end
     end
   end
+
+  def summary
+    @encounter_type = params[:skipped]
+    @patient_id = params[:patient_id]
+    render :layout => "menu"
+  end
+  
+
   
 private
   
