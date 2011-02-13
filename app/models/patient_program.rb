@@ -13,7 +13,7 @@ class PatientProgram < ActiveRecord::Base
 
   def validate
     PatientProgram.find_all_by_patient_id(self.patient_id).each{|patient_program|
-      if self.program == patient_program.program and self.location.related_to_location?(patient_program.location) and patient_program.date_enrolled <= self.date_enrolled and (patient_program.date_completed.nil? or self.date_enrolled <= patient_program.date_completed)
+      if self.program == patient_program.program and self.location and self.location.related_to_location?(patient_program.location) and patient_program.date_enrolled <= self.date_enrolled and (patient_program.date_completed.nil? or self.date_enrolled <= patient_program.date_completed)
         errors.add_to_base "Patient already enrolled in program #{self.program.name rescue nil} at #{self.date_enrolled.to_date} at #{self.location.parent.name rescue self.location.name}"
       end
     }
@@ -40,9 +40,7 @@ class PatientProgram < ActiveRecord::Base
       # Find the state by name
       selected_state = self.program.program_workflows.map(&:program_workflow_states).flatten.select{|pws| pws.concept.name.name == params[:state]}.first rescue nil
       state = self.patient_states.last
-      logger.error selected_state.to_yaml
-      logger.error state.program_workflow_state.to_yaml
-      if (selected_state == state.program_workflow_state)
+      if (state && selected_state == state.program_workflow_state)
         # do nothing as we are already there
       else
         # Check if there is an open state and close it
