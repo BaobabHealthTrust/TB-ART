@@ -294,4 +294,9 @@ class Patient < ActiveRecord::Base
 
     appointments
   end
+
+  def arv_number
+    arv_number_id = PatientIdentifierType.find_by_name('ARV Number').patient_identifier_type_id
+    PatientIdentifier.identifier(self.patient_id, arv_number_id).identifier rescue nil
+  end
 end
