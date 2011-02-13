@@ -37,22 +37,28 @@ class PatientProgram < ActiveRecord::Base
   
   def transition(params)
     ActiveRecord::Base.transaction do
-      # Check if there is an open state and close it
-      state = self.patient_states.last
-      if (state && state.end_date.blank?)
-        state.end_date = params[:start_date]
-        state.save!
-      end    
       # Find the state by name
       selected_state = self.program.program_workflows.map(&:program_workflow_states).flatten.select{|pws| pws.concept.name.name == params[:state]}.first rescue nil
-      # Create the new state      
-      state = self.patient_states.new({
-        :state => selected_state.program_workflow_state_id,
-        :start_date => params[:start_date] || Date.today,
-        :end_date => params[:end_date]
-      })
-      state.save!
-    end  
+      state = self.patient_states.last
+      logger.error selected_state.to_yaml
+      logger.error state.program_workflow_state.to_yaml
+      if (selected_state == state.program_workflow_state)
+        # do nothing as we are already there
+      else
+        # Check if there is an open state and close it
+        if (state && state.end_date.blank?)
+          state.end_date = params[:start_date]
+          state.save!
+        end    
+        # Create the new state      
+        state = self.patient_states.new({
+          :state => selected_state.program_workflow_state_id,
+          :start_date => params[:start_date] || Date.today,
+          :end_date => params[:end_date]
+        })
+        state.save!
+      end  
+    end
   end
   
   def complete(end_date)
