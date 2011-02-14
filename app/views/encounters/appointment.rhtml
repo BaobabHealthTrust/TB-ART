@@ -1,3 +1,4 @@
+
 <style>
   .touchscreenTextInput, 
   .tt_controls_time_until_next_appointment #keyboard, 
@@ -29,14 +30,10 @@
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
   <label for='time_until_next_visit'>Time Until Next Appointment</label>
-  <%= select_tag("time_until_next_visit", options_for_select([["1 week", 1],
-                                                              ["2 weeks", 2],
-                                                              ["3 weeks", 3],
+  <%= select_tag("time_until_next_visit", options_for_select([["2 weeks", 2],
                                                               ["1 month", 4],
                                                               ["2 months", 8],
                                                               ["3 months", 12],
-                                                              ["4 months", 16],
-                                                              ["5 months", 20],
                                                               ["6 months", 24]]), {:helpText => 'Time Until Next Appointment'}) %>
 
 
