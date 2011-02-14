@@ -16,7 +16,7 @@ class ClinicController < ApplicationController
 
   def supervision
     @supervision_tools = [["Data that was Corrected", "summary_of_records_that_were_updated"],
-                          ["Drug Adherence Level",    "drug_adherence_level"],
+                          ["Drug Adherence Level",    "adherence_histogram_for_all_patients_in_the_quarter"],
                           ["Visits by Day",           "visits_by_day"],
                           ["Non-eligible Patients in Cohort", "non_eligible_patients_in_cohort"]]
 
