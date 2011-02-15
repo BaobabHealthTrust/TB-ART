@@ -41,7 +41,7 @@
     <%= select_tag(:set_day, options_for_select(days), 
         :field_type => 'number' , :absoluteMax => Date.today.to_s ,:helpText => 'Day' ,
         :validationJS =>'validateDate()',
-        :validationMessage => "You must enter an early date than #{Date.today.strftime('%Y-%b-%d')}")  %>
+        :validationMessage => "You must enter an earlier date than #{Date.today.strftime('%Y-%b-%d')}")  %>
 
   <%= submit_tag "Set visit date" %>
 </form>
