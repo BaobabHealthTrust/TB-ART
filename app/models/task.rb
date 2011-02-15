@@ -6,12 +6,13 @@ class Task < ActiveRecord::Base
   # Try to find the next task for the patient at the given location
   def self.next_task(location, patient, session_date = Date.today)
     all_tasks = self.all(:order => 'sort_weight ASC')
-    todays_encounters = patient.encounters.current.all(:include => [:type])
-    todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}
+    todays_encounters = patient.encounters.find_by_date(session_date)
+    todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
     all_tasks.each do |task|
 
       # Is the task for this location?
       next unless task.location.blank? || task.location == '*' || location.name.match(/#{task.location}/)
+      next if task.description == 'If a patient/guardian has skipped a station'
 
       # Have we already run this task?
       next if task.encounter_type.present? && todays_encounter_types.include?(task.encounter_type)
@@ -123,15 +124,17 @@ class Task < ActiveRecord::Base
   end 
   
   def self.validate_task(patient,task,session_date = Date.today)
-    #todays_encounters.map { | e | e.name } 
+    return task unless task.has_program_id == 1
+    return task if task.encounter_type == 'REGISTRATION'
     art_encounters = ['ART_INITIAL','HIV RECEPTION','VITALS','HIV STAGING','ART VISIT','ART ADHERENCE','TREATMENT','DISPENSING']
 
-    if patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[0]).id).blank? and !task.encounter_type == art_encounters[0]
+    if patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[0]).id).blank? and task.encounter_type != art_encounters[0]
       t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[0]}") 
+      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[0].gsub(' ','_')}") 
       return t
+    elsif patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[0]).id).blank? and task.encounter_type == art_encounters[0]
+      return task
     end
-
     
     hiv_reception = Encounter.find(:first,
                                    :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
@@ -153,7 +156,7 @@ class Task < ActiveRecord::Base
 
     if vitals.blank? and task.encounter_type != art_encounters[2]
       t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[2]}") 
+      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[2].gsub(' ','_')}") 
       return t
     elsif vitals.blank? and task.encounter_type == art_encounters[2]
       return task
@@ -161,8 +164,10 @@ class Task < ActiveRecord::Base
 
     if patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[3]).id).blank? and task.encounter_type != art_encounters[3]
       t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[3]}") 
+      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[3].gsub(' ','_')}") 
       return t
+    elsif patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[3]).id).blank? and task.encounter_type == art_encounters[3]
+      return task
     end
 
     art_visit = Encounter.find(:first,
@@ -172,12 +177,12 @@ class Task < ActiveRecord::Base
 
     if art_visit.blank? and task.encounter_type != art_encounters[4]
       t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[4]}") 
+      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[4].gsub(' ','_')}") 
       return t
     elsif art_visit.blank? and task.encounter_type == art_encounters[4]
       return task
     end
-
+=begin
     art_adherance = Encounter.find(:first,
                                    :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
                                    patient.id,EncounterType.find_by_name(art_encounters[5]).id,session_date],
@@ -185,12 +190,12 @@ class Task < ActiveRecord::Base
 
     if art_adherance.blank? and task.encounter_type != art_encounters[5]
       t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[5]}") 
+      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[5].gsub(' ','_')}") 
       return t
     elsif art_adherance.blank? and task.encounter_type == art_encounters[5]
       return task
     end
-
+=end
     art_treatment = Encounter.find(:first,
                                    :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
                                    patient.id,EncounterType.find_by_name(art_encounters[6]).id,session_date],
@@ -198,7 +203,7 @@ class Task < ActiveRecord::Base
 
     if art_visit.blank? and task.encounter_type != art_encounters[6]
       t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[6]}") 
+      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[6].gsub(' ','_')}") 
       return t
     elsif art_visit.blank? and task.encounter_type == art_encounters[6]
       return task

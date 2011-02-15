@@ -2,7 +2,8 @@ class PatientsController < ApplicationController
   before_filter :find_patient, :except => [:void]
   
   def show
-    @encounters = @patient.encounters.current.find(:all)
+    session_date = session[:datetime].to_date rescue Date.today
+    @encounters = @patient.encounters.find_by_date(session_date)
     @prescriptions = @patient.orders.unfinished.prescriptions.all
     @programs = @patient.patient_programs.all
     # This code is pretty hacky at the moment
