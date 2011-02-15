@@ -358,9 +358,9 @@ class CohortTool < ActiveRecord::Base
     cohort.total_registered = SurvivalAnalysis.report(cohort)
   end
 
-  def self.week_day_visits(visits)
+  def self.visits_by_week(visits)
 
-    weekly_visits = visits.inject({}) do |week, visit|
+    visits_by_week = visits.inject({}) do |week, visit|
 
       day       = visit.encounter_datetime.strftime("%a")
       beginning = visit.encounter_datetime.beginning_of_week.to_date
@@ -374,7 +374,7 @@ class CohortTool < ActiveRecord::Base
       week
     end
 
-    return weekly_visits
+    return visits_by_week
   end
 
 end
