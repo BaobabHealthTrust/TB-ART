@@ -22,7 +22,8 @@ class PrescriptionsController < ApplicationController
   def create
     @suggestions = params[:suggestion] || ['New Prescription']
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @encounter = @patient.current_treatment_encounter
+    session_date = session[:datetime] ||= Time.now()
+    @encounter = @patient.current_treatment_encounter(session_date)
     @diagnosis = Observation.find(params[:diagnosis]) rescue nil
     @suggestions.each do |suggestion|
       unless (suggestion.blank? || suggestion == '0' || suggestion == 'New Prescription')
@@ -36,8 +37,8 @@ class PrescriptionsController < ApplicationController
           render :new
           return
         end  
-        start_date = Time.now
-        auto_expire_date = Time.now + params[:duration].to_i.days
+        start_date = session_date
+        auto_expire_date = session_date + params[:duration].to_i.days
         prn = params[:prn].to_i
         if params[:type_of_prescription] == "variable"      
           DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, [params[:morning_dose], params[:afternoon_dose], params[:evening_dose], params[:night_dose]], 'VARIABLE', prn)
