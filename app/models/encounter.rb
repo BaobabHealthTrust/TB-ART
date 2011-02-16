@@ -106,7 +106,8 @@ class Encounter < ActiveRecord::Base
     required_encounters_ids.sort!
 
     Encounter.find(:all,
-      :joins      => "INNER JOIN obs ON obs.encounter_id = encounter.encounter_id",
+      :joins      => ["INNER JOIN obs     ON obs.encounter_id    = encounter.encounter_id",
+                      "INNER JOIN patient ON patient.patient_id  = encounter.patient_id"],
       :conditions => ["obs.voided = 0 AND encounter_type IN (?) AND encounter_datetime >=? AND encounter_datetime <=?",required_encounters_ids,start_date,end_date],
       :group      => "encounter.patient_id,DATE(encounter_datetime)",
       :order      => "encounter.encounter_datetime ASC")
