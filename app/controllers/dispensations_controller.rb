@@ -1,7 +1,13 @@
 class DispensationsController < ApplicationController
   def new
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @prescriptions = @patient.orders.current.prescriptions.all
+    #@prescriptions = @patient.orders.current.prescriptions.all
+    type = EncounterType.find_by_name('TREATMENT')
+    session_date = session[:datetime].to_date rescue Date.today
+    @prescriptions = Order.find(:all,
+                     :joins => "INNER JOIN encounter e USING (encounter_id)", 
+                     :conditions => ["encounter_type = ? AND e.patient_id = ? AND DATE(encounter_datetime) = ?",
+                     type.id,@patient.id,session_date]) 
     @options = @prescriptions.map{|presc| [presc.drug_order.drug.name, presc.drug_order.drug_inventory_id]}
   end
   
@@ -11,15 +17,19 @@ class DispensationsController < ApplicationController
       params[:quantity] = params[:identifier].match(/\d+$/).to_s
     end
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    @encounter = @patient.current_dispensation_encounter
+    session_date = session[:datetime] ||= Time.now()
+    @encounter = @patient.current_dispensation_encounter(session_date)
     @drug = Drug.find(params[:drug_id])
-    @order = @patient.current_treatment_encounter.orders.current.prescriptions.first(:conditions => ['drug_order.drug_inventory_id = ?', params[:drug_id]])
+    
+    @order = @patient.current_treatment_encounter(session_date).drug_orders.find(:first,:conditions => ['drug_order.drug_inventory_id = ?', 
+             params[:drug_id]]).order rescue []
     # Do we have an order for the specified drug?
     if @order.blank?
       flash[:error] = "There is no prescription for #{@drug.name}"
       redirect_to "/patients/treatment/#{@patient.patient_id}" and return
     end
     # Try to dispense the drug    
+      
     obs = Observation.new(
       :concept_name => "AMOUNT DISPENSED",
       :order_id => @order.order_id,
@@ -27,12 +37,13 @@ class DispensationsController < ApplicationController
       :encounter_id => @encounter.id,
       :value_drug => @order.drug_order.drug_inventory_id,
       :value_numeric => params[:quantity],
-      :obs_datetime => Time.now)
+      :obs_datetime => session[:datetime] ||= Time.now())
     if obs.save
-      @patient.patient_programs.find_by_program_id(Program.find_by_name("HIV PROGRAM")).transition(:state => "ON ANTIRETROVIRALS") if @drug.arv? rescue nil
-      @order.drug_order.total_drug_supply(@patient, @encounter)
-      @patient.set_received_regimen(@encounter,@order) if @order.drug_order.drug.arv?
-      Pharmacy.dispensed_stock_adjustment(@patient.current_treatment_encounter)
+      @patient.patient_programs.find_by_program_id(Program.find_by_name("HIV PROGRAM")).transition(
+               :state => "ON ANTIRETROVIRALS",:start_date => session[:datetime] ||= Time.now()) if @drug.arv? rescue nil
+      @order.drug_order.total_drug_supply(@patient, @encounter,session_date.to_date)
+      #@patient.set_received_regimen(@encounter,@order) if @order.drug_order.drug.arv?
+      Pharmacy.dispensed_stock_adjustment(@patient.current_treatment_encounter(session_date.to_date))
       redirect_to "/patients/treatment/#{@patient.patient_id}"
     else
       flash[:error] = "Could not dispense the drug for the prescription"

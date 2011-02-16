@@ -26,7 +26,8 @@
 </script>
 <div id="tab">
   <div id="treatment" class="panel" style="width:980px">
-    <h2>Today's Treatment (possibly filtered)</h2>
+    <% current_day = session[:datetime].strftime('%Y-%m-%d') rescue 'Today'%>
+    <h2><%=current_day%>'s Treatment (possibly filtered)</h2>
     <ul id="prescriptions" class="list" style="height:200px;width:100%;">
       <% @prescriptions.each do |order| %>
         <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
@@ -35,7 +36,7 @@
             <%= order.to_s.gsub(/\n/, '<br/>') -%>
             <% units = order.drug_order.units %>
             <% amount_needed = order.drug_order.amount_needed -%>
-            <% amounts_dispensed = order.drug_order.total_drug_supply(@patient) %>
+            <% amounts_dispensed = order.drug_order.total_drug_supply(@patient, @encounter, session[:datetime]) %>
             <% amounts_dispensed.each do |amount_dispensed| %>
               <div class="subtotal dispensation"><%=h amount_dispensed.to_s %> <%= units %></div>
             <% end %>

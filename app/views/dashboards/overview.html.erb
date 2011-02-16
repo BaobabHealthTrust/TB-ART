@@ -73,7 +73,8 @@
       </ul>
     </div>
     <div id="encounters" class="panel" style="float:right;">
-      <h2><%=session[:datetime].strftime('%Y-%m-%d') rescue Date.today.strftime('%Y-%m-%d') %>'s Visit (possibly filtered)</h2>
+      <% current_day = session[:datetime].strftime('%Y-%m-%d') rescue 'Today'%>
+      <h2><%=current_day %>'s Visit (possibly filtered)</h2>
       <ul class="list" style="clear:both;">
         <% for encounter in @encounters.reverse do %>
           <li class="data <%= cycle('even', 'odd') %>" encounter="<%= encounter.id %>">

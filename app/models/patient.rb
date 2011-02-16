@@ -33,16 +33,16 @@ class Patient < ActiveRecord::Base
     }.flatten.compact
   end
 
-  def current_treatment_encounter
+  def current_treatment_encounter(date = Time.now())
     type = EncounterType.find_by_name("TREATMENT")
-    encounter = encounters.current.find_by_encounter_type(type.id)
-    encounter ||= encounters.create(:encounter_type => type.id)
+    encounter = encounters.find(:first,:conditions =>["DATE(encounter_datetime) = ? AND encounter_type = ?",date.to_date,type.id])
+    encounter ||= encounters.create(:encounter_type => type.id,:encounter_datetime => date)
   end
 
-  def current_dispensation_encounter
+  def current_dispensation_encounter(date = Time.now())
     type = EncounterType.find_by_name("DISPENSING")
-    encounter = encounters.current.find_by_encounter_type(type.id)
-    encounter ||= encounters.create(:encounter_type => type.id)
+    encounter = encounters.find(:first,:conditions =>["DATE(encounter_datetime) = ? AND encounter_type = ?",date.to_date,type.id])
+    encounter ||= encounters.create(:encounter_type => type.id,:encounter_datetime => date)
   end
     
   def alerts
@@ -302,7 +302,7 @@ class Patient < ActiveRecord::Base
 
   def set_received_regimen(encounter,drug_order)
     dispense_finish = true ; dispensed_drugs_concept_ids = []
-
+    
     ( drug_order.encounter.orders || [] ).each do | order |
       dispense_finish = false if order.drug_order.quantity <= 0
       dispensed_drugs_concept_ids << Drug.find(order.drug_order.drug_inventory_id).concept_id

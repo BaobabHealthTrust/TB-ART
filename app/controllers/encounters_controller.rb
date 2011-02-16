@@ -51,6 +51,7 @@ class EncountersController < ApplicationController
     end
 
     # Program handling
+    date_enrolled_default = session[:datetime] ||= Time.now()
     (params[:programs] || []).each do |program|
       # Look up the program if the program id is set      
       @patient_program = PatientProgram.find(program[:patient_program_id]) unless program[:patient_program_id].blank?
@@ -58,9 +59,13 @@ class EncountersController < ApplicationController
       unless (@patient_program)
         @patient_program = @patient.patient_programs.create(
           :program_id => program[:program_id],
-          :date_enrolled => program[:date_enrolled] || Time.now)          
+          :date_enrolled => program[:date_enrolled] ||= date_enrolled_default)          
       end
       # Lots of states bub
+      unless program[:states].blank?
+        #adding program_state start date
+        program[:states][0]['start_date'] = @patient_program.date_enrolled rescue nil 
+      end
       (program[:states] || []).each {|state| @patient_program.transition(state) }
     end
 
