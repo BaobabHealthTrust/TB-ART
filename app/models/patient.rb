@@ -344,5 +344,6 @@ class Patient < ActiveRecord::Base
         :obs_datetime => Time.now)
       #obs.save 
     end
+ end
 
 end
