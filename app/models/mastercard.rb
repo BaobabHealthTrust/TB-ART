@@ -75,7 +75,8 @@ class Mastercard
         :conditions =>["voided = 0 AND person_id = ? AND Date(obs_datetime) = ?",
         patient_obj.patient_id,encounter_date.to_date],:order =>"obs_datetime")
     end    
-    ["HEIGHT","WEIGHT","REGIMEN","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT",'ADHERENCE','NOTES'].map do |field|
+    ["HEIGHT","WEIGHT","REGIMEN","TB STATUS","SYMPTOMS","VISIT","BMI","PILLS BROUGHT",'ADHERENCE','NOTES','DRUGS GIVEN'].map do |field|
+      gave_hash = Hash.new(0) 
       observations.map do |obs|
          visit_date = obs.obs_datetime.to_date
          patient_visits[visit_date] = self.new() if patient_visits[visit_date].blank?
@@ -107,17 +108,30 @@ class Mastercard
             patient_visits[visit_date].tb_status = 'sup' if status == 'TB SUSPECTED'
             patient_visits[visit_date].tb_status = 'noRx' if status == 'CONFIRMED TB NOT ON TREATMENT'
             patient_visits[visit_date].tb_status = 'Rx' if status == 'CONFIRMED TB ON TREATMENT'
-          when "REGIMEN"
+          when "DRUGS GIVEN"
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'AMOUNT DISPENSED'
             drugs_quantity = []
             drugs_quantity << [Drug.find(obs.order.drug_order.drug_inventory_id),obs.order.drug_order.quantity] rescue []
             next if drugs_quantity.blank?
-            patient_visits[visit_date].reg =  drugs_quantity[0].first.concept.name.name
+
+            gave = []  
             drugs_quantity.map{|drug,quantity|
-              patient_visits[visit_date].gave+="<br/>#{drug.name} (#{quantity})" unless patient_visits[visit_date].gave.blank?
-              patient_visits[visit_date].gave = "#{drug.name} (#{quantity})" if patient_visits[visit_date].gave.blank?
+              gave << [drug.name,quantity] 
             }
+            
+            gave.map{|drug,quantity| 
+              gave_hash[drug] += quantity 
+            }
+            patient_visits[visit_date].gave = nil
+            gave_hash.map{ | drug , quantity |
+              patient_visits[visit_date].gave += "<br />#{drug} (#{quantity})" unless patient_visits[visit_date].gave.blank?
+              patient_visits[visit_date].gave = "#{drug} (#{quantity})" if patient_visits[visit_date].gave.blank?
+            }
+          when "REGIMEN"
+            concept_name = obs.concept.name.name rescue []
+            next unless concept_name == 'ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT'
+            patient_visits[visit_date].reg =  obs.value_text 
           when "SYMPTOMS"
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'SYMPTOM PRESENT'

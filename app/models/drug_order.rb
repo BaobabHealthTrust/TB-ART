@@ -118,13 +118,13 @@ class DrugOrder < ActiveRecord::Base
   
   # We have to recalculate everything each time, because this might be the result
   # of a clinical worker voiding something. 
-  def total_drug_supply(patient, encounter=nil)
-    encounter ||= patient.current_dispensation_encounter
+  def total_drug_supply(patient, encounter = nil, session_date = Date.today)
+    encounter ||= patient.current_dispensation_encounter(session_date)
     amounts_brought = Observation.all(:conditions => 
       ['obs.concept_id = ? AND ' +
        'obs.person_id = ? AND ' +
-       'DATE(encounter.encounter_datetime) = CURRENT_DATE() AND ' +
-       'drug_order.drug_inventory_id = ?', 
+       "DATE(encounter.encounter_datetime) = '#{session_date.to_date}' AND " +
+       'drug_order.drug_inventory_id = ?',
         ConceptName.find_by_name("AMOUNT OF DRUG BROUGHT TO CLINIC").concept_id,
         patient.person.person_id,
         drug_inventory_id], 

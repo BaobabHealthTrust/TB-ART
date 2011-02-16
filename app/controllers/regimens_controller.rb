@@ -8,9 +8,10 @@ class RegimensController < ApplicationController
   
   def create
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    encounter = @patient.current_treatment_encounter
-    start_date = Time.now
-    auto_expire_date = Time.now + params[:duration].to_i.days
+    session_date = session[:datetime] ||=  Time.now()
+    encounter = @patient.current_treatment_encounter(session_date)
+    start_date = session[:datetime] ||= Time.now
+    auto_expire_date = session[:datetime] + params[:duration].to_i.days rescue Time.now + params[:duration].to_i.days
     orders = RegimenDrugOrder.all(:conditions => {:regimen_id => params[:regimen]})
     ActiveRecord::Base.transaction do
       # Need to write an obs for the regimen they are on, note that this is ARV
@@ -21,7 +22,7 @@ class RegimensController < ApplicationController
         :person_id => @patient.person.person_id,
         :encounter_id => encounter.encounter_id,
         :value_coded => params[:regimen_concept_id],
-        :obs_datetime => Time.now)    
+        :obs_datetime => start_date)    
       orders.each do |order|
         drug = Drug.find(order.drug_inventory_id)
         regimen_name = (order.regimen.concept.concept_names.tagged("short").first || order.regimen.concept.name).name

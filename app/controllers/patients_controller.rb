@@ -2,7 +2,8 @@ class PatientsController < ApplicationController
   before_filter :find_patient, :except => [:void]
   
   def show
-    @encounters = @patient.encounters.current.find(:all)
+    session_date = session[:datetime].to_date rescue Date.today
+    @encounters = @patient.encounters.find_by_date(session_date)
     @prescriptions = @patient.orders.unfinished.prescriptions.all
     @programs = @patient.patient_programs.all
     # This code is pretty hacky at the moment
@@ -16,7 +17,13 @@ class PatientsController < ApplicationController
   end
 
   def treatment
-    @prescriptions = @patient.orders.current.prescriptions.all
+    #@prescriptions = @patient.orders.current.prescriptions.all
+    type = EncounterType.find_by_name('TREATMENT')
+    session_date = session[:datetime].to_date rescue Date.today
+    @prescriptions = Order.find(:all,
+                     :joins => "INNER JOIN encounter e USING (encounter_id)",
+                     :conditions => ["encounter_type = ? AND e.patient_id = ? AND DATE(encounter_datetime) = ?",
+                     type.id,@patient.id,session_date])
     @historical = @patient.orders.historical.prescriptions.all
     @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
     @restricted.each do |restriction|
@@ -167,6 +174,14 @@ class PatientsController < ApplicationController
       end
     end
   end
+
+  def summary
+    @encounter_type = params[:skipped]
+    @patient_id = params[:patient_id]
+    render :layout => "menu"
+  end
+  
+
   
 private
   

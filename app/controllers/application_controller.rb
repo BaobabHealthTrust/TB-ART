@@ -20,7 +20,8 @@ class ApplicationController < ActionController::Base
   end if RAILS_ENV == 'production'
 
   def next_task(patient)
-    task = Task.next_task(Location.current_location, patient)
+    session_date = session[:datetime].to_date rescue Date.today
+    task = Task.next_task(Location.current_location, patient,session_date)
     return task.url if task.present? && task.url.present?
     return "/patients/show/#{patient.id}" 
   end
