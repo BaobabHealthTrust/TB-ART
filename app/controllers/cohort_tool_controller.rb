@@ -65,7 +65,7 @@ class CohortToolController < ApplicationController
 
         when "patients_with_adherence_greater_than_hundred"
           redirect_to :action  => "patients_with_adherence_greater_than_hundred",
-                      :quarter => params[:report].gsub("_"," ")
+                      :quater => params[:report].gsub("_"," ")
         return
 
         when "patients_with_multiple_start_reasons"
@@ -234,5 +234,60 @@ class CohortToolController < ApplicationController
   def cohort_menu
   end
 
+def adherence
+    adherences = CohortTool.adherence(params[:quarter])
+    @quater = params[:quarter]
+    type = "patients_with_adherence_greater_than_hundred"
+    @report_type = "Adherence Histogram for all patients"
+    @adherence_summary = "&nbsp;&nbsp;<button onclick='adhSummary();'>Summary</button>" unless adherences.blank?
+    @adherence_summary+="<input class='test_name' type=\"button\" onmousedown=\"document.location='/cohort_tool/reports?report=#{@quater}&report_type=#{type}';\" value=\"Over 100% Adherence\"/>"  unless adherences.blank?
+    @adherence_summary_hash = Hash.new(0)
+    adherences.each{|adherence,value|
+      adh_value = value.to_i
+      current_adh = adherence.to_i
+      if current_adh <= 94
+        @adherence_summary_hash["0 - 94"]+= adh_value
+      elsif current_adh >= 95 and current_adh <= 100
+        @adherence_summary_hash["95 - 100"]+= adh_value
+      else current_adh > 100
+        @adherence_summary_hash["> 100"]+= adh_value
+      end
+    }
+    @adherence_summary_hash['missing'] = CohortTool.missing_adherence(@quater).length rescue 0
+    @adherence_summary_hash.values.each{|n|@adherence_summary_hash["total"]+=n}
+
+    data = ""
+    adherences.each{|x,y|data+="#{x}:#{y}:"}
+    @id = data[0..-2] || ''
+
+    @results = @id
+    @results = @results.split(':').enum_slice(2).map
+    @results = @results.each {|result| result[0] = result[0]}.sort_by{|result| result[0]}
+    @results.each{|result| @graph_max = result[1].to_f if result[1].to_f > (@graph_max || 0)}
+    @graph_max ||= 0
+    render :layout => false
+  end
+
+  def patients_with_adherence_greater_than_hundred
+
+      min_range = params[:min_range]
+      max_range = params[:max_range]
+      missing_adherence = false
+      missing_adherence = true if params[:show_missing_adherence] == "yes"
+      session[:list_of_patients] = nil
+
+      @patients = CohortTool.adherence_over_hundred(params[:quater],min_range,max_range,missing_adherence)
+
+      @quater = params[:quater] + ": (#{@patients.length})" rescue  params[:quater]
+      if missing_adherence
+        @report_type = "Patient(s) with missing adherence"
+      elsif max_range.blank? and min_range.blank?
+        @report_type = "Patient(s) with adherence greater than 100%"
+      else
+        @report_type = "Patient(s) with adherence starting from  #{min_range}% to #{max_range}%"
+      end
+      render :layout => 'report'
+      return
+  end
 end
 
