@@ -340,4 +340,8 @@ class Patient < ActiveRecord::Base
     end
   end
 
+  def gender
+    self.person.sex
+  end
+
 end
