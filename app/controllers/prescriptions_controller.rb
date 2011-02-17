@@ -72,7 +72,7 @@ class PrescriptionsController < ApplicationController
     @drug_concepts = ConceptName.find(:all, 
       :select => "concept_name.name", 
       :joins => "INNER JOIN drug ON drug.concept_id = concept_name.concept_id AND drug.retired = 0", 
-      :conditions => ["concept_name.name LIKE ?", '%' + search_string + '%'])
+      :conditions => ["concept_name.name LIKE ?", '%' + search_string + '%'],:group => 'drug.concept_id')
     render :text => "<li>" + @drug_concepts.map{|drug_concept| drug_concept.name }.uniq.join("</li><li>") + "</li>"
   end
   

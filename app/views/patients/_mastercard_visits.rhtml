@@ -92,7 +92,14 @@ vertical-align:top;
       <td><%= data.tb_status || '&nbsp;'%></td>
       <td><%= data.s_eff || '&nbsp;'%></td>
       <td><%= data.pills || '&nbsp;'%></td>
-      <td><%= data.gave || '&nbsp;'%></td>
+      <td>
+        <% gave = '' 
+        data.gave.each do | name , quantity |
+          gave += "<br/>#{name} (#{quantity})" unless gave.blank?
+          gave = "#{name} (#{quantity})" if gave.blank?
+        end %>
+        <%= gave || '&nbsp;'%>
+      </td>
       <td style=""><%= data.visit_by || '&nbsp;'%></td>
       <!--td><%#= '&nbsp;'%></td>
       <td><%#= '&nbsp;'%></td-->
