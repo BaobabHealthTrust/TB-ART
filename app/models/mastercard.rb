@@ -111,23 +111,8 @@ class Mastercard
           when "DRUGS GIVEN"
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'AMOUNT DISPENSED'
-            drugs_quantity = []
-            drugs_quantity << [Drug.find(obs.order.drug_order.drug_inventory_id),obs.order.drug_order.quantity] rescue []
-            next if drugs_quantity.blank?
-
-            gave = []  
-            drugs_quantity.map{|drug,quantity|
-              gave << [drug.name,quantity] 
-            }
-            
-            gave.map{|drug,quantity| 
-              gave_hash[drug] += quantity 
-            }
-            patient_visits[visit_date].gave = nil
-            gave_hash.map{ | drug , quantity |
-              patient_visits[visit_date].gave += "<br />#{drug} (#{quantity})" unless patient_visits[visit_date].gave.blank?
-              patient_visits[visit_date].gave = "#{drug} (#{quantity})" if patient_visits[visit_date].gave.blank?
-            }
+            patient_visits[visit_date].gave = [] if patient_visits[visit_date].gave.blank?
+            patient_visits[visit_date].gave << [Drug.find(obs.value_drug).name,obs.value_numeric]
           when "REGIMEN"
             concept_name = obs.concept.name.name rescue []
             next unless concept_name == 'ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT'

@@ -21,7 +21,7 @@
         $('#new_desk').click(function() { window.location = '/location' })        
         $('#set_date').click(function() { window.location = '/people/set_datetime' })        
     
-        session_datetime = '<%=session[:datetime]%>'
+        session_datetime = '<%=session[:datetime].to_date rescue '' %>'
 
         if (session_datetime != ''){
           document.getElementById('set_date').innerHTML = '<span>Reset date</span>'

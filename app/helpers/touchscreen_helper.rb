@@ -46,7 +46,7 @@ module TouchscreenHelper
     options = limits.merge(options)
     content = ""
     content << text_field_tag("observations[][value_numeric]", value, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_numeric')
+    content << touch_meta_tag(concept, patient, time, 'value_numeric', options)
     content
   end
 

@@ -1,3 +1,4 @@
+
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
 </script>
@@ -9,21 +10,21 @@
 
 <% @patient.orders.unfinished.arv.prescriptions.each do |order| %>
     <%= touch_numeric_tag "AMOUNT OF DRUG BROUGHT TO CLINIC", @patient, nil,
-      {:id => "amount_brought_#{order.order_id}",
-       :units => "#{order.drug_order.units}",
-       :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} brought to clinic",
-       :order_id => order.order_id} %>
+      {:id        => "amount_brought_#{order.order_id}",
+       :units     => "#{order.drug_order.units}",
+       :order_id  => "#{order.order_id}",
+       :helpText  => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} brought to clinic"} %>
     <%= touch_numeric_tag "AMOUNT OF DRUG REMAINING AT HOME", @patient, nil,
-      {:id => "amount_other_#{order.order_id}",
-       :units => "#{order.drug_order.units}",
-       :helpText => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} left at home",
-       :order_id => order.order_id } %>
+      {:id        => "amount_other_#{order.order_id}",
+       :units     => "#{order.drug_order.units}",
+       :order_id  => "#{order.order_id}",
+       :helpText  => "Total #{order.drug_order.units} of #{order.drug_order.drug.name} left at home" } %>
     <%= touch_text_field_tag "WHAT WAS THE PATIENTS ADHERENCE FOR THIS DRUG ORDER", @patient, nil,
-      {:id => "adherence_#{order.order_id}",
-       :helpText => "Adherence summary for #{order.drug_order.drug.name}",
-       :tt_onLoad => "adherence(#{order.id}, '#{order.start_date.strftime('%Y-%m-%d')}', '#{order.auto_expire_date.strftime('%Y-%m-%d')}', #{order.drug_order.equivalent_daily_dose || 0}, #{order.drug_order.quantity || 0})",
-       :optional => "true",
-       :order_id => order.order_id,
+      {:id          => "adherence_#{order.order_id}",
+       :helpText    => "Adherence summary for #{order.drug_order.drug.name}",
+       :tt_onLoad   => "adherence(#{order.id}, '#{order.start_date.strftime('%Y-%m-%d')}', '#{order.auto_expire_date.strftime('%Y-%m-%d')}', #{order.drug_order.equivalent_daily_dose || 0}, #{order.drug_order.quantity || 0})",
+       :optional    => "true",
+       :order_id    => "#{order.order_id}",
        :tt_pageStyleClass => "NoControls"} %>
   <% end %>
 <script>
@@ -47,7 +48,13 @@ function adherence(order_id, start_date, auto_expire_date, equivalent_daily_dose
     var days_since_last_visit = since(last_visit_date);
     var expected_amount_remaining = quantity - Math.round(days_since_last_visit * equivalent_daily_dose);
     var doses_missed = amount_remaining - expected_amount_remaining;
-    var adherence = Math.round(100 * (quantity - amount_remaining) / (quantity - expected_amount_remaining))
+    var adherence = 100;
+    // To avoiding dividing by zero which result in a value of 'infinity' being inserted into the database as adherence value
+    if ((quantity - expected_amount_remaining) != 0)
+    {
+      adherence = Math.round(100 * (quantity - amount_remaining) / (quantity - expected_amount_remaining));
+    }
+    //alert(adherence);
     // This is probably not accurate, we should use appointment date
     var days_overdue_for_visit = since(auto_expire_date);
     // Build the summary
