@@ -42,9 +42,14 @@ class DispensationsController < ApplicationController
       @patient.patient_programs.find_by_program_id(Program.find_by_name("HIV PROGRAM")).transition(
                :state => "ON ANTIRETROVIRALS",:start_date => session[:datetime] ||= Time.now()) if @drug.arv? rescue nil
       @order.drug_order.total_drug_supply(@patient, @encounter,session_date.to_date)
-      @patient.set_received_regimen(@encounter, @order) if @order.drug_order.drug.arv?
+      dispension_completed = @patient.set_received_regimen(@encounter, @order) if @order.drug_order.drug.arv?
       Pharmacy.dispensed_stock_adjustment(@patient.current_treatment_encounter(session_date.to_date))
-      redirect_to "/patients/treatment/#{@patient.patient_id}"
+      if dispension_completed.blank?
+        redirect_to "/patients/treatment/#{@patient.patient_id}"
+      else
+        redirect_to :controller => 'encounters',:action => 'new',:start_date => @order.start_date.to_date,
+          :patient_id => @patient.id,:id =>"show",:encounter_type => "appointment" ,:end_date => @order.auto_expire_date.to_date
+      end
     else
       flash[:error] = "Could not dispense the drug for the prescription"
       redirect_to "/patients/treatment/#{@patient.patient_id}"

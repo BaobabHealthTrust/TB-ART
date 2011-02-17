@@ -233,7 +233,7 @@ class Cohort
     cohort_report['TB confirmed on treatment'] = tb_status_outcomes['TB STATUS']['On Treatment']
     cohort_report['TB Unknown'] = tb_status_outcomes['TB STATUS']['Unknown']
 
-    cohort_report['Regimens'] = self.regimens
+    cohort_report['Regimens'] = self.regimens(@@first_registration_date)
    
     cohort_report
   end

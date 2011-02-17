@@ -13,15 +13,33 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
   
-  function calculate_dates() {
-    ds.date = new Date(); 
-    ds.date.setDate(ds.date.getDate() + (7 * parseInt($('time_until_next_visit').value)));
-    $('dateselector_year').value = ds.date.getFullYear();
-    $('dateselector_month').value = DateUtil.months[ds.date.getMonth()];
-    $('dateselector_day').value = ds.date.getDate(); 
-    ds.init();  
+  function calculate_dates(start_date,end_date) {
+    if (start_date == '' && end_date == ''){
+      ds.date = new Date(); 
+      ds.date.setDate(ds.date.getDate() + (7 * parseInt($('time_until_next_visit').value)));
+      $('dateselector_year').value = ds.date.getFullYear();
+      $('dateselector_month').value = DateUtil.months[ds.date.getMonth()];
+      $('dateselector_day').value = ds.date.getDate(); 
+      $('next_appointment_date').value = ds.date
+      ds.init();
+      $('touchscreenInput1').value = ds.date.getFullYear() + '-' + DateUtil.months[ds.date.getMonth()] + '-' + ds.date.getDate()
+    }else{
+      visit_date = new Date(start_date);
+      auto_expire_date = new Date(end_date);
+      week = parseInt((auto_expire_date - visit_date) / (7 * 24 * 60 * 60 * 1000))
+      visit_date.setDate(visit_date.getDate() + (7 * week));
+      $('dateselector_year').value = visit_date.getFullYear();
+      $('dateselector_month').value = DateUtil.months[visit_date.getMonth()];
+      $('dateselector_day').value = visit_date.getDate(); 
+      $('touchscreenInput1').value = visit_date.getFullYear() + '-' + DateUtil.months[visit_date.getMonth()] + '-' + visit_date.getDate()
+    }
   }
   
+  function calculateGivenRange(start_date,end_date) {
+    if (start_date && end_date)
+      gotoNextPage();
+  }
+
 </script>
 <form id='appointment' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "APPOINTMENT" %>
@@ -34,21 +52,26 @@
                                                               ["1 month", 4],
                                                               ["2 months", 8],
                                                               ["3 months", 12],
-                                                              ["6 months", 24]]), {:helpText => 'Time Until Next Appointment'}) %>
+                                                              ["6 months", 24]]), 
+                                                              {:helpText => 'Time Until Next Appointment',
+                                                               :tt_onLoad => "calculateGivenRange('#{params[:start_date]}','#{params[:end_date]}')"}) %>
 
-
+  <%
+  absolute_min = params[:start_date].to_date.year rescue Date.today.year 
+  absolute_max = params[:end_date].to_date.year + 1 rescue Date.today.year + 1%>
   <label for='next_appointment_date'>Next Appointment Date</label>
   <%= hidden_field_tag("observations[][concept_name]", "RETURN VISIT DATE") %>
   <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
   <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
   <%= text_field_tag("observations[][value_datetime]", (Time.now + 1.month).year, {:helpText => 'Next Appointment Date', 
                                                                                    :field_type => 'date', 
-                                                                                   :absoluteMin => Date.today.year, 
-                                                                                   :absoluteMax => Date.today.year + 1, 
+                                                                                   :absoluteMin => absolute_min, 
+                                                                                   :absoluteMax => absolute_max, 
                                                                                    :tt_pageStyleClass => "Date DatesOnly", 
-                                                                                   :tt_onLoad => "calculate_dates();", 
+                                                                                   :tt_onLoad => "calculate_dates('#{params[:start_date]}','#{params[:end_date]}');", 
                                                                                    :id => 'next_appointment_date'}) %>
 
 
   <%= submit_tag "Finish" %>    
 </form>
+
