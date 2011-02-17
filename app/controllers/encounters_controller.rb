@@ -1,7 +1,8 @@
 class EncountersController < ApplicationController
 
-  def create  
+  def create
     if params['ever_received_art'] == 'NO' and params['encounter']['encounter_type_name'] == 'ART_INITIAL'
+
       observations = []
       (params[:observations] || []).each do |observation|
         next if observation['concept_name'] == 'HAS TRANSFER LETTER'
@@ -9,6 +10,7 @@ class EncountersController < ApplicationController
         next if observation['concept_name'] == 'ART NUMBER AT PREVIOUS LOCATION'
         observations << observation
       end
+      raise params[:observations].to_yaml
       params[:observations] = observations unless observations.blank?
     end
 
@@ -24,11 +26,13 @@ class EncountersController < ApplicationController
 
     # Observation handling
     (params[:observations] || []).each do |observation|
+
       # Check to see if any values are part of this observation
       # This keeps us from saving empty observations
       values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
         observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
       }.compact
+
       next if values.length == 0
       observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
       observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
@@ -105,10 +109,12 @@ class EncountersController < ApplicationController
     @answer_array = arv_regimen_answers(:patient => @patient,
       :use_short_names    => use_regimen_short_names == "true",
       :show_other_regimen => show_other_regimen      == "true")
-
     redirect_to "/" and return unless @patient
+
     redirect_to next_task(@patient) and return unless params[:encounter_type]
+
     redirect_to :action => :create, 'encounter[encounter_type_name]' => params[:encounter_type].upcase, 'encounter[patient_id]' => @patient.id and return if ['registration'].include?(params[:encounter_type])
+
     render :action => params[:encounter_type] if params[:encounter_type]
   end
 

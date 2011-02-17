@@ -300,7 +300,12 @@ class Patient < ActiveRecord::Base
     PatientIdentifier.identifier(self.patient_id, arv_number_id).identifier rescue nil
   end
 
-  def set_received_regimen(encounter,order)
+  def age_at_initiation(initiation_date)
+    patient = Person.find(self.id)
+    return patient.age(initiation_date) unless initiation_date.nil?
+  end
+
+  def set_received_regimen(encounter,drug_order)
     dispense_finish = true ; dispensed_drugs_concept_ids = []
     
     ( order.encounter.orders || [] ).each do | order |
@@ -337,6 +342,6 @@ EOF
       obs.save
       return obs.value_text 
     end
-  end
+ end
 
 end
