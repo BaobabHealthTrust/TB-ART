@@ -377,4 +377,34 @@ class CohortTool < ActiveRecord::Base
     return visits_by_week
   end
 
+  def self.visits_by_week_day(visits)
+    week_day_visits = {}
+    visits          = CohortTool.visits_by_week(visits)
+    weeks           = visits.keys.sort
+    week_days       = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+    week_days.each_with_index do |day, index|
+      weeks.map do  |week|
+        visits_number = 0
+        visit_date    = week.to_date.strftime("%d-%b-%Y")
+        js_date       = week.to_time.to_i * 1000
+        this_day      = visits[week][day]
+
+
+        unless this_day.nil?
+          visits_number = this_day.count
+          visit_date    = this_day.first.encounter_datetime.to_date.strftime("%d-%b-%Y")
+          js_date       = this_day.first.encounter_datetime.to_time.to_i * 1000
+        else
+        this_day      = (week.to_date + index.days)
+        visit_date    = this_day.strftime("%d-%b-%Y")
+        js_date       = this_day.to_time.to_i * 1000
+        end
+
+        (week_day_visits[day].nil?) ? week_day_visits[day] = [[js_date, visits_number, visit_date]] : week_day_visits[day].push([js_date, visits_number, visit_date])
+      end
+    end
+    week_day_visits
+  end
+
 end
