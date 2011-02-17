@@ -387,7 +387,7 @@ class CohortTool < ActiveRecord::Base
 
  adherence_sql_statement= " SELECT worse_adherence_dif, pat_ad.person_id as patient_id, pat_ad.value_text AS adherence_rate_worse
                             FROM (SELECT ABS(100 - Abs(value_text)) as worse_adherence_dif, obs_id, person_id, concept_id, encounter_id, order_id, obs_datetime, location_id, value_text
-                                  FROM openmrs_bart2.obs q
+                                  FROM obs q
                                   WHERE concept_id = #{adherence_concept_id} AND order_id IS NOT NULL
                                   ORDER BY q.obs_datetime DESC, worse_adherence_dif DESC, person_id ASC)pat_ad
                             WHERE pat_ad.obs_datetime >= '#{start_date}' AND pat_ad.obs_datetime<= '#{end_date}'
@@ -436,7 +436,7 @@ class CohortTool < ActiveRecord::Base
                                FROM (SELECT latest_adherence.obs_datetime, latest_adherence.adherence_rate, latest_adherence.id, latest_adherence.patient_id, latest_adherence.order_id, drugOrder.drug_inventory_id, drugOrder.equivalent_daily_dose, drugOrder.quantity, latest_adherence.encounter_id
                                     FROM (SELECT all_adherences.obs_datetime, all_adherences.value_text AS adherence_rate, all_adherences.obs_id as id, all_adherences.person_id as patient_id,all_adherences.order_id, all_adherences.encounter_id
                                           FROM (SELECT obs_id, person_id, concept_id, encounter_id, order_id, obs_datetime, location_id, value_text
-                                                FROM openmrs_bart2.obs Observations
+                                                FROM obs Observations
                                                 WHERE concept_id = #{adherence_concept_id}
                                                 ORDER BY person_id ASC , Observations.obs_datetime DESC )all_adherences
                                           WHERE all_adherences.obs_datetime >= '#{start_date}' AND all_adherences.obs_datetime<= '#{end_date}'
@@ -450,7 +450,7 @@ class CohortTool < ActiveRecord::Base
 
       worse_adherence_per_patient =" (SELECT worse_adherence_dif, pat_ad.person_id as patient_id, pat_ad.value_text AS adherence_rate_worse
                                 FROM (SELECT ABS(100 - Abs(value_text)) as worse_adherence_dif, obs_id, person_id, concept_id, encounter_id, order_id, obs_datetime, location_id, value_text
-                                      FROM openmrs_bart2.obs q
+                                      FROM obs q
                                       WHERE concept_id = #{adherence_concept_id} AND order_id IS NOT NULL
                                       ORDER BY q.obs_datetime DESC, worse_adherence_dif DESC, person_id ASC)pat_ad
                                 WHERE pat_ad.obs_datetime >= '#{start_date}' AND pat_ad.obs_datetime<= '#{end_date}'
