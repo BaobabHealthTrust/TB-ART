@@ -300,43 +300,42 @@ class Patient < ActiveRecord::Base
     PatientIdentifier.identifier(self.patient_id, arv_number_id).identifier rescue nil
   end
 
-  def set_received_regimen(encounter,drug_order)
+  def set_received_regimen(encounter,order)
     dispense_finish = true ; dispensed_drugs_concept_ids = []
     
-    ( drug_order.encounter.orders || [] ).each do | order |
+    ( order.encounter.orders || [] ).each do | order |
       dispense_finish = false if order.drug_order.quantity <= 0
       dispensed_drugs_concept_ids << Drug.find(order.drug_order.drug_inventory_id).concept_id
     end
 
     return unless dispense_finish
 
-    all_drug_ingredients = {}
-    DrugIngredient.find(:all).each do  | ingredient |
-      #concept = Concept.find(concept_id)
-      #regimen_name = concept.short_name ; regimen_name = concept.name.name if regimen_name.blank? 
-      all_drug_ingredients[ingredient.concept_id] = [] if all_drug_ingredients[ingredient.concept_id].blank?
-      all_drug_ingredients[ingredient.concept_id] << ingredient.ingredient_id
-    end
-
-    regimen_prescribed = nil
-
-    ( all_drug_ingredients || [] ).each do | regimen_id , ingredients |
-      regimen_prescribed = regimen_id if (ingredients - dispensed_drugs_concept_ids) == []
-    end
-
-    return dispensed_drugs_concept_ids
-    regimen_prescribed = 5811 if regimen_prescribed.blank?
-    return regimen_prescribed
+    regimen_id = ActiveRecord::Base.connection.select_value <<EOF
+SELECT concept_id FROM drug_ingredient 
+WHERE ingredient_id IN (SELECT distinct ingredient_id 
+FROM drug_ingredient 
+WHERE concept_id IN (#{dispensed_drugs_concept_ids.join(',')}))
+GROUP BY concept_id
+HAVING COUNT(*) = (SELECT COUNT(distinct ingredient_id) 
+FROM drug_ingredient 
+WHERE concept_id IN (#{dispensed_drugs_concept_ids.join(',')}))
+EOF
+  
+    regimen_prescribed = regimen_id.to_i rescue ConceptName.find_by_name('UNKNOWN').concept_id
+    
     if (Observation.find(:first,:conditions => ["person_id = ? AND encounter_id = ? AND concept_id = ?",
         self.id,encounter.id,ConceptName.find_by_name('ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT').concept_id])).blank? 
+        regimen_value_text = Concept.find(regimen_prescribed).short_name
+        regimen_value_text = ConceptName.find_by_concept_id(regimen_prescribed).name if regimen_value_text.blank?
       obs = Observation.new(
         :concept_name => "ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT",
         :person_id => self.id,
         :encounter_id => encounter.id,
-        :value_text => ConceptName.find_by_concept_id(regimen_prescribed).name,
+        :value_text => regimen_value_text,
         :value_coded => regimen_prescribed,
-        :obs_datetime => Time.now)
-      #obs.save 
+        :obs_datetime => encounter.encounter_datetime)
+      obs.save
+      return obs.value_text 
     end
   end
 
