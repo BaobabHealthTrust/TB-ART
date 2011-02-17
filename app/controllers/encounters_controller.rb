@@ -68,7 +68,7 @@ class EncountersController < ApplicationController
       # Lots of states bub
       unless program[:states].blank?
         #adding program_state start date
-        program[:states][0]['start_date'] = @patient_program.date_enrolled rescue nil 
+        program[:states][0]['start_date'] = @patient_program.date_enrolled ||= Time.now()
       end
       (program[:states] || []).each {|state| @patient_program.transition(state) }
     end
