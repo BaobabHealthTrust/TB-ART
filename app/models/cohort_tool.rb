@@ -407,4 +407,31 @@ class CohortTool < ActiveRecord::Base
     week_day_visits
   end
 
+  def self.visiting_patients_by_day(visits)
+
+    patients = visits.inject({}) do |patient, visit|
+
+      visit_date = visit.encounter_datetime.strftime("%d-%b-%Y")
+
+      # get a patient of a given visit
+      new_patient   = { :patient_id   => (visit.patient.patient_id || ""),
+                        :arv_number   => (visit.patient.arv_number || ""),
+                        :name         => (visit.patient.name || ""),
+                        :national_id  => (visit.patient.national_id || ""),
+                        :gender       => (visit.patient.gender || ""),
+                        :age          => (visit.patient.person.age || ""),
+                        :birthdate    => (visit.patient.person.birthdate.strftime("%d-%b-%Y") || ""),
+                        :phone_number => (visit.patient.person.phone_numbers[:cell_phone_number] || ""),
+                        :start_date   => (visit.patient.encounters.last.encounter_datetime.strftime("%d-%b-%Y") || "")
+      }
+
+      #add a patient to the day
+      (patient[visit_date].nil?) ? patient[visit_date] = [new_patient] : patient[visit_date].push(new_patient)
+
+      patient
+    end
+
+    patients
+  end
+
 end
