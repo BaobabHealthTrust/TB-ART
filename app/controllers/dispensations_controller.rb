@@ -17,7 +17,7 @@ class DispensationsController < ApplicationController
       params[:quantity] = params[:identifier].match(/\d+$/).to_s
     end
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    session_date = session[:datetime] ||= Time.now()
+    session_date = session[:datetime] || Time.now()
     @encounter = @patient.current_dispensation_encounter(session_date)
     @drug = Drug.find(params[:drug_id])
     
@@ -37,10 +37,10 @@ class DispensationsController < ApplicationController
       :encounter_id => @encounter.id,
       :value_drug => @order.drug_order.drug_inventory_id,
       :value_numeric => params[:quantity],
-      :obs_datetime => session[:datetime] ||= Time.now())
+      :obs_datetime => session[:datetime] || Time.now())
     if obs.save
       @patient.patient_programs.find_by_program_id(Program.find_by_name("HIV PROGRAM")).transition(
-               :state => "ON ANTIRETROVIRALS",:start_date => session[:datetime] ||= Time.now()) if @drug.arv? rescue nil
+               :state => "ON ANTIRETROVIRALS",:start_date => session[:datetime] || Time.now()) if @drug.arv? rescue nil
       @order.drug_order.total_drug_supply(@patient, @encounter,session_date.to_date)
       dispension_completed = @patient.set_received_regimen(@encounter, @order) if @order.drug_order.drug.arv?
       Pharmacy.dispensed_stock_adjustment(@patient.current_treatment_encounter(session_date.to_date))

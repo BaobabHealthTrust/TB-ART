@@ -113,7 +113,7 @@ Guardian(s):&nbsp;<%=person.relationships.map{|r|Person.find(r.person_b).name}.j
       <th>Drugs given</th>
       <td>
         <% gave = ''
-        visit.gave.each do | name , quantity |
+        (visit.gave || []).each do | name , quantity |
           gave += "<br/>#{name} (#{quantity})" unless gave.blank?
           gave = "#{name} (#{quantity})" if gave.blank?
         end %>

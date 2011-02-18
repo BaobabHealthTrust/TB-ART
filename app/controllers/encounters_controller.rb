@@ -1,16 +1,19 @@
 class EncountersController < ApplicationController
 
   def create
-    if params['ever_received_art'] == 'NO' and params['encounter']['encounter_type_name'] == 'ART_INITIAL'
-
-      observations = []
-      (params[:observations] || []).each do |observation|
-        next if observation['concept_name'] == 'HAS TRANSFER LETTER'
-        next if observation['concept_name'] == 'HAS THE PATIENT TAKEN ART IN THE LAST TWO WEEKS'
-        next if observation['concept_name'] == 'ART NUMBER AT PREVIOUS LOCATION'
-        observations << observation
+    if params['encounter']['encounter_type_name'] == 'ART_INITIAL'
+      if params[:observations][0]['concept_name'] == 'EVER RECEIVED ART' and params[:observations][0]['value_coded_or_text'] == 'NO'
+        observations = []
+        (params[:observations] || []).each do |observation|
+          next if observation['concept_name'] == 'HAS TRANSFER LETTER'
+          next if observation['concept_name'] == 'HAS THE PATIENT TAKEN ART IN THE LAST TWO WEEKS'
+          next if observation['concept_name'] == 'HAS THE PATIENT TAKEN ART IN THE LAST TWO MONTHS'
+          next if observation['concept_name'] == 'ART NUMBER AT PREVIOUS LOCATION'
+          next if observation['concept_name'] == 'DATE ART LAST TAKEN'
+          next if observation['concept_name'] == 'LAST ART DRUGS TAKEN'
+          observations << observation
+        end
       end
-      raise params[:observations].to_yaml
       params[:observations] = observations unless observations.blank?
     end
 
@@ -55,7 +58,8 @@ class EncountersController < ApplicationController
     end
 
     # Program handling
-    date_enrolled_default = session[:datetime] ||= Time.now()
+    date_enrolled = params[:programs][0]['date_enrolled'].to_time rescue nil
+    date_enrolled = session[:datetime] || Time.now() if date_enrolled.blank?
     (params[:programs] || []).each do |program|
       # Look up the program if the program id is set      
       @patient_program = PatientProgram.find(program[:patient_program_id]) unless program[:patient_program_id].blank?
@@ -63,12 +67,12 @@ class EncountersController < ApplicationController
       unless (@patient_program)
         @patient_program = @patient.patient_programs.create(
           :program_id => program[:program_id],
-          :date_enrolled => program[:date_enrolled] ||= date_enrolled_default)          
+          :date_enrolled => date_enrolled)          
       end
       # Lots of states bub
       unless program[:states].blank?
         #adding program_state start date
-        program[:states][0]['start_date'] = @patient_program.date_enrolled ||= Time.now()
+        program[:states][0]['start_date'] = date_enrolled
       end
       (program[:states] || []).each {|state| @patient_program.transition(state) }
     end

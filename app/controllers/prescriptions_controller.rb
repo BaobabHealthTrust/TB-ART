@@ -22,7 +22,7 @@ class PrescriptionsController < ApplicationController
   def create
     @suggestions = params[:suggestion] || ['New Prescription']
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    session_date = session[:datetime] ||= Time.now()
+    session_date = session[:datetime] || Time.now()
     @encounter = @patient.current_treatment_encounter(session_date)
     @diagnosis = Observation.find(params[:diagnosis]) rescue nil
     @suggestions.each do |suggestion|

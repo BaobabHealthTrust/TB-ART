@@ -94,7 +94,7 @@ vertical-align:top;
       <td><%= data.pills || '&nbsp;'%></td>
       <td>
         <% gave = '' 
-        data.gave.each do | name , quantity |
+        (data.gave || []).each do | name , quantity |
           gave += "<br/>#{name} (#{quantity})" unless gave.blank?
           gave = "#{name} (#{quantity})" if gave.blank?
         end %>

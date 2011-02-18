@@ -8,9 +8,9 @@ class RegimensController < ApplicationController
   
   def create
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
-    session_date = session[:datetime] ||=  Time.now()
+    session_date = session[:datetime] || Time.now()
     encounter = @patient.current_treatment_encounter(session_date)
-    start_date = session[:datetime] ||= Time.now
+    start_date = session[:datetime] || Time.now
     auto_expire_date = session[:datetime] + params[:duration].to_i.days rescue Time.now + params[:duration].to_i.days
     orders = RegimenDrugOrder.all(:conditions => {:regimen_id => params[:regimen]})
     ActiveRecord::Base.transaction do
