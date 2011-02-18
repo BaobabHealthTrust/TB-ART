@@ -124,7 +124,7 @@ class Task < ActiveRecord::Base
   end 
   
   def self.validate_task(patient,task,session_date = Date.today)
-    return task unless task.has_program_id == 1
+    #return task unless task.has_program_id == 1
     return task if task.encounter_type == 'REGISTRATION'
     art_encounters = ['ART_INITIAL','HIV RECEPTION','VITALS','HIV STAGING','ART VISIT','ART ADHERENCE','TREATMENT','DISPENSING']
 

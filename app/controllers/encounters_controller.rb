@@ -13,10 +13,17 @@ class EncountersController < ApplicationController
           next if observation['concept_name'] == 'LAST ART DRUGS TAKEN'
           observations << observation
         end
+      elsif params[:observations][4]['concept_name'] == 'DATE ART LAST TAKEN' and params[:observations][4]['value_datetime'] != 'Unknown'
+        observations = []
+        (params[:observations] || []).each do |observation|
+          next if observation['concept_name'] == 'HAS THE PATIENT TAKEN ART IN THE LAST TWO WEEKS'
+          next if observation['concept_name'] == 'HAS THE PATIENT TAKEN ART IN THE LAST TWO MONTHS'
+          observations << observation
+        end
       end
       params[:observations] = observations unless observations.blank?
     end
-
+    
     @patient = Patient.find(params[:encounter][:patient_id])
 
     # Go to the dashboard if this is a non-encounter

@@ -46,8 +46,10 @@
      :condition => '$("ever_received_art").value == "YES"',
      :helpText => "ART number at previous location" } %>
 
+  <% absolute_min = session[:datetime].to_date rescue Date.today %>
   <%= touch_date_tag "DATE ART LAST TAKEN", @patient, nil,
     {:id => "date_art_last_taken",
+     :absoluteMin => absolute_min,
      :absoluteMax => Date.today,
      :condition => '$("ever_received_art").value == "YES"',
      :helpText => "Date ART last taken"} %>
