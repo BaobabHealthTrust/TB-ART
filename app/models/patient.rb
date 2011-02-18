@@ -305,7 +305,7 @@ class Patient < ActiveRecord::Base
     return patient.age(initiation_date) unless initiation_date.nil?
   end
 
-  def set_received_regimen(encounter,drug_order)
+  def set_received_regimen(encounter,order)
     dispense_finish = true ; dispensed_drugs_concept_ids = []
     
     ( order.encounter.orders || [] ).each do | order |
@@ -326,7 +326,7 @@ FROM drug_ingredient
 WHERE concept_id IN (#{dispensed_drugs_concept_ids.join(',')}))
 EOF
   
-    regimen_prescribed = regimen_id.to_i rescue ConceptName.find_by_name('UNKNOWN').concept_id
+    regimen_prescribed = regimen_id.to_i rescue ConceptName.find_by_name('UNKNOWN ANTIRETROVIRAL DRUG').concept_id
     
     if (Observation.find(:first,:conditions => ["person_id = ? AND encounter_id = ? AND concept_id = ?",
         self.id,encounter.id,ConceptName.find_by_name('ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT').concept_id])).blank? 

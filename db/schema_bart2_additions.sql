@@ -782,6 +782,26 @@ CREATE TABLE `weight_height_for_ages` (
   KEY `index_weight_height_for_ages_on_sex` (`sex`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `drug_ingredient`
+--
+
+DROP TABLE IF EXISTS `drug_ingredient`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `drug_ingredient` (
+  `concept_id` int(11) NOT NULL DEFAULT '0',
+  `ingredient_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ingredient_id`,`concept_id`),
+  KEY `combination_drug` (`concept_id`),
+  CONSTRAINT `combination_drug` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `ingredient` FOREIGN KEY (`ingredient_id`) REFERENCES `concept`    (`concept_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

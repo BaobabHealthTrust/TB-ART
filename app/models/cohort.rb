@@ -233,8 +233,33 @@ class Cohort
     cohort_report['TB confirmed on treatment'] = tb_status_outcomes['TB STATUS']['On Treatment']
     cohort_report['TB Unknown'] = tb_status_outcomes['TB STATUS']['Unknown']
 
-
+    cohort_report['Regimens'] = self.regimens(@@first_registration_date)
+   
     cohort_report
+  end
+
+  def regimens(start_date = @start_date, end_date = @end_date)
+    regimens = []
+    regimen_hash = {"STAVUDINE LAMIVUDINE AND NEVIRAPINE" => 0,
+                    "ZIDOVUDINE LAMIVUDINE AND NEVIRAPINE" => 0,
+                    "STAVUDINE LAMIVUDINE AND EFAVIRENZ" => 0,
+                    "ZIDOVUDINE LAMIVUDINE AND EFAVIRENZ" => 0,
+                    "AZT+3TC+TDF+LPV/R" => 0,
+                    "DIDANOSINE ABACAVIR LOPINAVIR RITONAVIR" => 0,
+                    "UNKNOWN ANTIRETROVIRAL DRUG" => 0
+                   }
+    regimem_given_concept = ConceptName.find_by_name('ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT')
+    PatientProgram.find_by_sql("SELECT patient_id , value_coded regimen_id, value_text regimen FROM obs 
+                                INNER JOIN patient_program p ON p.patient_id = obs.person_id
+                                INNER JOIN patient_state s ON p.patient_program_id = s.patient_program_id
+                                WHERE p.program_id = #{@@program_id} AND obs.concept_id = #{regimem_given_concept.concept_id}
+                                AND date_enrolled >= '#{start_date}' AND date_enrolled <= '#{end_date}' 
+                                GROUP BY patient_id 
+                                ORDER BY obs.obs_datetime DESC").map{| value | regimens << [value.regimen_id, value.regimen]}
+    ( regimens || [] ).each do | regimen_id, regimen |
+      regimen_hash[ConceptName.find_by_concept_id(regimen_id).name]+=1
+    end
+    regimen_hash
   end
 
   def death_dates(start_date = @start_date, end_date = @end_date)
