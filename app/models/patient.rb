@@ -344,4 +344,8 @@ EOF
     end
  end
 
+  def gender
+    self.person.sex
+  end
+
 end

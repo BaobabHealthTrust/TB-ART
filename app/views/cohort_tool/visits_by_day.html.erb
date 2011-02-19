@@ -1,41 +1,32 @@
 <html>
   <head>
-    <%= stylesheet_link_tag "visits_by_day" %>
-    <style>
-      .color_too_high{
-        background-color:#CDCD00;
-      }
-      
-      .color_too_low{
-        background-color:#EEC900;
-      }
-    </style>
+    <%= stylesheet_link_tag 'visits_by_day' %>
+
+    <script language = 'javascript'>
+      var visitsByWeekDay   = <%= @visits_by_week_day.to_json %>
+      var visitingPatients  = <%= @patients.to_json%>
+    </script>
+
+    <%= javascript_include_tag 'jquery'  %>
+    <%= javascript_include_tag 'jquery.flot'%>
+    <%= javascript_include_tag 'utils' %>
+    <%= javascript_include_tag 'visits_by_day' %>
   </head>
-  <h2><%=@stats_name %></br><%= @quater%></h2>
-  <%= render :partial => "/report/header" %>
-  </br>
-  </br>
-  </br>
-  <div id='data'>
-  <table id="data_table">
-    <thead>
-      <tr>
-        <td style="background:#FFFF99;" class="top_colunm">WEEK</td>
-        <% unless @totals_by_week_day.blank? %>
-          <td class='table_heading_td buttons top_colunm'><%= link_to_onmousedown "Mon", :action =>  'graph',:id =>@totals_by_week_day['Mon'],:quater => @quater,:day =>"Monday" %></td>
-          <td class='table_heading_td buttons top_colunm'><%= link_to_onmousedown "Tue", :action =>  'graph',:id =>@totals_by_week_day['Tue'],:quater => @quater,:day =>"Tuesday"  %></td>
-          <td class='table_heading_td buttons top_colunm'><%= link_to_onmousedown "Wed", :action =>  'graph',:id =>@totals_by_week_day['Wed'],:quater => @quater,:day =>"Wednesday"  %></td>
-          <td class='table_heading_td buttons top_colunm'><%= link_to_onmousedown "Thu", :action =>  'graph',:id =>@totals_by_week_day['Thu'],:quater => @quater,:day =>"Thursday"  %></td>
-          <td class='table_heading_td buttons top_colunm'><%= link_to_onmousedown "Fri", :action =>  'graph',:id =>@totals_by_week_day['Fri'],:quater => @quater,:day =>"Friday"  %></td>
-          <td class='table_heading_td buttons top_colunm'><%= link_to_onmousedown "Sat", :action =>  'graph',:id =>@totals_by_week_day['Sat'],:quater => @quater,:day =>"Saturday"  %></td>
-          <td class='table_heading_td buttons top_colunm'><%= link_to_onmousedown "Sun", :action =>  'graph',:id =>@totals_by_week_day['Sun'],:quater => @quater,:day =>"Sunday"  %></td>
-        <% end %>
-        <td class='table_heading_td top_colunm' id="totals">Total</td>
-      </tr>
-    </thead>
-    <%= CohortTool.visits_by_day_results_html(@results,@quater) unless @results.blank? %>
-  </table>
-  </div>
+  <body>
+    <%= render :partial => '/report/header' %>
+    <div id='tabbed-content'>
+      <div id='visits-table-tab' class='activated'>
+        <%= render :partial => 'visits_table' %>
+      </div>
+
+      <div id='visits-graph-tab' style='display: none'>
+          <%= render :partial => 'visits_graph' %>
+      </div>
+
+      <div id='patients-list-tab' style='display: none'>
+        <%= render :partial => 'patients_list'%>
+      </div>
+    </div>
   </body>
 </html>
 

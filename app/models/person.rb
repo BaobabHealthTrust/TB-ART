@@ -317,5 +317,15 @@ class Person < ActiveRecord::Base
   def phone_numbers
     PersonAttribute.phone_numbers(self.person_id)
   end
-  
+
+  def sex
+    if self.gender == "M"
+      return "Male"
+    elsif self.gender == "F"
+      return "Female"
+    else
+      return nil
+    end
+  end
+
 end
