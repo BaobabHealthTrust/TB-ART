@@ -234,6 +234,8 @@ class Cohort
     cohort_report['TB Unknown'] = tb_status_outcomes['TB STATUS']['Unknown']
 
     cohort_report['Regimens'] = self.regimens(@@first_registration_date)
+    cohort_report['Patients reinitiated on ART'] = self.patients_reinitiated_on_art
+    cohort_report['Total Patients reinitiated on ART'] = self.patients_reinitiated_on_art(@@first_registration_date)
    
     cohort_report
   end
@@ -260,6 +262,35 @@ class Cohort
       regimen_hash[ConceptName.find_by_concept_id(regimen_id).name]+=1
     end
     regimen_hash
+  end
+
+  def patients_reinitiated_on_art(start_date = @start_date, end_date = @end_date)
+    patients = []
+    yes_concept = ConceptName.find_by_name('YES')
+    date_art_last_taken_concept = ConceptName.find_by_name('DATE ART LAST TAKEN')
+    taken_arvs_concept = ConceptName.find_by_name('HAS THE PATIENT TAKEN ART IN THE LAST TWO WEEKS')
+    PatientProgram.find_by_sql("SELECT 
+                                patient_id , value_datetime date_art_last_taken,obs_datetime visit_date,value_coded,obs.concept_id concept_id  
+                                FROM obs 
+                                INNER JOIN patient_program p ON p.patient_id = obs.person_id
+                                INNER JOIN patient_state s ON p.patient_program_id = s.patient_program_id
+                                WHERE p.program_id = #{@@program_id} 
+                                AND (obs.concept_id = #{date_art_last_taken_concept.concept_id} OR obs.concept_id = #{taken_arvs_concept.id})
+                                AND date_enrolled >= '#{start_date}' AND date_enrolled <= '#{end_date}' 
+                                GROUP BY patient_id 
+                                ORDER BY obs.obs_datetime DESC").map do | ob | 
+                                  if ob.concept_id == date_art_last_taken_concept.id
+                                    patients << ob.patient_id if ob.value_coded == yes_concept.id
+                                  else
+                                    unless 2 >= ((ob.date_art_last_taken.to_date - ob.visit_date.to_date) / 7).to_i 
+                                      patients << ob.patient_id
+                                    end
+                                  end  
+                                end
+    patients.length
+  end
+
+  def patients_initiated_on_art_first_time(start_date = @start_date, end_date = @end_date)
   end
 
   def death_dates(start_date = @start_date, end_date = @end_date)
