@@ -23,7 +23,40 @@
     if (recent) select(recent);
   }) 
 </script>
-<div id="tab">
+<style type="text/css">
+        .personal-details-label {
+          font-weight:bold;
+        }
+        #personal-details{
+          font-size: 1em;
+          height: 150px;
+          max-width: 720px;
+          margin: 5px;
+          overflow: auto;
+        }
+
+        #menu {
+          float: right;
+          height: 680px;
+          overflow: auto;
+          width: 253px;
+          border: thin solid #EEEEEE;
+          margin-right: 5px;
+          margin-top: 5px;
+        }
+        .menu-button{
+          width:245px;
+        }
+        #visit-summary{
+          background: none repeat scroll 0 0 white;
+          margin-top: 10px;
+          float: left;
+          height: 236px;
+          width: 276px;
+        }
+      </style>
+
+<div id="tab" style="width:720px">
   <div id="history" style="float:left;width:500px;margin-top:5px;">
     <div id="programs" class="panel">
       <!-- h2>Programs</h2 -->
@@ -45,23 +78,23 @@
         <% end %>
       </ul>
     </div>
-    <div id="treatment" class="panel">
+    <!--div id="treatment" class="panel"-->
       <!-- h2>Treatment</h2 -->
-      <ul class="list small" style="height:140px;">
-        <% for presc in @prescriptions do %>
-          <li class="data <%= cycle('even', 'odd') %>" prescription="<%= presc.id %>">
-            <div class="prescription"><%=h presc.to_s %></div>
+      <!--ul class="list small" style="height:140px;">
+        <%#for presc in @prescriptions do %>
+          <li class="data <%#= cycle('even', 'odd') %>" prescription="<%#= presc.id %>">
+            <div class="prescription"><%#=h presc.to_s %></div>
           </li>  
-        <% end %>
-        <% if @prescriptions.empty? %>
+        <% #end %>
+        <%# if @prescriptions.empty? %>
           <li class="data even">
             <div class="prescription">There are no current prescriptions for this patient</div>
           </li>        
-        <% end %>
+        <%# end %>
       </ul>
-    </div>
-    <div id="charts" class="panel" style="height:235px;">
-    </div>
+    </div-->
+    <!--div id="charts" class="panel" style="height:235px;">
+    </div-->
   </div>
   <div id="today" style="margin-top:5px; border: 1px solid #000;">
     <div id="alerts" class="panel">
@@ -72,7 +105,7 @@
         </li>
       </ul>
     </div>
-    <div id="encounters" class="panel" style="float:right;">
+    <!--div id="encounters" class="panel" style="float:right;">
       <% current_day = session[:datetime].strftime('%Y-%m-%d') rescue 'Today'%>
       <h2><%=current_day %>'s Visit (possibly filtered)</h2>
       <ul class="list" style="clear:both;">
@@ -86,6 +119,6 @@
       <p></p>
       <ul id="observations" class="list small" style="height: 230px;">
       </ul>    
-    </div>
+    </div-->
   </div>  
 </div>

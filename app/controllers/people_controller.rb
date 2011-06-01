@@ -17,6 +17,13 @@ class PeopleController < ApplicationController
   end
  
   def search
+    #redirect to TB contact search results page if params has to do with search of tb contact info   
+    if params[:search_tb_index_person]
+      redirect_to :action => :new_tb_index_person, :gender => params[:gender],:given_name => params[:given_name], 
+                             :family_name => params[:family_name], :patient_id => params[:patient_id], 
+                             :referred_by_tb_index_person => params[:referred_by_tb_index_person] and return 
+    end
+    
     found_person = nil
     if params[:identifier]
       local_results = Person.search_by_identifier(params[:identifier])
@@ -31,14 +38,19 @@ class PeopleController < ApplicationController
         found_person =  Person.create_from_form(found_person_data) unless found_person_data.nil?
       end
       if found_person
+        #raise "--#{found_person.id}---#{params[:relation]}--".to_yaml
         redirect_to search_complete_url(found_person.id, params[:relation]) and return
       end
     end
-    @people = Person.search(params)    
+    
+    @people = Person.search(params)
   end
  
   # This method is just to allow the select box to submit, we could probably do this better
   def select
+    # 2011/04/12 -- And also allow the creation of TB contact link
+    redirect_to :action => :create_tb_index_person, :new_tb_index_person => {:gender => params[:gender], :given_name => params[:given_name], :family_name => params[:family_name],
+    :person_id => params[:person], :patient_id => params[:patient_id], :referred_by_tb_index_person => params[:referred_by_tb_index_person]} and return if params[:referred_by_tb_index_person] == "YES"
     redirect_to search_complete_url(params[:person], params[:relation]) and return unless params[:person].blank? || params[:person] == '0'
     redirect_to :action => :new, :gender => params[:gender], :given_name => params[:given_name], :family_name => params[:family_name],
     :family_name2 => params[:family_name2], :address2 => params[:address2], :identifier => params[:identifier], :relation => params[:relation]
@@ -77,14 +89,33 @@ class PeopleController < ApplicationController
     session[:datetime] = nil
     redirect_to :action => "index" and return
   end
+
+  def new_tb_index_person
+    @patient = Patient.find(params[:patient_id] || session[:patient_id])
+    @people = Person.search(params)  
+  end
+
+  def create_tb_index_person
+    Person.create_tb_index_or_contact(params[:new_tb_index_person])
+    redirect_to search_complete_url(params[:new_tb_index_person][:patient_id], '')
+  end
+
+  def create_tb_contact_person
+    Person.create_tb_index_or_contact(params[:new_tb_index_person])
+    redirect_to search_complete_url(params[:new_tb_contact_person][:patient_id], '')
+  end
+
+
   
 private
   
   def search_complete_url(found_person_id, primary_person_id) 
     unless (primary_person_id.blank?)
       # Notice this swaps them!
+      #raise "A--#{found_person_id}---#{primary_person_id}--".to_yaml
       new_relationship_url(:patient_id => primary_person_id, :relation => found_person_id)
     else
+      #raise "B--#{found_person_id}---#{primary_person_id}--".to_yaml
       url_for(:controller => :encounters, :action => :new, :patient_id => found_person_id)
     end
   end

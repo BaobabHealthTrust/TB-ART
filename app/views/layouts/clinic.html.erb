@@ -54,15 +54,14 @@
     </style>
     
   </head>
-  <body id="mateme">  
-    <div id="container">      
+    <body id="container">      
       <div id="content">
         <div id="header" style="height:160px;margin-top:-15px;padding-left:20px;">
           <h1><%= Location.current_location.name %></h1>
           <div id="version" style="padding-top:44px;"><%= version %></div>
           <div id="user" style="margin-top:-4px;">Logged in as <%= User.current_user.username %></div>
           <form id='barcodeForm' action="/people/search">
-            <div style="float:left">Scan a barcode:</div>
+            <div style="float:left;font-style:normal;font-size:25px;font-weight:bold">Scan patient barcode:</div>
             <%= text_field_tag :identifier, '', {:id => 'barcode', :class => 'touchscreenTextInput', :style => 'position:absolute' } %>
             <%= submit_tag "Submit", :style => "display:none" %>
           </form>
@@ -76,13 +75,12 @@
             <% if User.current_user.admin? %>
             <!--button id="staging" class="yellow"><span>Staging</span></button-->
 			        <% if development_environment? %>
-                <button id="new_desk" class="yellow"><span>Swap desk</span></button>
+                <!--button id="new_desk" class="yellow"><span>Swap desk</span></button-->
 			        <% end %>
               <button id="set_date" class=""><span>Set date</span></button>
             <% end %>
           </div>          
         </div>    
       </div>  
-    </div>
   </body>
 </html>

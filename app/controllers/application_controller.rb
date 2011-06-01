@@ -21,8 +21,11 @@ class ApplicationController < ActionController::Base
 
   def next_task(patient)
     session_date = session[:datetime].to_date rescue Date.today
+    #raise Location.current_location.to_yaml
     task = Task.next_task(Location.current_location, patient,session_date)
-    return task.url if task.present? && task.url.present?
+#    raise task.to_yaml
+    return task if task.present?
+    #return task.url if task.present? && task.url.present?
     return "/patients/show/#{patient.id}" 
   end
 

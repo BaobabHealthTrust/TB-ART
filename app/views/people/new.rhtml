@@ -34,23 +34,35 @@
 
   <%= text_field_tag "person[addresses][address2]", params[:address2], {:id => 'address2', :field_type => 'alpha', :helpText => 'Home Village', :ajaxURL => '/person_addresses/address2?search_string=', :allowFreeText => true, :condition => '$("address2").value == "" || skipped[tstCurrentPage] == 1', :tt_onLoad => 'seen(tstCurrentPage);' } if ask_home_village %>
   
-  <%= text_field_tag "person[addresses][county_district]",  params[:county_district], {:field_type => 'alpha', :helpText => 'Current Traditional Authority (TA)', :ajaxURL => '/person_addresses/traditional_authority?search_string=', :allowFreeText => true }%>
+  <%= text_field_tag "person[addresses][county_district]",  params[:county_district], {:field_type => 'alpha', :helpText => 'Ancestral Traditional Authority (TA)', :ajaxURL => '/person_addresses/traditional_authority?search_string=', :allowFreeText => true }%>
 
-  <%= text_field_tag "person[addresses][city_village]",  params[:city_village], {:field_type => 'alpha', :helpText => 'Current Village (residence)', :ajaxURL => '/person_addresses/village?search_string=', :allowFreeText => true }%>
+  <%= text_field_tag "person[addresses][city_village]",  params[:city_village], {:field_type => 'alpha', :helpText => 'Current city, place or area of residence', :ajaxURL => '/person_addresses/village?search_string=', :allowFreeText => true }%>
+  
+  <%= text_field_tag "person[landmark]",  params[:landmark], {:field_type => 'alpha', :helpText => 'Land mark', :allowFreeText => true }%>
+  
+  <%= text_field_tag "person[home_phone_number]",  params[:home_phone_number], {:field_type => 'number', :helpText => 'Ground Phone Number', :allowFreeText => true, :tt_pageStyleClass => "Numeric NumbersOnly" }%>
 
-  <%= text_field_tag "person[cell_phone_number]",  params[:cell_phone_number], {:field_type => 'number', :helpText => 'Cell Phone Number', :allowFreeText => true }%>
+  <%= text_field_tag "person[cell_phone_number]",  params[:cell_phone_number], {:field_type => 'number', :helpText => 'Cell Phone Number', :allowFreeText => true, :tt_pageStyleClass => "Numeric NumbersOnly" }%>
 
   <% ask_multiple_phone_numbers = GlobalProperty.find_by_property("ask_multiple_phone_numbers").property_value rescue 'false'
      if ask_multiple_phone_numbers == 'true' 
   %>
+
   <%= text_field_tag "person[office_phone_number]",  params[:office_phone_number], {:field_type => 'number', :helpText => 'Office Phone Number', :allowFreeText => true }%>
 
-  <%= text_field_tag "person[home_phone_number]",  params[:home_phone_number], {:field_type => 'number', :helpText => 'Home Phone Number', :allowFreeText => true }%>
+  <%#= text_field_tag "person[home_phone_number]",  params[:home_phone_number], {:field_type => 'number', :helpText => 'Home Phone Number', :allowFreeText => true }%>
   <%end%>
-
-  <%= select_tag("person[occupation]", options_for_select([" ", "Housewife", "Farmer", "Police", "Soldier", "Business", "Teacher", "Student", "Healthcare Worker"].sort.concat(["Other"]) ,params[:occupation]),:helpText =>"Occupation",:allowFreeText => true, :tt_onLoad => 'seen(tstCurrentPage);')%>
+  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we text you on this number for TB therapy?", :tt_onLoad => 'seen(tstCurrentPage);')%>
   
+  <%= select_tag("person[agrees_to_be_visited_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_to_be_visited_for_TB_therapy]),:helpText =>"Can we visit you at home for TB therapy?", :tt_onLoad => 'seen(tstCurrentPage);')%>
+
+  <%= select_tag("person[occupation]", options_for_select([" ", "Housewife", "Farmer", "Police", "Soldier", "Business", "Teacher", "Student", "Healthcare Worker"].sort.concat(["Other"]) ,params[:occupation]),:helpText =>"Occupation",:allowFreeText => true, :tt_onLoad => 'seen(tstCurrentPage);', :ttMatchFromBeginning => "true")%>
+  
+  <%= select_tag("person[hiv_status]", options_for_select([" ", "Negative", "Positive", "Unknown"] ,params[:hiv_status]),:helpText =>"HIV Status", :tt_onLoad => 'seen(tstCurrentPage);')%>
+  
+  <%= select_tag("person[art_status]", options_for_select([" ", "On ART", "Not on ART", "Unknown"] ,params[:art_status]),:helpText =>"ART Status", :tt_onLoad => 'seen(tstCurrentPage);')%>
   <!-- Make sure patient is created -->
+
 
   <%= hidden_field_tag "person[patient]", "" %>
 

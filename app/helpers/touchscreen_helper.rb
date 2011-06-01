@@ -16,6 +16,7 @@ module TouchscreenHelper
     content << hidden_field_tag("observations[][concept_name]", concept) 
     content << hidden_field_tag("observations[][patient_id]", patient.id) 
     content << hidden_field_tag("observations[][obs_datetime]", time)
+    content << hidden_field_tag("observations[][accession_number]", options[:accession_number]) if options[:accession_number] 
     content
   end  
 
@@ -117,9 +118,10 @@ module TouchscreenHelper
     options = {  
      :allowFreeText => false 
     }.merge(options)                 
+    kind = options[:value_datetime] ? "value_datetime" : "value_coded_or_text"
     content = ""
-    content << hidden_field_tag("observations[][value_coded_or_text]", value, options) 
-    content << touch_meta_tag(concept, patient, time, 'value_coded_or_text', options)
+    content << hidden_field_tag("observations[][#{kind}]", value, options) 
+    content << touch_meta_tag(concept, patient, time, kind, options)
     content
   end
   
@@ -135,4 +137,19 @@ module TouchscreenHelper
     content << text_field_tag("identifiers[][identifier]", value, options) 
     content
   end
+
+  def touch_misc_numeric_tag(concept, patient, value, options={}, time=DateTime.now())
+    options = {
+      :field_type => 'number',
+      :validationRule => "^([0-9\>\<]+)|Unknown$",
+      :validationMessage => "You must enter numbers only (for example 90)",
+      :tt_pageStyleClass => "Numeric NumbersOnly",
+      :accession_number => value
+    }.merge(options)                 
+    content = ""
+    content << text_field_tag("observations[][value_text]", options[:hidden_value_text], options) 
+    content << touch_meta_tag(concept, patient, time, 'value_text', options)
+    content
+  end
+
 end

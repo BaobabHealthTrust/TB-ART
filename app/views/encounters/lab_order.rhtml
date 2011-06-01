@@ -1,0 +1,118 @@
+<script>
+  var tt_cancel_destination = "/patients/show/<%= @patient.id%>?auto_load_forms=false"
+
+  // Every 500 milliseconds update the Next/Finish button
+  function updateNextFinish(){
+    if (tstInputTarget.value == 'Finished'){
+      $('nextButton').innerHTML = '<span>Finish</span>';
+      // TODO clear all items after Finish form
+    }
+    else
+      $('nextButton').innerHTML = '<span>Next</span>';
+
+    setTimeout(updateNextFinish, 500)
+  }
+
+  function updateInforBar(){
+    current_values = tstPageValues.join(", ")
+    current_values = current_values.substring(0,current_values.indexOf(", ,"))
+    finished_position = current_values.indexOf(", Finished")
+    if (finished_position != -1) {
+      current_values = current_values.substring(0,finished_position)
+    }
+    $('infoBar'+tstCurrentPage).innerHTML = current_values
+  }
+
+  function showLabels(){
+    tstInputTarget.value = "Finished"
+
+    var displayText = ""
+    for(var i=0;i<tstPageValues.length;i++){
+      value = tstPageValues[i]
+      if(value == "" | value == "Finished"){
+        break
+      }
+      displayText += drawLabel(tstPageValues[i])
+    }
+
+     $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '</div>' ;
+  }
+
+  function drawLabel(test_type){
+    //TODO Replace below wtih http://barcode-coder.com/en/barcode-jquery-plugin-201.html
+    label = "\
+<div class='label'>\
+<span class='labelLine'>\
+<%= "#{@patient.name} #{@patient.national_id_with_dashes}" %>\
+</span>\
+<span class='labelLine reverse'>"+test_type+"</span>\
+<span class='labelLine'> 421249 || |||| | ||||| | | ||||| || | |</span>\
+<%= "#{DateTime.now.strftime("%d%b%y %H:%M")}" %>\
+</div>\
+"
+    return label
+  }
+
+</script>
+<style>
+  #space { display:inline; font-size:1.2em; }
+  #Unknown { display: none}
+  .label {
+    display: inline-block;
+    margin: 5px;
+    border: 2px dashed black;
+    height: 80px;
+    width: 300px
+  }
+  .label .labelLine {
+    width: 100%;
+    display:block
+
+  }
+  .reverse {
+    background: black;
+    color: white;
+  }
+</style>
+<form id='label_specimens' action="/encounters/create" method='post'>
+    
+  <%= hidden_field_tag "encounter[encounter_type_name]", "LAB ORDERS" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <%=
+  #ConceptClass.find_by_name("Specimen Sample Type").concepts.map{|container_types|container_types.concepts}.flatten.map{|tests|tests.concept_names.reject{|name|name.locale!='en'}}.flatten.names.length
+  container_types = ConceptClass.find_by_name("Specimen Sample Type").concepts
+  available_tests = container_types.map{|container_type|container_type.concept_members.map{|member| member.concept}.flatten}.flatten
+  test_names_with_synonyms = available_tests.map{|test|test.concept_names.reject{|name|name.locale!='en'}}.flatten.map{|test_name|test_name.name}.sort
+# TODO sort this by most commonly used tests
+
+  tests = ["","Finished"] + test_names_with_synonyms
+
+  options = {
+    :helpText => 'Test Required',
+    :allowFreeText => 'false',
+    :textCase => "upper",
+    :tt_onLoad => "updateInforBar();" ,
+    :tt_OnUnload => "if (tstInputTarget.value == 'Finished') {$('value_coded_or_text_#{}').value = ''}" ,
+  } %>
+
+  <% 15.times do |iteration| %>
+    <% options[:tt_onLoad] += "updateNextFinish();" if iteration == 0 %>
+    <% options[:condition] = "tstPageValues[tstCurrentPage] != 'Finished'" if iteration > 0 %>
+    <% options[:tt_OnUnload] = "$('value_coded_or_text_#{iteration}').value = (tstInputTarget.value == 'Finished' ? '' : tstInputTarget.value)" %>
+    <%= select_tag ("observations[][value_coded_or_text]", options_for_select(tests), options)%>
+    <%#= hidden_field_tag ("observations[][value_coded_or_text]", nil, {:id => "value_coded_or_text_#{iteration}"}) %>
+    <%= hidden_field_tag("observations[][value_text]", nil) %>
+    <%= hidden_field_tag("observations[][concept_name]", "TESTS ORDERED", options) %>
+    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+  <% end %>
+
+  <label for='showSummary'>Summary </label>
+  <%= text_field_tag :showSummary, nil, { :tt_onLoad => "showLabels()", :optional => "true", :tt_pageStyleClass => "NoControls" } %>
+
+  <%= submit_tag "Finish" %>
+
+</form>

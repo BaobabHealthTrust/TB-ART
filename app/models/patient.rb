@@ -348,4 +348,9 @@ EOF
     self.person.sex
   end
 
+  def recent_sputum_orders
+    sputum_concept_ids = ConceptName.find(:all, :conditions => ["name IN (?)", ["FIRST SPUTUM FOR AAFB","SECOND SPUTUM FOR AAFB", "THIRD SPUTUM FOR AAFB"]]).map(&:concept_id)
+    Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ? AND value_coded in (?)", self.id, ConceptName.find_by_name('TESTS ORDERED').concept_id, sputum_concept_ids], :order => "obs_datetime desc", :limit => 3)
+  end
+
 end

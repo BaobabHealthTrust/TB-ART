@@ -5,6 +5,16 @@ class Task < ActiveRecord::Base
 
   # Try to find the next task for the patient at the given location
   def self.next_task(location, patient, session_date = Date.today)
+    referred_by_tb_idex = PersonAttribute.find(:first, :conditions => ["person_id =? and person_attribute_type_id =?",patient.id,PersonAttributeType.find(:first, :conditions => ["name = ?","Referred by current TB patient"]).id])
+
+    todays_encounters = patient.encounters.find_by_date(session_date)
+    todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
+    
+
+    return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_idex
+    return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS")
+    return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
+=begin
     all_tasks = self.all(:order => 'sort_weight ASC')
     todays_encounters = patient.encounters.find_by_date(session_date)
     todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
@@ -109,8 +119,10 @@ class Task < ActiveRecord::Base
 
       # We need to skip this task for some reason
       next if skip
- 
-      task = self.validate_task(patient,task,session_date.to_date)
+      
+      if location.name.match(/HIV|ART/i)
+       task = self.validate_task(patient,task,session_date.to_date)
+      end
 
       # Nothing failed, this is the next task, lets replace any macros
       task.url = task.url.gsub(/\{patient\}/, "#{patient.patient_id}")
@@ -121,7 +133,10 @@ class Task < ActiveRecord::Base
       
       return task
     end
-  end 
+=end
+  
+  end
+
   
   def self.validate_task(patient,task,session_date = Date.today)
     #return task unless task.has_program_id == 1

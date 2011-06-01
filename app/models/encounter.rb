@@ -112,4 +112,12 @@ class Encounter < ActiveRecord::Base
       :group      => "encounter.patient_id,DATE(encounter_datetime)",
       :order      => "encounter.encounter_datetime ASC")
   end
+
+  def self.lab_activities
+    lab_activities = [
+      ['Lab Order', 'lab_order'],
+      ['Sputum Submission', 'sputum_submission'],
+      ['Lab Results', 'lab_results'],
+    ]
+  end
 end

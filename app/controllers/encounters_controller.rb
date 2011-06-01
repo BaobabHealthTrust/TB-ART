@@ -23,9 +23,9 @@ class EncountersController < ApplicationController
       end
       params[:observations] = observations unless observations.blank?
     end
+
     
     @patient = Patient.find(params[:encounter][:patient_id])
-
     # Go to the dashboard if this is a non-encounter
     redirect_to "/patients/show/#{@patient.id}" unless params[:encounter]
 
@@ -33,14 +33,19 @@ class EncountersController < ApplicationController
     encounter = Encounter.new(params[:encounter])
     encounter.encounter_datetime = session[:datetime] unless session[:datetime].blank?
     encounter.save    
-
     # Observation handling
+   # raise params[:observations].to_yaml
     (params[:observations] || []).each do |observation|
 
       # Check to see if any values are part of this observation
       # This keeps us from saving empty observations
+      # And also keeps us from saving a dummy observation TODO Find a proper way of doing this because the condition is pecific for lab ordering 
+      #
       values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
-        observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
+        #unless observation["value_#{value_name}"].blank? || (observation["value_#{value_name}"].humanize == "Finished" && observation["concept_name"].humanize == "Tests ordered")
+        unless observation["value_#{value_name}"].blank?
+          observation["value_#{value_name}"]
+        end
       }.compact
 
       next if values.length == 0
@@ -50,6 +55,7 @@ class EncountersController < ApplicationController
       observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name] ||= "DIAGNOSIS" if encounter.type.name == "DIAGNOSIS"
+      observation[:accession_number] = Observation.new_accession_number if observation[:concept_name].humanize == "Tests ordered"
       # Handle multiple select
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
         observation[:value_coded_or_text_multiple].compact!
@@ -62,6 +68,7 @@ class EncountersController < ApplicationController
         observation.delete(:value_coded_or_text_multiple)
         Observation.create(observation)
       end
+    
     end
 
     # Program handling
@@ -111,7 +118,6 @@ class EncountersController < ApplicationController
 
   def new
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
-
     use_regimen_short_names = GlobalProperty.find_by_property(
       "use_regimen_short_names").property_value rescue "false"
     show_other_regimen = GlobalProperty.find_by_property(
@@ -120,6 +126,16 @@ class EncountersController < ApplicationController
     @answer_array = arv_regimen_answers(:patient => @patient,
       :use_short_names    => use_regimen_short_names == "true",
       :show_other_regimen => show_other_regimen      == "true")
+    @lab_activities = Encounter.lab_activities
+    @tb_classification = [["Pulmonary TB","PULMONARY TB"],["Extra Pulmonary TB","EXTRA PULMONARY TB"]]
+    @tb_patient_category = [["New","NEW"], ["Relapse","RELAPSE"], ["Retreatment after default","RETREATMENT AFTER DEFAULT"], ["Fail","FAIL"], ["Other","OTHER"]]
+    @sputum_visual_appearance = [['Muco-purulent','MUCO-PURULENT'],['Blood-stained','BLOOD-STAINED'],['Saliva','SALIVA']]
+
+    @sputum_results = [['1+','1 PLUS'], ['2+','2 PLUS'], ['3+','3 PLUS'],['Negative', 'NEGATIVE'], ['Scanty+', 'SCANTY+']]
+
+    @recent_sputum_acc_numbers = @patient.recent_sputum_orders.map(&:accession_number)
+
+
     redirect_to "/" and return unless @patient
 
     redirect_to next_task(@patient) and return unless params[:encounter_type]
@@ -218,6 +234,11 @@ class EncountersController < ApplicationController
     end
     answer_array
 
-    # raise answer_array.inspect
+  end
+
+  def lab
+    @patient = Patient.find(params[:encounter][:patient_id])
+    encounter_type = params[:observations][0][:value_coded_or_text] 
+    redirect_to "/encounters/new/#{encounter_type}?patient_id=#{@patient.id}"
   end
 end
