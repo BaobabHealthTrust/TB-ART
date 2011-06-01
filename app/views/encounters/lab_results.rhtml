@@ -55,12 +55,7 @@
      :tt_pageStyleClass => "NoKeyboard",
       :accession_number => @recent_sputum_acc_numbers[2],
       :helpText => "Sputum specimen 3 result (Accession number: #{@recent_sputum_acc_numbers[2]})" } %>
-
-  <%= touch_yes_no_tag "REFER TO CLINICIAN", @patient, nil,
-    {:id => "refer_to_clinician",
-     :helpText => "Refer to clinician"} %>
-     
-     
+      
   <%= submit_tag "Finish" %>    
 
 </form>
