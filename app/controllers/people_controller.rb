@@ -17,11 +17,22 @@ class PeopleController < ApplicationController
   end
  
   def search
-    #redirect to TB contact search results page if params has to do with search of tb contact info   
+    #redirect to TB index search results page if params has to do with search of tb index info   
     if params[:search_tb_index_person]
       redirect_to :action => :new_tb_index_person, :gender => params[:gender],:given_name => params[:given_name], 
                              :family_name => params[:family_name], :patient_id => params[:patient_id], 
-                             :referred_by_tb_index_person => params[:referred_by_tb_index_person] and return 
+                             :source_of_referral => params[:source_of_referral] and return 
+    end
+    
+    #redirect to TB contact search results page if params has to do with search of tb contact info   
+    if params[:search_tb_contact_person]
+      redirect_to :action => :new_tb_contact_person, :gender => params[:gender], :given_name => params[:given_name], 
+                             :family_name => params[:family_name], :person_id => params[:person], 
+                             :patient_id => params[:patient_id], :number_of_contacts => params[:number_of_contacts], 
+                             :tb_contact_birth_year => params[:tb_contact_birth_year], 
+                             :tb_contact_birth_month => params[:tb_contact_birth_month], 
+                             :tb_contact_age_estimate => params[:tb_contact_age_estimate], 
+                             :tb_contact_birth_day => params[:tb_contact_birth_day] and return 
     end
     
     found_person = nil
@@ -48,9 +59,39 @@ class PeopleController < ApplicationController
  
   # This method is just to allow the select box to submit, we could probably do this better
   def select
-    # 2011/04/12 -- And also allow the creation of TB contact link
-    redirect_to :action => :create_tb_index_person, :new_tb_index_person => {:gender => params[:gender], :given_name => params[:given_name], :family_name => params[:family_name],
-    :person_id => params[:person], :patient_id => params[:patient_id], :referred_by_tb_index_person => params[:referred_by_tb_index_person]} and return if params[:referred_by_tb_index_person] == "YES"
+     
+    if params[:source_of_referral]
+       referral_source = PersonAttribute.create({
+                                          :person_id => params[:patient_id], 
+                                          :value => params[:source_of_referral], 
+                                          :person_attribute_type_id => PersonAttributeType.find(:first, :conditions => ["name = ?","Source of referral"]).id
+                                      })
+       referral_source.save
+      
+       redirect_to :action => :create_tb_index_person, :new_tb_index_person => {:gender => params[:gender], 
+                   :given_name => params[:given_name], :family_name => params[:family_name], :person_id => params[:person], 
+                   :patient_id => params[:patient_id], :relationship => ["TB Contact Person", "TB Index Person"]} and return 
+     end
+    
+    if params[:number_of_contacts]
+       number_of_contacts = PersonAttribute.create({
+                                          :person_id => params[:patient_id], 
+                                          :value => params[:number_of_contacts], 
+                                          :person_attribute_type_id => PersonAttributeType.find(:first, :conditions => ["name = ?","Number of TB contacts"]).id
+                                      })
+       number_of_contacts.save
+
+
+       redirect_to :action => :create_tb_contact_person, :new_tb_contact_person => {
+                              :gender => params[:gender], :given_name => params[:given_name], :family_name => params[:family_name],
+                              :person_id => params[:person], :patient_id => params[:patient_id], :birthday_params => {
+                                                                      :birth_year => params[:tb_contact_birth_year], 
+                                                                      :birth_month => params[:tb_contact_birth_month], 
+                                                                      :age_estimate => params[:tb_contact_age_estimate], 
+                                                                      :birth_day => params[:tb_contact_birth_day]},
+                              :relationship => ["TB Patient","TB contact Person"]} and return 
+    end
+
     redirect_to search_complete_url(params[:person], params[:relation]) and return unless params[:person].blank? || params[:person] == '0'
     redirect_to :action => :new, :gender => params[:gender], :given_name => params[:given_name], :family_name => params[:family_name],
     :family_name2 => params[:family_name2], :address2 => params[:address2], :identifier => params[:identifier], :relation => params[:relation]
@@ -99,9 +140,14 @@ class PeopleController < ApplicationController
     Person.create_tb_index_or_contact(params[:new_tb_index_person])
     redirect_to search_complete_url(params[:new_tb_index_person][:patient_id], '')
   end
+  
+  def new_tb_contact_person
+    @patient = Patient.find(params[:patient_id] || session[:patient_id])
+    @people = Person.search(params)  
+  end
 
   def create_tb_contact_person
-    Person.create_tb_index_or_contact(params[:new_tb_index_person])
+    Person.create_tb_index_or_contact(params[:new_tb_contact_person])
     redirect_to search_complete_url(params[:new_tb_contact_person][:patient_id], '')
   end
 

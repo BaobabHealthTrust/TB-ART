@@ -351,19 +351,31 @@ class Person < ActiveRecord::Base
      
      unless tb_index_or_contact #If the TB contact does not exist, create one
        person = Person.create({"gender" => params["gender"]})
+       
+       #set the person birthdate if it has been passed
+       birthday_params = params["birthday_params"]
+       if birthday_params
+         if birthday_params["birth_year"] == "Unknown"
+           person.set_birthdate_by_age(birthday_params["age_estimate"])
+         else
+           person.set_birthdate(birthday_params["birth_year"], birthday_params["birth_month"], birthday_params["birth_day"])
+         end
+       end
+
        person.save
        tb_index_or_contact = person
        person.names.create({"family_name"=>params["family_name"], "given_name"=>params["given_name"]})
 
-       relationship = Relationship.create({"person_a" => params[:patient_id], "relationship" => RelationshipType.find(:first, :conditions => ["a_is_to_b = ? AND b_is_to_a =?","TB Contact Person", "TB Index Person"]).id, "person_b" => person.id})
      end
+     rltnship_type = params["relationship"]
+     relationship = Relationship.create({
+                                  "person_a" => params[:patient_id], 
+                                  "relationship" => RelationshipType.find(
+                                                          :first, 
+                                                          :conditions => ["a_is_to_b = ? AND b_is_to_a =?",rltnship_type[0], rltnship_type[1]]
+                                            ).id, 
+                                  "person_b" => person.id})
     
-     if params["referred_by_tb_index_person"]
-       referred = PersonAttribute.create({"person_id" => params[:patient_id], "value" => params["referred_by_tb_index_person"], "person_attribute_type_id" => PersonAttributeType.find(:first, :conditions => ["name = ?","Referred by current TB patient"]).id})
-       referred.save
-     end
-
-     #TODO link patient_id with person/tbcontact id
      return nil
    end
 

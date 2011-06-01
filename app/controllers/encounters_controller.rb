@@ -131,7 +131,7 @@ class EncountersController < ApplicationController
     @tb_patient_category = [["New","NEW"], ["Relapse","RELAPSE"], ["Retreatment after default","RETREATMENT AFTER DEFAULT"], ["Fail","FAIL"], ["Other","OTHER"]]
     @sputum_visual_appearance = [['Muco-purulent','MUCO-PURULENT'],['Blood-stained','BLOOD-STAINED'],['Saliva','SALIVA']]
 
-    @sputum_results = [['1+','1 PLUS'], ['2+','2 PLUS'], ['3+','3 PLUS'],['Negative', 'NEGATIVE'], ['Scanty+', 'SCANTY+']]
+    @sputum_results = [['1+','1 PLUS'], ['2+','2 PLUS'], ['3+','3 PLUS'],['Negative', 'NEGATIVE'], ['Scanty', 'SCANTY']]
 
     @recent_sputum_acc_numbers = @patient.recent_sputum_orders.map(&:accession_number)
 

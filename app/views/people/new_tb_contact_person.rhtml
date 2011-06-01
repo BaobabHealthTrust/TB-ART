@@ -6,45 +6,37 @@
   }
 </script>
 
-<% if (params[:gender].blank? || params[:given_name].blank? || params[:family_name].blank?) && (params[:identifier].blank?) %> 
+<% if  (params[:gender].blank? || params[:given_name].blank? || params[:family_name].blank?) && (params[:identifier].blank?) %> 
   <% form_tag "search", :method => :get do %>
-    <label for='number_of_contacts'>Number of contacts</label>
-    <%= text_field_tag "number_of_contacts", nil, {:helpText => 'Number of contacts', :field_type => 'number', :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
     
-    <%= text_field_tag :given_name, params[:given_name], {:field_type => 'alpha', :helpText => 'First name of index patient', :ajaxURL => '/person_names/given_names?search_string=', :allowFreeText => true }%> 
-    <%= text_field_tag :family_name, params[:family_name], {:field_type => 'alpha', :helpText => 'Last name of index patient ', :ajaxURL => '/person_names/family_names?search_string=', :allowFreeText => true }%> 
+    <%= text_field_tag "number_of_contacts", nil, {:helpText => 'Number of contacts', :field_type => 'number', :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+    <%= text_field_tag :given_name, params[:given_name], {:field_type => 'alpha', :helpText => 'First name of contact', :ajaxURL => '/person_names/given_names?search_string=', :allowFreeText => true, :condition => '$("number_of_contacts").value > 0' }%> 
+    <%= text_field_tag :family_name, params[:family_name], {:field_type => 'alpha', :helpText => 'Last name of contact', :ajaxURL => '/person_names/family_names?search_string=', :allowFreeText => true, :condition => '$("number_of_contacts").value > 0' }%> 
+    <%= text_field_tag "tb_contact_birth_year", nil, {:helpText => 'Year of Birth', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :condition => '$("number_of_contacts").value > 0' }  %>
 
+    <%= select_tag "tb_contact_birth_month", month_name_options, {:helpText => 'Month of Birth', :condition => '$("tb_contact_birth_year").value.toLowerCase() != "unknown";$("number_of_contacts").value > 0'}%>
 
-  
-  <%= text_field_tag "person[birth_year]", nil, {:helpText => 'Year of Birth', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :tt_onLoad => 'seen(tstCurrentPage);' }  %>
+    <%= text_field_tag "tb_contact_age_estimate", nil, {:helpText => 'Age Estimate', :absoluteMin => 1, :absoluteMax => age_limit, :field_type => 'number', :condition => '$("tb_contact_birth_year").value == "Unknown";$("number_of_contacts").value > 0', :tt_pageStyleClass => "Numeric NumbersOnly"} %> 
 
-  <%= select_tag "person[birth_month]", month_name_options, {:helpText => 'Month of Birth', :condition => '$("person_birth_year").value.toLowerCase() != "unknown"'}%>
+    <%= text_field_tag "tb_contact_birth_day]",  nil, :field_type => 'number', :helpText => 'Birth Day', :condition => '($("tb_contact_birth_year").value != "Unknown") && ($("tb_contact_birth_month").value != "Unknown");$("number_of_contacts").value > 0', :tt_onLoad => "getDayOfMonthPicker($('tb_contact_birth_year').value, $('tb_contact_birth_month').value)" %>
 
-  <%= text_field_tag "person[age_estimate]", nil, {:helpText => 'Age Estimate', :absoluteMin => 1, :absoluteMax => age_limit, :field_type => 'number', :condition => '$("person_birth_year").value == "Unknown"', :tt_pageStyleClass => "Numeric NumbersOnly"} %> 
-
-  <%= text_field_tag "person[birth_day]",  nil, :field_type => 'number', :helpText => 'Birth Day', :condition => '($("person_birth_year").value != "Unknown") && ($("person_birth_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('person_birth_year').value, $('person_birth_month').value)" %>
-
-
-
-
-    Gender: <%= select_tag :gender, options_for_select({"" => "", "Male" => "M", "Female" => "F"}), {:helpText => "Gender of index patient"} %>
-    <%= hidden_field_tag :search_tb_index_person, true %>
+  Gender: <%= select_tag :gender, options_for_select({"" => "", "Male" => "M", "Female" => "F"}), {:helpText => "Gender of contact", :condition => '$("number_of_contacts").value > 0'} %>
+    <%= hidden_field_tag :search_tb_contact_person, true %>
     <%= hidden_field_tag :patient_id, @patient.patient_id %>
     <%= submit_tag "Find person" %>
   <% end -%>
 <% end -%>
 
 <% unless (params[:gender].blank? || params[:given_name].blank? || params[:family_name].blank?) && (params[:identifier].blank?) %>
- 
   <% form_tag "select", :method => :get do %>
     <% if @people.blank? %>
       <label for="person">No persons were found:</label>
     <% else -%>
-      <label for="person">Select the TB index from the following</label>
+      <label for="person">Select the TB contact from the following</label>
     <% end -%>
     <select name="person" id="person">
       <% @people.each do |person| -%>
-        <option value="<%= person.id %>" onmousedown="changeNextButtonText('Select TB Index')">
+        <option value="<%= person.id %>" onmousedown="changeNextButtonText('Select TB contact')">
           <%=h person.name -%>, 
           <% unless person.birthdate.blank? %>Birthdate: <%=h person.birthdate_formatted -%>,<% end %>
           <% if person.addresses.first && person.addresses.first.address2.present? %>Home Village: <%=h person.addresses.first.address2 -%>,<% end %>
@@ -53,14 +45,18 @@
           <%=h ' Died' if person.dead == 1 rescue '' -%>
         </option>
       <% end -%>
-        <option value="0" onmousedown="changeNextButtonText('New TB Index')">Create a new TB index with the name <%=h params[:given_name] -%> <%=h params[:family_name] -%></option>
+        <option value="0" onmousedown="changeNextButtonText('New TB Contact')">Create a new TB contact with the name <%=h params[:given_name] -%> <%=h params[:family_name] -%></option>
     </select>
     <%unless params[:patient_id].blank?%>
       <%= hidden_field_tag :patient_id, params[:patient_id] %>
     <%end%>
-    <input type="hidden" name="referred_by_tb_index_person" value="<%=h params[:referred_by_tb_index_person] -%>" />
-    <input type="hidden" name="gender" value="<%=h params[:gender] -%>" />
+    <input type="hidden" name="number_of_contacts" value="<%=h params[:number_of_contacts] -%>" />
     <input type="hidden" name="given_name" value="<%=h params[:given_name] -%>" />
     <input type="hidden" name="family_name" value="<%=h params[:family_name] -%>" />
+    <input type="hidden" name="tb_contact_birth_year" value="<%=h params[:tb_contact_birth_year] -%>" />
+    <input type="hidden" name="tb_contact_birth_month" value="<%=h params[:tb_contact_birth_month] -%>" />
+    <input type="hidden" name="tb_contact_age_estimate" value="<%=h params[:tb_contact_age_estimate] -%>" />
+    <input type="hidden" name="tb_contact_birth_day" value="<%=h params[:tb_contact_birth_day] -%>" />
+    <input type="hidden" name="gender" value="<%=h params[:gender] -%>" />
   <% end -%>
-  <% end -%> 
+  <% end -%>
