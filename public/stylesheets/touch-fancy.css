@@ -15,7 +15,6 @@
   *
   **************************************************************************/
 
-
 body{
   font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
   overflow: hidden;
@@ -343,7 +342,7 @@ button span {
 
 button, button.blue { 
   background:url(../images/buttons/btn_right_blue.png) right no-repeat; 
-  font-size:1.2em; 
+  font-size:1.3em; 
   line-height:57px;
   min-width:56px;
 }
@@ -678,3 +677,15 @@ display:block;
 .NoKeyboard, .NoControls { height: 520px !important } 
 .NoKeyboard .inputFrameClass { height: 440px !important } 
 .NoKeyboard .options { height: 395px !important } 
+
+#footer button, div.buttonsDiv button {
+  margin-top: 10px;
+  min-width: 140px;
+}
+
+textarea {
+  background-color: #eee;
+  border: 0px solid #eee;
+  padding: 10px;
+  font-size: 2.2em;
+}
