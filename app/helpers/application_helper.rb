@@ -107,4 +107,8 @@ module ApplicationHelper
   def development_environment?
     ENV['RAILS_ENV'] == 'development'
   end
+
+  def system_date
+    return (session[:datetime].to_date rescue Date.today).strftime('%d-%b-%Y')
+  end
 end
