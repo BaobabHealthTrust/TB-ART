@@ -120,4 +120,17 @@ class Encounter < ActiveRecord::Base
       ['Lab Results', 'lab_results'],
     ]
   end
+
+  def self.select_options
+    select_options = {
+     'reason_for_tb_clinic_visit' => [
+        ['',''],
+        ['Clinical examination','CLINICAL EXAMINATION'],
+        ['Smear Negative','SMEAR NEGATIVE'],
+        ['Smear Positive','SMEAR POSITIVE'],
+        ['X-ray results','X-RAY RESULTS']
+      ]
+    }
+  end
+
 end

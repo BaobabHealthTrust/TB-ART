@@ -117,6 +117,7 @@ class EncountersController < ApplicationController
   end
 
   def new
+    @select_options = Encounter.select_options
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
     use_regimen_short_names = GlobalProperty.find_by_property(
       "use_regimen_short_names").property_value rescue "false"
