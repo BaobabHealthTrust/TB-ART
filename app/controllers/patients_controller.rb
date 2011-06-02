@@ -2,18 +2,8 @@ class PatientsController < ApplicationController
   before_filter :find_patient, :except => [:void]
   
   def show
-    session_date = session[:datetime].to_date rescue Date.today
-    @encounters = @patient.encounters.find_by_date(session_date)
-    @prescriptions = @patient.orders.unfinished.prescriptions.all
-    @programs = @patient.patient_programs.all
-    # This code is pretty hacky at the moment
-    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
-    @restricted.each do |restriction|    
-      @encounters = restriction.filter_encounters(@encounters)
-      @prescriptions = restriction.filter_orders(@prescriptions)
-      @programs = restriction.filter_programs(@programs)
-    end
-    render :template => 'dashboards/overview', :layout => 'dashboard' 
+   
+    render :template => 'dashboards/patients', :layout => 'clinic'
   end
 
   def treatment
@@ -179,6 +169,22 @@ class PatientsController < ApplicationController
     @encounter_type = params[:skipped]
     @patient_id = params[:patient_id]
     render :layout => "menu"
+  end
+
+  def overview
+     session_date = session[:datetime].to_date rescue Date.today
+    @encounters = @patient.encounters.find_by_date(session_date)
+    @prescriptions = @patient.orders.unfinished.prescriptions.all
+    @programs = @patient.patient_programs.all
+    # This code is pretty hacky at the moment
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
+    @restricted.each do |restriction|
+      @encounters = restriction.filter_encounters(@encounters)
+      @prescriptions = restriction.filter_orders(@prescriptions)
+      @programs = restriction.filter_programs(@programs)
+    end
+
+    render :layout => false
   end
   
 
