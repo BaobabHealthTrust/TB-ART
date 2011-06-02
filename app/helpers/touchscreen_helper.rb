@@ -97,21 +97,21 @@ module TouchscreenHelper
     options = {
       :tt_pageStyleClass => "NoKeyboard"
     }.merge(options)                 
-    touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO']], value), options, time)
+    touch_select_tag(concept, patient, options_for_select([["",""],['Yes','YES'],['No','NO']], value), options, time)
   end
   
   def touch_yes_no_unknown_tag(concept, patient, value, options={}, time=DateTime.now())
     options = {
       :tt_pageStyleClass => "NoKeyboard"
     }.merge(options)                 
-    touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']], value), options, time)
+    touch_select_tag(concept, patient, options_for_select([["",""],['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']], value), options, time)
   end
   
   def touch_yes_no_tag(concept, patient, value, options={}, time=DateTime.now())
     options = {
       :tt_pageStyleClass => "NoKeyboard"
     }.merge(options)                 
-    touch_select_tag(concept, patient, options_for_select([['Yes','YES'],['No','NO']], value), options, time)
+    touch_select_tag(concept, patient, options_for_select([["",""],['Yes','YES'],['No','NO']], value), options, time)
   end
   
   def touch_hidden_tag(concept, patient, value, options={}, time=DateTime.now())
