@@ -2,7 +2,7 @@
    var tt_cancel_destination = "/patients/show/<%= @patient.patient_id -%>";
 </script>
 <!--TODO 
-Skip Logic
+Skip Logic - Ask LH team on the skip logic for clarification
 -->
 <form id='tb_reception' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "TB RECEPTION" %>
@@ -11,84 +11,29 @@ Skip Logic
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
   <label for='tb_treatment'>Ever received TB Treatment?</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select([['',''],['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), 
-    { :id => 'tb_treatment', 
-      :tt_pageStyleClass => 'NoKeyboard'
-  } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "EVER RECEIVED TB TREATMENT") %>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
-  
+  <%= touch_yes_no_unknown_tag "EVER RECEIVED TB TREATMENT", @patient, nil,{:id => "tb_treatment"} %>
+
   <label for='guardian_present'>Guardian present?</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select([['',''],['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), 
-    { :id => 'guardian_present', 
-      :tt_pageStyleClass => 'NoKeyboard'
-  } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "GUARDIAN PRESENT")%>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
+  <%= touch_yes_no_unknown_tag "GUARDIAN PRESENT", @patient, nil,{:id => "guardian_present"} %>
   
   <label for='patient_present'>Patient present?</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select([['',''],['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), 
-    { :id => 'patient_present', 
-      :tt_pageStyleClass => 'NoKeyboard'
-  } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "PATIENT PRESENT")%>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
+  <%= touch_yes_no_unknown_tag "PATIENT PRESENT", @patient, nil,{:id => "patient_present"} %>
   
-  <label for='clinical_problems'>Any clinical problems?</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select([['',''],['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), 
-    { :id => 'clinical_problems', 
-      :tt_pageStyleClass => 'NoKeyboard'
-  } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "CLINICAL PROBLEMS")%>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
-
   <label for='reason_for_clinic_visit'>Reason for clinical visit</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select(
-    [
-      ['',''],
-      ['Clinical examination','CLINICAL EXAMINATION'],
-      ['Smear Negative','SMEAR NEGATIVE'],
-      ['Smear Positive','SMEAR POSITIVE'],
-      ['X-ray results','X-RAY RESULTS']
-  ]
-  ), 
-    { :id => 'reason_for_clinic_visit', 
-      :tt_pageStyleClass => 'NoKeyboard'
-  } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "REASON FOR CLINICAL VISIT")%>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
+  <%= touch_select_tag "REASON FOR CLINICAL VISIT", @patient, options_for_select(@select_options['reason_for_tb_clinic_visit']),{:id => "reason_for_clinic_visit",} %>
 
+  <label for='need_to_see_clinician'>Any need to see a clinician?</label>
+  <%= touch_yes_no_unknown_tag "ANY NEED TO SEE A CLINICIAN", @patient, nil,{:id => "need_to_see_clinician"} %>
 
-  <label for='hiv_test_results_within_3_months'>HIV test results with 3 months</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select([['',''],['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), 
-    { :id => 'hiv_test_results_within_3_months', 
-      :tt_pageStyleClass => 'NoKeyboard'
-  } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "HIV TEST RESULTS WITHIN 3 MONTHS")%>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
-
+  <label for='hiv_test_results_within_3_months'>HIV test results within 3 months</label>
+  <%= touch_yes_no_unknown_tag "HIV TEST RESULTS WITHIN 3 MONTHS", @patient, nil,{:id => "hiv_test_results_within_3_months"} %>
 
   <label for='refer_to_htc'>Refer to HTC?</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select([['',''],['Yes','YES'],['No','NO'],['Unknown','UNKNOWN']]), 
-    { :id => 'refer_to_htc', 
-      :tt_pageStyleClass => 'NoKeyboard'
+  <%= touch_yes_no_unknown_tag "REFER TO HTC", @patient, nil,
+    {
+      :id => "refer_to_htc", 
+      :condition => "$('hiv_test_results_within_3_months').value.toUpperCase() != 'YES';"
   } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "REFER TO HTC")%>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
 
   <%= submit_tag "Finish" %>    
 
