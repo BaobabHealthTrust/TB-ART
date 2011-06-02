@@ -1,0 +1,69 @@
+<%= javascript_include_tag "touchscreen" %>
+<%= stylesheet_link_tag fancy_or_high_contrast_touch %>
+
+<style type="text/css">
+        .personal-details-label {
+          font-weight:bold;
+        }
+        #personal-details{
+          font-size: 1em;
+          height: 150px;
+          max-width: 720px;
+          margin: 5px;
+          overflow: auto;
+        }
+
+        #menu {
+          float: right;
+          height: 680px;
+          overflow: auto;
+          width: 253px;
+          border: thin solid #EEEEEE;
+          margin-right: 5px;
+          margin-top: 5px;
+        }
+        .menu-button{
+          width:245px;
+        }
+        #visit-summary{
+          background: none repeat scroll 0 0 white;
+          margin-top: 10px;
+          float: left;
+          height: 236px;
+          width: 276px;
+        }
+      </style>
+<base target="_parent">
+<div id="visit-summary" style=" width: 680px; height: 320px; overflow: auto;">
+  <div id="programs" class="panel" style="margin-top:5px; border: 1px solid #000;">
+        <!-- h2>Programs</h2 -->
+        <ul class="list small" style="height:100px;">
+          <% for prog in @programs do %>
+            <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
+              <div class="program"><%=h prog.program.name.humanize %> started <%=h prog.date_enrolled.strftime("%b-%Y") rescue 'Unknown' %></div>
+            </li>
+          <% end %>
+          <% if @programs.empty? %>
+            <li class="data even">
+              <div class="program">There are no current programs for this patient</div>
+            </li>
+          <% end %>
+          <% for prog in @programs do %>
+            <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
+              <div class="patient_state"><%=h prog.patient_states.last.to_s.humanize %></div>
+            </li>
+          <% end %>
+        </ul>
+  </div>
+  <div id="today" style="margin-top:5px; border: 1px solid #000;">
+      <div id="alerts" class="panel">
+        <!-- h2>Alerts</h2 -->
+        <ul class="list small" style="height:100px;">
+          <li class="data even">
+            <div class="alert">There are no alerts for this patient</div>
+          </li>
+        </ul>
+      </div>
+   </div>
+  </div>
+</base>
