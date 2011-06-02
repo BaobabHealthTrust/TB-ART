@@ -59,6 +59,10 @@ module ApplicationHelper
     style = "style='background-color:red;'" unless session[:datetime].blank?
     "TB Version: #{BART_VERSION} - <span #{style}>#{(session[:datetime].to_date rescue Date.today).strftime('%A, %d-%b-%Y')}</span>"
   end
+  def version_without_date
+    #Added this to ensure that the we are not returning the when needing the version
+    "TB-ART"
+  end
   
   def welcome_message
     "Muli bwanji, enter your user information or scan your id card. <span style='font-size:0.6em;float:right'>(#{version})</span>"  
