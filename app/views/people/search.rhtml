@@ -35,6 +35,7 @@
 <% end -%>
  
 <% unless (params[:gender].blank? || params[:given_name].blank? || params[:family_name].blank?) && (params[:identifier].blank?) %>
+  
   <% form_tag "select", :method => :get do %>
     <% if @people.blank? %>
       <label for="person">No patients were found:</label>
@@ -42,6 +43,7 @@
       <label for="person">Select the patient from the following</label>
     <% end -%>
     <select name="person" id="person">
+      <option> </option>
       <% @people.each do |person| -%>
         <option value="<%= person.id %>" onmousedown="changeNextButtonText('Select Patient')">
           <%=h person.name -%>, 
