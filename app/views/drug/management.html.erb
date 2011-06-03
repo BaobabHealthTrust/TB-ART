@@ -85,7 +85,9 @@ width:85%;
 </style>
 
 <script type="text/javascript">
-var tt_cancel_destination = "/clinic/reports"
+var tt_cancel_destination = "/clinic"
+var tt_cancel_show = "/clinic"
+
 //jQuery(document).ready(function($) {  })
 </script>
 </head>
@@ -111,11 +113,12 @@ var tt_cancel_destination = "/clinic/reports"
         <%end%>
       </table>
     </div>
-    <div id="right"-->
+    <div id="right">
       <table id="activity_buttons">
         <% @activities.each do |name,path| %>
         <tr>
-          <td><a href="<%=path%>" class='report_buttons'><%=name%></a></td>
+          <!-- <td><a href="<%=path%>" class='report_buttons'><%=name%></a></td> -->
+          <td><button class='blue' onclick="parent.location='<%=path%>'" style='margin: 5px,0px,0px; min-width: 250px'><span> <%=name%> </span></button></td>
         </tr>
         <%end%>
       </table>
