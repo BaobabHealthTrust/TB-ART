@@ -1,9 +1,17 @@
-<%= render :partial => 'clinic/nav', :locals => {:active => 'properties'} %>
 <script type="text/javascript">
-  jQuery(document).ready(function($) {
-  }) 
+//  jQuery(document).ready(function($) {
+//  })
 </script>
-<div id="tab" style="height: 461px;">
-  <div class="panel">
-  </div>        
-</div>
+<%= stylesheet_link_tag 'extra_buttons' %>
+<table id="tcontent" style="margin-left: 350px;">
+<tr>
+  <td>
+    <button class='blue' onclick="window.parent.location='/properties/clinic_days'" style='margin: 5px,0px,0px; min-width: 300px'><span> Set Clinic Days </span></button> <br/>
+    <button class='blue' onclick="window.parent.location='/properties/clinic_holidays'" style='margin: 5px,0px,0px; min-width: 300px'><span> View Clinic Holidays </span></button> <br/>
+    <button class='blue' onclick="window.parent.location='/properties/set_clinic_holidays'" style='margin: 5px,0px,0px; min-width: 300px'><span> Set Clinic Holidays</span></button> <br/>
+    <button class='blue' onclick="window.parent.location='/properties/site_code'" style='margin: 5px,0px,0px; min-width: 300px'><span> Set Site Code </span></button> <br/>
+    <button class='blue' onclick="window.parent.location='/properties/set_appointment_limit'" style='margin: 5px,0px,0px; min-width: 300px'><span> Set Appointment Limit </span></button>
+
+  </td>
+</tr>
+</table>
