@@ -1,9 +1,25 @@
-<%= render :partial => 'clinic/nav', :locals => {:active => 'users'} %>
 <script type="text/javascript">
   jQuery(document).ready(function($) {
-  }) 
+  })
 </script>
-<div id="tab" style="height: 461px;">
-  <div class="panel">
-  </div>        
-</div>
+
+<%= stylesheet_link_tag 'extra_buttons' %>
+
+<table id="tcontent" style="margin-left: 350px;" >
+  <tr>
+    <td> <button class="button blue"  onclick="window.parent.location='/user/change_password/<%=User.current_user.id%>'" style="margin: 5px,50px,0px; min-width: 300px"><span> Change Password </span></button></td>
+  </tr>
+  <tr>
+    <td> <button class="button blue"  onclick="window.parent.location='/user/edit/<%=User.current_user.id%>'" style="margin: 5px,50px,0px; min-width: 300px"><span> Edit Name </span></button> </td>
+  </tr>
+
+  <% if User.current_user.admin? %>
+    <tr>
+      <td> <button class="button blue"  onclick="window.parent.location='/user/new/<%=User.current_user.id%>'" style="margin: 5px,50px,0px; min-width: 300px"><span> Create User </span></button> </td>
+    </tr>
+    <tr>
+      <td> <button class="button blue"  onclick="window.parent.location='/user/select_user'" style="margin: 5px,50px,0px; min-width: 300px"><span> Edit User </span></button> </td>
+    </tr>
+  <% end %>
+</table>
+
