@@ -28,7 +28,7 @@ class DrugController < ApplicationController
       @stock[drug_name]["consumption_per"] = sprintf('%.2f',((@stock[drug_name]["dispensed"].to_f / @stock[drug_name]["current_stock"].to_f) * 100.to_f)).   to_s + " %" rescue "0 %"
     }
 
-    render :layout => "menu" 
+    render :layout => "clinic"
   end
 
   def name
