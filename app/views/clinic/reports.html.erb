@@ -1,13 +1,16 @@
-<%= render :partial => 'clinic/nav', :locals => {:active => 'reports'} %>
 <script type="text/javascript">
 //  jQuery(document).ready(function($) {
-//  }) 
+//  })
 </script>
 <%= stylesheet_link_tag 'extra_buttons' %>
-<table id="tcontent">
-<% @reports.each do |name,path| %>
-<tr>
-  <td><a href="<%=path%>" class='report_button'><%=name%></a></td>
-</tr>
-<%end rescue nil%>
+<table id="tcontent" style="margin-left: 350px;">
+  <tr>
+    <td>
+      <button class='blue' onclick="window.parent.location='/cohort_tool/cohort_menu'" style='margin: 5px,0px,0px; min-width: 300px'><span> Cohort </span></button> <br/>
+      <button class='blue' onclick="window.location='/clinic/supervision?target_tab=3'" style='margin: 5px,0px,0px; min-width: 300px'><span> Supervision </span></button> <br/>
+      <button class='blue' onclick="window.location='/report/data_cleaning?target_tab=3'" style='margin: 5px,0px,0px; min-width: 300px'><span> Data Cleaning Tools </span></button> <br/>
+      <button class='blue' onclick="window.parent.location='/drug/date_select'" style='margin: 5px,0px,0px; min-width: 300px'><span> Stock Report </span></button>
+    </td>
+  </tr>
 </table>
+[
