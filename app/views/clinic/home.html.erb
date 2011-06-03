@@ -2,6 +2,7 @@
   tt_cancel_destination = "/logout";
   tt_cancel_show = "/people/search";
   tstSuppressBarcode = false;
+  tt_active_tab = <%="'#{@tt_active_tab}'"%>;
 </script>
 
 <div id="home">
@@ -12,7 +13,10 @@
   <div id="user"><%= User.current_user.username %></div>
   <select id="tabs">
     <option value='/clinic/overview' target="_parent">Overview</option>
-    <option value='' target="_parent">Users</option>
+    <option value='/clinic/reports' target="_parent">Reports</option>
+    <option value='/clinic/properties' target="_parent">Properties</option>
+    <option value='/clinic/administration' target="_parent">Administration</option>
+    <!--<option value='' target="_parent">Users</option> -->
   </select>
 
   <select id="links">
