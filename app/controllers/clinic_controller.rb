@@ -1,10 +1,17 @@
 class ClinicController < ApplicationController
   def index
+    @tt_active_tab = params[:active_tab]
+    params[:dashboard] = 'clinic'
     render :template => 'clinic/home', :layout => 'clinic'
   end
 
   def reports
-    @reports = [["Cohort","/cohort_tool/cohort_menu"],["Drug management","/drug/management"]]
+    @reports = [
+                ["Cohort","/cohort_tool/cohort_menu"],
+                ["Supervision","/clinic/supervision"],
+                ["Data Cleaning Tools", "/report/data_cleaning"],
+                ["Stock report","/drug/date_select"]]
+    
     render :template => 'clinic/reports', :layout => 'clinic' 
   end
 
@@ -20,21 +27,29 @@ class ClinicController < ApplicationController
   end
 
   def properties
-    render :template => 'clinic/properties', :layout => 'clinic' 
+    @settings = [
+                  ["Set clinic days","/properties/clinic_days"],
+                  ["View clinic holidays","/properties/clinic_holidays"],
+                  ["Set clinic holidays","/properties/set_clinic_holidays"],
+                  ["Set site code", "/properties/site_code"],
+                  ["Set appointment limit", "/properties/set_appointment_limit"]
+                ]
+    render :template => 'clinic/properties', :layout => 'clinic'
   end
 
   def printing
-    render :template => 'clinic/printing', :layout => 'clinic' 
+    render :template => 'clinic/printing', :layout => 'clinic'
   end
 
   def users
-    render :template => 'clinic/users', :layout => 'clinic' 
+    render :template => 'clinic/users', :layout => 'clinic'
   end
 
   def administration
-    @reports = [['/report/data_cleaning','Data Clining Tools']]
+    @reports = [['/clinic/users','User accounts/settings'],['/drug/management','Drug Management']]
     @landing_dashboard = 'clinic_administration'
-    render :template => 'clinic/administration', :layout => 'clinic' 
+    
+    render :template => 'clinic/administration', :layout => 'clinic'
   end
 
   def overview

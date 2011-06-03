@@ -9,12 +9,13 @@
       tstCurrentDate = "<%= Time.now.strftime("%Y/%m/%d") %>";
       var tt_cancel_destination = null;
     </script>
-    <%= stylesheet_link_tag "mateme" %>
     <%= stylesheet_link_tag fancy_or_high_contrast_touch %>
-    <%= javascript_include_tag "preload" %>
+    <%= stylesheet_link_tag "dashboard" %>
+    <%= stylesheet_link_tag "graytabs" %>
+    <%= javascript_include_tag "dashboard" %>
   </head>
     <body id="container">
-      <div id="content">
+      <!--<div id="content"> -->
         <div id="description" style="color:#777;position:absolute;margin-top:-70px;">
           <% if show_intro_text %>
             This demonstration site contains the work of <a href="http://pih.org" style="color:white">Partners In Health</a>
@@ -34,14 +35,14 @@
           <% end %>
         </div>  
         <%= yield %>  
-        <div id="footer">
+        <!--<div id="footer">
           <div id="buttons" class="buttonsDiv" style="top:0px">
             <button id="finishButton" class="button navButton green" onclick="if (tt_cancel_destination) window.location = tt_cancel_destination;"><span>Finish</span></button>
             <button id="switch_view" class="button navButton green" onclick="showReport();"><span>Survival Analysis</span></button>
             <div id="tt_extraButtons"/>
           </div>
           
-        </div>    
-      </div>  
+        </div>  -->
+      <!-- </div>   -->
   </body>
 </html>

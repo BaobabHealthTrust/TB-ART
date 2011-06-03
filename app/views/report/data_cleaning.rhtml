@@ -1,33 +1,20 @@
-<script >
-    tt_cancel_destination = "/clinic/administration"
-</script>
-<%= stylesheet_link_tag 'extra_buttons' %>
-<%= javascript_include_tag 'jquery' %>
-
 <script type="text/javascript">
   jQuery(document).ready(function($) {
-  document.getElementById('finishButton').innerHTML= "<span>Back<span>";
   })
 </script>
 
+<%= stylesheet_link_tag 'extra_buttons' %>
 
-<div align = center>
-      <br />
-      <h1><u>Data Cleaning Reports</u></h1>
-      
-      <div id="right" style="border: 1px solid black; width:279px">
+<table id="tcontent" style="margin-left: 250px;">
+    <%path = "/cohort_tool/select"
+      options = "?dashboard=#{@landing_dashboard}"
+    %>
+    <% @reports.each do |helptext,report_type| %>
+      <tr>
+          <td>
+            <td><button class='blue' onclick="window.parent.location='<%=path%><%=options%>&report_type=<%=report_type%>'" style='margin: 5px,0px,0px; min-width: 450px'><span> <%=helptext%> </span></button></td>
+          </td>
+      </tr>
+    <%end%>
+</table>
 
-        <table id="tcont  ent">
-            <% @reports.each do |helptext,report_type| %>
-            <tr>
-                <td>  
-                      <%= link_to_onmousedown "#{helptext}",{:controller =>"cohort_tool", :action => 'select',
-                                                                      :report_type => "#{report_type}", :dashboard => "#{@landing_dashboard}"}, :class => 'report_button' %> 
-                      
-                </td>
-            </tr>
-            <%end%>
-        </table>
-        
-      </div>
-</div>
