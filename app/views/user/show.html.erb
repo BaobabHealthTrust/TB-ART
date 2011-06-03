@@ -1,0 +1,136 @@
+<script>
+   var tt_cancel_destination = "/clinic/users"
+</script>
+<style>
+  h1 { padding-left:10px; }
+
+  .user_info {
+    float:left;
+    background-color: #DDDDDD;
+    width: 70%;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    margin-top: 1px;
+    font-size:25px;
+  }
+
+  div#right{
+  float:right;
+  border: 0px solid black;
+  width:30%;
+  text-align:right;
+  }
+
+  .userdata {
+    background: none repeat scroll 0 0 white;
+    border: 1px solid black;
+    margin: 10px;
+    width: 98%;
+  }
+
+  .userdata td, .userdata th {
+    border-width: 0px;
+    border-style:solid;
+  }
+
+  th { text-align:left; }
+
+  .blue { background-color:#E6E6FF; }
+
+  .user_info button {
+    margin-top: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0 4px;
+    float:right;
+  }
+
+  .report_buttons{
+    background-color:grey;
+    border-bottom-color:black;
+    border-bottom-width:1px;
+    border-left-color-ltr-source:physical;
+    border-left-color-rtl-source:physical;
+    border-left-color-value:black;
+    border-left-style-ltr-source:physical;
+    border-left-style-rtl-source:physical;
+    border-left-style-value:solid;
+    border-left-width-ltr-source:physical;
+    border-left-width-rtl-source:physical;
+    border-left-width-value:1px;
+    border-right-color-ltr-source:physical;
+    border-right-color-rtl-source:physical;
+    border-right-color-value:black;
+    border-right-style-ltr-source:physical;
+    border-right-style-rtl-source:physical;
+    border-right-style-value:solid;
+    border-right-width-ltr-source:physical;
+    border-right-width-rtl-source:physical;
+    border-right-width-value:1px;
+    border-top-color:black;
+    /*border-top-style:solid;
+    border-bottom-style:solid;*/
+    border-style:outset;
+    border-top-width:1px;
+    color:white;
+    display:block;
+    padding-bottom:10px;
+    padding-left:10px;
+    padding-right:16px;
+    padding-top:10px;
+    padding-top:10px;
+    text-decoration:none;
+    text-align:center;
+    width:85%;
+  }
+
+  #activity_buttons{
+  float:right;
+  width:100%
+  }
+
+#activity_buttons td{
+  padding-bottom:5px;
+}
+
+</style>
+
+<br />
+<h1>User information</h1>
+<br />
+<div class = 'user_info'>
+<table class = 'userdata'>
+  <tr>
+    <th class='blue'>Username:&nbsp;</th>
+    <td class='blue'>&nbsp;<%=@user.username%></td>
+  </tr>
+  <tr>
+    <th>Role:&nbsp;</th>
+    <td>&nbsp;<%=@user.user_roles.map{|r|r.role}.join(',') rescue '&nbsp;'%></td>
+  </tr>
+  <tr>
+    <th class='blue'>First name:&nbsp;</th>
+    <td class='blue'>&nbsp;<%=@user.first_name%></td>
+  </tr>
+  <tr>
+    <th>Last name:&nbsp;</th>
+    <td>&nbsp;<%=@user.last_name%></td>
+  </tr>
+  <tr>
+    <th class='blue'>Date created:&nbsp;</th>
+    <td class='blue'>&nbsp;<%=@user.date_created.strftime('%A  %d, %B, %Y') rescue '&nbsp;'%></td>
+  </tr>
+</table>
+<br />
+</div>
+
+<div id="right"-->
+  <table id="activity_buttons">
+    <tr>
+    <td>
+      <a class='report_buttons' href='/user/change_password?id=<%= @user.id -%>'>Change Password</a><br />
+      <a class='report_buttons' href='/user/edit?id=<%= @user.id -%>'>Edit Names</a><br />
+    </td>
+  </tr>
+  </table>
+</div>
