@@ -1,0 +1,96 @@
+<script type="text/javascript" language="javascript">
+		tt_cancel_show = "/patients/show/<%= @patient.id %>";
+		tt_cancel_destination = "/patients/show/<%= @patient.id %>";
+
+var symptoms_values = [];
+
+function setConceptNamesAndValues(symptoms, observations, obs_type){
+
+    var values_string = selectedValue(observations);
+   
+    /* clear the fields*/
+  for (var index = 0; index < symptoms.length; index++){
+    var concept_name        = obs_type + index +"_concept_name";
+    var value_coded_or_text = obs_type + index +"_value_coded_or_text";    
+
+    if(values_string.contains(symptoms[index][0]) && symptoms[index][1] != ""){
+      $(concept_name).value         = symptoms[index][1];
+      $(value_coded_or_text).value  = 'YES';
+    }
+    else{
+      $(concept_name).value         = '';
+      $(value_coded_or_text).value  = '';
+    }
+  }
+}
+
+</script>
+
+<% form_tag :controller => "encounters", :action => "create" do |f| %>
+	<%= hidden_field_tag "encounter[encounter_type_name]", "IPT CONTACT PERSON" %>
+	<%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+	<%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+	<%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+<% options = {
+     :id          => "ipt_contact_name",
+     :tt_onUnLoad => "$('ipt_contact_name_value_coded_or_text').value = $('ipt_contact_name').value",
+     :helpText    => "Enter full name of the IPT Contact Person"
+     } %>
+
+  <%= text_field_tag('ipt_contact_name','',options)%>
+  <%= hidden_field_tag("observations[][concept_name]",        "GIVEN NAME") %>
+  <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'ipt_contact_name_value_coded_or_text'}) %>
+  <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+  <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+
+
+<% options = {
+     :id          => "prescribe_for_drugs",
+     :tt_onUnLoad => "$('prescribe_for_drugs_value_coded_or_text').value = $('prescribe_for_drugs').value",
+     :helpText    => "Prescribe IPT Drugs"
+     } %>
+
+  <%@prescribe_for_drugs = ["", "YES", "NO"]%>
+
+  <%= select_tag("select_outcome", options_for_select(@prescribe_for_drugs), options)%>
+  <%= hidden_field_tag("observations[][concept_name]",        "START DRUGS") %>
+  <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'prescribe_for_drugs_value_coded_or_text'}) %>
+  <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+  <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+<% options = {
+     :id          => "regimen",
+     :tt_onUnLoad => "$('regimen_value_coded_or_text').value = $('regimen').value",
+     :helpText    => "Select Regimen",
+     :condition    => "$('prescribe_for_drugs_value_coded_or_text').value == 'YES'"
+     } %>
+
+  <%@regimen = ["", "ISONIAZID"]%>
+
+  <%= select_tag("select_outcome", options_for_select(@regimen), options)%>
+  <%= hidden_field_tag("observations[][concept_name]",        "PRIMARY REGIMEN") %>
+  <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'regimen_value_coded_or_text'}) %>
+  <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+  <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+
+<% options = {
+     :id          => "prescription_period",
+     :tt_onUnLoad => "$('prescription_period_value_coded_or_text').value = $('prescription_period').value",
+     :helpText    => "Prescription Time Period",
+     :condition   => "$('prescribe_for_drugs_value_coded_or_text').value == 'YES'"
+
+     } %>
+
+  <%@prescription_period = ["", "2 Weeks", "1 Month"]%>
+
+  <%= select_tag("select_outcome", options_for_select(@prescription_period), options)%>
+  <%= hidden_field_tag("observations[][concept_name]",        "IPT DURATION") %>
+  <%= hidden_field_tag("observations[][value_coded_or_text]", "", {:id => 'prescription_period_value_coded_or_text'}) %>
+  <%= hidden_field_tag("observations[][patient_id]",          @patient.id) %>
+  <%= hidden_field_tag("observations[][obs_datetime]",        DateTime.now()) %>
+
+	<%= submit_tag 'Finish' %>
+<% end %>
