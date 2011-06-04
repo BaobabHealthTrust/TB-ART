@@ -1,6 +1,6 @@
 <script type="text/javascript">
-  tt_cancel_destination = "/clinic?status=endcall";
-  tt_cancel_show = "/clinic?status=endcall";
+  tt_cancel_destination = "/clinic";
+  tt_cancel_show = "/clinic";
 </script>
 
 
@@ -36,6 +36,7 @@
     <!--<option value='/encounter_types?patient_id=<%= @patient.id -%>'>Change Task</option>-->
     <option value='/people/new_tb_index_person?patient_id=<%= @patient.id -%>'>New TB Index Person</option>
     <option value='/people/new_tb_contact_person?patient_id=<%= @patient.id -%>'>New TB Contact Person</option>
+    <option value='/encounters/new/ipt_contact_person?patient_id=<%= @patient.id -%>'>New IPT</option>
     <option value='/encounters/new/tb_reception?patient_id=<%= @patient.id -%>'>TB Reception</option>
     <option value='/encounters/new/art_initial?patient_id=<%= @patient.id -%>'>ART Initial</option>
     <option value='/encounters/new/vitals?patient_id=<%= @patient.id -%>'>Vitals</option>
