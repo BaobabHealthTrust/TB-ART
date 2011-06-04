@@ -242,4 +242,10 @@ class EncountersController < ApplicationController
     encounter_type = params[:observations][0][:value_coded_or_text] 
     redirect_to "/encounters/new/#{encounter_type}?patient_id=#{@patient.id}"
   end
+
+  def give_drugs
+    @patient = Patient.find(params[:patient_id] || session[:patient_id])
+    render :layout => "menu" 
+  end
+
 end
