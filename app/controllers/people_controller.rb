@@ -26,13 +26,14 @@ class PeopleController < ApplicationController
     
     #redirect to TB contact search results page if params has to do with search of tb contact info   
     if params[:search_tb_contact_person]
+     
       redirect_to :action => :new_tb_contact_person, :gender => params[:gender], :given_name => params[:given_name], 
                              :family_name => params[:family_name], :person_id => params[:person], 
                              :patient_id => params[:patient_id], :number_of_contacts => params[:number_of_contacts], 
                              :tb_contact_birth_year => params[:tb_contact_birth_year], 
                              :tb_contact_birth_month => params[:tb_contact_birth_month], 
                              :tb_contact_age_estimate => params[:tb_contact_age_estimate], 
-                             :tb_contact_birth_day => params[:tb_contact_birth_day] and return 
+                             :tb_contact_birth_day => params[:tb_contact_birth_day], :source => params[:source] and return
     end
     
     found_person = nil
@@ -82,7 +83,7 @@ class PeopleController < ApplicationController
        number_of_contacts.save
 
 
-       redirect_to :action => :create_tb_contact_person, :new_tb_contact_person => {
+       redirect_to :action => :create_tb_contact_person, :source => params[:source], :new_tb_contact_person => {
                               :gender => params[:gender], :given_name => params[:given_name], :family_name => params[:family_name],
                               :person_id => params[:person], :patient_id => params[:patient_id], :birthday_params => {
                                                                       :birth_year => params[:tb_contact_birth_year], 
@@ -143,12 +144,17 @@ class PeopleController < ApplicationController
   
   def new_tb_contact_person
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
-    @people = Person.search(params)  
+    @people = Person.search(params)
   end
 
   def create_tb_contact_person
     Person.create_tb_index_or_contact(params[:new_tb_contact_person])
-    redirect_to search_complete_url(params[:new_tb_contact_person][:patient_id], '')
+
+    if params[:source] == "create_ipt"
+      redirect_to("/encounters/new/ipt_contact_person?patient_id=#{params[:new_tb_contact_person][:patient_id]}")
+    else
+      redirect_to search_complete_url(params[:new_tb_contact_person][:patient_id], '')
+    end
   end
 
 
