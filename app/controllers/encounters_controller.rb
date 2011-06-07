@@ -22,6 +22,8 @@ class EncountersController < ApplicationController
         end
       end
       params[:observations] = observations unless observations.blank?
+    elsif params['encounter']['encounter_type_name'] == 'ART_INITIAL'
+      @encounter = @patient.current_treatment_encounter(session_date)
     end
 
     
@@ -245,6 +247,19 @@ class EncountersController < ApplicationController
 
   def give_drugs
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
+     #@prescriptions = @patient.orders.current.prescriptions.all
+    type = EncounterType.find_by_name('TREATMENT')
+    session_date = session[:datetime].to_date rescue Date.today
+    @prescriptions = Order.find(:all,
+                     :joins => "INNER JOIN encounter e USING (encounter_id)",
+                     :conditions => ["encounter_type = ? AND e.patient_id = ? AND DATE(encounter_datetime) = ?",
+                     type.id,@patient.id,session_date])
+    @historical = @patient.orders.historical.prescriptions.all
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
+    @restricted.each do |restriction|
+      @prescriptions = restriction.filter_orders(@prescriptions)
+      @historical = restriction.filter_orders(@historical)
+    end
     render :layout => "menu" 
   end
 
