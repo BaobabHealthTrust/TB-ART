@@ -353,4 +353,10 @@ EOF
     Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ? AND value_coded in (?)", self.id, ConceptName.find_by_name('TESTS ORDERED').concept_id, sputum_concept_ids], :order => "obs_datetime desc", :limit => 3)
   end
 
+
+   def tb_contacts
+     ipt_contact_ids = Relationship.find(:all, :conditions => ["person_a = ? AND relationship = ?", self.id, RelationshipType.find(:first, :conditions => ["a_is_to_b = ? AND b_is_to_a = ?","TB Patient", "TB contact Person"])]).map(&:person_b)
+     ipt_contacts = Person.find(:all, :conditions => ["person_id IN(?)", ipt_contact_ids])
+   end
+
 end
