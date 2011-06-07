@@ -129,6 +129,72 @@ class Encounter < ActiveRecord::Base
         ['Smear Negative','SMEAR NEGATIVE'],
         ['Smear Positive','SMEAR POSITIVE'],
         ['X-ray results','X-RAY RESULTS']
+      ],
+     'family_planning_methods' => [
+       ['',''],
+       ['Oral contraceptive pills', 'ORAL CONTRACEPTIVE PILLS'],
+		   ['Depo-Provera', 'DEPO-PROVERA'],
+		   ['Intrauterine contraception', 'INTRAUTERINE CONTRACEPTION'],
+       ['Contraceptive implant', 'CONTRACEPTIVE IMPLANT'],
+       ['Male condoms', 'MALE CONDOMS'],
+       ['Female condoms', 'FEMALE CONDOMS'],
+       ['Rhythm method', 'RYTHM METHOD'],
+       ['Withdrawal', 'WITHDRAWAL'],
+       ['Abstinence', 'ABSTINENCE'],
+       ['Tubal ligation', 'TUBAL LIGATION'],
+       ['Vasectomy', 'VASECTOMY'],
+		   ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
+      ],
+        'tb_symptoms' => [
+          ['',''],
+          ['Persistent cough', 'PERSISTENT COUGH'],
+          ['Bronchial breathing', 'BRONCHIAL BREATHING'],
+          ['Shortness of breath', 'SHORTNESS OF BREATH'],
+          ['Crepitations', 'CREPITATIONS'],
+          ['Failure to thrive', 'FAILURE TO THRIVE'],
+          ['Chest pains', 'CHEST PAINS'],
+          ['Loss of weight', 'LOST OF WEIGHT'],
+          ['Recurrent fever', 'RECURRENT FEVER'],
+          ['Lethargy', 'LETHARGY'],
+          ['Haemoptysis', 'HAEMOPTYSIS'],
+          ['Other','OTHER']
+      ],
+        'drug_related_side_effects' => [
+          ['',''],
+          ['Deafness', 'DEAFNESS'],
+          ['Dizziness','DIZZINESS'],
+          ['General reaction including shock', 'GENERAL REACTION'],
+          ['Purpura', 'PURPURA'],
+          ['Jaundice', 'JAUNDICE'],
+          ['Skin itching', 'SKIN ITCHING'],
+          ['Visual impairment', 'VISUAL IMPAIRMENT'],
+          ['Vomiting ++/confusion', 'VOMITING']
+      ],
+        'drug_list' => [
+          ['',''],
+          ["Refampcin Isoniazid Pyrazinamide Ethambutol", "REFAMPCIN ISONIAZID PYRAZINAMIDE ETHAMBUTOL"],
+          ["Refampcin Isoniazid Ethambutol", "REFAMPCIN ISONIAZID ETHAMBUTOL"],
+          ["Refampcin Isoniazid", "REFAMPCIN ISONIAZID"],
+          ["Stavudine Lamivudine Nevirapine", "STAVUDINE LAMIVUDINE NEVIRAPINE"],
+          ["Stavudine Lamivudine + Stavudine Lamivudine Nevirapine", "STAVUDINE LAMIVUDINE + STAVUDINE LAMIVUDINE NEVIRAPINE"],
+          ["Zidovudine Lamivudine + Nevirapine", "ZIDOVUDINE LAMIVUDINE + NEVIRAPINE"]
+      ],
+        'presc_time_period' => [
+          ["",""],
+          ["2 weeks", "2 WEEKS"],
+          ["1 month", "1 MONTH"],
+          ["2 months", "2 MONTHS"],
+          ["3 months", "3 MONTHS"],
+          ["4 months", "4 MONTHS"],
+          ["5 months", "5 MONTHS"],
+          ["6 months", "6 MONTHS"],
+          ["7 months", "7 MONTHS"],
+          ["8 months", "8 MONTHS"]
+      ],
+        'continue_treatment' => [
+          ["",""],
+          ["Yes", "YES"],
+          ["Transfer Out", "TRANSFER OUT"]
       ]
     }
   end
