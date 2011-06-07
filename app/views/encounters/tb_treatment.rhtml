@@ -45,19 +45,19 @@ Check applicability of code below
       {:id => "on_fpm",
         :helpText => "Currently using family planning method" } %>
 
-  <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['family_planning_methods']),
     {:id => "fpm_used",
      :condition => '$("on_fpm").value == "YES"',
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "What method?" } %>
 
-  <%= touch_select_tag "TB SYMPTOMS", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "TB SYMPTOMS", @patient, options_for_select(@select_options['tb_symptoms']),
     {:id => "tb_symptoms",
-     :multiple => "true",
+     :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "TB symptoms / side effects" } %>
 
-  <%= touch_select_tag "DRUG RELATED SIDE EFFECTS", @patient, options_for_select(@answer_array),
+     <%= touch_select_tag "DRUG RELATED SIDE EFFECTS", @patient, options_for_select(@select_options['drug_related_side_effects']),
     {:id => "drug_side_effects",
      :multiple => "true",
      :tt_pageStyleClass => "NoKeyboard",
@@ -67,15 +67,23 @@ Check applicability of code below
       {:id => "refer_to_clinician",
         :helpText => "Refer patient to clinician" } %>
 
-  <%= touch_yes_no_unknown_tag "CONTINUE TREATMENT", @patient, nil,
-      {:id => "continue_treatment",
-        :helpText => "Continue treatment" } %>
+   <%= touch_text_field_tag "TOTAL NUMBER OF WHOLE TB TABLETS REMAINING", @patient, nil,
+    {:id => "total_tb_tablets_remaining",
+     :field_type => 'number',
+     :helpText => "Total number of whole TB tablets remaining (brought to the clinic and left at home)" } %>
+
+   <%= touch_text_field_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
+    {:id => "total_arv_tablets_remaining",
+     :field_type => 'number',
+     :helpText => "Total number of whole ARV tablets remaining (brought to the clinic and left at home)" } %>
+
+     <!--TODO How should we handle 'Show adherence report(TB+ART)'-->
 
   <%= touch_yes_no_unknown_tag "PRESCRIBE DRUGS", @patient, nil,
       {:id => "prescribe_drugs",
         :helpText => "Prescribe TB regimens this visit" } %>
 
-  <%= touch_select_tag "PRESCRIBED DRUGS", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "PRESCRIBED DRUGS", @patient, options_for_select(@select_options['drug_list']),
     {:id => "prescribed_drugs",
      #:condition => '$("prescribe_drugs").value == "EPTB"',
      :tt_pageStyleClass => "NoKeyboard",
@@ -85,21 +93,22 @@ Check applicability of code below
       {:id => "recommended_dosage",
         :helpText => "Recommended dosage for patient" } %>
 
-  <%= touch_yes_no_unknown_tag "PATIENT ON ART", @patient, nil,
-      {:id => "patient_on_art",
-        :helpText => "Is the patient on ART" } %>
+  <%= touch_yes_no_unknown_tag "PRESCRIBE RECOMMENDED DOSAGE", @patient, nil,
+      {:id => "prescribe_recommended_dosage",
+        :helpText => "Prescribe recommended dosage for patient" } %>
 
-  <%= touch_select_tag "PRESCRIPTION TIME PERIOD", @patient, options_for_select(@answer_array),
+  <%= touch_yes_no_unknown_tag "PRESCRIBE COTRAMOXAZOLE", @patient, nil,
+      {:id => "prescribe_cpt",
+        :helpText => "Prescribe Cotramoxazole" } %>
+
+  <%= touch_select_tag "PRESCRIPTION TIME PERIOD", @patient, options_for_select(@select_options['presc_time_period']),
     {:id => "prescription_time_period",
      #:condition => '$("prescribe_drugs").value == "EPTB"',
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Prescription time period" } %>
 
-  <%= touch_yes_no_unknown_tag "PRESCRIBE COTRAMOXAZOLE", @patient, nil,
-      {:id => "prescribe_cpt",
-        :helpText => "PRESCRIBE COTRAMOXAZOLE" } %>
 
-  <%= touch_select_tag "CONTINUE TREATMENT AT THIS SITE", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "CONTINUE TREATMENT AT THIS SITE", @patient, options_for_select(@select_options['continue_treatment']),
     {:id => "continue_treatment_at_this_site",
      #:condition => '$("prescribe_drugs").value == "EPTB"',
      :tt_pageStyleClass => "NoKeyboard",
@@ -111,6 +120,11 @@ Check applicability of code below
      :optional => false,
      :helpText => "Transfer out destination" } %>
 
+  <%= touch_location_tag "TRANSFER OUT DOT SITE", @patient, nil,
+    {:id => "dot_site",
+     :condition => '$("continue_treatment_at_this_site").value == "TRANSFER OUT"',
+     :optional => false,
+     :helpText => "Lilongwe DHO Dot sites" } %>
   <%= submit_tag "Finish" %>    
 </form>
 <% end %>
