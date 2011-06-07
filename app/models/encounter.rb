@@ -153,7 +153,7 @@ class Encounter < ActiveRecord::Base
           ['Crepitations', 'CREPITATIONS'],
           ['Failure to thrive', 'FAILURE TO THRIVE'],
           ['Chest pains', 'CHEST PAINS'],
-          ['Loss of weight', 'LOST OF WEIGHT'],
+          ['Loss of weight', 'LOSS OF WEIGHT'],
           ['Recurrent fever', 'RECURRENT FEVER'],
           ['Lethargy', 'LETHARGY'],
           ['Haemoptysis', 'HAEMOPTYSIS'],
@@ -163,7 +163,7 @@ class Encounter < ActiveRecord::Base
           ['',''],
           ['Deafness', 'DEAFNESS'],
           ['Dizziness','DIZZINESS'],
-          ['General reaction including shock', 'GENERAL REACTION'],
+          ['General reaction including shock', 'GENERAL REACTION INCLUDING SHOCK'],
           ['Purpura', 'PURPURA'],
           ['Jaundice', 'JAUNDICE'],
           ['Skin itching', 'SKIN ITCHING'],
@@ -172,16 +172,15 @@ class Encounter < ActiveRecord::Base
       ],
         'drug_list' => [
           ['',''],
-          ["Refampcin Isoniazid Pyrazinamide Ethambutol", "REFAMPCIN ISONIAZID PYRAZINAMIDE ETHAMBUTOL"],
-          ["Refampcin Isoniazid Ethambutol", "REFAMPCIN ISONIAZID ETHAMBUTOL"],
-          ["Refampcin Isoniazid", "REFAMPCIN ISONIAZID"],
-          ["Stavudine Lamivudine Nevirapine", "STAVUDINE LAMIVUDINE NEVIRAPINE"],
-          ["Stavudine Lamivudine + Stavudine Lamivudine Nevirapine", "STAVUDINE LAMIVUDINE + STAVUDINE LAMIVUDINE NEVIRAPINE"],
-          ["Zidovudine Lamivudine + Nevirapine", "ZIDOVUDINE LAMIVUDINE + NEVIRAPINE"]
+          ["Rifampicin Isoniazid Pyrazinamide and Ethambutol", "RHEZ (RIF, INH, Ethambutol and Pyrazinamide tab)"],
+          ["Rifampicin Isoniazid and Ethambutol", "RHE (Rifampicin Isoniazid and Ethambutol -1-1-mg t"],
+          ["Rifampicin and Isoniazid", "RH (Rifampin and Isoniazid tablet)"],
+          ["Stavudine Lamivudine and Nevirapine", "D4T+3TC+NVP"],
+          ["Stavudine Lamivudine + Stavudine Lamivudine and Nevirapine", "D4T+3TC/D4T+3TC+NVP"],
+          ["Zidovudine Lamivudine and Nevirapine", "AZT+3TC+NVP"]
       ],
         'presc_time_period' => [
           ["",""],
-          ["2 weeks", "2 WEEKS"],
           ["1 month", "1 MONTH"],
           ["2 months", "2 MONTHS"],
           ["3 months", "3 MONTHS"],
@@ -194,6 +193,7 @@ class Encounter < ActiveRecord::Base
         'continue_treatment' => [
           ["",""],
           ["Yes", "YES"],
+          ["DHO Dot site","DHO DOT SITE"],
           ["Transfer Out", "TRANSFER OUT"]
       ]
     }
