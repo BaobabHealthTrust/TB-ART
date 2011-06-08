@@ -20,6 +20,7 @@ class PrescriptionsController < ApplicationController
   end
   
   def create
+    raise params[:observations].to_yaml
     @suggestions = params[:suggestion] || ['New Prescription']
     @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
     session_date = session[:datetime] || Time.now()
@@ -149,6 +150,11 @@ class PrescriptionsController < ApplicationController
     @orders = DrugOrder.find_common_orders(@diagnosis.value_coded)
     @options = @orders.map{|o| [o.order_id, o.script] } + @options
     render :layout => false
+  end
+
+  def tb_treatment
+    @patient = Patient.find(params[:patient_id] || session[:patient_id])
+    @select_options = Encounter.select_options
   end
   
 end

@@ -22,8 +22,6 @@ class EncountersController < ApplicationController
         end
       end
       params[:observations] = observations unless observations.blank?
-    elsif params['encounter']['encounter_type_name'] == 'ART_INITIAL'
-      @encounter = @patient.current_treatment_encounter(session_date)
     end
 
     

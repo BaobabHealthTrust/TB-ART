@@ -1,5 +1,10 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
+
+  function hideMessage(){ 
+      document.getElementById('sulfurAlert').style.display = 'none';
+    }
+
 </script> 
 
 <!--.........TODO...........
@@ -29,7 +34,7 @@ Check applicability of code below
 		setTimeout("window.location=tt_cancel_destination;", 5000);
   </script>
 <% else %>
-<form id='appointment' action="/encounters/create" method='post'>
+<form id='appointment' action="/prescriptions/create" method='get'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "TREATMENT" %>
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
@@ -48,6 +53,7 @@ Check applicability of code below
   <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['family_planning_methods']),
     {:id => "fpm_used",
      :condition => '$("on_fpm").value == "YES"',
+     :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "What method?" } %>
 
@@ -59,11 +65,11 @@ Check applicability of code below
 
      <%= touch_select_tag "DRUG RELATED SIDE EFFECTS", @patient, options_for_select(@select_options['drug_related_side_effects']),
     {:id => "drug_side_effects",
-     :multiple => "true",
+     :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Drug related side effects" } %>
 
-  <%= touch_yes_no "REFER PATIENT TO CLINICIAN", @patient, nil,
+  <%= touch_yes_no_tag "REFER PATIENT TO CLINICIAN", @patient, nil,
       {:id => "refer_to_clinician",
         :helpText => "Refer patient to clinician" } %>
 
@@ -86,17 +92,19 @@ Check applicability of code below
 
   <%= touch_select_tag "PRESCRIBED DRUGS", @patient, options_for_select(@select_options['drug_list']),
     {:id => "prescribed_drugs",
-     :condition => '$("refer_to_clinician").value == "NO"',
+      :multiple => true,
+     :condition => '$("refer_to_clinician").value == "NO" && $("prescribe_drugs").value == "YES"',
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Select TB regimens" } %>
 
   <%= touch_yes_no_unknown_tag "PRESCRIBE RECOMMENDED DOSAGE", @patient, nil,
       {:id => "prescribe_recommended_dosage",
-     :condition => '$("refer_to_clinician").value == "NO"',
+     :condition => '$("refer_to_clinician").value == "NO" && $("prescribe_drugs").value == "YES"',
         :helpText => "Prescribe recommended dosage for patient" } %>
 
   <%= touch_yes_no_unknown_tag "PRESCRIBE COTRAMOXAZOLE", @patient, nil,
-      {:id => "prescribe_cpt",
+    {:id => "prescribe_cpt",
+      :tt_onLoad => '$("sulfurAlert").style.display = "block";',
      :condition => '$("refer_to_clinician").value == "NO"',
         :helpText => "Prescribe Cotramoxazole" } %>
 
@@ -127,3 +135,8 @@ Check applicability of code below
   <%= submit_tag "Finish" %>    
 </form>
 <% end %>
+<div id='sulfurAlert' class='messageBar' style='display:none'>
+  Find ot if patient is alergic to Sulfur<br /> 
+  <button onmousedown="$('sulfurAlert').style.display = 'none';"><span>OK</span></button>
+</div> 
+
