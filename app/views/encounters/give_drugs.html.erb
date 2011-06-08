@@ -4,7 +4,8 @@
 <style type="text/css">
   .subtotal { margin-left:32px; font-size: 0.8em;}
   .warning { color: red; font-weight: bold; }
-  ul.list{overflow: auto;}
+  ul.list{overflow: auto; font-size: 1.8em;}
+  #treatment{padding-left: 10px}
 </style>
 <script type="text/javascript">
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id -%>";
@@ -33,6 +34,7 @@
     <h2>TB</h2>
     <ul id="prescriptions" class="list" style="height:200px;width:100%;">
       <% @prescriptions.each do |order| %>
+        <%next if order.drug_order.drug.arv?%>
         <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
           <div class="summary">
@@ -54,10 +56,21 @@
     </ul>
     <h2>ART</h2>
     <ul id="prescriptions" class="list" style="height:200px;width:100%;">
-      <% @historical.reverse.each do |order| %>
+      <% @prescriptions.each do |order| %>
+        <%next unless order.drug_order.drug.arv?%>
         <li class="data <%= cycle('even', 'odd') %>" prescription="<%= order.id %>">
           <div class="void"><img src="/images/cancel_flat_small.png"/></div>
-          <div class="summary"><%= order.to_s.gsub(/\n/, '<br/>') -%></div>
+          <div class="summary">
+            <%= order.to_s.gsub(/\n/, '<br/>') -%>
+            <% units = order.drug_order.units %>
+            <% amount_needed = order.drug_order.amount_needed -%>
+            <% amounts_dispensed = order.drug_order.total_drug_supply(@patient, @encounter, session[:datetime] || Date.today) %>
+            <% amounts_dispensed.each do |amount_dispensed| %>
+              <div class="subtotal dispensation"><%=h amount_dispensed.to_s %> <%= units %></div>
+            <% end %>
+            <div class="subtotal">TOTAL SUPPLY OF DRUG RECEIVED BY PATIENT: <%= order.drug_order.quantity.to_s %> <%= units %></div>
+            <div class="subtotal">NEED TO DISPENSE: <span class="<%= 'warning' if amount_needed > 0 %>"><%= amount_needed.to_s %> <%= units %></span></div>  
+          </div>
         </li>  
       <% end %>
       <% if @prescriptions.blank? %>        
