@@ -4,6 +4,7 @@ module TouchscreenHelper
   def touch_meta_tag(concept, patient, time=DateTime.now(), kind=nil, options={})
     content = ""
     content << hidden_field_tag("observations[][value_numeric]", nil) unless kind == 'value_numeric'
+    content << hidden_field_tag("observations[][value_modifier]", nil) 
     content << hidden_field_tag("observations[][value_datetime]", nil) unless kind == 'value_datetime'
     content << hidden_field_tag("observations[][value_coded_or_text]", nil) unless kind == 'value_coded_or_text'
     content << hidden_field_tag("observations[][value_coded_or_text_multiple][]", nil) unless kind == 'value_coded_or_text_multiple'
@@ -11,12 +12,12 @@ module TouchscreenHelper
     content << hidden_field_tag("observations[][value_text]", nil)  unless kind == 'value_text'
     content << hidden_field_tag("observations[][value_boolean]", nil)  unless kind == 'value_boolean'
     content << hidden_field_tag("observations[][value_drug]", nil)  unless kind == 'value_drug'
+    content << hidden_field_tag("observations[][accession_number]", options[:accession_number]) if options[:accession_number] 
     content << hidden_field_tag("observations[][obs_group_id]", options[:obs_group_id])
     content << hidden_field_tag("observations[][order_id]", options[:order_id])
     content << hidden_field_tag("observations[][concept_name]", concept) 
     content << hidden_field_tag("observations[][patient_id]", patient.id) 
     content << hidden_field_tag("observations[][obs_datetime]", time)
-    content << hidden_field_tag("observations[][accession_number]", options[:accession_number]) if options[:accession_number] 
     content
   end  
 
@@ -88,8 +89,8 @@ module TouchscreenHelper
     options = {:tt_pageStyleClass => "NoKeyboard"}.merge(options) if options[:ajaxURL].blank?
     kind = options[:multiple] ? "value_coded_or_text_multiple" : "value_coded_or_text"
     content = ""
-    content << select_tag("observations[][#{kind}]", choices, options) 
     content << touch_meta_tag(concept, patient, time, kind, options)
+    content << select_tag("observations[][#{kind}]", choices, options) 
     content
   end
 
@@ -138,6 +139,17 @@ module TouchscreenHelper
     content
   end
 
+  def touch_text_area_tag(concept, patient, value, options={}, time=DateTime.now())
+    options = {
+      :field_type => 'alpha',
+      :allowFreeText => true
+    }.merge(options)                 
+    content = ""
+    content << touch_meta_tag(concept, patient, time, 'value_text', options)
+    content << text_area_tag("observations[][value_text]", value, options) 
+    content
+  end
+
   def touch_misc_numeric_tag(concept, patient, value, options={}, time=DateTime.now())
     options = {
       :field_type => 'number',
@@ -151,5 +163,4 @@ module TouchscreenHelper
     content << touch_meta_tag(concept, patient, time, 'value_text', options)
     content
   end
-
 end
