@@ -20,12 +20,65 @@ class PrescriptionsController < ApplicationController
   end
   
   def create
-    raise params[:observations].to_yaml
+    tb_treatment_encounter = false
+    tb_treatment_encounter = true if (params[:encounter] && params[:encounter][:encounter_type_name] == 'TB TREATMENT')
     @suggestions = params[:suggestion] || ['New Prescription']
-    @patient = Patient.find(params[:patient_id] || session[:patient_id]) rescue nil
+    @patient = Patient.find(params[:patient_id] || session[:patient_id] || params[:encounter][:patient_id]) rescue nil
     session_date = session[:datetime] || Time.now()
     @encounter = @patient.current_treatment_encounter(session_date)
     @diagnosis = Observation.find(params[:diagnosis]) rescue nil
+    if tb_treatment_encounter
+      multiple_drug_names = Array.new()
+      prescription_time_period = ''
+      # Tb treatment observation handling
+      (params[:observations] || []).each do |observation|
+      # Check to see if any values are part of this observation
+      # This keeps us from saving empty observations
+        values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
+          unless observation["value_#{value_name}"].blank?
+            observation["value_#{value_name}"]
+          end
+        }.compact
+        
+        multiple_drug_names = observation[:value_coded_or_text_multiple] if observation[:concept_name] == 'PRESCRIBED DRUGS' && observation[:value_coded_or_text_multiple]
+        prescription_time_period = observation[:value_coded_or_text] if observation[:concept_name] == 'PRESCRIPTION TIME PERIOD'
+        next if (values.length == 0 || ['PRESCRIBED DRUGS','PRESCRIBE RECOMMENDED DOSAGE','PRESCRIPTION TIME PERIOD'].include?(observation[:concept_name]))
+        observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
+        observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
+        observation[:encounter_id] = @encounter.id
+        observation[:obs_datetime] = @encounter.encounter_datetime || Time.now()
+        observation[:person_id] ||= @encounter.patient_id
+        # Handle multiple select
+        if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
+          observation[:value_coded_or_text_multiple].compact!
+          observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
+        end  
+        if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
+          values = observation.delete(:value_coded_or_text_multiple)
+          values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
+        else      
+          observation.delete(:value_coded_or_text_multiple)
+          Observation.create(observation)
+        end
+      end
+      #Create drug orders if any prescriptions have been made
+      unless multiple_drug_names.length < 1
+
+        @drugs = Drug.find(:all, :conditions => ['name in (?)', multiple_drug_names]) rescue []
+        if @drugs.empty?
+          flash[:notice] = "No matching drugs"
+          render :new #find_appropreate render
+          return
+        end  
+        start_date = session_date
+        auto_expire_date = session_date + prescription_time_period.to_i.days
+        @drugs.each do |drug|
+          DrugOrder.write_order(@encounter, @patient, @diagnosis, drug, start_date, auto_expire_date, drug.dose_strength, "TWICE A DAY (BD)", 0)
+        end
+      end
+      redirect_to "/encounters/give_drugs?patient_id=#{@patient.id}"
+    else
+
     @suggestions.each do |suggestion|
       unless (suggestion.blank? || suggestion == '0' || suggestion == 'New Prescription')
         @order = DrugOrder.find(suggestion)
@@ -40,7 +93,7 @@ class PrescriptionsController < ApplicationController
         end  
         start_date = session_date
         auto_expire_date = session_date + params[:duration].to_i.days
-        prn = params[:prn].to_i
+        prn = params[:prn].to_i || 0
         if params[:type_of_prescription] == "variable"      
           DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, [params[:morning_dose], params[:afternoon_dose], params[:evening_dose], params[:night_dose]], 'VARIABLE', prn)
         else
@@ -49,6 +102,7 @@ class PrescriptionsController < ApplicationController
       end  
     end 
     redirect_to (params[:auto] == '1' ? "/prescriptions/auto?patient_id=#{@patient.id}" : "/patients/treatment/#{@patient.id}")
+  end
   end
   
   def auto
