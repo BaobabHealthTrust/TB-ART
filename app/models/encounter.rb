@@ -181,14 +181,14 @@ class Encounter < ActiveRecord::Base
       ],
         'presc_time_period' => [
           ["",""],
-          ["1 month", "1 MONTH"],
-          ["2 months", "2 MONTHS"],
-          ["3 months", "3 MONTHS"],
-          ["4 months", "4 MONTHS"],
-          ["5 months", "5 MONTHS"],
-          ["6 months", "6 MONTHS"],
-          ["7 months", "7 MONTHS"],
-          ["8 months", "8 MONTHS"]
+          ["1 month", "30"],
+          ["2 months", "60"],
+          ["3 months", "90"],
+          ["4 months", "120"],
+          ["5 months", "150"],
+          ["6 months", "180"],
+          ["7 months", "210"],
+          ["8 months", "240"]
       ],
         'continue_treatment' => [
           ["",""],
