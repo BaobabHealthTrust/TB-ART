@@ -7,7 +7,7 @@ class ClinicController < ApplicationController
 
   def reports
     @reports = [
-                ["Cohort","/cohort_tool/cohort_menu"],
+                ["Cohort","/clinic/cohort"],
                 ["Supervision","/clinic/supervision"],
                 ["Data Cleaning Tools", "/report/data_cleaning"],
                 ["Stock report","/drug/date_select"]]
@@ -61,6 +61,14 @@ class ClinicController < ApplicationController
     @ever = Encounter.statistics(@types)
     
     render :template => 'clinic/overview', :layout => false
+  end
+
+  def cohort
+    @cohort_reports = [["TB Treatment Outcome and Activities", "tb_treatment_outcome_and_activities"],
+                       ["TB Supervision and Case Finding",    "tb_supervision_and_case_findings"]]
+
+    render :template => 'clinic/cohort_subreports', :layout => 'clinic'
+
   end
 
 end
