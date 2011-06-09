@@ -1,0 +1,152 @@
+<html>
+<head>
+<%= javascript_include_tag "prototype" %>
+<%= stylesheet_link_tag "cohort" %>
+<script>
+  var tt_cancel_destination = "/cohort_tool/cohort_menu"  
+
+  function showReport() {
+    cohort = document.getElementsByClassName('scrollTableContainer')[0]
+    survival_analysis = document.getElementsByClassName('survival-analysis')[0]
+    switch_button = $('switch_view')
+    if (switch_button.innerHTML.sub('<span>','').sub('</span>','') == 'Survival Analysis'){
+      cohort.style.display = 'none'
+      switch_button.innerHTML = "<span>Cohort</span>"
+      survival_analysis.style.display = 'inline'
+    } else {
+      cohort.style.display = 'inline'
+      switch_button.innerHTML = "<span>Survival Analysis</span>"
+      survival_analysis.style.display = 'none'
+    } 
+     
+  }
+</script>
+<style>
+  table {
+    border-style:none;
+    border-width:0px;
+    margin-left: 5px;
+    margin-right: 5px;
+    }
+
+  th {
+    border-style:solid;
+    border-width:0.5px;
+    font-weight: normal;
+  }
+
+  td {
+    text-align:center;
+    border-style:solid;
+    border-width:0.5px;
+  }
+  .small_columns td{
+    text-align:center;
+    border-style:solid;
+    border-width:0.5px;
+    width:4%;
+  }
+  .row_break td {
+    border-width:0px;
+  }
+
+  div.scrollTableContainer {
+    border-style:solid;
+    border-width: 0.5px;
+    width: 980px;
+    height: 500px;
+  }
+
+  .survival-analysis th, .survival-analysis td {
+    text-align:left;
+  }
+</style>
+
+<title>Cohort <%= Location.current_health_center.name + "  " %></title>
+</head>
+
+<body>
+<h1><%= Location.current_health_center.name + "  "  %></h1>
+<br />
+
+<div class='scrollTableContainer'>
+  <h2 align="center"> National TB Control Program: TB Supervision and Case-finding Report </h2>
+<table class='dataTable' cellspacing='0'>
+<!-- <thead> -->
+<tr> <th colspan="24">National TB Control Program: TB Supervision and Case-finding Reporting Form</th></tr>
+<tr> <th colspan="24"><span style="float:left"><b>Hospital: </b></span></th></tr>
+<tr>
+  <th rowspan="3">Age Categories in Years</th>
+  <th colspan="9">Pulmonary Tuberculosis</th>
+  <th rowspan="3" colspan="3">Extra-pulmonary Tuberculosis (c)</th>
+  <th rowspan="3">Total(d)</th>
+  <th colspan="7">Others</th>
+  <th rowspan="3" colspan="2">Total (i)</th>
+  <th rowspan="3">Grand Total</th>
+</tr>
+<tr>
+  <th colspan="6">Smear Positive Pulmonary Tuberculosis (a)</th>
+  <th rowspan="2"colspan="3">Smear negative pulmonary Tuberculosis (b)</th>
+  <th colspan="4">Previously Treated Smear Positive Pulmonary Tuberculosis</th>
+  <th rowspan="2" colspan="2">Recurrent (g)</th>
+  <th rowspan="2">Total(h)(e+f+g)</th>
+</tr>
+<tr>
+  <th colspan="3">New Cases</th>
+  <th colspan="3">Relapses</th>
+  <th colspan="2">Treatment after default (e)</th>
+  <th colspan="2">Treatment failure (f)</th>
+</tr>
+<tr>
+  <td> </td><td>M</td><td>F</td><td>T</td><td>M</td><td>F</td><td>T</td><td>M</td><td>F</td><td>T</td><td>M</td><td>F</td><td>T</td>
+  <td> </td><td>M</td><td>F</td><td>M</td><td>F</td><td>M</td><td>F</td><td> </td><td>M</td><td>F</td><td> </td>
+</tr>
+<tr class="small_columns">
+  <td>0-4</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>5-14</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>15-25</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>25-34</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>35-44</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>45-54</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>55-64</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>65</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>Total Cases</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>Target(%)</td><td>40% or More</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>25% or less</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+<tr class="small_columns">
+  <td>Achievements</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+  <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+</tr>
+
+</table>
+</div
+</body>
+</html>
