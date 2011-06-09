@@ -129,6 +129,72 @@ class Encounter < ActiveRecord::Base
         ['Smear Negative','SMEAR NEGATIVE'],
         ['Smear Positive','SMEAR POSITIVE'],
         ['X-ray results','X-RAY RESULTS']
+      ],
+     'family_planning_methods' => [
+       ['',''],
+       ['Oral contraceptive pills', 'ORAL CONTRACEPTIVE PILLS'],
+		   ['Depo-Provera', 'DEPO-PROVERA'],
+		   ['Intrauterine contraception', 'INTRAUTERINE CONTRACEPTION'],
+       ['Contraceptive implant', 'CONTRACEPTIVE IMPLANT'],
+       ['Male condoms', 'MALE CONDOMS'],
+       ['Female condoms', 'FEMALE CONDOMS'],
+       ['Rhythm method', 'RYTHM METHOD'],
+       ['Withdrawal', 'WITHDRAWAL'],
+       ['Abstinence', 'ABSTINENCE'],
+       ['Tubal ligation', 'TUBAL LIGATION'],
+       ['Vasectomy', 'VASECTOMY'],
+		   ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
+      ],
+        'tb_symptoms' => [
+          ['',''],
+          ['Persistent cough', 'PERSISTENT COUGH'],
+          ['Bronchial breathing', 'BRONCHIAL BREATHING'],
+          ['Shortness of breath', 'SHORTNESS OF BREATH'],
+          ['Crepitations', 'CREPITATIONS'],
+          ['Failure to thrive', 'FAILURE TO THRIVE'],
+          ['Chest pains', 'CHEST PAINS'],
+          ['Loss of weight', 'LOSS OF WEIGHT'],
+          ['Recurrent fever', 'RECURRENT FEVER'],
+          ['Lethargy', 'LETHARGY'],
+          ['Haemoptysis', 'HAEMOPTYSIS'],
+          ['Other','OTHER']
+      ],
+        'drug_related_side_effects' => [
+          ['',''],
+          ['Deafness', 'DEAFNESS'],
+          ['Dizziness','DIZZINESS'],
+          ['General reaction including shock', 'GENERAL REACTION INCLUDING SHOCK'],
+          ['Purpura', 'PURPURA'],
+          ['Jaundice', 'JAUNDICE'],
+          ['Skin itching', 'SKIN ITCHING'],
+          ['Visual impairment', 'VISUAL IMPAIRMENT'],
+          ['Vomiting ++/confusion', 'VOMITING']
+      ],
+        'drug_list' => [
+          ['',''],
+          ["Rifampicin Isoniazid Pyrazinamide and Ethambutol", "RHEZ (RIF, INH, Ethambutol and Pyrazinamide tab)"],
+          ["Rifampicin Isoniazid and Ethambutol", "RHE (Rifampicin Isoniazid and Ethambutol -1-1-mg t"],
+          ["Rifampicin and Isoniazid", "RH (Rifampin and Isoniazid tablet)"],
+          ["Stavudine Lamivudine and Nevirapine", "D4T+3TC+NVP"],
+          ["Stavudine Lamivudine + Stavudine Lamivudine and Nevirapine", "D4T+3TC/D4T+3TC+NVP"],
+          ["Zidovudine Lamivudine and Nevirapine", "AZT+3TC+NVP"]
+      ],
+        'presc_time_period' => [
+          ["",""],
+          ["1 month", "30"],
+          ["2 months", "60"],
+          ["3 months", "90"],
+          ["4 months", "120"],
+          ["5 months", "150"],
+          ["6 months", "180"],
+          ["7 months", "210"],
+          ["8 months", "240"]
+      ],
+        'continue_treatment' => [
+          ["",""],
+          ["Yes", "YES"],
+          ["DHO Dot site","DHO DOT SITE"],
+          ["Transfer Out", "TRANSFER OUT"]
       ]
     }
   end
