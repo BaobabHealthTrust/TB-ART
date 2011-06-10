@@ -195,6 +195,17 @@ class Encounter < ActiveRecord::Base
           ["Yes", "YES"],
           ["DHO Dot site","DHO DOT SITE"],
           ["Transfer Out", "TRANSFER OUT"]
+      ],
+        'hiv_status' => [
+          ['',''],
+          ['Negative','NEGATIVE'],
+          ['Positive','POSITIVE'],
+          ['Unknown','UNKNOWN']
+      ],
+        'type_of_hiv_test' => [
+          ['',''],
+          ['Initial','INITIAL HIV TEST'],
+          ['Confirmatory','CONFIRMATORY HIV TEST']
       ]
     }
   end
