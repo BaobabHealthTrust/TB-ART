@@ -35,7 +35,9 @@
 <% end -%>
  
 <% unless (params[:gender].blank? || params[:given_name].blank? || params[:family_name].blank?) && (params[:identifier].blank?) %>
-  
+<script type="text/javascript">
+  var tt_cancel_destination = "/people/search"
+</script>  
   <% form_tag "select", :method => :get do %>
     <% if @people.blank? %>
       <label for="person">No patients were found:</label>
@@ -46,7 +48,7 @@
       <option> </option>
       <% @people.each do |person| -%>
         <option value="<%= person.id %>" onmousedown="changeNextButtonText('Select Patient')">
-          <%=h person.name -%>, 
+        <%=h "#{person.name} (#{person.gender})" -%>, 
           <% unless person.birthdate.blank? %>Birthdate: <%=h person.birthdate_formatted -%>,<% end %>
           <% if person.addresses.first && person.addresses.first.address2.present? %>Home Village: <%=h person.addresses.first.address2 -%>,<% end %>
           <% if person.addresses.first && person.addresses.first.city_village.present? %>Current Village: <%=h person.addresses.first.city_village -%>,<% end %>
