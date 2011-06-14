@@ -8,10 +8,10 @@
 
 <% if (params[:gender].blank? || params[:given_name].blank? || params[:family_name].blank?) && (params[:identifier].blank?) %> 
   <% form_tag "search", :method => :get do %>
-    Referred by <%= select_tag :source_of_referral, options_for_select(["Walk in", "Health Facility", "Index Patient"]), {:helpText => "Referred by"} %> 
-    <%= text_field_tag :given_name, params[:given_name], {:field_type => 'alpha', :helpText => 'First name of index patient', :ajaxURL => '/person_names/given_names?search_string=', :allowFreeText => true }%> 
-    <%= text_field_tag :family_name, params[:family_name], {:field_type => 'alpha', :helpText => 'Last name of index patient ', :ajaxURL => '/person_names/family_names?search_string=', :allowFreeText => true }%> 
-    Gender: <%= select_tag :gender, options_for_select({"" => "", "Male" => "M", "Female" => "F"}), {:helpText => "Gender of index patient"} %>
+    Referred by <%= select_tag :source_of_referral, options_for_select(["Walk in", "Health Facility", "Index Patient"]), {:helpText => "Referred by", :id => 'source_of_referral'} %> 
+    <%= text_field_tag :given_name, params[:given_name], {:field_type => 'alpha', :helpText => 'First name of index patient', :ajaxURL => '/person_names/given_names?search_string=', :allowFreeText => true, :condition => '$("source_of_referral").value == "Index Patient"'}%> 
+    <%= text_field_tag :family_name, params[:family_name], {:field_type => 'alpha', :helpText => 'Last name of index patient ', :ajaxURL => '/person_names/family_names?search_string=', :allowFreeText => true, :condition => '$("source_of_referral").value == "Index Patient"'}%> 
+    Gender: <%= select_tag :gender, options_for_select({"" => "", "Male" => "M", "Female" => "F"}), {:helpText => "Gender of index patient", :condition => '$("source_of_referral").value == "Index Patient"'} %>
     <%= hidden_field_tag :search_tb_index_person, true %>
     <%= hidden_field_tag :patient_id, @patient.patient_id %>
     <%= submit_tag "Find person" %>
