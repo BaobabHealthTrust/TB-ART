@@ -38,6 +38,7 @@
       <label for="person">Select the TB contact from the following</label>
     <% end -%>
     <select name="person" id="person">
+       <option> </option>
       <% @people.each do |person| -%>
         <option value="<%= person.id %>" onmousedown="changeNextButtonText('Select TB contact')">
           <%=h person.name -%>, 

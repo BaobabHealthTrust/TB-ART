@@ -27,6 +27,7 @@
       <label for="person">Select the TB index from the following</label>
     <% end -%>
     <select name="person" id="person">
+       <option> </option>
       <% @people.each do |person| -%>
         <option value="<%= person.id %>" onmousedown="changeNextButtonText('Select TB Index')">
           <%=h person.name -%>, 
