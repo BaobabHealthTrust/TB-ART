@@ -220,7 +220,7 @@ class Person < ActiveRecord::Base
     address_params = params["addresses"]
     names_params = params["names"]
     patient_params = params["patient"]
-    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number|landmark|agrees_phone_text_for_TB_therapy|agrees_to_be_visited_for_TB_therapy|hiv_status|art_status/) }
+    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number|landmark|agrees_phone_text_for_TB_therapy|agrees_to_be_visited_for_TB_therapy|art_status_at_registration/) }
     birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
     person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate|occupation/) }
     person = Person.create(person_params)
@@ -263,12 +263,8 @@ class Person < ActiveRecord::Base
       :value => params["agrees_to_be_visited_for_TB_therapy"]) unless params["agrees_to_be_visited_for_TB_therapy"].blank?
 
     person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("HIV Status").person_attribute_type_id,
-      :value => params["hiv_status"]) unless params["hiv_status"].blank?
-
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("ART status").person_attribute_type_id,
-      :value => params["art_status"]) unless params["art_status"].blank?
+      :person_attribute_type_id => PersonAttributeType.find_by_name("ART status at registration").person_attribute_type_id,
+      :value => params["art_status_at_registration"]) unless params["art_status_at_registration"].blank?
 # TODO handle the birthplace attribute
  
     if (!patient_params.nil?)
@@ -386,5 +382,11 @@ class Person < ActiveRecord::Base
     end
 
   end
+
+  def self.occupations
+    ['','Driver','Housewife','Messenger','Business','Farmer','Salesperson','Teacher','Student','Security guard','Domestic worker', 'Police',
+      'Unknown','Office worker', 'Preschool child','Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other"])
+  end
+
 
 end

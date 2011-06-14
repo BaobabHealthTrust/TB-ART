@@ -11,35 +11,34 @@
   <!--TODO
   Compile the Date of HIV test from the three data fields and check for validity.
   Skip logic
-
-  Pull out only districts for location of HIV test - ajax url for districts
   -->
-  
-  <label for='hiv_status'>HIV Status</label>
-  <%= select_tag "observations[][value_coded_or_text]", options_for_select([['',''],['Positive','POSITIVE'],['Negative','NEGATIVE'],['Unknown','UNKNOWN']]), 
-    { :id => 'hiv_status', 
-      :tt_pageStyleClass => 'NoKeyboard'
-  } %>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "HIV STATUS") %>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
-  
-  <label for='hiv_test_year'>HIV test year</label>
+
+ <%= touch_select_tag "HIV STATUS", @patient, options_for_select(@select_options['hiv_status']),
+    {:id => "hiv_status",
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "HIV Status" } %>
+
+ <%= touch_select_tag "TYPE OF HIV TEST", @patient, options_for_select(@select_options['type_of_hiv_test']),
+    {:id => "type_of_hiv_test",
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "Type of HIV test" } %>
+
   <%= text_field_tag "hiv_test_year", nil, {:helpText => 'HIV test year', :field_type => 'number', :absoluteMin => "1982", :min => "1982", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
-  
-  <label for='hiv_test_month'>HIV test month</label>
+
   <%= select_tag "hiv_test_month", month_name_options, {:helpText => 'HIV test month', :condition => '$("hiv_test_year").value.toLowerCase() != "unknown"'}%>
 
-  <label for='hiv_test_day'>HIV test day</label>
   <%= text_field_tag "hiv_test_day",  nil, :field_type => 'number', :helpText => 'HIV test day', :condition => '($("hiv_test_year").value != "Unknown") && ($("hiv_test_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('hiv_test_year').value, $('hiv_test_month').value)" %>
-  
-  <label for='location_of_hiv_test'>Location of HIV test</label>
- <%= text_field_tag "location_of_hiv_test",  params[:city_village], {:field_type => 'alpha', :helpText => 'Location of HIV test', :ajaxURL => '/person_addresses/village?search_string=', :allowFreeText => true }%>
-  <%= hidden_field_tag("observations[][value_text]", nil) %>
-  <%= hidden_field_tag("observations[][concept_name]", "LOCATION OF HIV TEST") %>
-  <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-  <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %> 
+
+  <%= touch_location_tag "LOCATION OF HIV TEST", @patient, nil,
+    {:id => "location_of_hiv_test",
+     :optional => false,
+     :helpText => "Location of HIV test" } %>
+     <!--:condition => '$("continue_treatment_at_this_site").value == "TRANSFER OUT"',-->
+
+ <%= touch_numeric_tag "HTC SERIAL NUMBER", @patient, nil,
+    {:id => "htc_serial_number",
+     :helpText => "HTC serial number" } %>
+ <!--:condition => '$("refer_to_clinician").value == "NO"',-->
   <%= submit_tag "Finish" %>    
 
 </form>

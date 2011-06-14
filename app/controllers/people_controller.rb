@@ -4,6 +4,7 @@ class PeopleController < ApplicationController
   end
  
   def new
+    @occupations = Person.occupations
   end
   
   def identifiers
