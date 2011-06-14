@@ -439,6 +439,19 @@ class Cohort
     end
     tb_status_hash
   end
+  #tb treatment outcome report
+  def tb_treatment_outcome
+    return {} if @@first_registration_date.blank?
+    tb_treatment_outcome_report ={}
+    tb_treatment_outcome_report['new sputum total registered'] = nil
+    
+
+  end
+
+  def new_sputum_total_registered(start_date = @start_date, end_date = @end_date)
+
+  end
+
 
 
 end
