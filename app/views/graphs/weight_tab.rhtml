@@ -4,7 +4,7 @@
     margin:0;
     padding:0;
   }
-  
+
   .nav li {
     background-color:#999999;
     display:block;
@@ -14,7 +14,7 @@
     line-height:42px;
     margin-left:5px;
   }
-  
+
   .nav li a.active {
     background-color:#DDDDDD;
     border-bottom:1px solid #DDDDDD;
@@ -51,15 +51,15 @@
     z-index:3;
   }
 
-  #graph.nav li { 
+  #graph.nav li {
     margin-left:2px;
-    line-height:22px; 
+    line-height:22px;
     font-size:0.8em;
   }
 
-  #graph.nav li a { 
-    border: 2px solid black; 
-    padding: 0 3px; 
+  #graph.nav li a {
+    border: 2px solid black;
+    padding: 0 3px;
   }
 
   #graph.nav li a.active {
@@ -67,7 +67,7 @@
     border-bottom:2px solid #fff;
   }
 
-  
+
 </style>
 <div id="graph" class="nav">
   <ul>
@@ -76,9 +76,9 @@
     <li><a href='#'>CRT</a></li -->
   </ul>
 </div>
-<div id="placeholder" style="width:480px;height:190px;"></div>
+<div id="placeholder" style="width:90%;height:95px;"></div>
 <script type="text/javascript">
-  function graph() {    
+  function graph() {
     var patient_data = [
       <% @min = Time.now
          @max = Time.now
@@ -86,12 +86,12 @@
 		@minWeight = 0
 		@maxWeight = 0
          @obs.sort_by{|obs| obs.obs_datetime}.each do |obs|
-			if obs.value_numeric <= @minWeight			
+			if obs.value_numeric <= @minWeight
 				@minWeight = obs.value_numeric
 			end
 			if obs.value_numeric >= @maxWeight
 				@maxWeight =obs.value_numeric
-			end  
+			end
            @min = obs.obs_datetime if obs.obs_datetime < @min %>
         [<%= obs.obs_datetime.to_f -%>, <%= obs.value_numeric -%>],<% end %>
     ];
@@ -105,13 +105,13 @@
     <% @first = Time.mktime(@first.year + (@first.month == 12 ? 1 : 0), @first.month + (@first.month < 12 ? 1 : -11), 1) -%>
     <% end -%>
 ];
-    
+
     var range = <%= 1.year.to_f -%>;
     var min = <%= @min.to_f -%>;
     var max = <%= @max.to_f -%>;
     var max_tick = "<%= @max.strftime("%d-%b") -%>";
 //    patient_data.push([max, 0]);
-        
+
     function get_data(x1, x2) {
       return [{
         color: "green",
@@ -122,14 +122,14 @@
       }]
     }
 
-    var plot_options = {      
+    var plot_options = {
       grid: { clickable: false, backgroundColor: "white", color:"black" },
       yaxis: { min: <%= @minWeight %> - 5, max: <%= @maxWeight %> + 5},
       xaxis: { min: max-range, max: max, ticks: patient_ticks}
     }
-    
+
     var plot = jQuery.plot(jQuery("#placeholder"), get_data(null, null), plot_options);
   }
-  
+
   graph();
 </script>

@@ -1,99 +1,121 @@
-<%= javascript_include_tag "touchscreen" %>
-<%= stylesheet_link_tag fancy_or_high_contrast_touch %>
+<%= stylesheet_link_tag "dashboard" %>
+<script src="/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript" src="/javascripts/jquery.flot.js"></script>
+<script src="/javascripts/touchscreenYesNo.js" type="text/javascript"></script>
+<script type="text/javascript">
+  function select(node) {
+    $('#observations').empty().load('/encounters/observations/' + node.attr('encounter'))
+    $('#encounters li.data').removeClass("active");
+    node.addClass("active");
+  }
 
-<style type="text/css">
-        .personal-details-label {
-          font-weight:bold;
+  function voiding(node) {
+    confirmYesNo("Void this item?", function() {
+      hideConfirmation();
+      $.post('/encounters/void/' + node.parent().attr('encounter'), {}, function(data, status) {
+        if (status == 'success') {
+          document.getElementById('observations').innerHTML = '';
+          node.parent().remove();
         }
-        #personal-details{
-          font-size: 1em;
-          height: 150px;
-          max-width: 720px;
-          margin: 5px;
-          overflow: auto;
-        }
+      })
+    }, function() { hideConfirmation(); });
+  }
 
-        #menu {
-          float: right;
-          height: 680px;
-          overflow: auto;
-          width: 253px;
-          border: thin solid #EEEEEE;
-          margin-right: 5px;
-          margin-top: 5px;
-        }
-        .menu-button{
-          width:245px;
-        }
-        #visit-summary{
-          background: none repeat scroll 0 0 white;
-          margin-top: 10px;
-          float: left;
-          height: 236px;
-          width: 276px;
-        }
-      </style>
-<base target="_parent">
-<div id="tab">
-  <div id="history" style="float:left;width:500px;margin-top:5px;">
-    <div id="programs" class="panel">
-      <!-- h2>Programs</h2 -->
-      <ul class="list small" style="height:140px;">
+  jQuery(document).ready(function($) {
+    $('#encounters li.data').click(function() { select($(this)); });
+    $('#encounters li.data div.void').click(function() { voiding($(this)); return false; });
+    $('#charts').empty().load('/patients/graph/<%= @patient.id -%>?data=weight_tab');
+    recent = $('#encounters li.data:first');
+    if (recent) select(recent);
+  })
+</script>
+<style>
+  .even {
+     -moz-border-radius: 15px;
+  }
+  .outerdiv{
+    background-color: white;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+<div  class="outerdiv" style="display: table;">
+  <div  style="display: table-row;">
+    <div style="display: table-cell; width: 50%; padding: 10px; vertical-align: top;
+         border: 1px solid #eee; -moz-border-radius: 15px;">
 
+      <div id="programs">
+        <!-- h2>Programs</h2 -->
+        <ul class="list small" style="height:140px; -moz-border-radius: 15px;">
+          <% for prog in @programs do %>
+              <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
+                <div class="program">
+                  <%=h prog.program.name.humanize %> started <%=h prog.date_enrolled.strftime("%b-%Y") rescue 'Unknown' %>
+                  <br /><font class='patient_state'>Current state: <%=h prog.patient_states.last.to_s.humanize %></font>
+                </div>
+              </li>
+            <% end %>
+            <% if @programs.empty? %>
+              <li class="data even">
+                <div class="program">There are no current programs for this patient</div>
+              </li>
+            <% end %>
+            <% for prog in @programs do %>
+                <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
+                  <div class="patient_state"><%#=h prog.patient_states.last.to_s.humanize + " (#{prog.program.name})"%></div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
 
-
-          <li class="data even">
-            <div class="program">There are no current programs for this patient</div>
-          </li>
-        <!-->
-
-      </ul>
-    </div>
-    <div id="treatment" class="panel">
-      <!-- h2>Treatment</h2 -->
-      <ul class="list small" style="height:140px;">
-
-
-          <li class="data even">
-            <div class="prescription">There are no current prescriptions for this patient</div>
-          </li>
-
-      </ul>
-
-    </div>
-    <div id="charts" class="panel" style="height:235px;">
-    </div>
-  </div>
-  <div id="today" style="margin-top:5px; border: 1px solid #000;">
-    <div id="alerts" class="panel">
-      <!-- h2>Alerts</h2 -->
-      <ul class="list small" style="height:139px;">
+        </div>
 
 
-        <li class="data even">
+        <div style="display: table-cell; width: 50%; padding: 10px; border: 1px solid #eee; -moz-border-radius: 15px;">
 
-          <div class="alert">There are no alerts for this patient</div>
-        </li>
+          <div id="charts" >
+          </div>
 
-      </ul>
-    </div>
-    <div id="encounters" class="panel" style="float:right;">
+        </div>
+      </div>
+      <div  style="display: table-row;">
 
-      <h2>Today's Visit (possibly filtered)</h2>
-      <ul class="list" style="clear:both;">
+        <div style="display: table-cell; width: 50%; padding: 5px; border: 1px solid #eee; -moz-border-radius: 15px;">
 
-          <li class="data even" encounter="8">
+          <div id="treatment">
+            <!-- h2>Treatment</h2 -->
+            <ul class="list small" style="height:140px; -moz-border-radius: 15px;">
+              <% for presc in @prescriptions do %>
+                  <li class="data <%= cycle('even', 'odd') %>" prescription="<%= presc.id %>">
+                    <div class="prescription"><%=h presc.to_s %></div>
+                  </li>
+                <% end %>
+                <% if @prescriptions.empty? %>
+                  <li class="data even">
+                    <div class="prescription">There are no current prescriptions for this patient</div>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
 
-            <div class="void"><img src="/images/cancel_flat_small.png"/></div>
-            <div class="encounter">Registration at 10:34</div>
-          </li>
+          <div style="display: table-cell; width: 50%; padding: 5px; border: 1px solid #eee; -moz-border-radius: 15px;">
 
-      </ul>
-      <p></p>
-      <ul id="observations" class="list small" style="height: 230px;">
-      </ul>
-    </div>
-  </div>
-
-</div>
-</base>
+            <div id="alerts">
+              <!-- h2>Alerts</h2 -->
+              <ul class="list" style="height:140px; -moz-border-radius: 15px;">
+                <% for alert in @alerts do %>
+                    <li class="data <%= cycle('even', 'odd') %>">
+                      <div class="patient_state"><%=h alert %></div>
+                    </li>
+                  <% end %>
+                  <% if @alerts.blank? %>
+                    <li class="data even">
+                      <div class="alert">There are no alerts for this patient</div>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>

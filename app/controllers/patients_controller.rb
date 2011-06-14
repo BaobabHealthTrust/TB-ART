@@ -20,7 +20,7 @@ class PatientsController < ApplicationController
       @prescriptions = restriction.filter_orders(@prescriptions)
       @historical = restriction.filter_orders(@historical)
     end
-    render :template => 'dashboards/treatment', :layout => 'dashboard' 
+    render :template => 'dashboards/treatment', :layout => false
   end
 
   def relationships
@@ -172,10 +172,12 @@ class PatientsController < ApplicationController
   end
 
   def overview
-     session_date = session[:datetime].to_date rescue Date.today
+    session[:mastercard_ids] = []
+    session_date = session[:datetime].to_date rescue Date.today
     @encounters = @patient.encounters.find_by_date(session_date)
     @prescriptions = @patient.orders.unfinished.prescriptions.all
     @programs = @patient.patient_programs.all
+    @alerts = @patient.alerts
     # This code is pretty hacky at the moment
     @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
     @restricted.each do |restriction|

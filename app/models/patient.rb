@@ -49,7 +49,25 @@ class Patient < ActiveRecord::Base
     # next appt
     # adherence
     # drug auto-expiry
-    # cd4 due    
+    # cd4 due
+    alerts = []
+    type = EncounterType.find_by_name("APPOINTMENT")
+    next_appt = self.encounters.find_last_by_encounter_type(type.id).observations.last.to_s rescue nil
+    alerts << ('Latest ' + next_appt).capitalize unless next_appt.blank?
+
+    type = EncounterType.find_by_name("ART ADHERENCE")
+    self.encounters.find_last_by_encounter_type(type.id).observations.map do | adh |
+      next if adh.value_text.blank?
+      alerts << "Adherence: #{adh.order.drug_order.drug.name} (#{adh.value_text}%)"
+    end rescue []
+
+    type = EncounterType.find_by_name("DISPENSING")
+    self.encounters.find_last_by_encounter_type(type.id).observations.each do | obs |
+      next if obs.order.blank? and obs.order.auto_expire_date.blank?
+      alerts << "Auto expire date: #{obs.order.drug_order.drug.name} #{obs.order.auto_expire_date.to_date.strftime('%d-%b-%Y')}"
+    end rescue []
+
+    alerts
   end
   
   def summary
