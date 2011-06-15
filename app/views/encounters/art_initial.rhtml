@@ -42,7 +42,7 @@ Change the date fields to 3tier date
   
   <%= touch_yes_no_unknown_tag "WILLING TO REGISTER AT CURRENT CLINIC", @patient, nil,
     {:id => "willing_to_register_at_clinic",
-     :helpText => "Willing to register at current clinic (MPC)?" } %>
+     :helpText => "Willing to enroll for ART at MPC?" } %>
   
   <%= touch_yes_no_unknown_tag "AGREES TO TEXT MESSAGE FOR ART THERAPY", @patient, nil,
     {:id => "agrees_to_text_message",
@@ -61,7 +61,14 @@ Change the date fields to 3tier date
      :helpText => "Last ART drugs taken" } %>
      
   <%# absolute_min = session[:datetime].to_date rescue Date.today %>
-  <%= touch_date_tag "DATE ART FIRST TAKEN", @patient, nil,
+
+  <%= text_field_tag "date_art_first_taken_year", nil, {:helpText => 'Year ART first taken', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+
+  <%= select_tag "date_art_first_taken_month", month_name_options, {:helpText => 'Month ART first taken', :condition => '$("date_art_first_taken_year").value.toLowerCase() != "unknown"'}%>
+
+  <%= text_field_tag "date_art_first_taken_day",  nil, :field_type => 'number', :helpText => 'Day ART first taken', :condition => '($("date_art_first_taken_year").value != "Unknown") && ($("date_art_first_taken_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('date_art_first_taken_year').value, $('date_art_first_taken_month').value)" %>
+
+  <%#= touch_date_tag "DATE ART FIRST TAKEN", @patient, nil,
     {:id => "date_art_first_taken",
      #:absoluteMin => absolute_min,
      :absoluteMax => Date.today,
@@ -69,7 +76,14 @@ Change the date fields to 3tier date
      :helpText => "Date ART first taken"} %>
      
   <%# absolute_min = session[:datetime].to_date rescue Date.today %>
-  <%= touch_date_tag "DATE ART LAST TAKEN", @patient, nil,
+
+  <%= text_field_tag "date_art_last_taken_year", nil, {:helpText => 'Year ART Last taken', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+
+  <%= select_tag "date_art_last_taken_month", month_name_options, {:helpText => 'Month ART Last taken', :condition => '$("date_art_last_taken_year").value.toLowerCase() != "unknown"'}%>
+
+  <%= text_field_tag "date_art_last_taken_day",  nil, :field_type => 'number', :helpText => 'Day ART Last taken', :condition => '($("date_art_last_taken_year").value != "Unknown") && ($("date_art_last_taken_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('date_art_last_taken_year').value, $('date_art_last_taken_month').value)" %>
+
+  <%#= touch_date_tag "DATE ART LAST TAKEN", @patient, nil,
     {:id => "date_art_last_taken",
      #:absoluteMin => absolute_min,
      :absoluteMax => Date.today,
@@ -91,8 +105,15 @@ Change the date fields to 3tier date
     {:id => "previous_art_number",
      :condition => '$("ever_received_art").value.toUpperCase() == "YES"',
      :helpText => "ART number at previous location" } %>
+
+  <%= text_field_tag "art_initiation_date_year", nil, {:helpText => 'Year of ART initiation', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+
+  <%= select_tag "art_initiation_date_month", month_name_options, {:helpText => 'Month of ART initiation', :condition => '$("art_initiation_date_year").value.toLowerCase() != "unknown"'}%>
+
+  <%= text_field_tag "art_initiation_date_day",  nil, :field_type => 'number', :helpText => 'Day of ART initiation', :condition => '($("art_initiation_date_year").value != "Unknown") && ($("art_initiation_date_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('art_initiation_date_year').value, $('art_initiation_date_month').value)" %>
+
      
-  <%= touch_date_tag "DATE OF ART INITIATION", @patient, nil,
+  <%#= touch_date_tag "DATE OF ART INITIATION", @patient, nil,
     {:id => "art_initiation_date",
     :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
     :absoluteMax => Date.today,
@@ -123,36 +144,44 @@ Change the date fields to 3tier date
      :field_type => 'number',
      :helpText => "Weight when ART was started" } %>
 
-  <%= touch_select_tag "WHO STAGE I CONDITIONS", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "WHO STAGE I CONDITIONS", @patient, options_for_select(@select_options['who_stage1']),
     {:id => "who_stage_one_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
      :multiple => "true",
      :helpText => "WHO stage 1 conditions" } %>
 
-  <%= touch_select_tag "WHO STAGE II CONDITIONS", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "WHO STAGE II CONDITIONS", @patient, options_for_select(@select_options['who_stage2']),
     {:id => "who_stage_two_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "WHO stage 2 conditions" } %>
 
-  <%= touch_select_tag "WHO STAGE III CONDITIONS", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "WHO STAGE III CONDITIONS", @patient, options_for_select(@select_options['who_stage3']),
     {:id => "who_stage_three_conditions",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "WHO stage 3 conditions" } %>
      
-  <%= touch_select_tag "WHO STAGE IV CONDITIONS", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "WHO STAGE IV CONDITIONS", @patient, options_for_select(@select_options['who_stage4']),
     {:id => "who_stage_four_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "WHO stage 4 conditions" } %>
 
+  
   <%= touch_yes_no_unknown_tag "CD4 COUNT AVAILABLE", @patient, nil,
     {:id => "cd4_count_available",
        :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :helpText => "CD4 count available?" } %>
-     
-  <%= touch_date_tag "CD4 MOST RECENT SAMPLE COLLECTION DATE", @patient, nil,
+
+  <%= text_field_tag "cd4_most_recent_sample_collection_year", nil, {:helpText => 'Lab - CD4 most recent sample collection Year', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+
+  <%= select_tag "cd4_most_recent_sample_collection_month", month_name_options, {:helpText => 'Lab - CD4 most recent sample collection Month', :condition => '$("cd4_most_recent_sample_collection_year").value.toLowerCase() != "unknown"'}%>
+
+  <%= text_field_tag "cd4_most_recent_sample_collection_day",  nil, :field_type => 'number', :helpText => 'Lab - CD4 most recent sample collection Day', :condition => '($("cd4_most_recent_sample_collection_year").value != "Unknown") && ($("cd4_most_recent_sample_collection_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('cd4_most_recent_sample_collection_year').value, $('cd4_most_recent_sample_collection_month').value)" %>
+
+
+  <%#= touch_date_tag "CD4 MOST RECENT SAMPLE COLLECTION DATE", @patient, nil,
     {:id => "cd4_most_recent_sample_collection_date",
      #:absoluteMin => absolute_min,
      :absoluteMax => Date.today,
@@ -164,6 +193,12 @@ Change the date fields to 3tier date
      :condition => '$("cd4_count_available").value.toUpperCase() == "YES"',
      :field_type => 'number',
      :helpText => "CD4 Count" } %>
+
+  <%= touch_numeric_tag "CD4 PERCENTAGE", @patient, nil,
+    {:id => "cd4_percentage",
+     :condition => '$("cd4_count_available").value.toUpperCase() == "YES"',
+     :field_type => 'number',
+     :helpText => "CD4 Percentage" } %>
 
   <%= submit_tag "Finish" %>    
 </form>

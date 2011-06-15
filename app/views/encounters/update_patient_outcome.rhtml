@@ -46,7 +46,7 @@ function changeNextButton(text){
 
   <%= select_tag "patient_outcome_month", month_name_options, {:helpText => 'Patient Outcome Month', :condition => '$("patient_outcome_year").value.toLowerCase() != "unknown";$("patient_outcome").value == "On ART"'}%>
 
-  <%= text_field_tag "patient_outcome_day",  nil, :field_type => 'number', :helpText => 'Patient Outcome Day', :condition => '($("patient_outcome_year").value != "Unknown") && ($("patient_outcome_month").value != "Unknown");$("patient_outcome").value == "On ART"', :tt_onLoad => "getDayOfMonthPicker($('treatment_outcome_year').value, $('treatment_outcome_month').value)" %>
+  <%= text_field_tag "patient_outcome_day",  nil, :field_type => 'number', :helpText => 'Patient Outcome Day', :condition => '($("patient_outcome_year").value != "Unknown") && ($("patient_outcome_month").value != "Unknown");$("patient_outcome").value == "On ART"', :tt_onLoad => "getDayOfMonthPicker($('patient_outcome_year').value, $('patient_outcome_month').value)" %>
 
   <%= submit_tag 'Finish' %>
 <%end%>
