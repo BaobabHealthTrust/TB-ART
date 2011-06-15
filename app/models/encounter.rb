@@ -21,7 +21,7 @@ class Encounter < ActiveRecord::Base
   def after_void(reason = nil)
     self.orders.each{|row| Pharmacy.voided_stock_adjustment(order) if row.order_type_id == 1 }
     self.observations.each{|row| row.void(reason) }
-    selfnd_by_sql("SELECT * FROM encounter ORDER BY encounter_datetime DESC LIMIT 1").orders.each{|row| row.void(reason) }
+    self.find_by_sql("SELECT * FROM encounter ORDER BY encounter_datetime DESC LIMIT 1").orders.each{|row| row.void(reason) } rescue []
   end
 
   def encounter_type_name=(encounter_type_name)

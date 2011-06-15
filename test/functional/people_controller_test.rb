@@ -1,7 +1,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class PeopleControllerTest < ActionController::TestCase
-  fixtures :person, :person_name, :person_name_code, :person_address, :person_attribute_type, :patient, :patient_identifier, :patient_identifier_type
+  fixtures :person, :person_name, :person_name_code, :person_address,
+           :person_attribute_type, :patient, :patient_identifier,
+           :patient_identifier_type, :relationship_type, :person_attribute
 
   def setup  
     @controller = PeopleController.new
@@ -96,7 +98,36 @@ class PeopleControllerTest < ActionController::TestCase
         assert_does_not_contain assigns(:people), person(:evan)
       end  
     end
-    
+
+    should "create a new tb index person" do
+      logged_in_as :mikmck, :registration do
+        options = {"new_tb_index_person"=>{"relationship"=>["TB Contact Person","TB Index Person"],
+                                           "gender"=>"M", "patient_id"=>"1", "family_name"=>"Waters",
+                                           "person_id"=>"0", "given_name"=>"Evan"}}
+
+         assert_difference(Person, :count) { post :create_tb_index_person, options }
+         assert_response :redirect
+      end
+    end
+
+    should "create a new tb contact person" do
+      logged_in_as :mikmck, :registration do
+        options =  {"new_tb_contact_person"=>{"relationship"=>["TB Patient",
+                               "TB contact Person"],
+                               "gender"=>"M",
+                               "patient_id"=>"61",
+                               "family_name"=>"Gondwe",
+                               "person_id"=>"34",
+                               "given_name"=>"Dave",
+                               "birthday_params"=>{"age_estimate"=>"23",
+                               "birth_month"=>"4",
+                               "birth_day"=>"26",
+                               "birth_year"=>"1985"}}}
+         assert_difference(Person, :count) { post :create_tb_contact_person, options }
+         assert_response :redirect
+      end
+    end
+
     should "not include voided names in the search results" do
       logged_in_as :mikmck, :registration do      
         name = person(:evan).names.first
@@ -106,7 +137,7 @@ class PeopleControllerTest < ActionController::TestCase
         assert_does_not_contain assigns(:people), person(:evan)
       end  
     end
-          
+
     should "not include voided patients in the search results" do
       logged_in_as :mikmck, :registration do      
         evan = person(:evan)
@@ -126,13 +157,14 @@ class PeopleControllerTest < ActionController::TestCase
         assert_response :redirect
       end  
     end
-    
+
     should "look up people for display on the default page" do
       logged_in_as :mikmck, :registration do      
         get :index
-      end  
+        assert_redirected_to("/clinic")
+      end
     end
-    
+
     should "display the new person form" do
       logged_in_as :mikmck, :registration do      
         get :new
@@ -149,17 +181,21 @@ class PeopleControllerTest < ActionController::TestCase
             :birth_day => 28,
             :gender => 'M',
             :cell_phone_number => 'Unknown',
+            :occupation => 'Unknown',
+            :landmark => "18A/745",
+            :home_phone_number=>'Unknown',
+            :office_phone_number=>'Unknown',
             :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
             :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
           }
-        }  
+        }
         assert_difference(Person, :count) { post :create, options }
         assert_difference(PersonAddress, :count) { post :create, options }
         assert_difference(PersonName, :count) { post :create, options }
         assert_response :redirect
       end  
     end
-    
+
     should "allow for estimated birthdates" do
       logged_in_as :mikmck, :registration do      
         post :create, {
@@ -168,6 +204,10 @@ class PeopleControllerTest < ActionController::TestCase
             :age_estimate => 17,
             :gender => 'M',
             :cell_phone_number => 'Unknown',
+            :occupation => 'Unknown',
+            :landmark => "18A/745",
+            :home_phone_number=>'Unknown',
+            :office_phone_number=>'Unknown',
             :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
             :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
           }
@@ -175,7 +215,7 @@ class PeopleControllerTest < ActionController::TestCase
         assert_response :redirect
       end  
     end
-    
+
     should "not create a patient unless specifically requested" do
       logged_in_as :mikmck, :registration do      
         options = {
@@ -184,6 +224,10 @@ class PeopleControllerTest < ActionController::TestCase
           :age_estimate => 17,
           :gender => 'M',
           :cell_phone_number => 'Unknown',
+          :occupation => 'Unknown',
+          :landmark => "18A/745",
+          :home_phone_number=>'Unknown',
+          :office_phone_number=>'Unknown',
           :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
           :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
           }  
@@ -191,7 +235,7 @@ class PeopleControllerTest < ActionController::TestCase
         assert_no_difference(Patient, :count) { post :create, options }
         options[:person].merge!(:patient => "")
         assert_difference(Patient, :count) { post :create, options }
-      end  
-    end            
+      end
+    end
   end
 end

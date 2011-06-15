@@ -310,3 +310,98 @@ diastolic_blood_pressure:
   concept_id: 5086
   date_created: 2004-08-12 00:00:00 -07:00
   uuid: cf2db4ec-268b-102d-a2b3-16da04859145
+concept_03052:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f9284-df1a-11de-a277-0026181bb84d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 3052
+  date_created: 2008-04-17 11:54:03 +02:00
+concept_06851:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f9224-df1a-11de-a277-0026181bb84d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 6851
+  date_created: 2008-04-17 11:54:03 +02:00
+concept_06850:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f9224-df1a-11zz-a277-0026181bb84d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 6850
+  date_created: 2008-04-17 11:54:03 +02:00
+concept_06849:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f9224-ws1a-11de-a277-0026181bb84d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 6849
+  date_created: 2008-04-17 11:54:03 +02:00
+concept_01271:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f0224-df1a-11de-a277-0026181bb84d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 1271
+  date_created: 2008-04-17 11:54:03 +02:00

@@ -3,3 +3,39 @@ cell_phone_number:
   name: Cell Phone Number
   person_attribute_type_id: 12
   uuid: c75bf6c0-2695-102d-b4c2-001d929acb54
+occupation:
+  name: Occupation
+  person_attribute_type_id: 13
+  uuid: c75bf6c0-2695-102d-b4c2-001d929agb54
+home_phone_number:
+  name: Home Phone Number
+  person_attribute_type_id: 14
+  uuid: c75bf6c0-2695-102d-b4c2-003d929acb54
+office_phone_number:
+  name: Office Phone Number
+  person_attribute_type_id: 15
+  uuid: c75bf6c0-2695-102d-b4c2-004d929acb54
+landmark_or_plot_number:
+  name: Landmark Or Plot Number
+  person_attribute_type_id: 19
+  uuid: c75bf6c0-2695-102d-b4c2-005d929agb54
+source_of_referral:
+  name: Source of referral
+  person_attribute_type_id: 26
+  uuid: c75bf6c0-2695-102d-b4c2-006d929agb54
+agrees_to_phone_text_for_TB_therapy:
+  name: Agrees to phone text for TB therapy
+  person_attribute_type_id: 20
+  uuid: c75bf6c0-2695-102d-b4c2-006g929agb54
+agrees_to_be_visited_at_home_for_TB_therapy:
+  name: Agrees to be visited at home for TB therapy
+  person_attribute_type_id: 21
+  uuid: c75bf6c0-2695-102d-b4c2-046g929agb54
+hiv_status:
+  name: HIV Status
+  person_attribute_type_id: 22
+  uuid: c75bf6c0-2695-102d-b4w2-006g929agb54
+art_status_at_registration:
+  name: ART status at registration
+  person_attribute_type_id: 23
+  uuid: c75bf6c0-7695-102d-b4w2-006g929agb54

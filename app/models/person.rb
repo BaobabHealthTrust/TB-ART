@@ -113,14 +113,20 @@ class Person < ActiveRecord::Base
       "names" => {
         "given_name" => self.names[0].given_name,
         "family_name" => self.names[0].family_name,
-        "family_name2" => ""
+        "family_name2" => self.names[0].family_name2
       },
       "addresses" => {
-        "county_district" => "",
+        "county_district" => self.addresses[0].county_district,
         "city_village" => self.addresses[0].city_village,
-        "location" => self.addresses[0].address2
+        "address2" => self.addresses[0].address2
       },
-    "occupation" => self.get_attribute('Occupation')}}
+    "attributes" => {
+        "occupation" => self.get_attribute('Occupation'),
+        "cell_phone_number" => self.get_attribute('Cell Phone Number'),
+        "home_phone_number" => self.get_attribute('Home Phone Number'),
+        "office_phone_number" => self.get_attribute('Office Phone Number'),
+        "landmark" => self.get_attribute('Landmark Or Plot Number')
+       }}}
  
     if not self.patient.patient_identifiers.blank? 
       demographics["person"]["patient"] = {"identifiers" => {}}
@@ -236,11 +242,11 @@ class Person < ActiveRecord::Base
 
     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
-      :value => params["occupation"])
+      :value => params["occupation"]) unless params["occupation"].blank? rescue nil
  
     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
-      :value => params["cell_phone_number"])
+      :value => params["cell_phone_number"]) unless params["cell_phone_number"].blank? rescue nil
  
     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
@@ -374,6 +380,7 @@ class Person < ActiveRecord::Base
     
      return nil
    end
+
    def formatted_gender
 
     if self.gender == "F" then "Female"
@@ -384,9 +391,9 @@ class Person < ActiveRecord::Base
   end
 
   def self.occupations
-    ['','Driver','Housewife','Messenger','Business','Farmer','Salesperson','Teacher','Student','Security guard','Domestic worker', 'Police',
-      'Unknown','Office worker', 'Preschool child','Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other"])
+    ['','Driver','Housewife','Messenger','Business','Farmer','Salesperson','Teacher',
+     'Student','Security guard','Domestic worker', 'Police','Unknown','Office worker',
+     'Preschool child','Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other"])
   end
-
 
 end
