@@ -210,4 +210,6 @@ class Encounter < ActiveRecord::Base
     }
   end
 
+  
+
 end
