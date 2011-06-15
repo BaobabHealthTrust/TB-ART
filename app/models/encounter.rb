@@ -206,6 +206,32 @@ class Encounter < ActiveRecord::Base
           ['',''],
           ['Initial','INITIAL HIV TEST'],
           ['Confirmatory','CONFIRMATORY HIV TEST']
+      ],
+      'who_stage1' => [
+        ['',''],
+        ['Asymptomatic','ASYMPTOMATIC'],
+        ['Persistent generalised lymphadenopathy','PERSISTENT GENERALISED LYMPHADENOPATHY'],
+        ['Unspecified stage 1 condition','UNSPECIFIED STAGE 1 CONDITION']
+      ],
+      'who_stage2' => [
+        ['',''],
+        ['Unspecified stage 2 condition','UNSPECIFIED STAGE 2 CONDITION'],
+        ['Angular cheilitis','ANGULAR CHEILITIS'],
+        ['Popular pruritic eruptions / Fungal nail infections','POPULAR PRURITIC ERUPTIONS / FUNGAL NAIL INFECTIONS']
+      ],
+      'who_stage3' => [
+        ['',''],
+        ['Oral candidiasis','ORAL CANDIDIASIS'],
+        ['Oral hairly leukoplakia','ORAL HAIRLY LEUKOPLAKIA'],
+        ['Pulmonary tuberculosis','PULMONARY TUBERCULOSIS'],
+        ['Unspecified stage 3 condition','UNSPECIFIED STAGE 3 CONDITION']
+      ],
+      'who_stage4' => [
+        ['',''],
+        ['Toxaplasmosis of the brain','TOXAPLASMOSIS OF THE BRAIN'],
+        ["Kaposi's Sarcoma","KAPOSI'S SARCOMA"],
+        ['Unspecified stage 4 condition','UNSPECIFIED STAGE 4 CONDITION'],
+        ['HIV encephalopathy','HIV ENCEPHALOPATHY']
       ]
     }
   end
