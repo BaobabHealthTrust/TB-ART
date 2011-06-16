@@ -15,7 +15,7 @@
 
   <% if User.current_user.admin? %>
     <tr>
-      <td> <button class="button blue"  onclick="window.parent.location='/user/new/<%=User.current_user.id%>'" style="margin: 5px,50px,0px; min-width: 300px"><span> Create User </span></button> </td>
+      <td> <button class="button blue"  onclick="window.parent.location='/user/new'" style="margin: 5px,50px,0px; min-width: 300px"><span> Create User </span></button> </td>
     </tr>
     <tr>
       <td> <button class="button blue"  onclick="window.parent.location='/user/select_user'" style="margin: 5px,50px,0px; min-width: 300px"><span> Edit User </span></button> </td>
