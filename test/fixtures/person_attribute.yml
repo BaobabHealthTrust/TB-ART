@@ -1,0 +1,99 @@
+--- 
+art_status_at_registration:
+  person_attribute_id: 1
+  person_id: 1
+  value: Not on ART
+  person_attribute_type_id: 23
+  creator: 1
+  date_created: 2011-06-14 12:01:22
+  changed_by: 1
+  date_changed: 2011-06-14 12:01:22
+  voided: 0
+  voided_by:
+  date_voided:
+  void_reason:
+  uuid: 421dbb72-966d-11e0-b0e9-544249152fc0
+occupation:
+  person_attribute_id: 2
+  person_id: 1
+  value: Craftsman
+  person_attribute_type_id: 13
+  creator: 1
+  date_created: 2011-06-14 12:01:22
+  changed_by: 1
+  date_changed: 2011-06-14 12:01:22
+  voided: 0
+  voided_by:
+  date_voided:
+  void_reason:
+  uuid: 421dbb72-966d-11e0-b0e9-544349152fc0
+cell_phone_number:
+  person_attribute_id: 3
+  person_id: 1
+  value: 0999123456
+  person_attribute_type_id: 12
+  creator: 1
+  date_created: 2011-06-14 12:01:22
+  changed_by: 1
+  date_changed: 2011-06-14 12:01:22
+  voided: 0
+  voided_by:
+  date_voided:
+  void_reason:
+  uuid: 421dbb72-966d-11e0-b0e9-544349152fc8
+home_phone_number:
+  person_attribute_id: 4
+  person_id: 1
+  value: '01785636'
+  person_attribute_type_id: 14
+  creator: 1
+  date_created: 2011-06-14 12:01:22
+  changed_by: 1
+  date_changed: 2011-06-14 12:01:22
+  voided: 0
+  voided_by:
+  date_voided:
+  void_reason:
+  uuid: 421dbb72-966d-11g0-b0e9-544349152fc8
+landmark:
+  person_attribute_id: 5
+  person_id: 1
+  value: St-Thomas Anglican Primary School
+  person_attribute_type_id: 19
+  creator: 1
+  date_created: 2011-06-14 12:01:22
+  changed_by: 1
+  date_changed: 2011-06-14 12:01:22
+  voided: 0
+  voided_by:
+  date_voided:
+  void_reason:
+  uuid: 421dbb72-966d-11g0-b0p9-544349152fc8
+agrees_to_phone_text_for_TB_therapy:
+  person_attribute_id: 6
+  person_id: 1
+  value: 'YES'
+  person_attribute_type_id: 20
+  creator: 1
+  date_created: 2011-06-14 12:01:22
+  changed_by: 1
+  date_changed: 2011-06-14 12:01:22
+  voided: 0
+  voided_by:
+  date_voided:
+  void_reason:
+  uuid: 421dbb72-966d-11g0-b0e9-544379152fc8
+agrees_to_be_visited_at_home_for_TB_therapy:
+  person_attribute_id: 7
+  person_id: 1
+  value: 'YES'
+  person_attribute_type_id: 21
+  creator: 1
+  date_created: 2011-06-14 12:01:22
+  changed_by: 1
+  date_changed: 2011-06-14 12:01:22
+  voided: 0
+  voided_by:
+  date_voided:
+  void_reason:
+  uuid: 421dbb72-966d-11g0-b0e9-589379152fc8

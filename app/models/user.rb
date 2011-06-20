@@ -6,16 +6,26 @@ class User < ActiveRecord::Base
   set_primary_key :user_id
   include Openmrs
 
-  before_save :set_password
+  before_save :set_password, :before_create
 
   cattr_accessor :current_user
   attr_accessor :plain_password
 
   has_many :user_properties, :foreign_key => :user_id # no default scope
   has_many :user_roles, :foreign_key => :user_id, :dependent => :delete_all # no default scope
+  has_many :names, :class_name => 'PersonName', :foreign_key => :person_id, :dependent => :destroy, :order => 'person_name.preferred DESC', :conditions => {:voided =>  0}
+
+  def first_name
+    self.names.first.given_name rescue ''
+  end
+
+  def last_name
+    self.names.first.family_name rescue ''
+  end
 
   def name
-    self.first_name + " " + self.last_name
+    name = self.names.first
+    "#{name.given_name} #{name.family_name}"
   end
 
   def try_to_login
@@ -53,7 +63,25 @@ class User < ActiveRecord::Base
     (0..digest.size-1).each{|i| encoding << digest[i].to_s(16) }
     encoding
   end  
-  
+
+   def before_create
+    super
+    self.salt = User.random_string(10) if !self.salt?
+    self.password = User.encrypt(self.password,self.salt)
+  end
+
+   def self.random_string(len)
+    #generat a random password consisting of strings and digits
+    chars = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
+    newpass = ""
+    1.upto(len) { |i| newpass << chars[rand(chars.size-1)] }
+    return newpass
+  end
+
+  def self.encrypt(password,salt)
+    Digest::SHA1.hexdigest(password+salt)
+  end
+
   # This goes away after 1.6 is here I think, but the users table in 1.5 has no
   # auto-increment
   def self.auto_increment

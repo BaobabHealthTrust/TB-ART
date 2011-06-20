@@ -35,13 +35,13 @@ Check applicability of code below
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
   
-  <%= touch_select_tag "CLINICAL SYMPTOMS ASSOCIATED WITH TB SYMPTOMS", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "CLINICAL SYMPTOMS ASSOCIATED WITH TB SYMPTOMS", @patient, options_for_select(@select_options['tb_clinical_symptoms']),
     {:id => "clinical_symptoms_associated_with_tb",
      :tt_pageStyleClass => "NoKeyboard",
      :multiple => "true",
      :helpText => "Clinical symptoms associated with TB symptoms" } %>
 
-  <%= touch_select_tag "INTERPRET X-RAY", @patient, options_for_select(@answer_array),
+  <%= touch_select_tag "INTERPRET X-RAY", @patient, options_for_select(@select_options['tb_xray_interpretation']),
     {:id => "xray",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Interpret X-Ray" } %>

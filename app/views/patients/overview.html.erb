@@ -46,7 +46,7 @@
 
       <div id="programs">
         <!-- h2>Programs</h2 -->
-        <ul class="list small" style="height:140px; -moz-border-radius: 15px;">
+        <ul class="list small" style="height:100%; -moz-border-radius: 15px;">
           <% for prog in @programs do %>
               <li class="data <%= cycle('even', 'odd') %>" program="<%= prog.id %>">
                 <div class="program">
@@ -71,51 +71,12 @@
         </div>
 
 
-        <div style="display: table-cell; width: 50%; padding: 10px; border: 1px solid #eee; -moz-border-radius: 15px;">
+        <div style="display: table-cell; width: 50%; height: 100%; padding: 10px; border: 1px solid #eee; -moz-border-radius: 15px;">
 
           <div id="charts" >
           </div>
 
         </div>
       </div>
-      <div  style="display: table-row;">
-
-        <div style="display: table-cell; width: 50%; padding: 5px; border: 1px solid #eee; -moz-border-radius: 15px;">
-
-          <div id="treatment">
-            <!-- h2>Treatment</h2 -->
-            <ul class="list small" style="height:140px; -moz-border-radius: 15px;">
-              <% for presc in @prescriptions do %>
-                  <li class="data <%= cycle('even', 'odd') %>" prescription="<%= presc.id %>">
-                    <div class="prescription"><%=h presc.to_s %></div>
-                  </li>
-                <% end %>
-                <% if @prescriptions.empty? %>
-                  <li class="data even">
-                    <div class="prescription">There are no current prescriptions for this patient</div>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-
-          <div style="display: table-cell; width: 50%; padding: 5px; border: 1px solid #eee; -moz-border-radius: 15px;">
-
-            <div id="alerts">
-              <!-- h2>Alerts</h2 -->
-              <ul class="list" style="height:140px; -moz-border-radius: 15px;">
-                <% for alert in @alerts do %>
-                    <li class="data <%= cycle('even', 'odd') %>">
-                      <div class="patient_state"><%=h alert %></div>
-                    </li>
-                  <% end %>
-                  <% if @alerts.blank? %>
-                    <li class="data even">
-                      <div class="alert">There are no alerts for this patient</div>
-                    </li>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-          </div>
+      
         </div>

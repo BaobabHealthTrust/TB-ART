@@ -2,7 +2,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class PersonTest < ActiveSupport::TestCase
   context "Person" do
-    fixtures :person, :person_name, :person_name_code, :person_address, :obs, :patient
+    fixtures :person, :person_name, :person_name_code, :person_address,
+             :obs, :patient, :person_attribute_type, :relationship_type
+             :person_attribute
 
     should "be valid" do
       assert Person.make.valid?
@@ -25,12 +27,15 @@ class PersonTest < ActiveSupport::TestCase
       p.date_created = "2000-01-01".to_date
       assert_equal p.age("2008-06-07".to_date), 7
     end
-    
+
     should "format the birthdate" do
       assert_equal person(:evan).birthdate_formatted, "09/Jun/1982"
-      assert_equal Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => 1).birthdate_formatted, "??/???/2000"
-      assert_equal Person.make(:birthdate => "2000-06-15".to_date, :birthdate_estimated => 1).birthdate_formatted, "??/Jun/2000"
-      assert_equal Person.make(:birthdate => "2000-07-01".to_date, :birthdate_estimated => 0).birthdate_formatted, "01/Jul/2000"     
+      assert_equal Person.make(:birthdate => "2000-07-01".to_date,
+                               :birthdate_estimated => 1).birthdate_formatted, "??/???/2000"
+      assert_equal Person.make(:birthdate => "2000-06-15".to_date,
+                               :birthdate_estimated => 1).birthdate_formatted, "??/Jun/2000"
+      assert_equal Person.make(:birthdate => "2000-07-01".to_date,
+                               :birthdate_estimated => 0).birthdate_formatted, "01/Jul/2000"
     end
     
     should "set the birthdate" do
@@ -82,24 +87,30 @@ class PersonTest < ActiveSupport::TestCase
       p.save!
       assert_equal Person.find(:first, :include => :names).name, "Sunshine Cassidy"
     end
-    
+
     should "return the first preferred address" do
       p = person(:evan)
-      p.addresses << PersonAddress.create(:address1 => 'Sunshine Underground', :city_village => 'Lilongwe')
-      p.addresses << PersonAddress.create(:address1 => 'Staff Housing', :city_village => 'Neno', :preferred => 1)
+      p.addresses << PersonAddress.create(:address2 => 'Sunshine Underground',
+                                          :city_village => 'Lilongwe', :county_district => 'Gomani')
+      p.addresses << PersonAddress.create(:address2 => 'Staff Housing',
+                                          :city_village => 'Neno', :county_district => 'Gomani',
+                                          :preferred => 1)
       p.save!
       assert_equal Person.find(:first, :include => :addresses).address, "Neno"
     end
 
     should "refer to the person's names but not include voided names" do
       p = person(:evan)
-      PersonName.create(:given_name => "Sunshine", :family_name => "Cassidy", :preferred => 1, :person_id => p.person_id, :voided => 1)
+      PersonName.create(:given_name => "Sunshine", :family_name => "Cassidy",
+                        :preferred => 1, :person_id => p.person_id, :voided => 1)
       assert_not_equal Person.find(:first, :include => :names).name, "Sunshine Cassidy"
     end
     
     should "refer to the person's addresses but not include voided addresses" do
       p = person(:evan)
-      PersonAddress.create(:address1 => 'Sunshine Underground', :city_village => 'Lilongwe', :preferred => 1, :person_id => p.person_id, :voided => 1)
+      PersonAddress.create(:address2 => 'Sunshine Underground',
+                           :city_village => 'Lilongwe', :county_district => 'Gomani',
+                           :preferred => 1, :person_id => p.person_id, :voided => 1)
       assert_not_equal Person.find(:first, :include => :addresses).address, "Lilongwe"
     end
 
@@ -108,8 +119,8 @@ class PersonTest < ActiveSupport::TestCase
       o.void("End of the world")
       p = person(:evan)
       assert p.observations.empty?
-    end  
-    
+    end
+
     should "refer to the corresponding patient" do
       p = person(:evan)
       assert_equal p.patient, patient(:evan)
@@ -120,7 +131,7 @@ class PersonTest < ActiveSupport::TestCase
       name_data = {
           "given_name" => "Evan",
           "family_name" => "Waters",
-          "family_name2" => ""
+          "family_name2" => nil
       }
       assert_equal p.demographics["person"]["names"], name_data
     end
@@ -128,7 +139,8 @@ class PersonTest < ActiveSupport::TestCase
     should "return a hash with correct address" do
       p = person(:evan)
       data = {
-        "county_district" => "",
+        "address2" => "Friendship House",
+        "county_district" => "Checkuchecku",
         "city_village" => "Katoleza"
       }
       assert_equal p.demographics["person"]["addresses"], data
@@ -148,29 +160,20 @@ class PersonTest < ActiveSupport::TestCase
 
     should "return a hash that represents a patients demographics" do
       p = person(:evan)
-      evan_demographics = { "person" => {
-        "date_changed" => Time.mktime("2000-01-01 00:00:00").to_s,
-        "gender" => "M",
-        "birth_year" => 1982,
-        "birth_month" => 6,
-        "birth_day" => 9,
-        "names" => {
-          "given_name" => "Evan",
-          "family_name" => "Waters",
-          "family_name2" => "",
-        },
-        "addresses" => {
-          "county_district" => "",
-          "city_village" => "Katoleza"
-        },
-        "patient" => {
-          "identifiers" => {
-            "National id" => "P1701210013",
-            "ARV Number" => "ARV-311",
-            "Pre ART Number" => "PART-311",
-          }
-        }
-      }}
+      evan_demographics = {"person"=>
+              {"birth_month"=>6,
+               "addresses"=>{"address2"=>"Friendship House","city_village"=>"Katoleza",
+                             "county_district"=>"Checkuchecku"},
+               "attributes"=>{"occupation"=>"Craftsman", "cell_phone_number"=>"0999123456",
+                              "landmark"=>"St-Thomas Anglican Primary School",
+                              "home_phone_number"=>"01785636", "office_phone_number"=>nil},
+               "gender"=>"M",
+               "patient"=>{"identifiers"=>{"National id"=>"P1701210013","Pre ART Number"=>"PART-311",
+                                           "ARV Number"=>"ARV-311"}},
+               "birth_day"=>9, "date_changed"=>"Sat Jan 01 00:00:00 +0200 2000",
+               "names"=>{"family_name2"=>nil, "family_name"=>"Waters", "given_name"=>"Evan"},
+               "birth_year"=>1982}}
+
     assert_equal p.demographics, evan_demographics
     end
 
@@ -262,10 +265,16 @@ class PersonTest < ActiveSupport::TestCase
     end
 
     should "be able to retrieve person data with their national id" do
-      demographic_national_id_only = {"person" => {"patient" => {"identifiers" => {"National id" => "P1701210013"} }}}
+      demographic_national_id_only = {"person" => {"patient" =>
+                                                  {"identifiers" => {"National id" => "P1701210013"} }}}
       assert_equal Person.find_by_demographics(demographic_national_id_only).first, person(:evan)
     end
 
+    should "format the patient gender" do
+      assert_equal person(:evan).gender, "M"
+      assert_equal Person.make(:gender => "M").formatted_gender, "Male"
+      assert_equal Person.make(:gender => "F").formatted_gender, "Female"
+    end
 
   end
 end

@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class PatientTest < ActiveSupport::TestCase
-  fixtures :patient, :patient_identifier, :person_name, :person, :encounter, :encounter_type, :concept, :concept_name, :obs
+  fixtures :patient, :patient_identifier, :person_name, :person,
+           :encounter, :encounter_type, :concept, :concept_name, :obs
 
   context "Patients" do
     should "be valid" do
@@ -113,7 +114,7 @@ EOF
       should "include coded and non-coded diagnoses" do
         assert_equal [@diagnosis, @diagnosis_non_coded], @evan.current_diagnoses
       end
-      
+
       should "not include non-diagnosis observations" do
         Observation.make(
           :encounter_id => @encounter.id, 

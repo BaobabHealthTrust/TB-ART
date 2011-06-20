@@ -7,7 +7,13 @@ require 'mocha'
 require 'colorfy_strings'
 require 'factory_girl'
 
-Dir[File.join(RAILS_ROOT, 'test', 'factories', '**', '*')].each {|f| require f }
+if (!Factory.factories || Factory.factories.empty?)
+  Dir.glob(File.dirname(__FILE__) + "/factories/*.rb").each do |factory|
+    require factory
+  end
+end
+
+#Dir[File.join(RAILS_ROOT, 'test', 'factories', '**', '*')].each {|f| require f }
 
 alias :running :lambda
 
@@ -78,7 +84,7 @@ class ActiveSupport::TestCase
   # logged_in_as :mikmck, :registration { }
   def logged_in_as(login, place, &block)
      @request.session[:user_id] = users(login).user_id
-     @request.session[:location_id] = location(place).location_id
+     @request.session[:location_id] = location(:location_00040).location_id
      yield block
   end 
   
