@@ -232,6 +232,66 @@ class Encounter < ActiveRecord::Base
         ["Kaposi's Sarcoma","KAPOSI'S SARCOMA"],
         ['Unspecified stage 4 condition','UNSPECIFIED STAGE 4 CONDITION'],
         ['HIV encephalopathy','HIV ENCEPHALOPATHY']
+      ],
+      'tb_clinical_symptoms' => [
+        ['',''],
+        ['Cough for the past 3 weeks','COUGH OVER 2 WKS'],
+        ["Productive cough","PRODUCTIVE COUGH"],
+        ['Unintentional weight loss',''],
+        ['Night sweat','NIGHT SWEATS'],
+        ['Loss of appetite','LOSS OF APPETITE'],
+        ['Persistent fever',''],
+        ['Shortness of breath','SHORTNESS OF BREATH'],
+        ['Fatigue','FATIGUE'],
+        ['Chest pains','CHEST PAIN']
+      ],
+      'tb_xray_interpretations' => [
+        ['',''],
+        ['Consistent of TB',''],
+        ['Not Consistent of TB','']
+      ],
+      'dot_options' => [
+        ['',''],
+        ['Hospital','HOSPITAL'],
+        ['Health Center','HEALTH CENTER'],
+        ['Guardian','GUARDIAN']
+      ],
+      'cough_durations' => [
+        ['',''],
+        ['2 Weeks','WEEKS'],
+        ['3 Weeks','WEEKS'],
+        ['4 Weeks','WEEKS'],
+        ['5 Weeks','WEEKS'],
+        ['6 Weeks','WEEKS'],
+        ['7 Weeks','WEEKS']
+      ],
+      'tb_types' => [
+        ['',''],
+        ['PTB','PTB'],
+        ['EPTB','EPTB']
+      ],
+      'eptb_classification' => [
+        ['',''],
+        ['Pleural Effusion','PLEURAL EFFUSION'],
+        ['Lymphadenopathy','LYMPHADENOPATHY'],
+        ['Pericardial Effusion','PERICARDIAL EFFUSION'],
+        ['Ascites','ASCITES'],
+        ['Spinal / Bone disease','SPINAL DISEASE'],
+        ['Meningitis','MENINGITIS']
+      ],
+      'tb_classification' => [
+        ['',''],
+        ['Susceptible','SUSCEPTIBLE TO TUBERCULOSIS DRU'],
+        ['MDR','MDR-TB'],
+        ['XDR','XDR TB']
+      ],
+      'patient_category' => [
+        ['',''],
+        ['New','NEW PATIENT'],
+        ['Relapse','RELAPSE MDR-TB PATIENT'],
+        ['Treatment after Default','TREATMENT AFTER DEFAULT MDR-TB PATIENT'],
+        ['Fail','FAILED - TB'],
+        ['Other','']
       ]
     }
   end
