@@ -81,38 +81,15 @@
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
-  <%= select_tag ("main_tests", options_for_select(['','Blood','CSF','Urine','Aspiration','Sputum','Stool','Swab']), :helptext => 'Main tests', :tt_OnUnload => 'tstPageValues.splice(1,tstPageValues.length)')%>
-  <%=
-  #ConceptClass.find_by_name("Specimen Sample Type").concepts.map{|container_types|container_types.concepts}.flatten.map{|tests|tests.concept_names.reject{|name|name.locale!='en'}}.flatten.names.length
-  container_types = ConceptClass.find_by_name("Specimen Sample Type").concepts
-  available_tests = container_types.map{|container_type|container_type.concept_members.map{|member| member.concept}.flatten}.flatten
-  test_names_with_synonyms = available_tests.map{|test|test.concept_names.reject{|name|name.locale!='en'}}.flatten.map{|test_name|test_name.name}.sort
-# TODO sort this by most commonly used tests
+  <%= select_tag ("main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.sort.unshift("")), :helptext => 'Main tests', :id => 'main_tests', :tt_onUnLoad => 'alert("aa")')%>
 
-  #tests = ["","Finished"] + test_names_with_synonyms
-  
+  <%= touch_select_tag "TESTS ORDERED", @patient, options_for_select([]),
+    {:id => "lab_orders",
+     :ajaxURL => '',
+     :multiple => true,
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "Select test" } %>
 
-  tests = ["","Finished"] + ['AAFB(1st)', 'AAFB(2nd)', 'AAFB(3rd)', 'Culture']
-
-  options = {
-    :helpText => 'Test Required',
-    :allowFreeText => 'false',
-    :textCase => "upper",
-    :tt_onLoad => "updateInforBar();" ,
-    :tt_OnUnload => "if (tstInputTarget.value == 'Finished') {$('value_coded_or_text_#{}').value = ''}" ,
-  } %>
-  <% 15.times do |iteration| %>
-    <%iteration += 1%>
-    <% options[:tt_onLoad] += "updateNextFinish();" if iteration == 1 %>
-    <% options[:condition] = "tstPageValues[tstCurrentPage] != 'Finished'" if iteration > 1 %>
-    <% options[:tt_OnUnload] = "$('value_coded_or_text_#{iteration}').value = (tstInputTarget.value == 'Finished' ? '' : tstInputTarget.value)" %>
-    <%= select_tag ("observations[][value_coded_or_text]", options_for_select(tests), options)%>
-    <%#= hidden_field_tag ("observations[][value_coded_or_text]", nil, {:id => "value_coded_or_text_#{iteration}"}) %>
-    <%= hidden_field_tag("observations[][value_text]", nil) %>
-    <%= hidden_field_tag("observations[][concept_name]", "TESTS ORDERED", options) %>
-    <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
-    <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
-  <% end %>
 
   <label for='showSummary'>Summary </label>
   <%= text_field_tag :showSummary, nil, { :tt_onLoad => "showLabels()", :optional => "true", :tt_pageStyleClass => "NoControls" } %>

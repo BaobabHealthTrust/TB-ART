@@ -262,4 +262,9 @@ class EncountersController < ApplicationController
     render :layout => "menu" 
   end
 
+  def lab_orders
+    @lab_orders = Encounter.select_options['lab_orders'][params['sample']].collect{|order| order}
+    render :text => "<li>" + @lab_orders.join("</li><li>") + "</li>"
+  end
+
 end

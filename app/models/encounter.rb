@@ -292,10 +292,21 @@ class Encounter < ActiveRecord::Base
         ['Treatment after Default','TREATMENT AFTER DEFAULT MDR-TB PATIENT'],
         ['Fail','FAILED - TB'],
         ['Other','']
-      ]
+      ],
+      'lab_orders' =>{
+        "Blood" => ["Full blood count", "Malaria parasite", "Group & cross match", "Urea & Electrolytes", "CD4 count", "Resistance",
+            "Viral Load", "Cryptococcal Antigen", "Lactate", "Fasting blood sugar", "Random blood sugar", "Sugar profile",
+            "Liver function test", "Hepatitis test", "Sickling test", "ESR", "Culture & sensitivity", "Widal test", "ELISA",
+            "ASO titre", "Rheumatoid factor", "Cholesterol", "Triglycerides", "Calcium", "Creatinine", "VDRL", "Direct Coombs",
+            "Indirect Coombs", "Blood Test NOS"],
+        "CSF" => ["Full CSF analysis", "Indian ink", "Protein & sugar", "White cell count", "Culture & sensitivity"],
+        "Urine" => ["Urine microscopy", "Urinanalysis", "Culture & sensitivity"],
+        "Aspirate" => ["Full aspirate analysis"],
+        "Stool" => ["Full stool analysis", "Culture & sensitivity"],
+        "Sputum" => ["AAFB (1st)", "AAFB (2nd)", "AAFB (3rd)", "Culture"],
+        "Swab" => ["Microscopy", "Culture & sensitivity"]
+      }
     }
   end
-
-  
 
 end
