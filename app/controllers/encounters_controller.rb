@@ -55,7 +55,6 @@ class EncountersController < ApplicationController
       observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name] ||= "DIAGNOSIS" if encounter.type.name == "DIAGNOSIS"
-      observation[:accession_number] = Observation.new_accession_number if observation[:concept_name].humanize == "Tests ordered"
       # Handle multiple select
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
         observation[:value_coded_or_text_multiple].compact!
@@ -63,7 +62,11 @@ class EncountersController < ApplicationController
       end  
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
         values = observation.delete(:value_coded_or_text_multiple)
-        values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
+        values.each do |value| 
+          observation[:value_coded_or_text] = value
+          observation[:accession_number] = Observation.new_accession_number if observation[:concept_name].humanize == "Tests ordered"
+          Observation.create(observation) 
+        end
       else      
         observation.delete(:value_coded_or_text_multiple)
         Observation.create(observation)

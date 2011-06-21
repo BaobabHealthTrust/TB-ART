@@ -1,38 +1,11 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.id%>?auto_load_forms=false"
 
-  // Every 500 milliseconds update the Next/Finish button
-  function updateNextFinish(){
-    if (tstInputTarget.value == 'Finished'){
-      $('nextButton').innerHTML = '<span>Finish</span>';
-      // TODO clear all items after Finish form
-    }
-    else
-      $('nextButton').innerHTML = '<span>Next</span>';
-
-    setTimeout(updateNextFinish, 500)
-  }
-
-  function updateInforBar(){
-    current_values = tstPageValues.join(", ")
-    current_values = current_values.substring(0,current_values.indexOf(", ,"))
-    finished_position = current_values.indexOf(", Finished")
-    if (finished_position != -1) {
-      current_values = current_values.substring(0,finished_position)
-    }
-    $('infoBar'+tstCurrentPage).innerHTML = current_values
-  }
-
   function showLabels(){
-    tstInputTarget.value = "Finished"
-
+    var ordersArray = tstPageValues[1].split(";")
     var displayText = ""
-    for(var i=0;i<tstPageValues.length;i++){
-      value = tstPageValues[i]
-      if(value == "" | value == "Finished"){
-        break
-      }
-      displayText += drawLabel(tstPageValues[i])
+    for(var i=0;i<ordersArray.length;i++){
+      displayText += drawLabel(ordersArray[i])
     }
 
      $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '</div>' ;
@@ -51,6 +24,11 @@
 </div>\
 "
     return label
+  }
+
+  function updateLaborderUrl(mainTest){
+    var url = '/encounters/lab_orders?sample=' + mainTest + '&search_string=';
+    $('lab_orders').setAttribute('ajaxURL', url);
   }
 
 </script>
@@ -81,13 +59,12 @@
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
-  <%= select_tag ("main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.sort.unshift("")), :helptext => 'Main tests', :id => 'main_tests', :tt_onUnLoad => 'alert("aa")')%>
+  <%= select_tag ("main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.sort.unshift("")), :helptext => 'Main tests', :id => 'main_tests', :tt_onUnLoad => 'updateLaborderUrl($("main_tests").value)')%>
 
   <%= touch_select_tag "TESTS ORDERED", @patient, options_for_select([]),
     {:id => "lab_orders",
      :ajaxURL => '',
      :multiple => true,
-     :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Select test" } %>
 
 
