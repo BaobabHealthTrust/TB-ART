@@ -4,15 +4,16 @@
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <% @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue ""  %>
+    <script type="text/javascript" language="javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer></script>
     <script language="javascript">
       tstUsername = "<%= User.current_user.username unless User.current_user.nil? %>";
       tstCurrentDate = "<%= Time.now.strftime("%Y/%m/%d") %>";
     </script>
-    <%= stylesheet_link_tag "mateme" %>
+    <%#= stylesheet_link_tag "mateme" %>
     <%#= stylesheet_link_tag "form" %>
-    <%= stylesheet_link_tag fancy_or_high_contrast_touch %>
-    <%= javascript_include_tag "preload" %>
-    <%= javascript_include_tag "touchscreenToolkit" %>
+    <%#= stylesheet_link_tag fancy_or_high_contrast_touch %>
+    <%#= javascript_include_tag "preload" %>
+    <%#= javascript_include_tag "touchscreenToolkit" %>
     <%#= javascript_include_tag "standard" %>
     <%= javascript_include_tag "dateselector" %>
   </head>
