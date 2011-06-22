@@ -303,7 +303,7 @@ class Encounter < ActiveRecord::Base
         "Urine" => ["Urine microscopy", "Urinanalysis", "Culture & sensitivity"],
         "Aspirate" => ["Full aspirate analysis"],
         "Stool" => ["Full stool analysis", "Culture & sensitivity"],
-        "Sputum" => ["AAFB (1st)", "AAFB (2nd)", "AAFB (3rd)", "Culture"],
+        "Sputum" => ["AAFB(1st)", "AAFB(2nd)", "AAFB(3rd)", "Culture"],
         "Swab" => ["Microscopy", "Culture & sensitivity"]
       }
     }
