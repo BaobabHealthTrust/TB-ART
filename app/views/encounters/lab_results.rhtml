@@ -37,24 +37,16 @@
     {:id => "visual_appearance_of_sputum_specimen",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Visual appearance of sputum specimen" } %>
+     
+     <%acc_numbers = @sputum_orders.collect{|k,v| k}.sort%>
 
-  <%= touch_select_tag "FIRST SPUTUM FOR AAFB RESULTS", @patient, options_for_select(@sputum_results),
-    {:id => "sputum_specimen_one_result",
+  <%3.times do |i|%>
+    <%= touch_select_tag "#{@sputum_orders[acc_numbers[i]]} RESULTS", @patient, options_for_select(@sputum_results),
+      {:id => "sputum_specimen_#{i+1}_result",
       :tt_pageStyleClass => "NoKeyboard",
-      :accession_number => @recent_sputum_acc_numbers[0],
-     :helpText => "Sputum specimen 1 result (Accession number: #{@recent_sputum_acc_numbers[0]})" } %>
-  
-  <%= touch_select_tag "SECOND SPUTUM FOR AAFB RESULTS", @patient, options_for_select(@sputum_results),
-    {:id => "sputum_specimen_two_result",
-     :tt_pageStyleClass => "NoKeyboard",
-      :accession_number => @recent_sputum_acc_numbers[1],
-     :helpText => "Sputum specimen 2 result (Accession number: #{@recent_sputum_acc_numbers[1]})" } %>
-
-  <%= touch_select_tag "THIRD SPUTUM FOR AAFB RESULTS", @patient, options_for_select(@sputum_results),
-    {:id => "sputum_specimen_three_result",
-     :tt_pageStyleClass => "NoKeyboard",
-      :accession_number => @recent_sputum_acc_numbers[2],
-      :helpText => "Sputum specimen 3 result (Accession number: #{@recent_sputum_acc_numbers[2]})" } %>
+      :accession_number => acc_numbers[i],
+      :helpText => "#{@sputum_orders[acc_numbers[i]]} Results (Accession number: #{acc_numbers[i]})" } %>
+   <%end%>
       
   <%= submit_tag "Finish" %>    
 
