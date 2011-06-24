@@ -30,21 +30,21 @@
     <!--<option value=''>Treatment Outcome</option> -->
     <!--<option value=''>Patient Outcome</option> -->
     <option value='/encounters/new/lab?patient_id=<%= @patient.id -%>'>Lab</option>
-    <option value='/encounters/give_drugs?patient_id=<%= @patient.id -%>'>Give Drugs</option>
     <option value='/encounters/new/update_hiv_status?patient_id=<%= @patient.id -%>'>Update HIV Status</option>
     <!--<option value=''>Print Demographics</option> -->
     <!--<option value=''>Print Passport Label</option> -->
     <!--<option value='/encounter_types?patient_id=<%= @patient.id -%>'>Change Task</option>-->
-    <option value='/people/new_tb_index_person?patient_id=<%= @patient.id -%>'>New TB Index Person</option>
-    <option value='/people/new_tb_contact_person?patient_id=<%= @patient.id -%>'>New TB Contact Person</option>
-    <option value='/encounters/new/update_treatment_outcome?patient_id=<%= @patient.id -%>'>Treatment Outcome</option>
-    <option value='/encounters/new/update_patient_outcome?patient_id=<%= @patient.id -%>'>Patient Outcome</option>
-    <option value='/encounters/new/ipt_contact_person?patient_id=<%= @patient.id -%>'>New IPT</option>
+    <!--option value='/people/new_tb_index_person?patient_id=<%= @patient.id -%>'>New TB Index Person</option-->
+    <!--option value='/people/new_tb_contact_person?patient_id=<%= @patient.id -%>'>New TB Contact Person</option-->
+    <!--option value='/encounters/new/update_treatment_outcome?patient_id=<%= @patient.id -%>'>Treatment Outcome</option-->
+    <!--option value='/encounters/new/update_patient_outcome?patient_id=<%= @patient.id -%>'>Patient Outcome</option-->
+    <!--option value='/encounters/new/ipt_contact_person?patient_id=<%= @patient.id -%>'>New IPT</option-->
     <option value='/encounters/new/tb_reception?patient_id=<%= @patient.id -%>'>TB Reception</option>
-    <option value='/encounters/new/art_initial?patient_id=<%= @patient.id -%>'>ART Initial</option>
     <option value='/encounters/new/vitals?patient_id=<%= @patient.id -%>'>Vitals</option>
-    <option value='/encounters/new/clinic_visit?patient_id=<%= @patient.id -%>'>TB Clinic Visit</option>
     <option value='/encounters/new/tb_registration?patient_id=<%= @patient.id -%>'>TB Registration</option>
+    <option value='/encounters/new/art_initial?patient_id=<%= @patient.id -%>'>ART Enrollment</option>
+    <option value='/encounters/new/clinic_visit?patient_id=<%= @patient.id -%>'>TB Clinic Visit</option>
     <option value='/prescriptions/tb_treatment?patient_id=<%= @patient.id -%>'>TB Treatment</option>
+    <option value='/encounters/give_drugs?patient_id=<%= @patient.id -%>'>Give Drugs</option>
   </select>
 </div>
