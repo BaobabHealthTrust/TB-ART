@@ -38,11 +38,6 @@
      <%= text_field_tag :summary, nil, { :tt_onLoad => "reminder('Unknown')", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => '$("hiv_status").value == "UNKNOWN"'} %>
 
 
- <%= touch_select_tag "TYPE OF HIV TEST", @patient, options_for_select(@select_options['type_of_hiv_test']),
-   {:id => "type_of_hiv_test",
-     :condition => '$("hiv_status").value != "UNKNOWN"',
-     :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "Type of HIV test" } %>
 
   <%= text_field_tag "hiv_test_year", nil, {:helpText => 'HIV test year', :field_type => 'number', :absoluteMin => "1982", :min => "1982", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :condition => '$("hiv_status").value != "UNKNOWN"'}  %>
 
@@ -68,6 +63,12 @@
    {:id => "htc_serial_number",
      :condition => '$("hiv_status").value != "UNKNOWN"',
      :helpText => "HTC serial number" } %>
+     
+ <%= touch_yes_no_unknown_tag "ON ART", @patient, nil,
+   {:id => "art_status",
+     :condition => '$("hiv_status").value != "NEGATIVE"',
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "On ART?" } %>
 
   <%= touch_hidden_tag "HIV TEST DATE", @patient, nil, {:id => "hiv_test_date", :value_datetime => true}%>
 

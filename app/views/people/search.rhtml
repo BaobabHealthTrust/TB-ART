@@ -52,8 +52,12 @@
           <% unless person.birthdate.blank? %>Birthdate: <%=h person.birthdate_formatted -%>,<% end %>
           <% if person.addresses.first && person.addresses.first.address2.present? %>Home Village: <%=h person.addresses.first.address2 -%>,<% end %>
           <% if person.addresses.first && person.addresses.first.city_village.present? %>Current Village: <%=h person.addresses.first.city_village -%>,<% end %>
-          <% if person.names.first && person.names.first.family_name2.present? %>Mother's Surname: <%=h person.names.first.family_name2 -%><% end %>
+          <% if person.names.first && person.names.first.family_name2.present? %>Middle Name: <%=h person.names.first.family_name2 -%>,<% end %>
+          <%if person.is_tb_index_person%> TB Index of: <%=person.is_tb_index_person.person.name%>, <%end%>
+          <%if person.is_tb_contact_person%> TB Contact of: <%=person.is_tb_contact_person.person.name%> <%end%>
+            
           <%=h ' Died' if person.dead == 1 rescue '' -%>
+
         </option>
       <% end -%>
       <% if params[:identifier] %>

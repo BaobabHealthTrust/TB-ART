@@ -5,13 +5,13 @@ class Task < ActiveRecord::Base
 
   # Try to find the next task for the patient at the given location
   def self.next_task(location, patient, session_date = Date.today)
-    referred_by_tb_idex = PersonAttribute.find(:first, :conditions => ["person_id =? and person_attribute_type_id =?",patient.id,PersonAttributeType.find(:first, :conditions => ["name = ?","Source of referral"]).id])
+    referred_by_tb_index = PersonAttribute.find(:first, :conditions => ["person_id =? and person_attribute_type_id =?",patient.id,PersonAttributeType.find(:first, :conditions => ["name = ?","Source of referral"]).id])
 
     todays_encounters = patient.encounters.find_by_date(session_date)
     todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
     
 
-    return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_idex
+    return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_index
     return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS")
     return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
 =begin

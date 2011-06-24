@@ -76,7 +76,6 @@
 
   <%= select_tag("person[occupation]", options_for_select(@occupations ,params[:occupation]),:helpText =>"Occupation",:allowFreeText => true, :tt_onLoad => 'seen(tstCurrentPage);', :ttMatchFromBeginning => "true")%>
   
-  <%= select_tag("person[art_status_at_registration]", options_for_select([" ", "On ART", "Not on ART", "Unknown"] ,params[:art_status_at_registration]),:helpText =>"ART Status", :tt_onLoad => 'seen(tstCurrentPage);')%>
   <!-- Make sure patient is created -->
 
 

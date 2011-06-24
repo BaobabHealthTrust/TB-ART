@@ -18,7 +18,18 @@ class PeopleController < ApplicationController
   end
 
   def search
-    #redirect to TB index search results page if params has to do with search of tb index info   
+    
+    #redirect to TB index search results page if params has to do with search of tb index info  
+     if params[:source_of_referral]
+       referral_source = PersonAttribute.create({:person_id => params[:patient_id],
+                            :value => params[:source_of_referral],
+                            :person_attribute_type_id => PersonAttributeType.find(:first, :conditions => ["name = ?","Source of referral"]).id})
+       referral_source.save
+       if ['Walk in', 'Health Facility'].include?(params[:source_of_referral])
+         redirect_to next_task(Patient.find(params[:patient_id])) and return
+       end
+     end
+ 
     if params[:search_tb_index_person]
       redirect_to :action => :new_tb_index_person, :gender => params[:gender],:given_name => params[:given_name],
                              :family_name => params[:family_name], :patient_id => params[:patient_id],
@@ -64,18 +75,13 @@ class PeopleController < ApplicationController
  
   # This method is just to allow the select box to submit, we could probably do this better
   def select
-     
-    if params[:source_of_referral]
-       referral_source = PersonAttribute.create({:person_id => params[:patient_id],
-                            :value => params[:source_of_referral],
-                            :person_attribute_type_id => PersonAttributeType.find(:first, :conditions => ["name = ?","Source of referral"]).id})
-       referral_source.save
-
+     if params[:source_of_referral]
+   
        redirect_to :action => :create_tb_index_person, :new_tb_index_person => {:gender => params[:gender],
                    :given_name => params[:given_name], :family_name => params[:family_name],
                    :person_id => params[:person], :patient_id => params[:patient_id],
                    :relationship => ["TB Contact Person", "TB Index Person"]} and return
-     end
+    end
 
     if params[:number_of_contacts]
        number_of_contacts = PersonAttribute.create({:person_id => params[:patient_id],

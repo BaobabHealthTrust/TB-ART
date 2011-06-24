@@ -226,7 +226,7 @@ class Person < ActiveRecord::Base
     address_params = params["addresses"]
     names_params = params["names"]
     patient_params = params["patient"]
-    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number|landmark|agrees_phone_text_for_TB_therapy|agrees_to_be_visited_for_TB_therapy|art_status_at_registration/) }
+    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number|landmark|agrees_phone_text_for_TB_therapy|agrees_to_be_visited_for_TB_therapy/) }
     birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
     person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate|occupation/) }
     person = Person.create(person_params)
@@ -268,9 +268,6 @@ class Person < ActiveRecord::Base
       :person_attribute_type_id => PersonAttributeType.find_by_name("Agrees to be visited at home for TB therapy").person_attribute_type_id,
       :value => params["agrees_to_be_visited_for_TB_therapy"]) unless params["agrees_to_be_visited_for_TB_therapy"].blank?
 
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("ART status at registration").person_attribute_type_id,
-      :value => params["art_status_at_registration"]) unless params["art_status_at_registration"].blank?
 # TODO handle the birthplace attribute
  
     if (!patient_params.nil?)
@@ -376,7 +373,7 @@ class Person < ActiveRecord::Base
                                                           :first, 
                                                           :conditions => ["a_is_to_b = ? AND b_is_to_a =?",rltnship_type[0], rltnship_type[1]]
                                             ).id, 
-                                  "person_b" => person.id})
+                                  "person_b" => tb_index_or_contact.id})
     
      return nil
    end
@@ -392,8 +389,16 @@ class Person < ActiveRecord::Base
 
   def self.occupations
     ['','Driver','Housewife','Messenger','Business','Farmer','Salesperson','Teacher',
-     'Student','Security guard','Domestic worker', 'Police','Unknown','Office worker',
-     'Preschool child','Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other"])
+     'Student','Security guard','Domestic worker', 'Police','Office worker',
+     'Preschool child','Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other","Unknown"])
+  end
+
+  def is_tb_index_person
+    Relationship.first(:conditions => ["person_b = ? AND relationship = ?",self.id, RelationshipType.first(:conditions => ["a_is_to_b = ? AND b_is_to_a = ?", 'TB Contact Person', 'TB Index Person'])])    
+  end
+  
+  def is_tb_contact_person
+    Relationship.first(:conditions => ["person_b = ? AND relationship = ?",self.id, RelationshipType.first(:conditions => ["a_is_to_b = ? AND b_is_to_a = ?", 'TB Patient', 'TB contact Person'])])    
   end
 
 end

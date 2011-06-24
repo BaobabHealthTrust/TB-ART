@@ -202,11 +202,6 @@ class Encounter < ActiveRecord::Base
           ['Positive','POSITIVE'],
           ['Unknown','UNKNOWN']
       ],
-        'type_of_hiv_test' => [
-          ['',''],
-          ['Initial','INITIAL HIV TEST'],
-          ['Confirmatory','CONFIRMATORY HIV TEST']
-      ],
       'who_stage1' => [
         ['',''],
         ['Asymptomatic','ASYMPTOMATIC'],
