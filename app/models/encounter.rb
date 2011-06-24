@@ -240,7 +240,7 @@ class Encounter < ActiveRecord::Base
         ['Fatigue','FATIGUE'],
         ['Chest pains','CHEST PAIN']
       ],
-      'tb_xray_interpretations' => [
+      'tb_xray_interpretation' => [
         ['',''],
         ['Consistent of TB',''],
         ['Not Consistent of TB','']
