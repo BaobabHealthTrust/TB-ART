@@ -20,4 +20,9 @@ class PersonAddressesController < ApplicationController
     render :text => "<li>" + @names.join("</li><li>") + "</li>"
     #redirect_to :action => :new, :address2 => params[:address2]
   end
+
+  def current_residence
+    @names = Location.current_residences
+    render :text => "<li>" + @names.join("</li><li>") + "</li>"
+  end
 end
