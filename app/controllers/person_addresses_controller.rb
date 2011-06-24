@@ -22,7 +22,13 @@ class PersonAddressesController < ApplicationController
   end
 
   def current_residence
-    @names = Location.current_residences
-    render :text => "<li>" + @names.join("</li><li>") + "</li>"
+    search_location(params[:search_string])
+  end
+
+    def search_location(search_string)
+    @results = Location.current_residences.grep(/#{search_string}/i).compact.sort_by{|location|
+      location.index(/#{search_string}/) || 100 # if the search string isn't found use value 100
+    }[0..15]
+    render :text => @results.collect{|location|"<li>#{location}</li>"}.join("\n")
   end
 end

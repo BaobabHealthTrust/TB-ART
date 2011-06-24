@@ -54,7 +54,7 @@
   
   <%= text_field_tag "person[addresses][county_district]",  params[:county_district], {:field_type => 'alpha', :helpText => 'Ancestral Traditional Authority (TA)', :ajaxURL => '/person_addresses/traditional_authority?search_string=', :allowFreeText => false }%>
 
-  <%= text_field_tag "person[addresses][city_village]",  params[:city_village], {:field_type => 'alpha', :helpText => 'Current city, place or area of residence', :ajaxURL => '/person_addresses/current_residence?search_string=', :allowFreeText => false }%>
+  <%= text_field_tag "person[addresses][city_village]",  params[:city_village], {:field_type => 'alpha', :helpText => 'Current city, place or area of residence', :ajaxURL => '/person_addresses/current_residence?search_string=', :allowFreeText => false,  :ttMatchFromBeginning => "true"}%>
   
   <%= text_field_tag "person[landmark]",  params[:landmark], {:field_type => 'alpha', :helpText => 'Closest land mark<span style="font-size:0.7em;font-style:italic">(Please do not include these words: Next to, close, in front of, behind)</span>', :allowFreeText => true }%>
   
@@ -74,7 +74,7 @@
   
   <%= select_tag("person[agrees_to_be_visited_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_to_be_visited_for_TB_therapy]),:helpText =>"Can we visit you at home for TB therapy?", :tt_onLoad => 'seen(tstCurrentPage);')%>
 
-  <%= select_tag("person[occupation]", options_for_select(@occupations ,params[:occupation]),:helpText =>"Occupation",:allowFreeText => true, :tt_onLoad => 'seen(tstCurrentPage);', :ttMatchFromBeginning => "true")%>
+  <%= select_tag("person[occupation]", options_for_select(@occupations ,params[:occupation]),:helpText =>"Occupation",:allowFreeText => false, :tt_onLoad => 'seen(tstCurrentPage);', :ttMatchFromBeginning => "true")%>
   
   <!-- Make sure patient is created -->
 
