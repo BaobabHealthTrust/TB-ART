@@ -57,13 +57,16 @@ class Location < ActiveRecord::Base
   def self.current_arv_code
     current_health_center.neighborhood_cell rescue nil
   end
+  
+  def self.areas
+    return @@areas
+  end
 
   def self.current_residences
     return @@current_residences
   end
-  def self.initialize_current_residences
-    locations = <<EOF
-Air Wing
+  def self.initialize_areas
+    areas = <<EOF
 Area 1
 Area 10
 Area 11
@@ -103,14 +106,13 @@ Area 46
 Area 47
 Area 49
 Area 5
-Area 50
-Area 51
-Area 53
-Area 56
-Area 6
-Area 7
-Area 8
-Area 9
+EOF
+    return areas.split("\n")
+  end
+
+  def self.initialize_current_residences
+    locations = <<EOF
+Air Wing
 Bagdad
 Balaka
 Balaka District
@@ -1279,5 +1281,6 @@ EOF
   end
 
   @@current_residences = initialize_current_residences()
+  @@areas = initialize_areas()
 
 end
