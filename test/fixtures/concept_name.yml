@@ -148,4 +148,114 @@ diastolic_blood_pressure:
   concept_id: 5086
   date_created: 2004-08-12 00:00:00 -07:00
   uuid: 1fd858ea-268f-102d-a2b3-16da04859145
-  
+first_line_antiretroviral_regimen:
+  name: FIRST LINE ANTIRETROVIRAL REGIMEN
+  voided: 0
+  uuid: e0f6aefe-df1a-11de-a277-0026181fd84d
+  creator: 1
+  voided_by:
+  void_reason:
+  date_voided:
+  concept_name_id: 9489
+  locale: en
+  concept_id: 6879
+  date_created: 2007-11-02 11:32:03 +02:00
+  uuid: 1fd858ea-268f-102d-a2b3-16da04859143
+alternative_first_line_antiretroviral_regimen:
+  name: ALTERNATIVE FIRST LINE ANTIRETROVIRAL REGIMEN
+  voided: 0
+  uuid: e0f6wsfe-df1a-11de-a256-0026181fd84d
+  creator: 1
+  voided_by:
+  void_reason:
+  date_voided:
+  concept_name_id: 9490
+  locale: en
+  concept_id: 6879
+  date_created: 2007-11-02 11:32:03 +02:00
+  uuid: 1fd858ea-268f-102d-a2s3-16da04859143
+second_line_antiretroviral_regimen:
+  name: SECOND LINE ANTIRETROVIRAL REGIMEN
+  voided: 0
+  uuid: e0f6aefe-df1a-11de-a256-0026181fd84d
+  creator: 1
+  voided_by:
+  void_reason:
+  date_voided:
+  concept_name_id: 9494
+  locale: en
+  concept_id: 6881
+  date_created: 2007-11-02 11:32:03 +02:00
+  uuid: 1fd858ea-268f-123d-a2b3-16da04859143
+tests_ordered: 
+  name: TESTS ORDERED
+  voided: 0
+  uuid: e0e0ca08-df1a-11de-a277-0026181bb84d
+  creator: 1
+  voided_by: 
+  void_reason: 
+  date_voided: 
+  concept_name_id: 1309
+  locale: en
+  concept_id: 1271
+  date_created: 2007-05-12 12:32:14 +02:00
+sputum: 
+  name: SPUTUM
+  voided: 0
+  uuid: e0dc900a-df1a-11de-a277-0026181bb84d
+  creator: 1
+  voided_by: 
+  void_reason: 
+  date_voided: 
+  concept_name_id: 1040
+  locale: en
+  concept_id: 1004
+  date_created: 2004-12-02 00:00:00 +02:00
+aafb(1st): 
+  name: AAFB(1st)
+  voided: 0
+  uuid: e0dc920a-df1a-11de-a277-0026181bb84d
+  creator: 1
+  voided_by: 
+  void_reason: 
+  date_voided: 
+  concept_name_id: 9450
+  locale: en
+  concept_id: 6849
+  date_created: 2004-12-02 00:00:00 +02:00
+aafb(2nd): 
+  name: AAFB(2st)
+  voided: 0
+  uuid: e0dc920a-df1a-r3de-a277-0026181bb84d
+  creator: 1
+  voided_by: 
+  void_reason: 
+  date_voided: 
+  concept_name_id: 9451
+  locale: en
+  concept_id: 6850
+  date_created: 2004-12-02 00:00:00 +02:00
+aafb(3rd): 
+  name: AAFB(3rd)
+  voided: 0
+  uuid: e0dc920a-dw3a-11de-a277-0026181bb84d
+  creator: 1
+  voided_by: 
+  void_reason: 
+  date_voided: 
+  concept_name_id: 9452
+  locale: en
+  concept_id: 6851
+  date_created: 2004-12-02 00:00:00 +02:00
+culture: 
+  name: CULTURE
+  voided: 0
+  uuid: e0dc920a-df1a-11de-a277-0026d81bb84d
+  creator: 1
+  voided_by: 
+  void_reason: 
+  date_voided: 
+  concept_name_id: 4844
+  locale: en
+  concept_id: 3492
+  date_created: 2004-12-02 00:00:00 +02:00

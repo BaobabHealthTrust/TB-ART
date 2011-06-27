@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class EncountersControllerTest < ActionController::TestCase
   fixtures :person, :person_name, :person_name_code, :person_address, 
            :patient, :patient_identifier, :patient_identifier_type,
-           :concept, :concept_name, :concept_class,
+           :concept, :concept_name, :concept_class, :concept_set,
            :encounter, :encounter_type, :obs
 
   def setup  
@@ -31,28 +31,39 @@ class EncountersControllerTest < ActionController::TestCase
         end
       end
 
-      should "process lab orders" do
+      should "get lab activity" do
         logged_in_as :mikmck, :registration do
           get :lab, {"encounter"=>{"patient_id"=>"1"},
-                     "observations"=>[{"value_coded"=>"", "value_datetime"=>"",
-                                       "order_id"=>"","obs_group_id"=>"","value_drug"=>"",
-                                       "patient_id"=>"1", "value_coded_or_text_multiple"=>[""],
-                                       "value_boolean"=>"","concept_name"=>"SELECT LAB ACTIVITY",
-                                       "value_modifier"=>"","value_text"=>"",
-                                       "obs_datetime"=>"2011-06-15T14:17:47+02:00",
-                                       "value_numeric"=>"", "value_coded_or_text"=>"sputum_submission"}]}
+                     "observations"=>[{"patient_id"=>"1",
+                                       "concept_name"=>"SELECT LAB ACTIVITY",
+                                       "value_coded_or_text"=>"sputum_submission"}]}
           assert_response :redirect
        end
      end
+  
+     should "process patient lab orders" do
+       logged_in_as :mikmck, :registration do
+         get :lab_orders, {:patient_id => patient(:evan).patient_id,
+                           :encounter_type=>encounter_type(:lab_orders), :sample => 'Sputum'}
+         assert_response :success
+        end
+      end
 
      should "create a new encounter" do
       logged_in_as :mikmck, :registration do
-       #TODO
-       #get :new, {:patient_id => patient(:evan).patient_id, :encounter_type => "lab_order"}
-       #assert_response :redirect
+       get :create, {:encounter => { :provider_id => "1",
+                                     :encounter_type_name => "LAB ORDERS",
+                                     :patient_id => patient(:evan).patient_id,
+                                     :encounter_datetime=>"2011-06-27T12:36:44+02:00"},
+                     :main_tests => "Blood",
+                     :observations => [{ :patient_id => patient(:evan).patient_id,
+                                        :concept_name => "TESTS ORDERED",
+                                        :value_coded_or_text_multiple => ["CD4 count"],
+                                        :obs_datetime => "2011-06-27T12:36:44+02:00"}]}        
+       assert_response :redirect
       end
      end
-
+ 
     end            
   end
 end
