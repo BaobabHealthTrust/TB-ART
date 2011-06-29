@@ -44,7 +44,7 @@
 
   <%= text_field_tag "person[birth_year]", nil, {:helpText => 'Year of Birth', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :tt_onLoad => 'seen(tstCurrentPage);' }  %>
 
-  <%= select_tag "person[birth_month]", month_name_options, {:helpText => 'Month of Birth', :condition => '$("person_birth_year").value.toLowerCase() != "unknown"'}%>
+  <%= select_tag "person[birth_month]", month_name_options, {:helpText => 'Month of Birth', :condition => '$("person_birth_year").value.toLowerCase() != "unknown"', :tt_onLoad => "$('keyboard').style.display = 'none';"}%>
 
   <%= text_field_tag "person[age_estimate]", nil, {:helpText => 'Age Estimate', :absoluteMin => 1, :absoluteMax => age_limit, :field_type => 'number', :condition => '$("person_birth_year").value == "Unknown"', :tt_pageStyleClass => "Numeric NumbersOnly"} %> 
 
@@ -70,7 +70,7 @@
 
   <%#= text_field_tag "person[home_phone_number]",  params[:home_phone_number], {:field_type => 'number', :helpText => 'Home Phone Number', :allowFreeText => true }%>
   <%end%>
-  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we text you on this number for TB therapy?", :tt_onLoad => 'seen(tstCurrentPage);')%>
+  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we send you an sms on this number for TB therapy?", :tt_onLoad => 'seen(tstCurrentPage);')%>
   
   <%= select_tag("person[agrees_to_be_visited_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_to_be_visited_for_TB_therapy]),:helpText =>"Can we visit you at home for TB therapy?", :tt_onLoad => 'seen(tstCurrentPage);')%>
 
