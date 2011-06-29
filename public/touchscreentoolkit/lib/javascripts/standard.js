@@ -1645,6 +1645,7 @@ function getABCKeyboard(){
     "<span class='buttonLine'>" +
     getButtons("ABCDEFGH") +
     getButtonString('backspace','Delete') +
+    getButtonString(' ','Space') +
     getButtonString('num','0-9') +
     "</span><span class='buttonLine'>" +
     getButtons("IJKLMNOP") +
