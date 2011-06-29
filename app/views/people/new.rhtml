@@ -13,6 +13,11 @@
     }
   }
 </script>
+<style>
+  .tt_controls_month_of_birth .keyboard{display:none;}
+  #tt_page_month_of_birth .options{height:570px;}
+  #tt_page_month_of_birth .options li{font-size:30px;}
+</style>
 <!--style>
   .numericKeyboard button{
     background: url("../images/buttons/btn_right_blue_big.png") no-repeat scroll right center transparent;
@@ -44,7 +49,7 @@
 
   <%= text_field_tag "person[birth_year]", nil, {:helpText => 'Year of Birth', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :tt_onLoad => 'seen(tstCurrentPage);' }  %>
 
-  <%= select_tag "person[birth_month]", month_name_options, {:helpText => 'Month of Birth', :condition => '$("person_birth_year").value.toLowerCase() != "unknown"', :tt_onLoad => "$('keyboard').style.display = 'none';"}%>
+  <%= select_tag "person[birth_month]", month_name_options, {:helpText => 'Month of Birth', :condition => '$("person_birth_year").value.toLowerCase() != "unknown"', :tt_onLoad => 'seen(tstCurrentPage);'}%>
 
   <%= text_field_tag "person[age_estimate]", nil, {:helpText => 'Age Estimate', :absoluteMin => 1, :absoluteMax => age_limit, :field_type => 'number', :condition => '$("person_birth_year").value == "Unknown"', :tt_pageStyleClass => "Numeric NumbersOnly"} %> 
 
