@@ -13,7 +13,7 @@ class EncountersControllerTest < ActionController::TestCase
   end
 
   context "Encounters controller" do
-  
+
     context "Outpatient Diagnoses" do
 
       should "lookup diagnoses by name return them in the search results" do
@@ -37,10 +37,10 @@ class EncountersControllerTest < ActionController::TestCase
                      "observations"=>[{"patient_id"=>"1",
                                        "concept_name"=>"SELECT LAB ACTIVITY",
                                        "value_coded_or_text"=>"sputum_submission"}]}
-          assert_response :redirect
+          assert_redirected_to("/encounters/new/sputum_submission?patient_id=#{patient(:evan).patient_id}")
        end
      end
-  
+
      should "process patient lab orders" do
        logged_in_as :mikmck, :registration do
          get :lab_orders, {:patient_id => patient(:evan).patient_id,
@@ -49,7 +49,7 @@ class EncountersControllerTest < ActionController::TestCase
         end
       end
 
-     should "create a new encounter" do
+     should "create a new encounter and redirect to the next task" do
       logged_in_as :mikmck, :registration do
        get :create, {:encounter => { :provider_id => "1",
                                      :encounter_type_name => "LAB ORDERS",
@@ -63,7 +63,14 @@ class EncountersControllerTest < ActionController::TestCase
        assert_response :redirect
       end
      end
- 
+
+     should "create a new encounter" do
+      logged_in_as :mikmck, :registration do
+       get :new, {:patient_id => patient(:evan).patient_id}
+       assert_response :redirect
+      end
+     end
+
     end            
   end
 end

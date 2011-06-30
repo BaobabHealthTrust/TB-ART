@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class PatientProgramTest < ActiveSupport::TestCase
-  fixtures :patient, :patient_identifier, :person_name, :person, :encounter, :encounter_type, :concept, :concept_name, :obs, :location
+  fixtures :patient, :patient_identifier, :person_name, :person, :encounter,
+           :encounter_type, :concept, :concept_name, :obs, :location
 
   context "Patient Programs" do
     should "be valid" do
