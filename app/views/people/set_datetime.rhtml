@@ -23,7 +23,7 @@
 
 <form method = 'post' action = '/admin/set_datetime' >
 
-  <%= text_field_tag (:set_year,nil,{:field_type => 'number', :absoluteMin => "1940", :absoluteMax => Time.now.year, :helpText => 'Year'}) %>
+  <%= text_field_tag(:set_year,nil,{:field_type => 'number', :absoluteMin => "1940", :absoluteMax => Time.now.year, :helpText => 'Year'}) %>
 
   <% optionsString = "<option>" "" "</option>"
   1.upto(12){ |number| 

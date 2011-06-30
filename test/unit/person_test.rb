@@ -146,6 +146,18 @@ class PersonTest < ActiveSupport::TestCase
       assert_equal p.demographics["person"]["addresses"], data
     end
 
+    should "return a hash with correct person attributes" do
+      p = person(:evan)
+      data = {
+        "occupation" => "Craftsman",
+        "cell_phone_number" => "0999123456",
+        "home_phone_number" => "01785636",
+        "landmark" => "St-Thomas Anglican Primary School",
+        "office_phone_number"=>nil
+      }
+      assert_equal p.demographics["person"]["attributes"], data
+    end
+
     should "return a hash with correct patient" do
       p = person(:evan)
       data = {

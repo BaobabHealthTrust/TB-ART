@@ -28,6 +28,20 @@ class PeopleControllerTest < ActionController::TestCase
       end  
     end
 
+    should "redirect to TB index search results page if params has to do with search of tb index info" do
+      logged_in_as :mikmck, :registration do
+        get :search, {:search_tb_index_person => patient(:evan).patient_id}
+        assert_redirected_to("/people/new_tb_index_person")
+      end
+    end
+
+    should "redirect to TB contact search results page if params has to do with search of tb contact info" do
+      logged_in_as :mikmck, :registration do
+        get :search, {:search_tb_contact_person => patient(:evan).patient_id}
+        assert_redirected_to("/people/new_tb_contact_person")
+      end
+    end
+
     should "lookup people by national id that has no associated record and return them in the search results" do
       GlobalProperty.delete_all(:property => 'remote_demographics_servers')
       logged_in_as :mikmck, :registration do
@@ -77,8 +91,8 @@ class PeopleControllerTest < ActionController::TestCase
         get :demographics, {:person => {:patient => {:identifiers => { "National id" => "P1701210013"}}}}
         #get "http://localhost:3000/people"
         assert response.body =~ /aaaa/
-      end  
-    end   
+      end
+    end
 =end
     should "lookup people that are not patients and return them in the search results" do
       logged_in_as :mikmck, :registration do      
@@ -88,7 +102,7 @@ class PeopleControllerTest < ActionController::TestCase
         assert_contains assigns(:people), person(:evan)
       end  
     end
-    
+
     should "not include voided people in the search results" do
       logged_in_as :mikmck, :registration do      
         p = person(:evan)
@@ -102,29 +116,23 @@ class PeopleControllerTest < ActionController::TestCase
     should "create a new tb index person" do
       logged_in_as :mikmck, :registration do
         options = {"new_tb_index_person"=>{"relationship"=>["TB Contact Person","TB Index Person"],
-                                           "gender"=>"M", "patient_id"=>"1", "family_name"=>"Waters",
-                                           "person_id"=>"0", "given_name"=>"Evan"}}
+                                           "gender"=>"M", "patient_id"=>patient(:evan).patient_id,
+                                           "family_name"=>"Waters", "person_id"=>"0", "given_name"=>"Evan"}}
 
          assert_difference(Person, :count) { post :create_tb_index_person, options }
-         assert_response :redirect
+         assert_redirected_to("/encounters/new?patient_id=#{patient(:evan).patient_id}")# :redirect
       end
     end
 
     should "create a new tb contact person" do
       logged_in_as :mikmck, :registration do
-        options =  {"new_tb_contact_person"=>{"relationship"=>["TB Patient",
-                               "TB contact Person"],
-                               "gender"=>"M",
-                               "patient_id"=>"61",
-                               "family_name"=>"Gondwe",
-                               "person_id"=>"34",
-                               "given_name"=>"Dave",
-                               "birthday_params"=>{"age_estimate"=>"23",
-                               "birth_month"=>"4",
-                               "birth_day"=>"26",
-                               "birth_year"=>"1985"}}}
+        options =  {"new_tb_contact_person"=>{"relationship"=>["TB Patient", "TB contact Person"],
+                               "gender"=>"M", "patient_id"=>"2", "family_name"=>"Baobab",
+                               "person_id"=>"2", "given_name"=>"Health",
+                               "birthday_params"=>{"age_estimate"=>"23","birth_month"=>"4",
+                               "birth_day"=>"26", "birth_year"=>"1985"}}}
          assert_difference(Person, :count) { post :create_tb_contact_person, options }
-         assert_response :redirect
+         assert_redirected_to("/encounters/new?patient_id=2")
       end
     end
 
@@ -165,6 +173,20 @@ class PeopleControllerTest < ActionController::TestCase
       end
     end
 
+    should "set the date and time" do
+      logged_in_as :mikmck, :registration do
+        get :set_datetime, {"set_year"=>"2010", "set_month"=>"6", "set_day"=>"26"}
+        assert_response :success
+      end
+    end
+
+    should "reset the date and time" do
+      logged_in_as :mikmck, :registration do
+        get :reset_datetime
+        assert_redirected_to("/")
+      end
+    end
+
     should "display the new person form" do
       logged_in_as :mikmck, :registration do      
         get :new
@@ -175,18 +197,12 @@ class PeopleControllerTest < ActionController::TestCase
     should "create a person with their address and name records" do
       logged_in_as :mikmck, :registration do      
         options = {
-          :person => {          
-            :birth_year => 1987, 
-            :birth_month => 2, 
-            :birth_day => 28,
-            :gender => 'M',
-            :cell_phone_number => 'Unknown',
-            :occupation => 'Unknown',
-            :landmark => "18A/745",
-            :home_phone_number=>'Unknown',
-            :office_phone_number=>'Unknown',
+          :person => {:birth_year => 1987, :birth_month => 2, :birth_day => 28,
+            :gender => 'M', :cell_phone_number => 'Unknown', :occupation => 'Unknown',
+            :landmark => "18A/745", :home_phone_number=>'Unknown', :office_phone_number=>'Unknown',
             :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
-            :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
+            :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville',
+            :address1 => 'The Street' }
           }
         }
         assert_difference(Person, :count) { post :create, options }
@@ -209,7 +225,8 @@ class PeopleControllerTest < ActionController::TestCase
             :home_phone_number=>'Unknown',
             :office_phone_number=>'Unknown',
             :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
-            :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
+            :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville',
+                           :address1 => 'The Street' }
           }
         }  
         assert_response :redirect
@@ -229,7 +246,8 @@ class PeopleControllerTest < ActionController::TestCase
           :home_phone_number=>'Unknown',
           :office_phone_number=>'Unknown',
           :names => {:given_name => 'Bruce', :family_name => 'Wayne'},
-          :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville', :address1 => 'The Street' }
+          :addresses => {:county_district => 'Homeland', :city_village => 'Coolsville',
+          :address1 => 'The Street' }
           }  
         }
         assert_no_difference(Patient, :count) { post :create, options }
