@@ -24,23 +24,23 @@ class PatientTest < ActiveSupport::TestCase
     end
     
     should "refer to the patient encounters" do
-      assert_equal patient(:evan).encounters.count, 1
+      assert_equal patient(:evan).encounters.count, 2
     end
      
     should "not included voided encounters" do
       Encounter.find(:first).void
-      assert_equal patient(:evan).encounters.count, 0
+      assert_equal patient(:evan).encounters.count, 1
     end
     
     should "lookup encounters by date" do
-      assert_equal patient(:evan).encounters.find_by_date("2001-01-01".to_date).size, 1
+      assert_equal patient(:evan).encounters.find_by_date("2001-01-01".to_date).size, 2
       assert_equal patient(:evan).encounters.find_by_date("2000-01-01".to_date).size, 0
     end
 
     should "return the national identifier" do
       assert_equal patient(:evan).national_id, "P1701210013"
     end
-    
+
     should "create a new national identifier if none exists" do
       PatientIdentifier.find(:first).void
       assert_not_nil patient(:evan).national_id

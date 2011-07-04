@@ -52,7 +52,7 @@ treatment:
   name: TREATMENT
   date_created: 2008-09-24 00:00:00 +02:00
   creator: 1
-  encounter_type_id: 8
+  encounter_type_id: 25
   description: ""
   uuid: 1fe33c24-268f-102d-a2b3-16da04859145
 diabetes_hypertenstion_initial_visit: 
@@ -62,3 +62,10 @@ diabetes_hypertenstion_initial_visit:
   encounter_type_id: 9
   description: ""
   uuid: 1fe3471e-268f-102d-a2b3-16da04859145
+lab_orders: 
+  name: LAB ORDERS
+  date_created: 2008-09-24 00:00:00 +02:00
+  creator: 1
+  encounter_type_id: 57
+  description: "Lab Test Order"
+  uuid: 1fe3471e-268f-102d-a2b3-16da04859148

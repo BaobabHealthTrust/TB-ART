@@ -21,7 +21,7 @@ location_00040:
   county_district:
   neighborhood_cell:
   longitude: ""
-  description: This is an area in the TB section where TB suspects/patients get registered and submit there sputum (ID=4)
+  description: This is an area in the TB section where TB suspects/patients get registered and submit there sputum (ID=40)
   retired: false
   date_created: 2007-11-30 02:23:37 +02:00
 location_00003:

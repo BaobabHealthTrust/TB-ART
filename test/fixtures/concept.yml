@@ -405,3 +405,117 @@ concept_01271:
   datatype_id: 2
   concept_id: 1271
   date_created: 2008-04-17 11:54:03 +02:00
+concept_06879:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f9r84-df1a-11de-a277-0026181by64d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 6879
+  date_created: 2008-04-17 11:54:03 +02:00
+concept_06881:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f9r84-da6a-11de-a277-0089181bb84d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 6881
+  date_created: 2008-04-17 11:54:03 +02:00
+concept_09490:
+  retire_reason:
+  retired_by:
+  is_set: 0
+  changed_by:
+  uuid: e01f9r84-sd6a-11de-a277-002qw81bb84d
+  creator: 1
+  date_retired:
+  class_id: 11
+  version: ""
+  short_name:
+  default_charge:
+  date_changed: 2009-03-19 06:00:06 +02:00
+  form_text:
+  description:
+  retired: 0
+  datatype_id: 2
+  concept_id: 9490
+  date_created: 2008-04-17 11:54:03 +02:00
+concept_01309: 
+  retire_reason: 
+  retired_by: 
+  is_set: 0
+  changed_by: 1
+  uuid: e01131ee-df1a-11de-a277-0026181bb84d
+  creator: 1
+  date_retired: 
+  class_id: 11
+  version: ""
+  short_name: 
+  default_charge: 
+  date_changed: 2006-09-21 15:16:15 +02:00
+  form_text: 
+  description: 
+  retired: 0
+  datatype_id: 4
+  concept_id: 1309
+  date_created: 2006-06-06 22:52:43 +02:00
+concept_01004: 
+  retire_reason: 
+  retired_by: 
+  is_set: 0
+  changed_by: 
+  uuid: e00b7024-df1a-11de-a277-0026181bb84d
+  creator: 1
+  date_retired: 
+  class_id: 14
+  version: ""
+  short_name: ""
+  default_charge: 
+  date_changed: 2009-03-19 09:06:36 +02:00
+  form_text: 
+  description: ""
+  retired: 0
+  datatype_id: 4
+  concept_id: 1004
+  date_created: 2004-12-02 00:00:00 +02:00
+concept_04844
+  retire_reason: 
+  retired_by: 
+  is_set: 0
+  changed_by: 
+  uuid: e00bw024-df1a-11de-a277-0026181bb84d
+  creator: 1
+  date_retired: 
+  class_id: 14
+  version: ""
+  short_name: ""
+  default_charge: 
+  date_changed: 2009-03-19 09:06:36 +02:00
+  form_text: 
+  description: ""
+  retired: 0
+  datatype_id: 4
+  concept_id: 4844
+  date_created: 2004-12-02 00:00:00 +02:00
