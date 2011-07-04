@@ -1,8 +1,10 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.id%>?auto_load_forms=false"
+  var val_arr = [];
 
   function showLabels(){
-    var ordersArray = tstPageValues[1].split(";")
+    //var ordersArray = tstPageValues[1].split(";")
+    var ordersArray = val_arr
     var displayText = ""
     for(var i=0;i<ordersArray.length;i++){
       displayText += drawLabel(ordersArray[i])
@@ -31,6 +33,17 @@
     $('lab_orders').setAttribute('ajaxURL', url);
   }
 
+  function updateInfoBar(element){
+    var val = unescape(element.innerHTML)
+    var idx = val_arr.toString().indexOf(val);
+    if (idx == -1){
+      val_arr.push(val);
+    }
+    $('infoBar'+tstCurrentPage).innerHTML = val_arr.toString();
+    $('final_tests').value = val_arr.join(';');
+  }
+
+
 </script>
 <style>
   #space { display:inline; font-size:1.2em; }
@@ -51,6 +64,9 @@
     background: black;
     color: white;
   }
+
+  .tt_controls_main_tests .keyboard{display:none;}
+
 </style>
 <form id='label_specimens' action="/encounters/create" method='post'>
     
@@ -59,17 +75,22 @@
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
-  <%= select_tag ("main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.sort.unshift("")), :helptext => 'Main tests', :id => 'main_tests', :tt_onUnLoad => 'updateLaborderUrl($("main_tests").value)')%>
+  <%= select_tag "main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.unshift(" ")), 
+    {:helptext => 'Main tests', 
+      :id => 'main_tests',
+     :tt_onUnLoad => 'updateLaborderUrl($("main_tests").value)'}%>
 
-  <%= touch_select_tag "TESTS ORDERED", @patient, options_for_select([]),
+  <%= select_tag "lab_orders", options_for_select([]),
     {:id => "lab_orders",
+     :tt_onLoad => '$("infoBar"+tstCurrentPage).innerHTML = val_arr.toString()',
      :ajaxURL => '',
-     :multiple => true,
+     :tt_onUnLoad => "",
      :helpText => "Select test" } %>
 
+     <%= touch_hidden_tag "TESTS ORDERED", @patient, nil, :id => "final_tests", :multiple => true %>
 
   <label for='showSummary'>Summary </label>
-  <%= text_field_tag :showSummary, nil, { :tt_onLoad => "showLabels()", :optional => "true", :tt_pageStyleClass => "NoControls" } %>
+  <%= text_field_tag :showSummary, nil, { :tt_onLoad => "showLabels();$('clearButton').style.display='none'", :optional => "true", :tt_pageStyleClass => "NoControls" } %>
 
   <%= submit_tag "Finish" %>
 
