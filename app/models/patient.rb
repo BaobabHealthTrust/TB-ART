@@ -377,4 +377,14 @@ EOF
      ipt_contacts = Person.find(:all, :conditions => ["person_id IN(?)", ipt_contact_ids])
    end
 
+  def hiv_status
+    status = Concept.find(Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV STATUS").concept_id]).value_coded).name.name rescue "UNKNOWN"
+    return status
+  end
+  
+  def hiv_test_date
+    test_date = Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV TEST DATE").concept_id]).value_datetime rescue nil
+    return test_date
+  end
+
 end
