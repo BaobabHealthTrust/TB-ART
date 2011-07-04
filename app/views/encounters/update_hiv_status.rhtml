@@ -19,6 +19,13 @@
 
 </script>
 
+<style>
+  #tt_page_htc_reminder .inputPage #summary{
+    background: none repeat scroll 0 0 tomato;
+    font-size: 40px;
+    }
+</style>
+
 <form id='update_hiv_status' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "UPDATE HIV STATUS" %>
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
