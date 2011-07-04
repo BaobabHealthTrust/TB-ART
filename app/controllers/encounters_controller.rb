@@ -34,7 +34,6 @@ class EncountersController < ApplicationController
     encounter.encounter_datetime = session[:datetime] unless session[:datetime].blank?
     encounter.save    
     # Observation handling
-   # raise params[:observations].to_yaml
     (params[:observations] || []).each do |observation|
 
       # Check to see if any values are part of this observation
@@ -55,7 +54,12 @@ class EncountersController < ApplicationController
       observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name] ||= "DIAGNOSIS" if encounter.type.name == "DIAGNOSIS"
+      
       # Handle multiple select
+      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(String)
+        observation[:value_coded_or_text_multiple] = observation[:value_coded_or_text_multiple].split(';')
+      end
+
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
         observation[:value_coded_or_text_multiple].compact!
         observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
@@ -123,6 +127,9 @@ class EncountersController < ApplicationController
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
     @ipt_contacts = @patient.tb_contacts.collect{|person| person unless person.age > 6}.compact
     @select_options = Encounter.select_options
+    @hiv_status = @patient.hiv_status
+    @hiv_test_date = @patient.hiv_test_date
+
     use_regimen_short_names = GlobalProperty.find_by_property(
       "use_regimen_short_names").property_value rescue "false"
     show_other_regimen = GlobalProperty.find_by_property(
@@ -268,7 +275,7 @@ class EncountersController < ApplicationController
 
   def lab_orders
     @lab_orders = Encounter.select_options['lab_orders'][params['sample']].collect{|order| order}
-    render :text => "<li>" + @lab_orders.join("</li><li>") + "</li>"
+    render :text => '<li onmousedown=updateInfoBar(this)>' + @lab_orders.join('</li><li onmousedown=updateInfoBar(this)>') + '</li>'
   end
 
 end
