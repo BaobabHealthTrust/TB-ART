@@ -12,7 +12,7 @@ class Task < ActiveRecord::Base
     
 
     return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_index
-    return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS")
+    return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || patient.hiv_status != "POSITIVE"
     return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
 =begin
     all_tasks = self.all(:order => 'sort_weight ASC')
