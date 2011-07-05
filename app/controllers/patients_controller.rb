@@ -4,6 +4,7 @@ class PatientsController < ApplicationController
   def show
    
     render :template => 'dashboards/patients', :layout => 'clinic'
+    @hiv_status = @patient.hiv_status
   end
 
   def treatment
