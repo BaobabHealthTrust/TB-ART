@@ -62,11 +62,11 @@ Change the date fields to 3tier date
      
   <%# absolute_min = session[:datetime].to_date rescue Date.today %>
 
-  <%= text_field_tag "date_art_first_taken_year", nil, {:helpText => 'Year ART first taken', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+  <%= text_field_tag "date_art_first_taken_year", nil, {:helpText => 'Year ART first taken', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :condition => '$("ever_received_art").value.toUpperCase() == "YES"'}  %>
 
-  <%= select_tag "date_art_first_taken_month", month_name_options, {:helpText => 'Month ART first taken', :condition => '$("date_art_first_taken_year").value.toLowerCase() != "unknown"'}%>
+  <%= select_tag "date_art_first_taken_month", month_name_options, {:helpText => 'Month ART first taken', :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("date_art_first_taken_year").value.toLowerCase() != "unknown"'}%>
 
-  <%= text_field_tag "date_art_first_taken_day",  nil, :field_type => 'number', :helpText => 'Day ART first taken', :condition => '($("date_art_first_taken_year").value != "Unknown") && ($("date_art_first_taken_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('date_art_first_taken_year').value, $('date_art_first_taken_month').value)" %>
+  <%= text_field_tag "date_art_first_taken_day",  nil, :field_type => 'number', :helpText => 'Day ART first taken', :condition => '($("date_art_first_taken_year").value != "Unknown") && ($("date_art_first_taken_month").value != "Unknown");$("ever_received_art").value.toUpperCase() == "YES"', :tt_onLoad => "getDayOfMonthPicker($('date_art_first_taken_year').value, $('date_art_first_taken_month').value)" %>
 
   <%#= touch_date_tag "DATE ART FIRST TAKEN", @patient, nil,
     {:id => "date_art_first_taken",
@@ -77,11 +77,11 @@ Change the date fields to 3tier date
      
   <%# absolute_min = session[:datetime].to_date rescue Date.today %>
 
-  <%= text_field_tag "date_art_last_taken_year", nil, {:helpText => 'Year ART Last taken', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+  <%= text_field_tag "date_art_last_taken_year", nil, {:helpText => 'Year ART Last taken', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly",:condition => '$("ever_received_art").value.toUpperCase() == "YES"'}  %>
 
-  <%= select_tag "date_art_last_taken_month", month_name_options, {:helpText => 'Month ART Last taken', :condition => '$("date_art_last_taken_year").value.toLowerCase() != "unknown"'}%>
+  <%= select_tag "date_art_last_taken_month", month_name_options, {:helpText => 'Month ART Last taken', :condition => '$("date_art_last_taken_year").value.toLowerCase() != "unknown";$("ever_received_art").value.toUpperCase() == "YES"'}%>
 
-  <%= text_field_tag "date_art_last_taken_day",  nil, :field_type => 'number', :helpText => 'Day ART Last taken', :condition => '($("date_art_last_taken_year").value != "Unknown") && ($("date_art_last_taken_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('date_art_last_taken_year').value, $('date_art_last_taken_month').value)" %>
+  <%= text_field_tag "date_art_last_taken_day",  nil, :field_type => 'number', :helpText => 'Day ART Last taken', :condition => '($("date_art_last_taken_year").value != "Unknown") && ($("date_art_last_taken_month").value != "Unknown");$("ever_received_art").value.toUpperCase() == "YES"', :tt_onLoad => "getDayOfMonthPicker($('date_art_last_taken_year').value, $('date_art_last_taken_month').value)" %>
 
   <%#= touch_date_tag "DATE ART LAST TAKEN", @patient, nil,
     {:id => "date_art_last_taken",
@@ -106,11 +106,11 @@ Change the date fields to 3tier date
      :condition => '$("ever_received_art").value.toUpperCase() == "YES"',
      :helpText => "ART number at previous location" } %>
 
-  <%= text_field_tag "art_initiation_date_year", nil, {:helpText => 'Year of ART initiation', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
+     <%= text_field_tag "art_initiation_date_year", nil, {:helpText => 'Year of ART initiation', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :condition => '$("ever_received_art").value.toUpperCase() == "YES"'}  %>
 
-  <%= select_tag "art_initiation_date_month", month_name_options, {:helpText => 'Month of ART initiation', :condition => '$("art_initiation_date_year").value.toLowerCase() != "unknown"'}%>
+  <%= select_tag "art_initiation_date_month", month_name_options, {:helpText => 'Month of ART initiation', :condition => '$("art_initiation_date_year").value.toLowerCase() != "unknown";$("ever_received_art").value.toUpperCase() == "YES"'}%>
 
-  <%= text_field_tag "art_initiation_date_day",  nil, :field_type => 'number', :helpText => 'Day of ART initiation', :condition => '($("art_initiation_date_year").value != "Unknown") && ($("art_initiation_date_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('art_initiation_date_year').value, $('art_initiation_date_month').value)" %>
+  <%= text_field_tag "art_initiation_date_day",  nil, :field_type => 'number', :helpText => 'Day of ART initiation', :condition => '($("art_initiation_date_year").value != "Unknown") && ($("art_initiation_date_month").value != "Unknown");$("ever_received_art").value.toUpperCase() == "YES"', :tt_onLoad => "getDayOfMonthPicker($('art_initiation_date_year').value, $('art_initiation_date_month').value)" %>
 
      
   <%#= touch_date_tag "DATE OF ART INITIATION", @patient, nil,
@@ -128,7 +128,7 @@ Change the date fields to 3tier date
   <% if @patient.person.gender == 'F' && @patient.person.age > 15 %>
     <%= touch_yes_no_tag "PREGNANT AT ART INITIATION", @patient, nil,
       {:id => "pregnant_at_art_initiation",
-       :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
+       :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO';$('ever_received_art').value.toUpperCase() == 'YES'",
        :helpText => "Pregnant at ART initiation?" } %>
   <% end %>  
   

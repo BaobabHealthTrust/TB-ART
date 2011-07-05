@@ -43,7 +43,7 @@
     <option value='/encounters/new/vitals?patient_id=<%= @patient.id -%>'>Vitals</option>
     <option value='/encounters/new/tb_registration?patient_id=<%= @patient.id -%>'>TB Registration</option>
     <option value='/encounters/new/clinic_visit?patient_id=<%= @patient.id -%>'>TB Clinic Visit</option>
-<%if @hiv_status == 'POSITIVE'%>
+<%if @patient.hiv_status == 'POSITIVE'%>
     <option value='/encounters/new/hiv_staging?patient_id=<%= @patient.id -%>'>HIV Staging</option>
     <option value='/encounters/new/art_initial?patient_id=<%= @patient.id -%>'>ART Enrollment</option>
 <%end%>
