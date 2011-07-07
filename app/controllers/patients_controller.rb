@@ -20,7 +20,7 @@ class PatientsController < ApplicationController
     @date = (session[:datetime].to_date rescue Date.today).strftime("%Y-%m-%d")
    
     @hiv_status = @patient.hiv_status
-    render :template => 'dashboards/patients', :layout => 'clinic'
+    render :template => 'patients/index', :layout => 'clinic'
   end
 
   def treatment
@@ -189,7 +189,7 @@ class PatientsController < ApplicationController
   end
 
   def overview
-    session[:mastercard_ids] = []
+     session[:mastercard_ids] = []
     session_date = session[:datetime].to_date rescue Date.today
     @encounters = @patient.encounters.find_by_date(session_date)
     @prescriptions = @patient.orders.unfinished.prescriptions.all
@@ -203,7 +203,8 @@ class PatientsController < ApplicationController
       @programs = restriction.filter_programs(@programs)
     end
 
-    render :layout => false
+    render :template => 'dashboards/overview_tab', :layout => false
+
   end
   
 
