@@ -2,9 +2,25 @@ class PatientsController < ApplicationController
   before_filter :find_patient, :except => [:void]
   
   def show
+    session[:mastercard_ids] = []
+    session_date = session[:datetime].to_date rescue Date.today
+    @encounters = @patient.encounters.find_by_date(session_date)
+    @prescriptions = @patient.orders.unfinished.prescriptions.all
+    @programs = @patient.patient_programs.all
+    @alerts = @patient.alerts
+    # This code is pretty hacky at the moment
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
+    @restricted.each do |restriction|    
+      @encounters = restriction.filter_encounters(@encounters)
+      @prescriptions = restriction.filter_orders(@prescriptions)
+      @programs = restriction.filter_programs(@programs)
+    end
+    # render :template => 'dashboards/overview', :layout => 'dashboard'
+
+    @date = (session[:datetime].to_date rescue Date.today).strftime("%Y-%m-%d")
    
-    render :template => 'dashboards/patients', :layout => 'clinic'
     @hiv_status = @patient.hiv_status
+    render :template => 'dashboards/patients', :layout => 'clinic'
   end
 
   def treatment
