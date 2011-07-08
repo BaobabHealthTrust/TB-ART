@@ -26,7 +26,7 @@
         $('#new_tb_index_person').click(function() { window.location = '/people/new_tb_index_person?patient_id=<%= @patient.id -%>'})
         $('#new_tb_contact_person').click(function() { window.location = '/people/new_tb_contact_person?patient_id=<%= @patient.id -%>'})
         $('#tb_reception').click(function() { window.location = '/encounters/new/tb_reception?patient_id=<%= @patient.id -%>'})
-        $('#art_initial').click(function() { window.location = '/encounters/new/art_initial?patient_id=<%= @patient.id -%>'})
+        $('#art_enrollment').click(function() { window.location = '/encounters/new/art_enrollment?patient_id=<%= @patient.id -%>'})
         $('#vitals').click(function() { window.location = '/encounters/new/vitals?patient_id=<%= @patient.id -%>'})
         $('#clinic_visit').click(function() { window.location = '/encounters/new/clinic_visit?patient_id=<%= @patient.id -%>'})
         $('#tb_registration').click(function() { window.location = '/encounters/new/tb_registration?patient_id=<%= @patient.id -%>'})
@@ -81,7 +81,7 @@
           <button id="new_tb_index_person" class="blue menu-button" onmousedown="window.location = ''"><span>New TB Index Person</span></button> <br/>
           <button id="new_tb_contact_person" class="blue menu-button" onmousedown="window.location = ''"><span>New TB Contact Person</span></button> <br/>
           <button id="tb_reception" class="blue menu-button" onmousedown="window.location = ''"><span>TB Reception</span></button> <br/>
-          <button id="art_initial" class="blue menu-button" onmousedown="window.location = ''"><span>ART Initial</span></button> <br/>
+          <button id="art_enrollment" class="blue menu-button" onmousedown="window.location = ''"><span>ART Enrollment</span></button> <br/>
           <button id="vitals" class="blue menu-button" onmousedown="window.location = ''"><span>Vitals</span></button> <br/>
           <button id="clinic_visit" class="blue menu-button" onmousedown="window.location = ''"><span>TB Clinic Visit</span></button> <br/>
           <button id="tb_registration" class="blue menu-button" onmousedown="window.location = ''"><span>TB Registration</span></button> <br/>
