@@ -387,4 +387,14 @@ EOF
     return test_date
   end
 
+  def tb_patient?
+  end
+
+  def on_tb_medication?
+  end
+
+  def art_patient?
+    
+  end
+
 end
