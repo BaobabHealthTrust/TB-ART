@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <title>Clinic</title>
+    <script type="text/javascript" language="javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer ></script>
+    <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
+    <script language="javascript">
+      tstUsername = "<%= User.current_user rescue "" %>";
+      tstCurrentDate = "<%= @date %>";
+      tt_cancel_destination = '/logout';
+      tt_cancel_show = '/people/search';
+    </script>
+  </head>
+  <body><div id='content'>
+      <div id='description' style='color:#777;position:absolute;margin-top:-70px;'></div><center>
+        <form id = 'home' action=''>
+          <table cellpadding=10>
+            <tr>
+              <th colspan=2>Home Page</th>
+            </tr>
+            <h1 id='project_name'>
+              <%= (@location.downcase == "outpatient" ? "OPD" : "tb-art") %>
+            </h1>
+
+            <div id="facility"><%= @facility %></div>
+            <div id="location"><%= @location %></div>
+            <div id="date"><%= @date %></div>
+            <div id="user"><%= @user %></div>
+
+            <select id="tabs">
+              <option value='/clinic/overview_tab'>Overview</option>
+              <option value='/clinic/reports_tab'>Reports</option>
+              
+              <% unless @roles.include?("Nurse") || @roles.include?("Registration Clerk") || @roles.include?("regstration_clerk") %>
+
+                <option value='/clinic/properties_tab'>Properties</option>
+                <option value='/clinic/administration_tab'>Administration</option>
+
+              <% end %>
+            </select>
+            <select id="links">
+              <option value='/logout'>Logout</option>
+              <%# Show Find / Register Patient button on HIV Reception and Find by Name button
+                  on the rest of the stations %>
+
+              <% if @location =~ /HIV Reception/ %>
+                  <option value='/people/search' ttSize="270px">Find / Register Patient</option>
+              <% else %>
+                  <option value='/people/search' ttSize="200px">Find By Name</option>
+              <% end %>
+              <%# Hide Find by ARV Number button on non-HIV workstations %>
+              <% if @location =~ /HIV/ %>
+                <option value="/people/find_by_arv_number" ttSize="260px">Find By ARV Number</option>
+              <% end %>
+              <option value='/location?from=clinic' ttSize="170px">New Location</option>
+              <option value='<%= ((session[:datetime].to_date rescue '') != '' ?
+                          "/people/reset_datetime" : "/people/set_datetime") %>'  ttSize="100px">
+                <%= ((session[:datetime].to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>
+              <!--option link='regimen.html'>Regimen</option-->
+            </select>
+            <tr>
+              <td align='center'>
+                <input type='submit' value='Finish' />
+              </td>
+            </tr>
+          </table>
+        </form>
+      </center>
+    </div>
+  </body>
+</html>
