@@ -181,6 +181,16 @@ class Patient < ActiveRecord::Base
     }
     false
   end
+  
+  def given_tb_medication_before?
+    self.orders.each{|order|
+      drug_order = order.drug_order
+      next if drug_order == nil
+      next unless drug_order.quantity > 0
+      return true if drug_order.drug.tb_medication?
+    }
+    false
+  end
 
   def name
     "#{self.person.name}"
@@ -388,13 +398,11 @@ EOF
   end
 
   def tb_patient?
-  end
-
-  def on_tb_medication?
+    return self.given_tb_medication_before?
   end
 
   def art_patient?
-    
+    return self.given_arvs_before?  
   end
 
 end
