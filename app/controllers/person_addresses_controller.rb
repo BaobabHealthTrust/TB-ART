@@ -4,7 +4,8 @@ class PersonAddressesController < ApplicationController
   end
 
   def traditional_authority
-    search("county_district", params[:search_string])
+   # search("county_district", params[:search_string])
+   search_location('ta', params[:search_string])
   end
   
   def landmark
@@ -22,17 +23,32 @@ class PersonAddressesController < ApplicationController
   end
 
   def current_residence
-    search_location(params[:search_string])
+    search_location('residence', params[:search_string])
   end
 
-    def search_location(search_string)
+  def home_village
+    search_location('home_vge', params[:search_string])
+  end
+  
+  def search_location(type, search_string)
+    
+    @results = []
+    if type == 'residence'
+      @areas = Location.areas.grep(/#{search_string}/i).compact.sort_by{|area| area.split(" ")[1].to_i}[0..60]
+      @results = @areas + Location.current_residences.grep(/#{search_string}/i).compact.sort_by{|location|
+        location.index(/#{search_string}/) || 100 # if the search string isn't found use value 100
+      }[0..10]
+    elsif type == 'ta'
+      @results = Location.tas.grep(/#{search_string}/i).compact.sort_by{|ta|
+          ta.index(/#{search_string}/) || 100 # if the search string isn't found use value 100
+        }[0..10]
+    elsif type == 'home_vge'
+        @results = Location.current_residences.grep(/#{search_string}/i).compact.sort_by{|location|
+          location.index(/#{search_string}/) || 100 # if the search string isn't found use value 100
+        }[0..10]
+    end
 
-    @areas = Location.areas.grep(/#{search_string}/i).compact.sort_by{|area| area.split(" ")[1].to_i}[0..40]
 
-    @results = @areas + Location.current_residences.grep(/#{search_string}/i).compact.sort_by{|location|
-      location.index(/#{search_string}/) || 100 # if the search string isn't found use value 100
-    }[0..10]
-
-    render :text => @results.collect{|location|"<li>#{location}</li>"}.join("\n")
+    render :text => @results.collect{|location|"<li>#{location}</li>"}.join("\n") + "<li>Other</li>"
   end
 end

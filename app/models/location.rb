@@ -65,6 +65,15 @@ class Location < ActiveRecord::Base
   def self.current_residences
     return @@current_residences
   end
+  
+  def self.districts
+    return @@districts
+  end
+  
+  def self.tas
+    return @@tas
+  end
+  
   def self.initialize_areas
     areas = <<EOF
 Area 1
@@ -1305,7 +1314,182 @@ EOF
     return locations.split("\n")
   end
 
+   def self.initialize_disticts
+    districts = <<EOF
+Balaka
+Blantyre
+Chikwawa
+Chiradzulu
+Chitipa
+Dedza
+Dowa
+Karonga
+Kasungu
+Likoma
+Lilongwe
+Machinga
+Mangochi
+Mchinji
+Mulanje
+Mwanza
+Mzimba
+Neno
+Nkhata Bay
+Nkhotakota
+Nsanje
+Ntcheu
+Ntchisi
+Phalombe
+Rumphi
+Salima
+Thyolo
+Rumphi
+EOF
+    return districts.split("\n")
+  end
+
+   def self.initialize_tas
+    tas = <<EOF
+Boghoyo
+Bvumbwe
+Chadza
+Chakhumbira
+Changata
+Chapananga
+Chigaru
+Chikho
+Chikowi
+Chikulamayembe
+Chikumbu
+Chimaliro
+Chimombo
+Chimutu
+Chimutu
+Chimwala
+Chindi
+Chiseka
+Chitera
+Chitukula
+Chiwere
+Chulu
+Dambe
+Dzoole
+Fukamapiri
+Jalasi
+Kabudula
+Kabunduli
+Kachindamoto
+Kadewere
+Kalembo
+Kalolo
+Kaluluma
+Kalumba
+Kalumbu
+Kalumo
+Kameme
+Kanduku
+Kanyenda
+Kaomba
+Kapelula
+Kapeni
+Kaphuka
+Kapichi
+Karonga
+Kasakula
+Kasisi
+Kasumbu
+Katuli
+Katumbi
+Katunga
+Kawinga
+Khombedza
+Khongoni
+Kilupula
+Kuluunda
+Kuntaja
+Kunthembwe
+Kuntumanji
+Kwataine
+Kyungu
+Likoswe
+Liwonde
+Lundu
+Mabuka
+Mabulabo
+Machinjili
+Maganga
+Makanjila
+Makata
+Makhwira
+Malemia
+Malenga
+Malenga
+Malili
+Mankhambira
+Masasa
+Maseya
+Mazengera
+Mkanda
+Mkhumba
+Mkumpha
+Mlauli
+Mlolo
+Mlonyeni
+Mlumbe
+M'Mbelwa
+Mpama
+Mpando
+Mpherembe
+Mponda
+Msakambewa
+Mtwalo
+Mwabulambya
+Mwadzama
+Mwambo
+Mwamlowe
+Mwase
+Mwenemisuku
+Mwenewenya
+Mzikubola
+Mzukuzuku
+Nankumba
+Nazombe
+Nchema
+Nchilamwela
+Ndamera
+Ndindi
+Ngabu
+Njolomole
+Nkalo
+Nkanda
+Nsabwe
+Nsamala
+Nthache
+Nthalire
+Nthiramanja
+Nyambi
+Pemba
+Phambala
+Santhe
+Somba
+Symon
+Tambala
+Tengani
+Thomas
+Timbiri
+Usisya
+Wasambo
+Wimbe
+Zolokere
+Zulu
+EOF
+    return tas.split("\n")
+  end
+
+
   @@current_residences = initialize_current_residences()
   @@areas = initialize_areas()
+  @@districts = initialize_disticts()
+  @@tas = initialize_tas()
 
 end
