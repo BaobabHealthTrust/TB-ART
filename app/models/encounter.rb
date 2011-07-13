@@ -125,10 +125,9 @@ class Encounter < ActiveRecord::Base
     select_options = {
      'reason_for_tb_clinic_visit' => [
         ['',''],
-        ['Clinical examination','CLINICAL EXAMINATION'],
-        ['Smear Negative','SMEAR NEGATIVE'],
+        ['Clinical review (Children, Smear-, HIV+)','CLINICAL REVIEW'],
         ['Smear Positive','SMEAR POSITIVE'],
-        ['X-ray results','X-RAY RESULTS']
+        ['X-ray result interpretation','X-RAY RESULT INTERPRETATION']
       ],
      'family_planning_methods' => [
        ['',''],
