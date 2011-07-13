@@ -23,7 +23,7 @@ body{
   font-family: "Nimbus Sans L";
   margin: 0;
   -moz-user-select:none;
-  background-color:#000000;
+ /* background-color:#000000;*/
 }
 
 
