@@ -8,6 +8,11 @@
     display += "<div><span class='title'>Please refer this person to HTC</span></div>";
     $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + display + '</div>' 
   }
+  
+  function showTaskName(){
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: TB Reception</span></div></div>' 
+    setTimeout("gotoNextPage()", 1500);
+  }
 
 </script>
 
@@ -26,6 +31,8 @@ Skip Logic - Ask LH team on the skip logic for clarification
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
 
   <label for='tb_treatment'>Ever received TB Treatment?</label>
   <%= touch_yes_no_unknown_tag "EVER RECEIVED TB TREATMENT", @patient, nil,{:id => "tb_treatment"} %>

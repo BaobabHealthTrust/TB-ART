@@ -43,6 +43,10 @@
     $('final_tests').value = val_arr.join(';');
   }
 
+   function showTaskName(){
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Lab Order</span></div></div>' 
+    setTimeout("gotoNextPage()", 1500);
+  }
 
 </script>
 <style>
@@ -74,6 +78,8 @@
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
 
   <%= select_tag "main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.unshift(" ")), 
     {:helptext => 'Main tests', 

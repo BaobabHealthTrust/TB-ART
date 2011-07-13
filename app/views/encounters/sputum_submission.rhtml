@@ -27,6 +27,12 @@
     $(hiddenDestination).value =  $(elementId).value;
   }
 
+   function showTaskName(){
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Sputum Submission</span></div></div>' 
+    setTimeout("gotoNextPage()", 1500);
+  }
+
+
 </script> 
 
 <!--.........TODO...........
@@ -76,6 +82,8 @@ Check applicability of code below
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
 
   <%3.times do |i|%>
     <%element_id = "specimen#{i+1}"%>

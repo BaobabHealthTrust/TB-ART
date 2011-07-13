@@ -173,6 +173,11 @@
     display += "<div><span class='title'>Reason for ART Eligibility: " + $('reason_for_art_eligibility').value + "</span></div>";
     $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + display + '</div>' ;    
   }  
+
+   function showTaskName(){
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: HIV STAGING </span></div></div>' 
+    setTimeout("gotoNextPage()", 1500);
+  }
   
 </script>  
 <style type="text/css">
@@ -185,6 +190,8 @@
   <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
 
   <% if @patient.person.gender == 'F' && @patient.person.age > 14 %>
     <%= touch_yes_no_unknown_tag "IS PATIENT PREGNANT?", @patient, nil,

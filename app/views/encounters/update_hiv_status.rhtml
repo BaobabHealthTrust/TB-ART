@@ -17,6 +17,11 @@
     }
   }
 
+  function showTaskName(){
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Update HIV Status</span></div></div>' 
+    setTimeout("gotoNextPage()", 1500);
+  }
+
 </script>
 
 <style>
@@ -36,6 +41,8 @@
   Compile the Date of HIV test from the three data fields and check for validity.
   Skip logic
   -->
+
+ <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
 
  <%= touch_select_tag "HIV STATUS", @patient, options_for_select(@select_options['hiv_status']),
     {:id => "hiv_status",

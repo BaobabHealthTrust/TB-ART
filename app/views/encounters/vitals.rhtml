@@ -115,7 +115,12 @@
      displayText += "<span class='lowBMI'>" + currentBmi + "</span><br/><span class='recommendation'>Eligible for therapeutic feeding</span>";
     }
     displayText += "</div>";
- }
+}
+
+ function showTaskName(){
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Height / Weight</span></div></div>' 
+    setTimeout("gotoNextPage()", 1500);
+  }
  
   </script>
  
@@ -125,6 +130,8 @@
     <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
     <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
     <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+   <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
   
     <% if ask_temperature %>
       <label for="temperature">Temperature (C)</label>
