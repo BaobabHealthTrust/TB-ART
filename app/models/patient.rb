@@ -397,6 +397,13 @@ EOF
     return test_date
   end
 
+  def months_since_last_hiv_test
+    today = Date.today
+    hiv_test_date = self.hiv_test_date
+    months = (today.year * 12 + today.month) - (hiv_test_date.year * 12 + hiv_test_date.month) rescue nil
+    return months
+  end
+
   def tb_patient?
     return self.given_tb_medication_before?
   end
