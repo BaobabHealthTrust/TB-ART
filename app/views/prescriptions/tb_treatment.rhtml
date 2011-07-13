@@ -119,13 +119,11 @@ Check applicability of code below
   <%= touch_location_tag "TRANSFER OUT SITE", @patient, nil,
     {:id => "transfer_out_site",
      :condition => '$("continue_treatment_at_this_site").value == "TRANSFER OUT" && $("refer_to_clinician").value == "NO"',
-     :optional => false,
      :helpText => "Transfer out destination" } %>
 
   <%= touch_location_tag "DHO DOT SITE", @patient, nil,
     {:id => "dot_site",
      :condition => '$("continue_treatment_at_this_site").value == "DHO DOT SITE" &&  $("refer_to_clinician").value == "NO"',
-     :optional => false,
      :helpText => "Lilongwe DHO Dot sites" } %>
   <%= submit_tag "Finish" %>    
 </form>

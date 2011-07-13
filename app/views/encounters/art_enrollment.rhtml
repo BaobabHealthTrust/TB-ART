@@ -100,7 +100,6 @@ Change the date fields to 3tier date
   <%= touch_location_tag "SITE TRANSFERRED FROM", @patient, nil,
     {:id => "site_transferred_from",
      :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
-     :optional => false,
      :helpText => "Site transferred from" } %>
      
   <%= touch_text_field_tag "ART NUMBER AT PREVIOUS LOCATION", @patient, nil,
@@ -124,7 +123,6 @@ Change the date fields to 3tier date
   <%= touch_location_tag "LOCATION OF ART INITIALIZATION", @patient, nil,
     {:id => "location_of_art_initialization",
      :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
-     :optional => false,
      :helpText => "Location of ART initiation" } %>
      
   <% if @patient.person.gender == 'F' && @patient.person.age > 15 %>

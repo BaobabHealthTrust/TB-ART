@@ -63,7 +63,6 @@
   <%= touch_location_tag "LOCATION OF HIV TEST", @patient, nil,
     {:id => "location_of_hiv_test",
       :condition => '$("hiv_status").value != "UNKNOWN"',
-      :optional => false,
      :helpText => "Location of HIV test" } %>
 
  <%= touch_numeric_tag "HTC SERIAL NUMBER", @patient, nil,
