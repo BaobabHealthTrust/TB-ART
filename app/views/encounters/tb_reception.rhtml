@@ -1,6 +1,23 @@
 <script>
-   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id -%>";
+  var tt_cancel_destination = "/patients/show/<%= @patient.patient_id -%>";
+
+  var showNegativeTestReminder = false;
+
+  function reminder(result){
+     var display = "<div><span class='title'>HIV Status: " + result + "</span></div>";
+    display += "<div><span class='title'>Please refer this person to HTC</span></div>";
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + display + '</div>' 
+  }
+
 </script>
+
+<style>
+  #tt_page_htc_reminder .inputPage #summary{
+    background: none repeat scroll 0 0 tomato;
+    font-size: 40px;
+    }
+</style>
+
 <!--TODO 
 Skip Logic - Ask LH team on the skip logic for clarification
 -->
@@ -13,11 +30,13 @@ Skip Logic - Ask LH team on the skip logic for clarification
   <label for='tb_treatment'>Ever received TB Treatment?</label>
   <%= touch_yes_no_unknown_tag "EVER RECEIVED TB TREATMENT", @patient, nil,{:id => "tb_treatment"} %>
 
-  <label for='guardian_present'>Guardian present?</label>
-  <%= touch_yes_no_unknown_tag "GUARDIAN PRESENT", @patient, nil,{:id => "guardian_present"} %>
-  
-  <label for='patient_present'>Patient present?</label>
-  <%= touch_yes_no_unknown_tag "PATIENT PRESENT", @patient, nil,{:id => "patient_present"} %>
+  <!--Ask Patient/Guardian present question only for those on TB or ART Treatment -->
+  <%if (@tb_patient || @art_patient) %>
+    <label for='guardian_present'>Guardian present?</label>
+    <%= touch_yes_no_unknown_tag "GUARDIAN PRESENT", @patient, nil,{:id => "guardian_present"} %>
+    <label for='patient_present'>Patient present?</label>
+    <%= touch_yes_no_unknown_tag "PATIENT PRESENT", @patient, nil,{:id => "patient_present"} %>
+  <%end%>
   
   <label for='reason_for_clinic_visit'>Reason for clinical visit</label>
   <%= touch_select_tag "REASON FOR CLINICAL VISIT", @patient, options_for_select(@select_options['reason_for_tb_clinic_visit']),{:id => "reason_for_clinic_visit",} %>
@@ -25,15 +44,12 @@ Skip Logic - Ask LH team on the skip logic for clarification
   <label for='need_to_see_clinician'>Any need to see a clinician?</label>
   <%= touch_yes_no_unknown_tag "ANY NEED TO SEE A CLINICIAN", @patient, nil,{:id => "need_to_see_clinician"} %>
 
-  <label for='hiv_test_results_within_3_months'>HIV test results within 3 months</label>
-  <%= touch_yes_no_unknown_tag "HIV TEST RESULTS WITHIN 3 MONTHS", @patient, nil,{:id => "hiv_test_results_within_3_months"} %>
+  <%if (["UNKNOWN","NEGATIVE"].include?(@hiv_status) && (@months_since_last_hiv_test.nil? || @months_since_last_hiv_test >= 3))%>
+    <label for='hiv_test_results_within_3_months'>Any HIV test results within the last 3 months?</label>
+    <%= touch_yes_no_unknown_tag "HIV TEST RESULTS WITHIN 3 MONTHS", @patient, nil,{:id => "hiv_test_results_within_3_months"} %>
+  <%end%>
 
-  <label for='refer_to_htc'>Refer to HTC?</label>
-  <%= touch_yes_no_unknown_tag "REFER TO HTC", @patient, nil,
-    {
-      :id => "refer_to_htc", 
-      :condition => "$('hiv_test_results_within_3_months').value.toUpperCase() != 'YES';"
-  } %>
+  <%= text_field_tag :summary, nil, { :tt_onLoad => "reminder('#{@hiv_status}')", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => '$("hiv_test_results_within_3_months").value == "NO"', :tt_onUnload => 'showNegativeTestReminder = false'} %>
 
   <%= submit_tag "Finish" %>    
 
