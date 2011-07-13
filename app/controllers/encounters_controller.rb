@@ -129,6 +129,9 @@ class EncountersController < ApplicationController
     @select_options = Encounter.select_options
     @hiv_status = @patient.hiv_status
     @hiv_test_date = @patient.hiv_test_date
+    @months_since_last_hiv_test = @patient.months_since_last_hiv_test
+    @tb_patient = @patient.tb_patient?
+    @art_patient = @patient.art_patient?
 
     use_regimen_short_names = GlobalProperty.find_by_property(
       "use_regimen_short_names").property_value rescue "false"
