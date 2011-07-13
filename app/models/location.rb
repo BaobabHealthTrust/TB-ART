@@ -74,6 +74,10 @@ class Location < ActiveRecord::Base
     return @@tas
   end
   
+  def self.health_facilities
+    return @@health_facilities
+  end
+  
   def self.initialize_areas
     areas = <<EOF
 Area 1
@@ -1486,10 +1490,770 @@ EOF
     return tas.split("\n")
   end
 
+  def self.initialize_health_facilities
+    health_facilities = <<EOF
+Bvumbwe Research Health Centre
+Milonde Health Centre
+Mkomaula Health Centre
+Mtende Health Centre
+Matope Rural Hospital
+Nthalire Health Centre
+Khola Health Centre
+Kangolwa Health Centre
+Chifunga Health Centre
+Lulwe Health Centre
+Mwatakale Health Post
+Bondo Health Centre
+Luwani Health Centre
+Kaongozi Dispensary
+Garrison Dispensary
+Liwaladzi Health Centre
+Kambenje Health Centre
+Alinafe Rehabilitation Centre
+Bwanje Health Centre
+Kakoma Health Centre
+Chiunda Dispensary
+Lungwena Health Centre
+Malombe Dispensary
+Zingwangwa Health Centre
+Mchacha Health Centre
+Chapwaila Health Centre
+Mdunga Health Centre
+Salima District Hospital
+Area 25 Health Centre
+Nkhulambe Health Centre
+Chilumba Rural Hospital
+Senzani Health Centre
+Ndamera Health Centre
+Khuwi Health Centre
+Iponga Health Centre
+Makapwa Health Centre
+Ntholowa
+Tulokhondo Health Centre
+Nathenje
+Kasina Health Centre
+Kamteteka Health Centre
+Machinga Health Centre
+Kaphatenga Health Centre
+Nsabwe Dispensary
+Lunjika Health Centre
+Chikowa Health Centre
+Kanyezi Health Centre
+Zomba Prison Dispensary
+Gombe Maternity
+Ulongwe Health Centre
+Chilonga Dispensary
+Chilambwe Health Centre
+Ngabu
+Machereza Health Post
+Chikuse
+Kanyama Health Centre
+Ntonda Rural Hospital
+Msenjere Health Centre
+Sister Martha Health Centre
+Makwapala Health Centre
+Mbalanguzi Dispensary
+Kafere
+Parachute Battallion Dispensary
+Mtenthera
+Matandani Health Centre
+Mwangala Maternity
+Mbalama Dispensary
+Beleu
+Bvumbwe Makungwa
+Namanolo Health Centre
+Mpepa
+Misamvu Health Centre
+Lemwe
+Mbangombe Health Centre
+Wimbe Health Centre
+Chiradzulu District Hospital
+Lilongwe Central Hospital
+St Gabriel
+Machinga District Hospital
+St Joseph Hospital
+Thyolo District Hospital
+Lumbira
+Nkhata Bay District Hospital
+Bwaila/Bottom Hospital
+State House Dispensary
+Mtendere Health Centre
+Euthini Rural Hospital
+Mpemba Health Centre
+Thambani Health Centre
+St Vincent Health Centre
+Kaundu
+Katema Health Centre
+Ntchisi District Hospital
+Cobbe Barracks
+Zomba Mental Hospital
+Mwanza District Hospital
+Mlambe Hospital
+Mangochi District Hospital
+Mulanje District Hospital
+Karonga District Hospital
+Balaka District Hospital
+Neno Rural Hospital
+Nkhotakota District Hospital
+Daeyang Luke Hospital
+Zomba Central Hospital
+Likoma/St Peters
+Chikwawa District Hospital
+Madisi Hospital
+Mchinji District Hospital
+St. Annes Hospital
+Mulanje Mission
+Ntcheu District Hospital
+Dedza District Hospital
+Mbabzi Dispensary
+Chithumba Maternity
+Mvera Mission
+Msakambewa Health Centre
+Chimembe Health Centre
+Malowa Dispensary
+Chiendausiku
+Chitekesa Health Centre
+Kawale
+Chilipa Health Centre
+Jalasi Health Centre
+Ngoni
+Koche Health Centre
+Guillime
+Doviko Dispensary
+Dzonzi Mvai Dispensary
+Mlowe Health Centre
+Mzokoto Health Centre
+Lwezga Health Centre
+Thuchila
+Mkhota Health Centre
+Gogode Dispensary
+Ndunde Health Centre
+Namikango
+Kawamba Health Centre
+Chiringa Maternity
+Thondwe Health Centre
+Katsekera Health Centre
+Mkango Health Centre
+Lulanga Health Centre
+Mpiri Health Centre
+Nsanama Health Centre
+Naphimba Health Centre
+Chisitu Health Centre
+Chitedze Health Centre
+Khosolo Health Centre
+Naisi Health Centre
+Kang'oma
+Tcharo
+Mwansambo Health Centre
+Nasawa/Chimwalira Health Centre
+Mtunthama Health Centre
+Sorgin Health Centre
+Mtimabi Health Centre
+Jenda Health Centre
+Mulibwanji Hospital
+Namwera Health Centre
+Queen Elizabeth Centre Hospital
+Holy Family
+Bulala Health Centre
+Ndakwela Health Centre
+Pirimiti Health Centre
+Mikolongwe Health Centre
+Malabada Health Centre
+Mkhwayi Health Centre
+Chimbalanga Health Centre
+Nkhande Dispensary
+Chingale Health Centre
+Lupembe Health Centre
+Ngana Health Centre
+Newa Health Centre
+Chintheche Rural Hospital
+Mwazisi Health Centre
+Namalaka Health Centre
+Mlare Health Centre
+Kasitu Health Centre
+Lojwa Dispensary
+Mpondasi Health Centre
+Diampwe Health Centre
+Ming'ongo
+Thumbwe Health Centre
+Likangala Health Centre
+Mzalangwe Health Centre
+Lunjeri Health Centre
+Ngabu Rural Hospital
+Chamba Dispensary
+Masenjere Health Centre
+Hara Dispensary
+Kapiri Health Centre
+Malembo
+Mkanda Health Centre
+Kachere Health Centre
+Lambulira Health Centre
+Nancholi Dispensary
+Mpamantha Dispensary
+Lumbadzi
+Offesi Dispensary
+Maperera Health Centre
+Luwazi Health Centre
+Thomasi Health Centre
+Monkey Bay Health Centre
+Mafco Health Centre
+Chitipa District Hospital
+Chididi Health Centre
+Phanga Dispensary
+Sankhulani Health Centre
+Makata Dispensary
+Chioshya Health Centre
+Chileka Health Centre
+Linyangwa Health Centre
+Mbera Health Centre
+Ngala Health Post
+Namikoko Dispensary
+Chadza/Unit 33
+Wenya Health Centre
+Ngokwe Health Centre
+Mganja Maternity
+Changata Health Centre
+Dowa District Hospital
+Mtakataka Health Centre
+Mayani Health Centre
+Nambiti 1
+Nyambi Health Centre
+Halena Oakely/Mtambanyama Clinic
+Kapenda Health Centre
+Mchoka Health Centre
+Bowe Health Centre
+Luwuchi Health Centre
+Gawanani Health Centre
+Dzoole Health Centre
+Emfeni Health Centre
+Mphunzi Health Centre
+Nsiyaludzu Health Centre
+Kasoba Health Centre
+Area 18 Health Centre
+Phalula Health Centre
+Mkwepere Dispensary
+Makhwira Health Centre
+Matanda
+Lengwe Dispensary
+Chiponde Health Centre
+Namisu Dispensary
+Kalinde
+Mhalaunda Health Centre
+Chiwamba Health Centre
+Chunjiza Health Centre
+Mbonechela Dispensary
+Mjini Dispensary
+Milepa Health Centre
+Kasinthula Dispensary
+Mbalachanda Health Centre
+Mulomba Health Centre
+Masasa Dispensary
+Mpherere Health Centre
+Chonde Health Centre
+Mponela Rural Hospital
+Chulu Health Centre
+Mbenje Health Centre
+Chiwe Health Centre
+Chang'ambika Health Centre
+Luwawa Health Centre
+Dzenza Health Centre
+Chitala Health Centre
+Matawale Health Centre
+Mpamba Health Centre
+H Parker Sharp Dispensary
+Chididi Health Centre
+Mpata Health Centre
+Kapanga Health Centre
+Bua Dispensary
+Nsanje District Hospital
+Bula Health Centre
+Chilobwe/Majiga
+Dickson Health Centre
+Chitera Health Centre
+Mauwa Health Centre
+Santhe Health Centre
+Jalawe Health Centre
+Waruma
+Chinthebe Dispensary
+Manyamula Health Centre
+South Lunzu Health Centre
+Kasinje Health Centre
+Limbe Health Centre
+Mvera Army Clinic
+Dwangwa Dispensary
+Nayinunje Health Centre
+Thonje Health Centre
+Kwitanda Health Centre
+Dzindevu
+Gowa Health Centre
+Chizolowondo Health Centre
+Mkumba Health Centre
+KTFT/Mziza Health Centre
+Madziabango Health Centre
+Ndirande Health Centre
+Tsoyo
+Kande Health Centre
+Kamboni Health Centre
+Namizana
+Kanyimbi Health Centre
+Ng'onga Health Centre
+Bangwe Health Centre
+Nyungwe Health Centre
+Nankhwali Health Centre
+Dzenje
+Namasalima Health Centre
+Machinjiri Health Centre
+Nkhataombere
+Mlanda Rural Hospital
+Khombedza Health Centre
+Mndinda
+Police Hospital
+Misomali Health Centre
+Kapelula Health Centre
+Ehehleni Dispensary
+Khongoni
+Makiyoni Health Centre
+Utale I
+Chagunda Dispensary
+Kaseye Rural Hospital
+Tengani Health Centre
+Mkoma Health Centre
+Nkhwazi Health Centre
+Mphompha Health Centre
+Chinkhwiri Health Centre
+Chilipa Health Centre
+Manjawira Maternity
+Bua Dispensary
+Chiumbangame Health Centre
+Lundu Health Centre
+Malembo Health Centre
+Mlomba Dispensary
+Chinguluwe Health Centre
+Iba Dispensary
+Dzaleka Refugee Camp Clinic
+Lirangwe Health Centre
+Mphati
+Magamba Dispensary
+St Martin Hospital
+Kapeni Health Centre
+Chingazi
+Kayembe Health Centre
+Namitambo Health Centre
+Chisepo Health Centre
+Kaname/Mdeza Dispensary
+Chamba Dispensary
+Edingeni Rural Hospital
+Soche SDA Dispensary
+Chiole Dispensary
+Malamulo
+Ndaula
+Kalikumbi Health Centre
+Ngwelelo Health Centre
+Chileka Health Centre
+Mbwatalika Health Centre
+Matapila
+Nsambe Health Centre
+Mbang'ombe 11 Health Centre
+Malingunde
+Katete Rural Hospital
+Biriwiri Health Centre
+Nalunga Health Centre
+Mbiza Health Centre
+Chikweo Health Centre
+Amalika Dispensary
+Thekerani Health Centre
+Dziwe Health Centre
+Lifeline Health Centre
+Msese Health Centre
+Mzimba District Hospital
+Mabiri Health Centre
+Chimoto
+Maonde Health Centre
+Chitowo
+Katchale
+Lugola Health Centre
+Thavite Health Centre
+Misuku Health Centre
+Mzenga Health Centre
+Namanja Health Centre
+Dolo Health Centre
+Ruarwe Dispensary
+Chimvu
+Golomoti Health Centre
+Mikondo Health Centre
+Mlangeni Health Centre
+Chikande Health Centre
+Chilomoni Health Centre
+Migowi Health Centre
+Namasalima Health Centre
+Dwambadzi Rural Hospital
+Molere Health Centre
+St Montfort Hospital
+Chikangawa Health Centre
+Kaigwazanga Health Centre
+Mhuju Rural Hospital
+Mphepozinai Dispensary
+Balaka Health Centre
+Kamsonga Health Centre
+Champiti Health Centre
+Kaloga Maternity
+Zomba City Clinic
+Kawinga Health Centre
+Mbingwa Health Centre
+Utale II Health Centre
+Senga Bay Baptist Health Centre
+Madede Health Centre
+Endindeni Health Centre
+Chankhungu
+Chinthembwe Health Centre
+Tembwe Dispensary
+Namadzi Health Centre
+Khondowe
+Chitimba Health Centre
+Kabudula Rural Hospital
+Bimbi Health Centre
+Chigodi Health Centre
+Lobi Health Centre
+Mikundi Health Centre
+Kunenekude Health Centre
+Chipumi Health Centre
+Old Maula Health Centre
+DGM
+Nkope Health Centre
+Rumphi District Hospital
+Vibangalala Dispensary
+Hoho Health Centre
+Chisala Health Centre
+Kasese/Lifeline Malawi Health Centre
+Chitsimuka Health Centre
+Mposa Health Centre
+Gola
+Kaluluma Rural Hospital
+Mluma
+Magaleta Health Centre
+Mpala Health Centre
+Nthungwa Health Centre
+Nangalamu Health Centre
+Muloza Heath Centre
+Nkhoma
+Mfera Health Centre
+Phokera Health Centre
+Magomero Health Centre
+Chesamu Health Centre
+Chabvala Health Centre
+Nkasala Health Centre
+Liuzi Health Centre
+Chiringa Cham Health Centre
+Nambazo Health Centre
+Likuni Hospital
+Ntaja Health Centre
+Benga Health Centre
+Wiliro Health Centre
+Mapanga Clinic
+Kameme Health Centre
+Mdeka Health Centre
+Nankumba Health Centre
+Makhanga Health Centre
+Chimaliro Health Centre
+Chinyama Health Centre
+Kadango Dispensary
+Kukalanga Dispensary
+Mase Health Centre
+Katowo Rural Hospital
+Chakhaza Health Centre
+Chingoni
+Mitundu
+Makanjira Health Centre
+Lizulu Health Centre
+Ifumbo Health Centre
+Kampanje
+Mayaka Health Centre
+Ludzi Rural Hospital
+Mitengo Health Centre
+Neno Parish Health Centre
+Sukasanje Health Centre
+Mtengowanthenga Hospital
+Kapiri Mission Hospital
+Mwanga Health Centre
+Nakalanzi
+Nkhamenya Hospital
+St. Joseph
+Kankao Health Centre
+Namulenga Health Centre
+St Patricks Rural Hospital
+St Mary's
+Luwerezi Health Centre
+Lake View Health Centre
+Mbulumbuzi Health Centre
+Sister Theresa Rural Hospital
+Kalemba Health Centre
+Matiya Health Centre
+Sharpe Valley Health Centre
+Mzama Health Centre
+Mlale
+Atupele Community Hospital
+Ngodzi Health Centre
+Nsipe Rural Hospital
+Mzambazi Rural Hospital
+Nambuma Health Centre
+Bembeke
+St. Annes Health Centre
+Tsangano Health Centre
+Chipini Rural Hospital
+Mpasa Health Centre
+Chitheka Health Centre
+Simulemba Health Centre
+Katuli Health Centre
+Chambe Health Centre
+Chipho Health Centre
+Nkalo Health Centre
+Mlolo Health Centre
+Fulirwa Health Centre
+Kasalika Health Centre
+Ganya Maternity
+Khonjeni Health Centre
+Kalembo Dispensary
+Malomo Health Centre
+Kalulu Health Centre
+Zoa Health Centre
+Kaphuka Rural Hospital
+Gaga Health Centre
+Phalombe
+Domasi Rural Hospital
+Chimwankango
+Nayuchi Health Centre
+Bilira Health Centre
+Chileka SDA
+Kamphata Health Centre
+Kazyozyo/Sakhuta Maternity
+Trinity Hospital
+Katimbira Health Centre
+Mkhuzi
+Maganga Health Centre
+Usisya Health Centre
+Chamwabvi Dispensary
+Gumba Health Post
+Lura Health Centre
+Ukwe
+Nyamithuthu Health Centre
+Nsaru
+Bolero Rural Hospital
+Mkumaniza Health Centre
+Mtosa Health Centre
+Phirilongwe Health Centre
+Nkhunga Health Centre
+Mulangali
+Mimosa
+Chikwina Health Centre
+Chipoka Health Centre
+Nthenje Health Centre
+Chinguluwe Health Centre
+PIM Health Centre
+Chambo Health Centre
+St Mary's/Chizumulu Health Centre
+Phimbi Health Centre
+Mzuzu Central Hospital
+Balaka BLM
+Comfort
+Lunzu BLM
+Midima BLM
+Ndirande BLM
+Railways CEAR Clinic
+Zingwangwa BLM
+Kapichira Clinic
+Ngabu BLM
+Sucoma/Illovo Clinic
+Dedza BLM
+Dowa BLM
+Family Planning Association of Malawi
+Karonga BLM
+Maneno Private Clinic
+Wovwe Escom Clinic
+Banja La Mtsogolo
+Gogo LEA PVT Clinic
+ABC Community Clinic
+Adventist health center Area 14
+Area 25 BLM
+Bunda Clinic
+Chimwala
+Chimwala Clinic
+Dzalanyama/Kapombeza
+Falls BLM
+Kawale BLM
+Malangalanga
+Malawi Army Air Wing Clinic
+Mlodza/Seventh Day
+SOS Medical Centre
+Liwonde BLM
+Assalam Clinic
+Mangochi BLM
+Mchinji BLM
+Mulanje BLM
+Mwanza BLM
+Nkula Clinic
+Mzimba BLM
+Mzuzu BLM
+Kawalazi Estate Clinic
+Nkhatabay BLM
+Centre 3 Clinic
+Dwangwa BLM
+Dwangwa Cane Grower Ltd Clinic
+Kasasa Clinic
+Nkhotakota BLM
+Nyamvuu Clinic
+Ukasi Clinic
+Ntcheu BLM
+Eva Demaya Private Clinic
+Rumphi BLM
+Admarc
+Salima BLM
+Bvumbwe BLM
+Adventist Health Services Clinic
+Zomba BLM
+Blantyre Civil Centre Health Centre
+Chichiri Prison Dispensary
+Limbe ADMARC Health Centre
+Mitsidi Dispensary
+80 Block Clinic
+Chisinga Dispensary
+Ofesi
+City Assembly Health
+New state house
+Police/Area 30
+Liwonde SDA Health Centre
+Sinyala Dispensary
+Malalwi Army Marine Dispensary
+Maldeco Dispensary
+Ekwaiweni Dispensary
+Lusangazi Dispensary
+Matuli Dispensary
+Mzuzu Police Dispensary
+Raiply Dispensary
+Chombe Estate Dispensary
+Kavuzi Dispensary
+Vizara Dispensary
+Kanyimbi
+Mlangeni/Police Dispensary
+Dzunje Dispensary
+Kaombe Dispensary
+Mndinda Dispensary
+Salima Admarc Dispensary
+Municipal Clinic
+Forestry Dispensary
+Ngabu SDA Health Centre
+Chithumba
+St Mary Rehabilitation
+Sangilo Health Centre
+Chamama Health Centre
+Kapyanga Health Centre
+Mpasazi Health Centre
+Thupa Health Centre
+Chinsapo
+Khasu
+Madalitso Health Centre
+Mwalasi
+Malukula Health Centre
+Nyangu Health Centre
+Sable Health Centre
+Kazyozyo
+Thembe
+Choma Health Centre
+Emsizini Health Centre
+Kabuwa Health Centre
+Kabwafu Health Centre
+Kafukule Health Centre
+Luvwere Health Centre
+Malidade Health Centre
+Moyale Health Centre
+Mpherembe Health Centre
+Mtwalo Health Centre
+Njuyu Health Centre
+Nkholongo Health Centre
+Nkhuyukuyu Health Centre
+Tchesamu Health Centre
+Matiki Health Centre
+Msenjere
+Nambiti 2
+Bwengu Health Centre
+Engucwini Health Centre
+Enukweni Health Centre
+Kamwe Health Centre
+Kasambala Health Centre - mispelled? - doesn't exist
+Luzi Health Centre
+Thunduwike Health Centre
+Golomoti Health Centre
+Lifuwu Health Centre
+M'mambo Health Centre
+Mkango
+Blantyre Adventist
+Ekwendeni Hospital
+Mumbwe Medical Centre
+St Johns Hospital
+Phalombe Mission
+Livingstonia Hospital
+Mua Hospital
+Soche Maternity
+Mayani Maternity
+Mphunzi Maternity
+St John of God
+Kasauka Nutr; Rehab; unit
+Mzuzu Urban Health Centre
+Macro Blantyre Clinic
+Macro Lilongwe
+Macro Mzuzu
+Mtakataka/Police College Health Centre
+St. Lukes Rural Hospital
+Maluwa
+Kandeu Dispensary
+Ngala Health Centre
+Nthondo
+St Andrews Health Centre
+Luwalika Health Centre
+Mangunda Clinic
+Chapananga Health Centre
+Kasungu District Hospital
+Embangweni Hospital
+Namphungo Health Centre
+Matumba Health Centre
+Lisungwi Health Centre
+Chikole Dispensary
+Bilal Dispensary
+Mzandu Health Centre
+Nthondo Dispensary
+Ligowe Health Centre
+Kochilila
+Ching'oma Health Centre
+Kaporo Rural Hospital
+Chikowa Health Centre
+Namandanje Health Centre
+Kapire Health Centre
+Mbenje Temp (refugee?)
+Tengani Temp (refugee?)
+Mazamba
+Phirisingo
+Chelinda
+Ku Chawe
+Mikuyu
+Malavi
+Zomba DHO
+Kasungu Prison
+Lifupa
+Blantyre DHO
+College of Nursing
+Kanjedza Police
+Kamuzu Barracks
+Lilongwe DHO
+Mzuzu Dispensary
+EOF
+    return health_facilities.split("\n")
+  end
+
+
 
   @@current_residences = initialize_current_residences()
   @@areas = initialize_areas()
   @@districts = initialize_disticts()
   @@tas = initialize_tas()
+  @@health_facilities = initialize_health_facilities()
 
 end
