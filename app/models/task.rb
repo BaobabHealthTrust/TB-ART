@@ -9,11 +9,42 @@ class Task < ActiveRecord::Base
 
     todays_encounters = patient.encounters.find_by_date(session_date)
     todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
-    
 
-    return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_index
-    return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || patient.hiv_status != "POSITIVE"
-    return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
+    #TODO Get all these into the task table
+    
+    if location.name == 'Chronic Cough'
+      return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_index
+      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || patient.hiv_status == "POSITIVE"
+      return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
+
+    elsif location.name == 'TB Reception'
+      return "/encounters/new/tb_reception?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB RECEPTION")
+      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || (patient.hiv_status == "POSITIVE")
+      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" unless todays_encounter_types.include?("ART ENROLLMENT")
+      return "/encounters/new/vitals?patient_id=#{patient.id}" unless todays_encounter_types.include?("VITALS")
+
+    elsif location.name == 'TB Clinician Station'
+      return "/encounters/new/clinic_visit?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB CLINIC VISIT")
+      return "/encounters/new/llh_staging?patient_id=#{patient.id}" unless todays_encounter_types.include?("HIV STAGING") && patient.hiv_status != 'POSITIVE'
+
+    elsif location.name == 'TB Registration'
+      return "/encounters/new/tb_registration?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB REGISTRATION")
+      return "/people/new_tb_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
+      return "/encounters/new/ipt_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
+      return "/prescriptions/tb_treatment?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB TREATMENT")
+
+    elsif location.name == 'TB Folloup Room'
+      return "/encounters/new/tb_reception?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB RECEPTION")
+      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || patient.hiv_status == "POSITIVE"
+      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" unless todays_encounter_types.include?("ART ENROLLMENT")
+      return "/encounters/new/vitals?patient_id=#{patient.id}" unless todays_encounter_types.include?("VITALS")
+      return "/people/new_tb_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
+      return "/encounters/new/ipt_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
+      return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
+
+    elsif location.name == 'Pharmacy'
+      return "/encounters/give_drugs?patient_id=#{patient.id}" 
+    end
 =begin
     all_tasks = self.all(:order => 'sort_weight ASC')
     todays_encounters = patient.encounters.find_by_date(session_date)
