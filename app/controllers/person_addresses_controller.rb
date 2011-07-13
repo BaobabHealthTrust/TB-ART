@@ -30,6 +30,10 @@ class PersonAddressesController < ApplicationController
     search_location('home_vge', params[:search_string])
   end
   
+  def health_facility
+    search_location('health_facility', params[:search_string])
+  end
+  
   def search_location(type, search_string)
     
     @results = []
@@ -45,6 +49,10 @@ class PersonAddressesController < ApplicationController
     elsif type == 'home_vge'
         @results = Location.current_residences.grep(/#{search_string}/i).compact.sort_by{|location|
           location.index(/#{search_string}/) || 100 # if the search string isn't found use value 100
+        }[0..10]
+    elsif type == 'health_facility'
+        @results = Location.health_facilities.grep(/#{search_string}/i).compact.sort_by{|facility|
+          facility.index(/#{search_string}/) || 100 # if the search string isn't found use value 100
         }[0..10]
     end
 
