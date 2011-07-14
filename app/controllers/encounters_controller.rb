@@ -141,6 +141,9 @@ class EncountersController < ApplicationController
     @answer_array = arv_regimen_answers(:patient => @patient,
       :use_short_names    => use_regimen_short_names == "true",
       :show_other_regimen => show_other_regimen      == "true")
+
+    @arv_drugs =  Concept.find_by_name('Antiretroviral drugs').concept_members.flatten.collect{|member| member.concept.name.name}.sort rescue []
+
     @lab_activities = Encounter.lab_activities
     @tb_classification = [["Pulmonary TB","PULMONARY TB"],["Extra Pulmonary TB","EXTRA PULMONARY TB"]]
     @tb_patient_category = [["New","NEW"], ["Relapse","RELAPSE"], ["Retreatment after default","RETREATMENT AFTER DEFAULT"], ["Fail","FAIL"], ["Other","OTHER"]]
