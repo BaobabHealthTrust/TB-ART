@@ -10,6 +10,8 @@
       text-decoration:underline;
       margin-right:10px;
     }
+    #char { display:none; }
+
     .lowWeightForHeight{color:black;background:red;}
     .medWeightForHeight {color:black;background:yellow;}
     .lowBMI {color:black;background:red;}
@@ -151,7 +153,7 @@
         <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
     <% end %>  
          
-    <label for='weight'>Weight (KG)</label>
+    <label for='weight'>Weight (Kg)</label>
       <%= text_field_tag "observations[][value_numeric]", nil,
         {:id => "weight",
          :field_type => 'number',
