@@ -34,7 +34,7 @@ class Task < ActiveRecord::Base
       return "/prescriptions/tb_treatment?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB TREATMENT")
 
     elsif location.name == 'TB Folloup Room'
-      return "/encounters/new/tb_reception?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB RECEPTION")
+      return "/prescriptions/tb_treatment?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB TREATMENT")
       return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || patient.hiv_status == "POSITIVE"
       return "/encounters/new/art_enrollment?patient_id=#{patient.id}" unless todays_encounter_types.include?("ART ENROLLMENT")
       return "/encounters/new/vitals?patient_id=#{patient.id}" unless todays_encounter_types.include?("VITALS")
