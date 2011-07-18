@@ -125,7 +125,7 @@ class EncountersController < ApplicationController
 
   def new
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
-    @ipt_contacts = @patient.tb_contacts.collect{|person| person unless person.age > 6}.compact
+    @ipt_contacts = @patient.tb_contacts.collect{|person| person unless person.age > 6}.compact rescue []
     @select_options = Encounter.select_options
     @hiv_status = @patient.hiv_status
     @hiv_test_date = @patient.hiv_test_date
