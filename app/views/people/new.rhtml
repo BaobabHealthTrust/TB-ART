@@ -14,6 +14,18 @@
   }
 </script>
 <style>
+  .tt_controls_year_of_birth #char { display:none; }
+
+  .tt_controls_cell_phone_number #char { display:none; }
+
+  .tt_controls_home_phone_number #num , #plus, #apostrophe, #star,
+      #char, #abc, #date, #slash, #minus, #comma, #percent, #decimal { display:none; }
+
+  .tt_controls_occupation .keyboard{display:none;}
+    #tt_page_occupation .options{height:550px;}
+    #tt_page_occupation .options li{font-size:30px;}
+    #space {display:inline;}
+
   .tt_controls_month_of_birth .keyboard{display:none;}
   #tt_page_month_of_birth .options{height:570px;}
   #tt_page_month_of_birth .options li{font-size:30px;}
@@ -106,5 +118,5 @@
   <%= hidden_field_tag :identifier, params[:identifier] %>
 
   <%= submit_tag "Create person" %>
-  
+
 <% end %>

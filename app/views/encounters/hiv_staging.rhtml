@@ -1,3 +1,21 @@
+<style>
+  .tt_controls_clinical_notes_optional #space { display:inline; }
+  .tt_controls_cd4_count .buttonLine {
+    height: 80px;
+  }
+
+  .tt_controls_cd4_count #char {
+    display: none;
+  }
+
+  .tt_controls_cd4_percent .buttonLine {
+    height: 80px;
+  }
+
+  .tt_controls_cd4_percent #char {
+    display: none;
+  }
+</style>
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id -%>";
   var age = <%= @patient.person.age -%>;
@@ -281,7 +299,7 @@
        :condition => '$("new_cd4_count_available").value == "YES"',
        :helpText => "CD4 Count Location"} %>
 
-    <%= touch_date_tag "CD4 COUNT DATETIME", @patient, (Time.now - 1.month).year,
+    <%= touch_date_tag "CD4 COUNT DATETIME", @patient, (Date.today).strftime('%Y-%m-%d'),
       {:id => "cd4_count_date",
        :condition => '$("new_cd4_count_available").value == "YES"',
        :helpText => "CD4 Count Date",
@@ -389,7 +407,7 @@
        :condition => '$("new_cd4_percent_available").value == "YES"',
        :helpText => "CD4 Percent Location"} %>
 
-    <%= touch_date_tag "CD4 PERCENT DATETIME", @patient, (Time.now - 1.month).year,
+    <%= touch_date_tag "CD4 PERCENT DATETIME", @patient, (Date.today).strftime('%Y-%m-%d'),
       {:id => "cd4_percent_date",
        :condition => '$("new_cd4_percent_available").value == "YES"',
        :helpText => "CD4 Percent Date",
@@ -411,7 +429,7 @@
        :condition => '$("new_lymphocyte_count_available").value == "YES"',
        :helpText => "Lymphocyte Count Location"} %>
 
-    <%= touch_date_tag "LYMPHOCYTE COUNT DATETIME", @patient, (Time.now - 1.month).year,
+    <%= touch_date_tag "LYMPHOCYTE COUNT DATETIME", @patient, (Date.today).strftime('%Y-%m-%d'),
       {:id => "lymphocyte_count_date",
        :condition => '$("new_lymphocyte_count_available").value == "YES"',
        :helpText => "Lymphocyte Count Date",
