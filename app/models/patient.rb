@@ -66,7 +66,11 @@ class Patient < ActiveRecord::Base
       next if obs.order.blank? and obs.order.auto_expire_date.blank?
       alerts << "Auto expire date: #{obs.order.drug_order.drug.name} #{obs.order.auto_expire_date.to_date.strftime('%d-%b-%Y')}"
     end rescue []
-
+    
+    hiv_status = self.hiv_status
+    alerts << "HIV Status : #{hiv_status} more than 3 months" if (hiv_status == 'Negative' && self.months_since_last_hiv_test > 3)
+    alerts << "HIV Status : #{hiv_status}" if hiv_status == 'Unknown'
+    
     alerts
   end
   

@@ -45,17 +45,17 @@
             </div>
             <select id="tabs">
               <option value='/patients/overview?patient_id=<%= @patient.id %>'>Overview</option>
-              <option value='/patients/visit_history?patient_id=<%= @patient.id %>'>Visit History</option>
-              <option value='/patients/personal/<%= @patient.id -%>'>Printouts/Other</option>
+              <!--option value='/patients/visit_history?patient_id=<%= @patient.id %>'>Visit History</option>
+              <option value='/patients/personal/<%= @patient.id -%>'>Printouts/Other</option-->
             </select>
             <select id="links">
-              <option value='/patients/treatment_dashboard/<%= @patient.id -%>'>Treatment</option>
+              <!--option value='/patients/treatment_dashboard/<%= @patient.id -%>'>Treatment</option>
               <option value='/patients/guardians_dashboard/<%= @patient.id -%>'>Relationships</option>
-              <option value='/patients/programs_dashboard/<%= @patient.id -%>'>Programs</option>
+              <option value='/patients/programs_dashboard/<%= @patient.id -%>'>Programs</option-->
             </select>
             <select id="navigation_links">
               <option link="/encounter_types?patient_id=<%= @patient.id -%>">Tasks</option>
-              <option link="/patients/mastercard_menu?patient_id=<%= @patient.id -%>&source=<%= @source -%>">Mastercard</option>
+              <!--option link="/patients/mastercard_menu?patient_id=<%= @patient.id -%>&source=<%= @source -%>">Mastercard</option-->
               <option link='<%= ((session[:datetime].to_date rescue '') != '' ?
                           "/people/reset_datetime/#{@patient.id}" : "/people/set_datetime/#{@patient.id}") %>'  ttSize="160px">
                 <%= ((session[:datetime].to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>

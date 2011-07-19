@@ -9,38 +9,33 @@ class Task < ActiveRecord::Base
 
     todays_encounters = patient.encounters.find_by_date(session_date)
     todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
+    hiv_status = patient.hiv_status
 
     #TODO Get all these into the task table
     
     if location.name == 'Chronic Cough'
       return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_index
-      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || patient.hiv_status == "POSITIVE"
+      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" if !todays_encounter_types.include?("UPDATE HIV STATUS") || (hiv_status == 'Negative' && patient.months_since_last_hiv_test > 3) || hiv_status == 'Unknown' 
       return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
 
     elsif location.name == 'TB Reception'
       return "/encounters/new/tb_reception?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB RECEPTION")
-      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || (patient.hiv_status == "POSITIVE")
-      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" unless todays_encounter_types.include?("ART ENROLLMENT") || patient.hiv_status != 'POSITIVE'
+      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" if !todays_encounter_types.include?("UPDATE HIV STATUS") || (hiv_status == 'Negative' && patient.months_since_last_hiv_test > 3) || hiv_status == 'Unknown' 
+      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" if (!todays_encounter_types.include?("ART ENROLLMENT") && hiv_status == 'Positive')
       return "/encounters/new/vitals?patient_id=#{patient.id}" unless todays_encounter_types.include?("VITALS")
 
     elsif location.name == 'TB Clinician Station'
       return "/encounters/new/clinic_visit?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB CLINIC VISIT")
-      return "/encounters/new/llh_staging?patient_id=#{patient.id}" unless todays_encounter_types.include?("HIV STAGING") && patient.hiv_status != 'POSITIVE'
+      return "/encounters/new/llh_staging?patient_id=#{patient.id}" if (!todays_encounter_types.include?("HIV STAGING") && == 'Positive')
 
     elsif location.name == 'TB Registration'
       return "/encounters/new/tb_registration?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB REGISTRATION")
-      return "/people/new_tb_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
-      return "/encounters/new/ipt_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
+      #return "/people/new_tb_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
+      #return "/encounters/new/ipt_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
       return "/prescriptions/tb_treatment?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB TREATMENT")
 
     elsif location.name == 'TB Folloup Room'
       return "/prescriptions/tb_treatment?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB TREATMENT")
-      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" unless todays_encounter_types.include?("UPDATE HIV STATUS") || patient.hiv_status == "POSITIVE"
-      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" unless todays_encounter_types.include?("ART ENROLLMENT")
-      return "/encounters/new/vitals?patient_id=#{patient.id}" unless todays_encounter_types.include?("VITALS")
-      return "/people/new_tb_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
-      return "/encounters/new/ipt_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
-      return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
 
     elsif location.name == 'Pharmacy'
       return "/encounters/give_drugs?patient_id=#{patient.id}" 
