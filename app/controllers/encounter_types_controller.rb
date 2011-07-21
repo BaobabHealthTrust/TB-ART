@@ -3,7 +3,7 @@ class EncounterTypesController < ApplicationController
   def index
     # TODO add clever sorting
     location = Location.find(session[:location_id]).name
-    @available_encounter_types = ['Update HIV Status', 'Lab Order'] if location == 'Chronic Cough'
+    @available_encounter_types = ['Update HIV Status', 'Lab'] if location == 'Chronic Cough'
     @available_encounter_types = ['TB Reception', 'Update HIV Status', 'ART Enrollment', 'Vitals'] if location == 'TB Reception'
     @available_encounter_types = ['TB Clinic Visit', 'llh Staging'] if location == 'TB Clinician Station'
     @available_encounter_types = ['TB Registration', 'TB Treatment'] if location == 'TB Registration'
