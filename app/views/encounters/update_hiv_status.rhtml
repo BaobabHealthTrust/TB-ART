@@ -68,12 +68,12 @@
 
   <%= touch_location_tag "LOCATION OF HIV TEST", @patient, nil,
     {:id => "location_of_hiv_test",
-      :condition => '$("hiv_status").value != "UNKNOWN"',
+      :condition => '$("hiv_status").value == "POSITIVE"',
      :helpText => "Location of HIV test" } %>
 
  <%= touch_numeric_tag "HTC SERIAL NUMBER", @patient, nil,
    {:id => "htc_serial_number",
-     :condition => '$("hiv_status").value != "UNKNOWN"',
+     :condition => '$("hiv_status").value == "POSITIVE"',
      :helpText => "HTC serial number" } %>
      
 <%unless @art_patient%>     
@@ -84,9 +84,8 @@
      :helpText => "On ART?" } %>
 <%end%>
 
-  <%= touch_hidden_tag "HIV TEST DATE", @patient, nil, {:id => "hiv_test_date", :value_datetime => true}%>
+ <%= touch_hidden_tag "HIV TEST DATE", @patient, nil, {:id => "hiv_test_date", :value_datetime => true}%>
 
      <%= submit_tag "Finish" %>    
-
 
 </form>
