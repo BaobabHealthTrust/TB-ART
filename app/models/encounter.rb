@@ -156,7 +156,8 @@ class Encounter < ActiveRecord::Base
           ['Recurrent fever', 'RECURRENT FEVER'],
           ['Lethargy', 'LETHARGY'],
           ['Haemoptysis', 'HAEMOPTYSIS'],
-          ['Other','OTHER']
+          ['Other','OTHER'],
+          ['None','None']
       ],
         'drug_related_side_effects' => [
           ['',''],
@@ -167,7 +168,10 @@ class Encounter < ActiveRecord::Base
           ['Jaundice', 'JAUNDICE'],
           ['Skin itching', 'SKIN ITCHING'],
           ['Visual impairment', 'VISUAL IMPAIRMENT'],
-          ['Vomiting ++/confusion', 'VOMITING']
+          ['Vomiting', 'VOMITING'],
+          ['Confusion','CONFUSION'],
+          ['Other','OTHER'],
+          ['None', 'NONE']
       ],
         'drug_list' => [
           ['',''],
@@ -250,15 +254,7 @@ class Encounter < ActiveRecord::Base
         ['Health Center','HEALTH CENTER'],
         ['Guardian','GUARDIAN']
       ],
-      'cough_durations' => [
-        ['',''],
-        ['2 Weeks','WEEKS'],
-        ['3 Weeks','WEEKS'],
-        ['4 Weeks','WEEKS'],
-        ['5 Weeks','WEEKS'],
-        ['6 Weeks','WEEKS'],
-        ['7 Weeks','WEEKS']
-      ],
+      'cough_durations' => ['', '2 Weeks', '3 Weeks', '4 Weeks','1 Month', 'More than one month'],
       'tb_types' => [
         ['',''],
         ['PTB','PTB'],
