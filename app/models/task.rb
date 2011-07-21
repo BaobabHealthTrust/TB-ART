@@ -26,7 +26,7 @@ class Task < ActiveRecord::Base
 
     elsif location.name == 'TB Clinician Station'
       return "/encounters/new/clinic_visit?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB CLINIC VISIT")
-      return "/encounters/new/llh_staging?patient_id=#{patient.id}" if (!todays_encounter_types.include?("HIV STAGING") && == 'Positive')
+      return "/encounters/new/llh_staging?patient_id=#{patient.id}" if (!todays_encounter_types.include?("HIV STAGING") && hiv_status == 'Positive')
 
     elsif location.name == 'TB Registration'
       return "/encounters/new/tb_registration?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB REGISTRATION")
