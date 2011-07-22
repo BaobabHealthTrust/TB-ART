@@ -1,20 +1,16 @@
 <%= javascript_include_tag "date" %>
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id -%>";
-  var showNegativeTestReminder = false;
-
-  function reminder(result){
-     var display = "<div><span class='title'>HIV Status: " + result + "</span></div>";
-    display += "<div><span class='title'>Please refer this person to HTC</span></div>";
-    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + display + '</div>' 
-  }
 
   function updateTestDate(){
     var testDate = new Date($('hiv_test_year').value, $('hiv_test_month').value - 1, $('hiv_test_day').value);
     $('hiv_test_date').value = testDate;
     if ((3).months().ago() > testDate){
       showNegativeTestReminder = true
+      }else {
+      showNegativeTestReminder = false
     }
+    return showNegativeTestReminder
   }
 
   function showTaskName(){
@@ -22,13 +18,6 @@
   }
 
 </script>
-
-<style>
-  #tt_page_htc_reminder .inputPage #summary{
-    background: none repeat scroll 0 0 tomato;
-    font-size: 40px;
-    }
-</style>
 
 <form id='update_hiv_status' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "UPDATE HIV STATUS" %>
@@ -48,10 +37,6 @@
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "HIV Status" } %>
 
-     <%= text_field_tag :summary, nil, { :tt_onLoad => "reminder('Unknown')", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => '$("hiv_status").value == "UNKNOWN"'} %>
-
-
-
   <%= text_field_tag "hiv_test_year", nil, {:helpText => 'HIV test year', :field_type => 'number', :absoluteMin => "1982", :min => "1982", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :condition => '$("hiv_status").value != "UNKNOWN"'}  %>
 
   <%= select_tag "hiv_test_month", month_name_options, {:helpText => 'HIV test month', :condition => '($("hiv_test_year").value.toLowerCase() != "unknown") && ($("hiv_status").value != "UNKNOWN")'}%>
@@ -64,7 +49,7 @@
       :tt_onUnload=> "updateTestDate();"
   } %>
 
-  <%= text_field_tag :summary, nil, { :tt_onLoad => "reminder('Negative')", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => 'showNegativeTestReminder == true && $("hiv_status").value == "NEGATIVE"', :tt_onUnload => 'showNegativeTestReminder = false'} %>
+  <%= text_field_tag :summary, nil, { :tt_onLoad => '$("hivTestReminder").style.display = "block";$("nextButton").innerHTML = "<span>Finish</span>";', :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => '(updateTestDate() == true && $("hiv_status").value == "NEGATIVE") || ($("hiv_status").value == "UNKNOWN");', :tt_onUnload => '$("hivTestReminder").style.display = "none";'} %>
 
   <%= touch_location_tag "LOCATION OF HIV TEST", @patient, nil,
     {:id => "location_of_hiv_test",
@@ -88,4 +73,10 @@
 
      <%= submit_tag "Finish" %>    
 
-</form>
+   </form>
+
+<div id='hivTestReminder' class='messageBar' style='display:none'>
+  Please refer this person to HTC<br /> 
+  <button onmousedown="$('hivTestReminder').style.display = 'none';"><span>OK</span></button>
+</div> 
+
