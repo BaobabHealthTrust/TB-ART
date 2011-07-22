@@ -416,4 +416,17 @@ EOF
     return self.given_arvs_before?  
   end
 
+  def hiv_test_results_within_3_months_available?
+    answer = Concept.find(Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ? AND DATE(obs_datetime) = ?", self.id, ConceptName.find_by_name("HIV TEST RESULTS WITHIN 3 MONTHS").concept_id, Date.today]).value_coded).name.name rescue 'Unknown'
+    return answer
+  end
+
+  def vitals_encounter_available?
+    available = false
+    self.encounters.map{|e| 
+      available = true if e.type.name == 'VITALS'
+    }
+    return available
+  end
+
 end
