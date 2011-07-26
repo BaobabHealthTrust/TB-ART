@@ -381,8 +381,19 @@ function populateInputPage(pageNum) {
 																						tstFormElements[i].attributes[a].value);
 				}
 			break;
+
+    case "TEXTAREA":
+			touchscreenInputNode = inputDiv.appendChild(document.createElement("textarea"));
+			touchscreenInputNode.setAttribute('type','textarea');
+      // since we are not cloning this, we need to copy every attribute
+      for (var a=0; a<tstFormElements[i].attributes.length; a++) {
+        touchscreenInputNode.setAttribute(tstFormElements[i].attributes[a].name, 
+                                          tstFormElements[i].attributes[a].value);
+      }
+			break;
+      
 	}
-	
+
 	setTouchscreenAttributes(touchscreenInputNode, tstFormElements[i], pageNum);
 
 	if (tstFormElements[i].value) {
@@ -471,6 +482,13 @@ function setTouchscreenAttributes(aInputNode, aFormElement, aPageNum) {
   aInputNode.setAttribute('class','touchscreenTextInput');
   aInputNode.setAttribute("v", aFormElement.getAttribute("validationRegexp"));  
 	if (aInputNode.type == "password") aInputNode.value = "";
+
+  if (aInputNode.type == 'textarea') {
+    aFormElement.setAttribute('touchscreenTextAreaID',aPageNum);
+    aInputNode.setAttribute('refersToTouchscreenTextAreaID',aPageNum);
+    aInputNode.setAttribute('id','touchscreenTextArea'+aPageNum);
+    aInputNode.setAttribute('class','touchscreenTextArea');
+  }
 }
 
 function getInfoBar(inputElement, aPageNum) {
@@ -997,21 +1015,9 @@ function tt_update(sourceElement){
  
       }
       break;
-    case "SELECT":
-    /*
-      var val_arr = new Array();
-      if (targetElement.multiple)
-        val_arr = sourceElement.value.split(tstMultipleSplitChar);
-      else
-        val_arr.push(sourceElement.value);
-      for(i=0;i<targetElement.options.length;i++){
-        if(optionIncludedInValue(targetElement.options[i].value, val_arr)){
-          targetElement.options[i].selected = true;
-          if (!targetElement.multiple) break;
-        } else targetElement.options[i].selected = false;
-      }   
+    case "TEXTAREA":
+      targetElement.value = sourceValue;
       break;
-      */
   }
 }
 
@@ -1091,8 +1097,10 @@ function joinDateValues(aDateElement) {
 
 // args: page number to load, validate: true/false
 function gotoPage(destPage, validate){
-	var currentPage = tstCurrentPage; 
-	var currentInput = document.getElementById("touchscreenInput"+currentPage);
+	var currentPage = tstCurrentPage;
+  var currentInput = document.getElementById("touchscreenInput"+currentPage);
+  if (currentInput == null)
+    currentInput = document.getElementById("touchscreenTextArea"+currentPage); 
 
 	if (currentInput) {
 //    if (document.getElementById'dateselector') != null && typeof ds != 'undefined')
@@ -1100,6 +1108,7 @@ function gotoPage(destPage, validate){
 		if (validate) {
 			if (!inputIsValid()) return;
 		}
+
 		tt_update(currentInput);
 		tstPageValues[currentPage] = currentInput.value;
 		var currentPageIndex = document.getElementById("progressAreaPage"+currentPage);
@@ -1252,7 +1261,9 @@ function cancelConfirmValue() {
 }
 
 function clearInput(){
-  document.getElementById('touchscreenInput'+tstCurrentPage).value = "";
+  try{
+    document.getElementById('touchscreenInput'+tstCurrentPage).value = "";
+  }catch(e){ document.getElementById('touchscreenTextArea'+tstCurrentPage).value = ""; }
 
   if(doListSuggestions){
     listSuggestions(tstCurrentPage);
@@ -1548,7 +1559,10 @@ function getDatePicker() {
 
 	var defaultDate = joinDateValues(inputElement);
 	var arrDate = defaultDate.split('/');
-	document.getElementById("touchscreenInput"+tstCurrentPage).value = defaultDate;
+
+  try {
+	  document.getElementById("touchscreenInput"+tstCurrentPage).value = defaultDate;
+  }catch(e){document.getElementById("touchscreenTextArea"+tstCurrentPage).value = defaultDate;}
 	
 	if (!isNaN(Date.parse(defaultDate))) {
 		ds = new DateSelector({element: keyboardDiv, target: tstInputTarget, year: arrDate[2], month: arrDate[1], date: arrDate[0], format: "dd/MM/yyyy" });
@@ -1689,18 +1703,18 @@ function listSuggestions(inputTargetPageNumber) {
 	}
 	var inputElement = document.getElementById('touchscreenInput'+inputTargetPageNumber); 
 
+  if (inputElement == null) {
+	  var inputElement = document.getElementById('touchscreenTextArea'+inputTargetPageNumber); 
+  }
+
+
 	if(inputElement.getAttribute("ajaxURL") != null && inputElement.getAttribute("ajaxURL")){
 		ajaxRequest(document.getElementById('options'),inputElement.getAttribute("ajaxURL")+inputElement.value);
 	}
 	else{
 		var optionsList = document.getElementById('options');
-    var searchTerm = "";
 		options = optionsList.getElementsByTagName("li");
-    if(inputElement.getAttribute("ttMatchFromBeginning") != null && inputElement.getAttribute("ttMatchFromBeginning") == "true"){
-      searchTerm = new RegExp("^" + inputElement.value,"i");
-    }else{
-      searchTerm = new RegExp(inputElement.value,"i");
-    }
+		var searchTerm = new RegExp(inputElement.value,"i");
 		for(var i=0; i<options.length; i++){
       var onmousedown = options[i].getAttribute("onmousedown");
       if (onmousedown == null || onmousedown.match(/updateTouchscreenInput/) == null)
@@ -1875,7 +1889,10 @@ function validateRule(aNumber) {
 
 // Touchscreen Input element
 var TTInput = function(aPageNum) {
-	this.element = document.getElementById("touchscreenInput"+aPageNum);
+  this.element = document.getElementById("touchscreenInput"+aPageNum);
+  if (this.element == null) 
+    this.element = document.getElementById("touchscreenTextArea"+aPageNum); 
+
 	this.formElement = tstFormElements[tstPages[aPageNum]]
 	this.value = this.element.value;
 

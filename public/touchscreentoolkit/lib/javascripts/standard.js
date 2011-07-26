@@ -63,6 +63,9 @@ var tstMessageBoxType = {
     YesNoCancel:{}
 }
 
+var tstTimerHandle = null;
+var tstTimerFunctionCall = "";
+
 //--------------------------------------
 // Default method in module to access element id changed to __$ to avoid
 // conflicts with other libraries like jQuery. The same is recommended for use
@@ -506,7 +509,7 @@ function setTouchscreenAttributes(aInputNode, aFormElement, aPageNum) {
     if(aFormElement.tagName == "TEXTAREA" ){
         aInputNode.setAttribute('class','touchscreenTextAreaInput');
         aInputNode.setAttribute('cols','56');
-        aInputNode.setAttribute('rows','10');
+        aInputNode.setAttribute('rows','8');
     } else {
         aInputNode.setAttribute('class','touchscreenTextInput');
     }
@@ -775,6 +778,8 @@ function loadSelectOptions(selectOptions, options, dualViewOptions) {
 }
 
 function addSummary(position){
+    tstTimerHandle = setTimeout("hideKeyBoard()", 200);
+    
     if(__$("viewport")) {
         __$("viewport").style.height = "250px";
     }
@@ -798,6 +803,12 @@ function addSummary(position){
 
     summaryContainer.appendChild(summary);
 
+    var tmpInputFrame = __$("inputFrame" + tstCurrentPage);
+
+    __$("page" + tstCurrentPage).removeChild(__$("inputFrame" + tstCurrentPage));
+    
+    __$("page" + tstCurrentPage).appendChild(tmpInputFrame);
+
 //if(position > 0){
 //    changeSummary(position - 1);
 //}
@@ -819,7 +830,7 @@ function changeSummary(position){
             var cell1 = document.createElement("div");
             cell1.style.display = "table-cell";
             cell1.style.padding = "10px";
-            cell1.innerHTML = "<b style='color: #333;'>" + item.replace(/_/g, " ").toUpperCase() + "</b>";
+            cell1.innerHTML = "<b style='color: #333;'>" + item.replace(/_/g, " ").toProperCase() + "</b>";
 
             row.appendChild(cell1);
 
@@ -1182,8 +1193,46 @@ function joinDateValues(aDateElement) {
     else return strDate;
 }
 
-//args: page number to load, validate: true/false
+// This detour has been added to capture alert messages that need to be displayed
+// before the next page is viewed
 function gotoPage(destPage, validate){
+    var currentPage = tstCurrentPage;
+    var currentInput = __$("touchscreenInput"+currentPage);
+
+    //	tt_BeforeUnload
+    var unloadElementId = 'touchscreenInput';
+    if (currentPage < destPage) {
+        unloadElementId = 'touchscreenInput'+(destPage-1);
+    } else if (currentPage > destPage) {
+        unloadElementId = 'touchscreenInput'+(destPage+1);
+    }
+
+    var unloadElement = __$(unloadElementId);
+    if (unloadElement) {
+        var onUnloadCode = unloadElement.getAttribute('tt_BeforeUnload');
+        if (onUnloadCode) {
+            var result = eval(onUnloadCode);
+
+            if(result == true){
+                // Set a global handle for the timer function and the
+                // corresponding function for earlier cancelling when required
+                tstTimerHandle = setTimeout("navigateToPage(" + destPage + ", " + validate + ");", 3000);
+                tstTimerFunctionCall = "navigateToPage(" + destPage + ", " + validate + ");";
+            } else {
+                navigateToPage(destPage, validate);
+            }
+        } else {
+            navigateToPage(destPage, validate);
+        }
+    } else {
+        navigateToPage(destPage, validate);
+    }
+}
+
+//args: page number to load, validate: true/false
+function navigateToPage(destPage, validate){
+    clearTimeout(tstTimerHandle);
+
     var currentPage = tstCurrentPage;
     var currentInput = __$("touchscreenInput"+currentPage);
 
@@ -1403,9 +1452,14 @@ function clearInput(){
     }
 }
 
-function showMessage(aMessage) {
+function showMessage(aMessage, withCancel) {
     var messageBar = tstMessageBar;
-    messageBar.innerHTML = aMessage;
+    messageBar.innerHTML = aMessage +
+    "<br />" + (typeof(withCancel) != "undefined" ? (withCancel == true ?
+        "<button onmousedown='tstMessageBar.style.display = \"none\"; " +
+        "clearTimeout(tstTimerHandle);'><span>Cancel</span></button>" : "") : "") +
+    "<button style='width: 200px;' onmousedown='tstMessageBar.style.display = \"none\"; " +
+    "clearTimeout(tstTimerHandle); eval(tstTimerFunctionCall);'><span>Ok</span></button>";
     if (aMessage.length > 0) {
         messageBar.style.display = 'block'
         window.setTimeout("hideMessage()",3000)
@@ -1499,6 +1553,9 @@ function showBestKeyboard(aPageNum) {
             break;
         case "date":
             getDatePicker();
+            break;
+        case "time":
+            getTimePicker();
             break;
         case "boolean":
             __$("keyboard").innerHTML = "";
@@ -1613,10 +1670,10 @@ function getQwertyKeyboard(){
     getButtons("ASDFGHJKL") +
     getButtonString('apostrophe',"'");
 
-    if(tstFormElements[tstCurrentPage].tagName == "TEXTAREA") {
-        keyboard = keyboard +
-        getButtonString('return',"ENTER");
-    }
+    // if(tstFormElements[tstCurrentPage].tagName == "TEXTAREA") {
+    //    keyboard = keyboard +
+    //    getButtonString('return',"ENTER");
+    // }
 
     keyboard = keyboard +
     "</span><span style='padding-left:25px' class='buttonLine'>" +
@@ -1628,8 +1685,9 @@ function getQwertyKeyboard(){
 
     if(tstFormElements[tstCurrentPage].tagName == "TEXTAREA") {
         keyboard = keyboard +
-        "</span><span style='padding-left:93px' class='buttonLine'>" +
+        "</span><span style='padding-left:0px' class='buttonLine'>" +
         getButtonString('whitespace','&nbsp', 'width: 520px;') +
+        getButtonString('return',"ENTER", 'width: 120px;') +
         "</span>";
     }
 
@@ -1645,17 +1703,16 @@ function getABCKeyboard(){
     "<span class='buttonLine'>" +
     getButtons("ABCDEFGH") +
     getButtonString('backspace','Delete') +
-    getButtonString(' ','Space') +
     getButtonString('num','0-9') +
     "</span><span class='buttonLine'>" +
     getButtons("IJKLMNOP") +
     getButtonString('apostrophe',"'") +
     getButtonString('SHIFT','aA') ;
 
-    if(tstFormElements[tstCurrentPage].tagName == "TEXTAREA") {
-        keyboard = keyboard +
-        getButtonString('return',"ENTER");
-    }
+    // if(tstFormElements[tstCurrentPage].tagName == "TEXTAREA") {
+    //    keyboard = keyboard +
+    //    getButtonString('return',"ENTER");
+    // }
 
     keyboard = keyboard +
     getButtonString('Unknown','Unknown') +
@@ -1668,6 +1725,7 @@ function getABCKeyboard(){
         keyboard = keyboard +
         "</span><span style='padding-left:0px' class='buttonLine'>" +
         getButtonString('whitespace','&nbsp', 'width: 520px;') +
+        getButtonString('return',"ENTER", 'width: 120px;') +
         "</span>";
     }
 
@@ -1696,14 +1754,57 @@ function getNumericKeyboard(){
     getButtonString('qwerty','qwerty') +
     "</span><span id='buttonLine3' class='buttonLine'>" +
     getButtons("789") +
-    getCharButtonSetID("0","zero") +
+    // getCharButtonSetID("0","zero") +
     getCharButtonSetID(".","decimal") +
     getCharButtonSetID(",","comma") +
     getButtonString('backspace','Delete') +
     getButtonString('Unknown','Unknown') +
     getButtonString('SHIFT','aA') +
+    "</span>" +
+    "</span><span id='buttonLine3' class='buttonLine'>" +
+    getCharButtonSetID("0","zero") +
     "</span>"
+
     return keyboard;
+}
+
+function getTimePicker() {
+    if (typeof(TimeSelector) == "undefined")
+        return;
+
+    var inputElement = tstFormElements[tstPages[tstCurrentPage]];
+    var keyboardDiv = __$('keyboard');
+    keyboardDiv.innerHTML = "";
+
+    var railsDate = new RailsDate(inputElement);
+    if (railsDate.isDayOfMonthElement()) {
+        getDayOfMonthPicker(railsDate.getYearElement().value, railsDate.getMonthElement().value);
+        return;
+    }
+
+    var defaultDate = joinDateValues(inputElement);
+    //defaultDate = defaultDate.replace("-", "/", "g");
+    var arrDate = defaultDate.split(':');
+    __$("touchscreenInput"+tstCurrentPage).value = defaultDate;
+
+    if (arrDate.length == 3) {
+        ds = new TimeSelector({
+            element: keyboardDiv,
+            target: tstInputTarget,
+            hour: arrDate[0],
+            minute: arrDate[1],
+            second: arrDate[2],
+            format: "H:M:S"
+        });
+    } else {
+        ds = new TimeSelector({
+            element: keyboardDiv,
+            target: tstInputTarget,
+            format: "H:M:S"
+        });
+    }
+
+// __$("options" + tstCurrentPage).innerHTML = "";
 }
 
 function getDatePicker() {
@@ -2744,4 +2845,18 @@ function confirmRecordDeletion(message, form) {
 
     return false;
 
+}
+
+String.prototype.toProperCase = function()
+{
+    return this.toLowerCase().replace(/^(.)|\s(.)/g,
+        function($1) {
+            return $1.toUpperCase();
+        });
+}
+
+function hideKeyBoard(){
+    __$("keyboard").style.display = "none";
+    
+    tstTimerHandle = setTimeout("hideKeyBoard()", 200);
 }
