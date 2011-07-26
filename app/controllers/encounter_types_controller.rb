@@ -18,6 +18,7 @@ class EncounterTypesController < ApplicationController
   end
 
   def show
+    redirect_to "/prescriptions/tb_treatment?patient_id=#{params[:patient_id]}" and return if params[:encounter_type] == 'TB Treatment'
     redirect_to "/encounters/new/#{params["encounter_type"].downcase.gsub(/ /,"_")}?#{params.to_param}" and return
   end
 
