@@ -144,36 +144,7 @@ class Encounter < ActiveRecord::Base
        ['Vasectomy', 'VASECTOMY'],
 		   ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
       ],
-        'tb_symptoms' => [
-          ['',''],
-          ['Persistent cough', 'PERSISTENT COUGH'],
-          ['Bronchial breathing', 'BRONCHIAL BREATHING'],
-          ['Shortness of breath', 'SHORTNESS OF BREATH'],
-          ['Crepitations', 'CREPITATIONS'],
-          ['Failure to thrive', 'FAILURE TO THRIVE'],
-          ['Chest pains', 'CHEST PAINS'],
-          ['Loss of weight', 'LOSS OF WEIGHT'],
-          ['Recurrent fever', 'RECURRENT FEVER'],
-          ['Lethargy', 'LETHARGY'],
-          ['Haemoptysis', 'HAEMOPTYSIS'],
-          ['Other','OTHER'],
-          ['None','None']
-      ],
-        'drug_related_side_effects' => [
-          ['',''],
-          ['Deafness', 'DEAFNESS'],
-          ['Dizziness','DIZZINESS'],
-          ['General reaction including shock', 'GENERAL REACTION INCLUDING SHOCK'],
-          ['Purpura', 'PURPURA'],
-          ['Jaundice', 'JAUNDICE'],
-          ['Skin itching', 'SKIN ITCHING'],
-          ['Visual impairment', 'VISUAL IMPAIRMENT'],
-          ['Vomiting', 'VOMITING'],
-          ['Confusion','CONFUSION'],
-          ['Other','OTHER'],
-          ['None', 'NONE']
-      ],
-        'drug_list' => [
+     'drug_list' => [
           ['',''],
           ["Rifampicin Isoniazid Pyrazinamide and Ethambutol", "RHEZ (RIF, INH, Ethambutol and Pyrazinamide tab)"],
           ["Rifampicin Isoniazid and Ethambutol", "RHE (Rifampicin Isoniazid and Ethambutol -1-1-mg t"],
@@ -231,57 +202,10 @@ class Encounter < ActiveRecord::Base
         ['Unspecified stage 4 condition','UNSPECIFIED STAGE 4 CONDITION'],
         ['HIV encephalopathy','HIV ENCEPHALOPATHY']
       ],
-      'tb_clinical_symptoms' => [
-        ['',''],
-        ['Cough for the past 3 weeks','COUGH OVER 2 WKS'],
-        ["Productive cough","PRODUCTIVE COUGH"],
-        ['Unintentional weight loss',''],
-        ['Night sweat','NIGHT SWEATS'],
-        ['Loss of appetite','LOSS OF APPETITE'],
-        ['Persistent fever',''],
-        ['Shortness of breath','SHORTNESS OF BREATH'],
-        ['Fatigue','FATIGUE'],
-        ['Chest pains','CHEST PAIN']
-      ],
       'tb_xray_interpretation' => [
         ['',''],
         ['Consistent of TB',''],
         ['Not Consistent of TB','']
-      ],
-      'dot_options' => [
-        ['',''],
-        ['Hospital','HOSPITAL'],
-        ['Health Center','HEALTH CENTER'],
-        ['Guardian','GUARDIAN']
-      ],
-      'cough_durations' => ['', '2 Weeks', '3 Weeks', '4 Weeks','1 Month', 'More than one month'],
-      'tb_types' => [
-        ['',''],
-        ['PTB','PTB'],
-        ['EPTB','EPTB']
-      ],
-      'eptb_classification' => [
-        ['',''],
-        ['Pleural Effusion','PLEURAL EFFUSION'],
-        ['Lymphadenopathy','LYMPHADENOPATHY'],
-        ['Pericardial Effusion','PERICARDIAL EFFUSION'],
-        ['Ascites','ASCITES'],
-        ['Spinal / Bone disease','SPINAL DISEASE'],
-        ['Meningitis','MENINGITIS']
-      ],
-      'tb_classification' => [
-        ['',''],
-        ['Susceptible','SUSCEPTIBLE TO TUBERCULOSIS DRU'],
-        ['MDR','MDR-TB'],
-        ['XDR','XDR TB']
-      ],
-      'patient_category' => [
-        ['',''],
-        ['New','NEW PATIENT'],
-        ['Relapse','RELAPSE MDR-TB PATIENT'],
-        ['Treatment after Default','TREATMENT AFTER DEFAULT MDR-TB PATIENT'],
-        ['Fail','FAILED - TB'],
-        ['Other','']
       ],
       'lab_orders' =>{
         "Blood" => ["Full blood count", "Malaria parasite", "Group & cross match", "Urea & Electrolytes", "CD4 count", "Resistance",
