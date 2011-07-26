@@ -41,11 +41,11 @@ Check applicability of code below
 
   <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
   
-  <%= touch_select_tag "CLINICAL SYMPTOMS ASSOCIATED WITH TB SYMPTOMS", @patient, options_for_select(@select_options['tb_clinical_symptoms']),
+  <%= touch_select_tag "Clinical symptoms associated with TB", @patient, concept_set_options('Clinical symptoms associated with TB').sort + ['<option>Other</option><option>None</option>'],
     {:id => "clinical_symptoms_associated_with_tb",
      :tt_pageStyleClass => "NoKeyboard",
      :multiple => "true",
-     :helpText => "Clinical symptoms associated with TB symptoms" } %>
+     :helpText => "Clinical symptoms associated with TB" } %>
 
   <%= touch_select_tag "INTERPRET X-RAY", @patient, options_for_select(@select_options['tb_xray_interpretation']),
     {:id => "xray",

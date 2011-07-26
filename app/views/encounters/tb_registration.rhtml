@@ -41,54 +41,43 @@ Check applicability of code below
 
   <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
 
-  <%= touch_text_field_tag "TB DISTRICT NUMBER", @patient, nil,
+  <%= touch_text_field_tag "TB registration number", @patient, nil,
     {:id => "tb_district_number",
-     :helpText => "TB Registration number" } %>
+     :helpText => "TB registration number" } %>
   
-  <%#= touch_select_tag "SPUTUM EXAMINATION RESULTS", @patient, options_for_select(@answer_array),
-    {:id => "sputum_examination_results",
-     :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "Sputum examination results" } %>
-
-  <%= touch_select_tag "DOT OPTION", @patient, options_for_select(@select_options['dot_options']),
+  <%= touch_select_tag "DOT Option", @patient, concept_set_options("DOT Option"),
     {:id => "dot_option",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "DOT option" } %>
 
-  <%= touch_select_tag "NUMBER OF WEEKS OF CURRENT COUGH", @patient, options_for_select(@select_options['cough_durations']),
+  <%= touch_select_tag "Duration of current cough", @patient, concept_set_options("Duration of current cough"),
     {:id => "number_of_weeks_of_current_cough",
      :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "Number of weeks of current cough" } %>
+     :helpText => "Duration of current cough" } %>
 
-  <%= touch_select_tag "TB CLASSIFICATION", @patient, options_for_select(@select_options['tb_types']),
+  <%= touch_select_tag "TB classfication", concept_set_options("TB classfication"),
     {:id => "tb_classification",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "TB classification" } %>
 
-  <%= touch_select_tag "FURTHER TB CLASSIFICATION", @patient, options_for_select(@select_options['eptb_classification']),
+  <%= touch_select_tag "EPTB classification", @patient, concept_set_options("EPTB classification"),
     {:id => "further_tb_classification",
      :condition => '$("tb_classification").value == "EPTB"',
      :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "Further classification" } %>
+     :helpText => "EPTB classification" } %>
 
-  <%= touch_select_tag "TB TYPE", @patient, options_for_select(@select_options['tb_classification']),
+  <%= touch_select_tag "TB type", @patient, concept_set_options("TB type"),
     {:id => "tb_type",
      :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "TB type is" } %>
+     :helpText => "TB type / TB susceptibility" } %>
 
-  <%= touch_select_tag "PATIENT CATEGORY", @patient, options_for_select(@select_options['patient_category']),
+  <!--TODO Reminder based on the answer to question 'ever received TB Treatment'-->
+
+  <%= touch_select_tag "TB patient category", @patient,  concept_set_options('TB patient category').sort + ['<option>Other</option>'],
     {:id => "patient_category",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Patient category" } %>
 
-  <%#= touch_text_field_tag "ARV NUMBER", @patient, nil,
-    {:id => "arv_number",
-     :helpText => "ARV number" } %>
-  
-  <%#= touch_yes_no_unknown_tag "CTX STATUS", @patient, nil,
-    {:id => "ctx_status",
-     :helpText => "CTX Status" } %>
-  
   <%= submit_tag "Finish" %>    
 </form>
 <% end %>

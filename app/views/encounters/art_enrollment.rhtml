@@ -51,16 +51,6 @@ Change the date fields to 3tier date
 
   <!--System stops here and continues to next encounter(HEIGHT/WEIGHT) if willing to register at this clinic == 'NO'   -->
   
-  <%= touch_yes_no_unknown_tag "AGREES TO TEXT MESSAGE FOR ART THERAPY", @patient, nil,
-    {:id => "agrees_to_text_message",
-     :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
-     :helpText => "Can we send you an sms for ART therapy?" } %>
-   
-  <%= touch_yes_no_unknown_tag "AGREES TO FOLLOWUP", @patient, nil,
-    {:id => "agrees_to_followup",
-     :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
-    :helpText => "Can we visit you at home for ART therapy?" } %>
-    
   <%= touch_select_tag "LAST ART DRUGS TAKEN", @patient, options_for_select(@arv_drugs),
     {:id => "last_art_drugs_taken",
      :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
