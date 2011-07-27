@@ -53,7 +53,7 @@ Change the date fields to 3tier date
   
   <%= touch_select_tag "LAST ART DRUGS TAKEN", @patient, options_for_select(@arv_drugs),
     {:id => "last_art_drugs_taken",
-     :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+     :condition => '$("ever_received_art").value.toUpperCase() == "YES"&&$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Last ART drugs taken" } %>
      
@@ -104,9 +104,9 @@ Change the date fields to 3tier date
 
      <%= text_field_tag "art_initiation_date_year", nil, {:helpText => 'Year of ART initiation', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"'}  %>
 
-  <%= select_tag "art_initiation_date_month", month_name_options, {:helpText => 'Month of ART initiation', :condition => '$("art_initiation_date_year").value.toLowerCase() != "unknown";$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"'}%>
+  <%= select_tag "art_initiation_date_month", month_name_options, {:helpText => 'Month of ART initiation', :condition => '$("art_initiation_date_year").value.toLowerCase() != "unknown";$("ever_received_art").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"'}%>
 
-  <%= text_field_tag "art_initiation_date_day",  nil, :field_type => 'number', :helpText => 'Day of ART initiation', :condition => '($("art_initiation_date_year").value != "Unknown") && ($("art_initiation_date_month").value != "Unknown");$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"', :tt_onLoad => "getDayOfMonthPicker($('art_initiation_date_year').value, $('art_initiation_date_month').value)" %>
+  <%= text_field_tag "art_initiation_date_day",  nil, :field_type => 'number', :helpText => 'Day of ART initiation', :condition => '($("art_initiation_date_year").value != "Unknown") && ($("art_initiation_date_month").value != "Unknown") && $("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"', :tt_onLoad => "getDayOfMonthPicker($('art_initiation_date_year').value, $('art_initiation_date_month').value)" %>
 
      
   <%#= touch_date_tag "DATE OF ART INITIATION", @patient, nil,
@@ -117,25 +117,25 @@ Change the date fields to 3tier date
      
   <%= touch_location_tag "LOCATION OF ART INITIALIZATION", @patient, nil,
     {:id => "location_of_art_initialization",
-     :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+     :condition => '$("ever_received_art").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :helpText => "Location of ART initiation" } %>
      
   <% if @patient.person.gender == 'F' && @patient.person.age > 15 %>
     <%= touch_yes_no_tag "PREGNANT AT ART INITIATION", @patient, nil,
       {:id => "pregnant_at_art_initiation",
-       :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO';$('ever_received_art').value.toUpperCase() == 'YES'",
+       :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO' && $('ever_received_art').value.toUpperCase() == 'YES'",
        :helpText => "Pregnant at ART initiation?" } %>
   <% end %>  
   
   <%= touch_text_field_tag "HEIGHT AT ART INITIATION", @patient, nil,
     {:id => "height_at_art_initiation",
-     :condition => '$("ever_received_art").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+     :condition => '$("ever_received_art").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :field_type => 'number',
      :helpText => "Height when ART was started" } %>
      
   <%= touch_text_field_tag "WEIGHT AT ART INITIATION", @patient, nil,
     {:id => "weight_at_art_initiation",
-     :condition => '$("ever_received_art").value.toUpperCase()  == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+     :condition => '$("ever_received_art").value.toUpperCase()  == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :field_type => 'number',
      :helpText => "Weight when ART was started" } %>
 
@@ -143,6 +143,7 @@ Change the date fields to 3tier date
     {:id => "who_stage_one_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
+     :optional => true,
      :multiple => "true",
      :helpText => "WHO stage 1 conditions" } %>
 
@@ -150,18 +151,21 @@ Change the date fields to 3tier date
     {:id => "who_stage_two_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
+     :optional => true,
      :helpText => "WHO stage 2 conditions" } %>
 
   <%= touch_select_tag "WHO STAGE III CONDITIONS", @patient, options_for_select(@select_options['who_stage3']),
     {:id => "who_stage_three_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
+     :optional => true,
      :helpText => "WHO stage 3 conditions" } %>
      
   <%= touch_select_tag "WHO STAGE IV CONDITIONS", @patient, options_for_select(@select_options['who_stage4']),
     {:id => "who_stage_four_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
+     :optional => true,
      :helpText => "WHO stage 4 conditions" } %>
 
   
@@ -172,7 +176,7 @@ Change the date fields to 3tier date
 
      <%= text_field_tag "cd4_most_recent_sample_collection_year", nil, {:helpText => 'Lab - CD4 most recent sample collection Year', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :condition => '$("willing_to_register_at_clinic").value.toUpperCase() != "NO"'}  %>
 
-  <%= select_tag "cd4_most_recent_sample_collection_month", month_name_options, {:helpText => 'Lab - CD4 most recent sample collection Month', :condition => '$("cd4_most_recent_sample_collection_year").value.toLowerCase() != "unknown";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"'}%>
+  <%= select_tag "cd4_most_recent_sample_collection_month", month_name_options, {:helpText => 'Lab - CD4 most recent sample collection Month', :condition => '$("cd4_most_recent_sample_collection_year").value.toLowerCase() != "unknown" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"'}%>
 
   <%= text_field_tag "cd4_most_recent_sample_collection_day",  nil, :field_type => 'number', :helpText => 'Lab - CD4 most recent sample collection Day', :condition => '($("cd4_most_recent_sample_collection_year").value != "Unknown") && ($("cd4_most_recent_sample_collection_month").value != "Unknown");$("willing_to_register_at_clinic").value.toUpperCase() != "NO"', :tt_onLoad => "getDayOfMonthPicker($('cd4_most_recent_sample_collection_year').value, $('cd4_most_recent_sample_collection_month').value)" %>
 
@@ -186,13 +190,13 @@ Change the date fields to 3tier date
 
   <%= touch_text_field_tag "CD4 COUNT", @patient, nil,
     {:id => "cd4_count",
-     :condition => '$("cd4_count_available").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+     :condition => '$("cd4_count_available").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :field_type => 'number',
      :helpText => "CD4 Count" } %>
 
   <%= touch_numeric_tag "CD4 PERCENTAGE", @patient, nil,
     {:id => "cd4_percentage",
-     :condition => '$("cd4_count_available").value.toUpperCase() == "YES";$("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+     :condition => '$("cd4_count_available").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :field_type => 'number',
      :helpText => "CD4 Percentage" } %>
 
