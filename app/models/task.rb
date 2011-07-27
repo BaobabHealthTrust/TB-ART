@@ -21,8 +21,9 @@ class Task < ActiveRecord::Base
     elsif location.name == 'TB Reception'
       return "/encounters/new/tb_reception?patient_id=#{patient.id}" unless patient.encounters.map{|e| e.name}.uniq.include?('TB RECEPTION') #TODO take care of those cured and returned
       return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" if patient.hiv_test_results_within_3_months_available? == 'Yes' 
-      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" if !patient.art_patient? && hiv_status == 'Positive'
-      return "/encounters/new/vitals?patient_id=#{patient.id}" if (patient.art_patient? || patient.vitals_encounter_available? == false)
+      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" if (!todays_encounter_types.include?("ART ENROLLMENT") && hiv_status == 'Positive')
+      #return "/encounters/new/vitals?patient_id=#{patient.id}" if (patient.art_patient? || patient.vitals_encounter_available? == false)
+      return "/encounters/new/vitals?patient_id=#{patient.id}" unless todays_encounter_types.include?("VITALS")
 
     elsif location.name == 'TB Clinician Station'
       return "/encounters/new/clinic_visit?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB CLINIC VISIT")
