@@ -15,7 +15,7 @@ class Task < ActiveRecord::Base
     
     if location.name == 'Chronic Cough'
       return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_index
-      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" if !todays_encounter_types.include?("UPDATE HIV STATUS") || (hiv_status == 'Negative' && patient.months_since_last_hiv_test > 3) || hiv_status == 'Unknown' 
+      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" if !todays_encounter_types.include?("UPDATE HIV STATUS") 
       return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
 
     elsif location.name == 'TB Reception'
