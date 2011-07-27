@@ -35,16 +35,30 @@
 
   function updateInfoBar(element){
     var val = unescape(element.innerHTML)
-    var idx = val_arr.toString().indexOf(val);
+    var idx = val_arr.indexOf(val);
     if (idx == -1){
       val_arr.push(val);
+      }else{
+      val_arr.splice(idx,1)
     }
+    tstInputTarget.value = ""
     $('infoBar'+tstCurrentPage).innerHTML = val_arr.toString();
     $('final_tests').value = val_arr.join(';');
   }
 
    function showTaskName(){
     $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Lab Order</span></div></div>' 
+  }
+
+  function colourfy(){
+    alert('AA');
+  }
+
+  function updateLabOptions(){
+    opts_arr = document.getElementsByTagName('li')
+    for (var i = 0; i < opts_arr.length; i++){
+      opts_arr[i].setAttribute("onmousedown", "updateInfoBar();updateTouchscreenInputForSelect(this);colourfy();")
+    }
   }
 
 </script>
@@ -69,6 +83,7 @@
   }
 
   .tt_controls_main_tests .keyboard{display:none;}
+  #tt_page_main_tests .options{height:570px}
 
 </style>
 <form id='label_specimens' action="/encounters/create" method='post'>
@@ -83,13 +98,14 @@
   <%= select_tag "main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.unshift(" ")), 
     {:helptext => 'Main tests', 
       :id => 'main_tests',
-     :tt_onUnLoad => 'updateLaborderUrl($("main_tests").value)'}%>
+     :tt_onUnLoad => 'updateLaborderUrl($("main_tests").value);'}%>
 
   <%= select_tag "lab_orders", options_for_select([]),
     {:id => "lab_orders",
-     :tt_onLoad => '$("infoBar"+tstCurrentPage).innerHTML = val_arr.toString()',
+     :tt_onLoad => '$("infoBar"+tstCurrentPage).innerHTML = val_arr.toString();updateLabOptions();',
      :ajaxURL => '',
      :tt_onUnLoad => "",
+     :multiple => true,
      :helpText => "Select test" } %>
 
      <%= touch_hidden_tag "TESTS ORDERED", @patient, nil, :id => "final_tests", :multiple => true %>
