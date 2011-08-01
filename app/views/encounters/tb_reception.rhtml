@@ -37,7 +37,7 @@
     <%= touch_yes_no_unknown_tag "HIV TEST RESULTS WITHIN 3 MONTHS", @patient, nil,{:id => "hiv_test_results_within_3_months"} %>
   <%end%>
   <!--Show HTC reminder if the person is Negative and has no results with the last 3 months or if person's hiv status is uknown-->
-  <%= text_field_tag :summary, nil, { :tt_onLoad => "$('hivTestReminder').style.display = 'block';", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => '$("hiv_test_results_within_3_months").value == "NO"', :tt_onUnload => "$('hivTestReminder').style.display = 'none';"} %>
+  <%= text_field_tag :summary, nil, { :tt_onLoad => "$('hivTestReminder').style.display = 'block';", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => '$("hiv_test_results_within_3_months").value == "NO"'} %>
 
   <%= submit_tag "Finish" %>    
 
