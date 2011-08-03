@@ -173,7 +173,7 @@ class EncountersController < ApplicationController
       diagnosis_concepts = Concept.find(:all, :joins => :concept_sets, :conditions => ['concept_set = ?', concept_set.id], :include => [:name])
     end  
     valid_answers = diagnosis_concepts.map{|concept| 
-      name = concept.name.name rescue nil
+      name = concept.fullname rescue nil
       name.match(search_string) ? name : nil rescue nil
     }.compact
     previous_answers = []
@@ -232,16 +232,16 @@ class EncountersController < ApplicationController
 
     regimen_types.collect{|regimen_type|
       Concept.find_by_name(regimen_type).concept_members.flatten.collect{|member|
-        next if member.concept.name.name.include?("Triomune Baby") and !options[:patient].child?
-        next if member.concept.name.name.include?("Triomune Junior") and !options[:patient].child?
+        next if member.concept.fullname.include?("Triomune Baby") and !options[:patient].child?
+        next if member.concept.fullname.include?("Triomune Junior") and !options[:patient].child?
         if options[:use_short_names]
-          include_fixed = member.concept.name.name.match("(fixed)")
+          include_fixed = member.concept.fullname.match("(fixed)")
           answer_array << [member.concept.shortname, member.concept_id] unless include_fixed
           answer_array << ["#{member.concept.shortname} (fixed)", member.concept_id] if include_fixed
           member.concept.shortname
         else
-          answer_array << [member.concept.name.name.titleize, member.concept_id] unless member.concept.name.name.include?("+")
-          answer_array << [member.concept.name.name, member.concept_id] if member.concept.name.name.include?("+")
+          answer_array << [member.concept.fullname.titleize, member.concept_id] unless member.concept.fullname.include?("+")
+          answer_array << [member.concept.fullname, member.concept_id] if member.concept.fullname.include?("+")
         end
       }
     }

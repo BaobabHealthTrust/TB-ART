@@ -5,51 +5,16 @@ class Task < ActiveRecord::Base
 
   # Try to find the next task for the patient at the given location
   def self.next_task(location, patient, session_date = Date.today)
-    referred_by_tb_index = PersonAttribute.find(:first, :conditions => ["person_id =? and person_attribute_type_id =?",patient.id,PersonAttributeType.find(:first, :conditions => ["name = ?","Source of referral"]).id])
-
-    todays_encounters = patient.encounters.find_by_date(session_date)
-    todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
-    hiv_status = patient.hiv_status
-
-    #TODO Get all these into the task table
-    
-    if location.name == 'Chronic Cough'
-      return "/people/new_tb_index_person?patient_id=#{patient.id}" unless referred_by_tb_index
-      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" if !todays_encounter_types.include?("UPDATE HIV STATUS") 
-      return "/encounters/new/lab_order?patient_id=#{patient.id}" unless todays_encounter_types.include?("LAB ORDERS")
-
-    elsif location.name == 'TB Reception'
-      return "/encounters/new/tb_reception?patient_id=#{patient.id}" unless patient.encounters.map{|e| e.name}.uniq.include?('TB RECEPTION') #TODO take care of those cured and returned
-      return "/encounters/new/update_hiv_status?patient_id=#{patient.id}" if patient.hiv_test_results_within_3_months_available? == 'Yes' 
-      return "/encounters/new/art_enrollment?patient_id=#{patient.id}" if (!todays_encounter_types.include?("ART ENROLLMENT") && hiv_status == 'Positive')
-      #return "/encounters/new/vitals?patient_id=#{patient.id}" if (patient.art_patient? || patient.vitals_encounter_available? == false)
-      return "/encounters/new/vitals?patient_id=#{patient.id}" unless todays_encounter_types.include?("VITALS")
-
-    elsif location.name == 'TB Clinician Station'
-      return "/encounters/new/clinic_visit?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB CLINIC VISIT")
-      return "/encounters/new/llh_staging?patient_id=#{patient.id}" if (!todays_encounter_types.include?("HIV STAGING") && hiv_status == 'Positive')
-
-    elsif location.name == 'TB Registration'
-      return "/encounters/new/tb_registration?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB REGISTRATION")
-      #return "/people/new_tb_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
-      #return "/encounters/new/ipt_contact_person?patient_id=#{patient.id}" #TODO find conditions for this
-      return "/prescriptions/tb_treatment?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB TREATMENT")
-
-    elsif location.name == 'TB Folloup Room'
-      return "/prescriptions/tb_treatment?patient_id=#{patient.id}" unless todays_encounter_types.include?("TB TREATMENT")
-
-    elsif location.name == 'Pharmacy'
-      return "/encounters/give_drugs?patient_id=#{patient.id}" 
+    if GlobalProperty.use_user_selected_activities
+      return self.next_form(patient , session_date)
     end
-=begin
     all_tasks = self.all(:order => 'sort_weight ASC')
     todays_encounters = patient.encounters.find_by_date(session_date)
     todays_encounter_types = todays_encounters.map{|e| e.type.name rescue ''}.uniq rescue []
     all_tasks.each do |task|
-
+      next if todays_encounters.map{ | e | e.name }.include?(task.encounter_type)
       # Is the task for this location?
       next unless task.location.blank? || task.location == '*' || location.name.match(/#{task.location}/)
-      next if task.description == 'If a patient/guardian has skipped a station'
 
       # Have we already run this task?
       next if task.encounter_type.present? && todays_encounter_types.include?(task.encounter_type)
@@ -79,8 +44,8 @@ class Task < ActiveRecord::Base
         # Only the most recent obs
         # For example, if there are mutliple REFER TO CLINICIAN = yes, than only take the most recent one
         if (task.has_obs_scope == 'RECENT')
-          o = patient.person.observations.recent(1).first(:conditions => ['encounter_id IN (?) AND concept_id =?', todays_encounters.map(&:encounter_id), task.has_obs_concept_id])
-          obs = 0 if (o.value_coded == task.has_obs_value_coded && o.value_drug == task.has_obs_value_drug &&
+          o = patient.person.observations.recent(1).first(:conditions => ['encounter_id IN (?) AND concept_id =? AND DATE(obs_datetime)=?', todays_encounters.map(&:encounter_id), task.has_obs_concept_id,session_date])
+          obs = 0 if (!o.nil? && o.value_coded == task.has_obs_value_coded && o.value_drug == task.has_obs_value_drug &&
             o.value_datetime == task.has_obs_value_datetime && o.value_numeric == task.has_obs_value_numeric &&
             o.value_text == task.has_obs_value_text )
         end
@@ -130,15 +95,25 @@ class Task < ActiveRecord::Base
         skip = true unless patient.patient_identifiers.first(
           :conditions => ['patient_identifier.identifier_type = ? AND patient_identifier.location_id = ?', task.has_identifier_type_id, Location.current_health_center.location_id])
       end
-      
+  
       if task.has_encounter_type_today.present?
         enc = nil
-        todays_encounters.each do | e |
-          if (e.name == task.has_encounter_type_today)
-            enc = e
-          end
+        if todays_encounters.collect{|e|e.name}.include?(task.has_encounter_type_today)
+          enc = task.has_encounter_type_today
         end
         skip = true unless enc.present?
+      end
+
+      if task.encounter_type == 'ART ADHERENCE' and patient.drug_given_before(session_date).blank?
+        skip = true
+      end
+      
+      if task.encounter_type == 'ART VISIT' and (patient.reason_for_art_eligibility.blank? or patient.reason_for_art_eligibility.match(/unknown/i))
+        skip = true
+      end
+      
+      if task.encounter_type == 'HIV STAGING' and not (patient.reason_for_art_eligibility.blank? or patient.reason_for_art_eligibility.match(/unknown/i))
+        skip = true
       end
       
       # Reverse the condition if the task wants the negative (for example, if the patient doesn't have a specific program yet, then run this task)
@@ -146,9 +121,9 @@ class Task < ActiveRecord::Base
 
       # We need to skip this task for some reason
       next if skip
-      
-      if location.name.match(/HIV|ART/i)
-       task = self.validate_task(patient,task,session_date.to_date)
+
+      if location.name.match(/HIV|ART/i) and not location.name.match(/Outpatient/i)
+       task = self.validate_task(patient,task,location,session_date.to_date)
       end
 
       # Nothing failed, this is the next task, lets replace any macros
@@ -160,20 +135,41 @@ class Task < ActiveRecord::Base
       
       return task
     end
-=end
+  end 
   
-  end
-
-  
-  def self.validate_task(patient,task,session_date = Date.today)
+  def self.validate_task(patient, task, location, session_date = Date.today)
     #return task unless task.has_program_id == 1
     return task if task.encounter_type == 'REGISTRATION'
+    # allow EID patients at HIV clinic, but don't validate tasks
+    return task if task.has_program_id == 4
+    
+    #check if the latest HIV program is closed - if yes, the app should redirect the user to update state screen
+    if patient.encounters.find_by_encounter_type(EncounterType.find_by_name('ART_INITIAL').id)
+      latest_hiv_program = [] ; patient.patient_programs.collect{ | p |next unless p.program_id == 1 ; latest_hiv_program << p } 
+      if latest_hiv_program.last.closed?
+        task.url = '/patients/programs_dashboard/{patient}' ; task.encounter_type = 'Program enrolment'
+        return task
+      end rescue nil
+    end
+
+    return task if task.url == "/patients/show/{patient}"
+
     art_encounters = ['ART_INITIAL','HIV RECEPTION','VITALS','HIV STAGING','ART VISIT','ART ADHERENCE','TREATMENT','DISPENSING']
 
+    #if the following happens - that means the patient is a transfer in and the reception are trying to stage from the transfer in sheet
+    if task.encounter_type == 'HIV STAGING' and location.name.match(/RECEPTION/i)
+      return task 
+    end
+
+    #if the following happens - that means the patient was refered to see a clinician
+    if task.description.match(/REFER/i) and location.name.match(/Clinician/i)
+      return task 
+    end
+
     if patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[0]).id).blank? and task.encounter_type != art_encounters[0]
-      t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[0].gsub(' ','_')}") 
-      return t
+      task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+      task.url = task.url.gsub(/\{encounter_type\}/, "#{art_encounters[0].gsub(' ','_')}") 
+      return task
     elsif patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[0]).id).blank? and task.encounter_type == art_encounters[0]
       return task
     end
@@ -184,74 +180,232 @@ class Task < ActiveRecord::Base
                                    :order =>'encounter_datetime DESC')
 
     if hiv_reception.blank? and task.encounter_type != art_encounters[1]
-      t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[1].gsub(' ','_')}") 
-      return t
+      task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+      task.url = task.url.gsub(/\{encounter_type\}/, "#{art_encounters[1].gsub(' ','_')}") 
+      return task
     elsif hiv_reception.blank? and task.encounter_type == art_encounters[1]
       return task
     end
 
-    vitals = Encounter.find(:first,
-                            :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
-                            patient.id,EncounterType.find_by_name(art_encounters[2]).id,session_date],
-                            :order =>'encounter_datetime DESC')
 
-    if vitals.blank? and task.encounter_type != art_encounters[2]
-      t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[2].gsub(' ','_')}") 
-      return t
-    elsif vitals.blank? and task.encounter_type == art_encounters[2]
+
+    reception = Encounter.find(:first,:conditions =>["patient_id = ? AND DATE(encounter_datetime) = ? AND encounter_type = ?",
+                        patient.id,session_date,EncounterType.find_by_name(art_encounters[1]).id]).collect{|r|r.to_s}.join(',') rescue ''
+    
+    if reception.match(/PATIENT PRESENT FOR CONSULTATION: YES/i)
+      vitals = Encounter.find(:first,
+                              :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
+                              patient.id,EncounterType.find_by_name(art_encounters[2]).id,session_date],
+                              :order =>'encounter_datetime DESC')
+
+      if vitals.blank? and task.encounter_type != art_encounters[2]
+        task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+        task.url = task.url.gsub(/\{encounter_type\}/, "#{art_encounters[2].gsub(' ','_')}") 
+        return task
+      elsif vitals.blank? and task.encounter_type == art_encounters[2]
+        return task
+      end
+    end
+
+    hiv_staging = patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[3]).id)
+    art_reason = patient_obj.person.observations.recent(1).question("REASON FOR ART ELIGIBILITY").all rescue nil
+    reasons = art_reason.map{|c|ConceptName.find(c.value_coded_name_id).name}.join(',') rescue ''
+
+    if ((reasons.blank?) and (task.encounter_type == art_encounters[3]))
+      return task
+    elsif hiv_staging.blank? and task.encounter_type != art_encounters[3]
+      task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+      task.url = task.url.gsub(/\{encounter_type\}/, "#{art_encounters[3].gsub(' ','_')}") 
+      return task
+    elsif hiv_staging.blank? and task.encounter_type == art_encounters[3]
       return task
     end
 
-    if patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[3]).id).blank? and task.encounter_type != art_encounters[3]
-      t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[3].gsub(' ','_')}") 
-      return t
-    elsif patient.encounters.find_by_encounter_type(EncounterType.find_by_name(art_encounters[3]).id).blank? and task.encounter_type == art_encounters[3]
-      return task
-    end
-
-    art_visit = Encounter.find(:first,
+    pre_art_visit = Encounter.find(:first,
                                    :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
-                                   patient.id,EncounterType.find_by_name(art_encounters[4]).id,session_date],
+                                   patient.id,EncounterType.find_by_name('PART_FOLLOWUP').id,session_date],
                                    :order =>'encounter_datetime DESC',:limit => 1)
 
-    if art_visit.blank? and task.encounter_type != art_encounters[4]
-      t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[4].gsub(' ','_')}") 
-      return t
-    elsif art_visit.blank? and task.encounter_type == art_encounters[4]
-      return task
-    end
-=begin
-    art_adherance = Encounter.find(:first,
-                                   :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
-                                   patient.id,EncounterType.find_by_name(art_encounters[5]).id,session_date],
-                                   :order =>'encounter_datetime DESC',:limit => 1)
+    if pre_art_visit.blank?
+      art_visit = Encounter.find(:first,
+                                     :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
+                                     patient.id,EncounterType.find_by_name(art_encounters[4]).id,session_date],
+                                     :order =>'encounter_datetime DESC',:limit => 1)
 
-    if art_adherance.blank? and task.encounter_type != art_encounters[5]
-      t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[5].gsub(' ','_')}") 
-      return t
-    elsif art_adherance.blank? and task.encounter_type == art_encounters[5]
-      return task
-    end
-=end
-    art_treatment = Encounter.find(:first,
-                                   :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
-                                   patient.id,EncounterType.find_by_name(art_encounters[6]).id,session_date],
-                                   :order =>'encounter_datetime DESC',:limit => 1)
+      if art_visit.blank? and task.encounter_type != art_encounters[4]
+        #checks if we need to do a pre art visit
+        if task.encounter_type == 'PART_FOLLOWUP' 
+          return task
+        elsif reasons.upcase == 'UNKNOWN' or reasons.blank?
+          task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+          task.url = task.url.gsub(/\{encounter_type\}/, "PRE_ART_FOLLOWUP") 
+          return task
+        end
 
-    if art_visit.blank? and task.encounter_type != art_encounters[6]
-      t = Task.find_by_description("If a patient/guardian has skipped a station")
-      t.url = t.url.gsub(/\{encounter_type\}/, "#{art_encounters[6].gsub(' ','_')}") 
-      return t
-    elsif art_visit.blank? and task.encounter_type == art_encounters[6]
-      return task
+        task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+        task.url = task.url.gsub(/\{encounter_type\}/, "#{art_encounters[4].gsub(' ','_')}") 
+        return task
+      elsif art_visit.blank? and task.encounter_type == art_encounters[4]
+        return task
+      end
     end
 
+    unless patient.drug_given_before(session_date).blank?
+      art_adherance = Encounter.find(:first,
+                                     :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
+                                     patient.id,EncounterType.find_by_name(art_encounters[5]).id,session_date],
+                                     :order =>'encounter_datetime DESC',:limit => 1)
+      
+      if art_adherance.blank? and task.encounter_type != art_encounters[5]
+        task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+        task.url = task.url.gsub(/\{encounter_type\}/, "#{art_encounters[5].gsub(' ','_')}") 
+        return task
+      elsif art_adherance.blank? and task.encounter_type == art_encounters[5]
+        return task
+      end
+    end
+
+    if patient.prescribe_arv_this_visit(session_date)
+      art_treatment = Encounter.find(:first,
+                                     :conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
+                                     patient.id,EncounterType.find_by_name(art_encounters[6]).id,session_date],
+                                     :order =>'encounter_datetime DESC',:limit => 1)
+      if art_treatment.blank? and task.encounter_type != art_encounters[6]
+        task.url = "/patients/summary?patient_id={patient}&skipped={encounter_type}" 
+        task.url = task.url.gsub(/\{encounter_type\}/, "#{art_encounters[6].gsub(' ','_')}") 
+        return task
+      elsif art_treatment.blank? and task.encounter_type == art_encounters[6]
+        return task
+      end
+    end
 
     task
   end 
+
+  def self.next_form(patient , session_date = Date.today)
+    
+    #we get the sequence of clinic questions(encounters) form the GlobalProperty table
+    #property: list.of.clinical.encounters.sequentially
+    #property_value: ?
+
+    #valid privileges for ART visit ....
+    #1. Manage Vitals - VITALS
+    #2. Manage pre ART visits - PART_FOLLOWUP
+    #3. Manage HIV staging visits - HIV STAGING
+    #4. Manage HIV reception visits - HIV RECEPTION
+    #5. Manage HIV first visit - ART_INITIAL
+    #6. Manage drug dispensations - DISPENSING
+    #7. Manage ART visits - ART VISIT
+    #8. Manage TB reception visits -? 
+    #9. Manage prescriptions - TREATMENT
+    #10. Manage appointments - APPOINTMENT
+    #11. Manage ART adherence - ART ADHERENCE
+
+    encounters_sequentially = GlobalProperty.find_by_property('list.of.clinical.encounters.sequentially')
+    encounters = encounters_sequentially.property_value.split(',') rescue []
+    user_selected_activities = User.current_user.activities.collect{|a| a.upcase }.join(',') rescue []
+    task = self.first rescue self.new()
+    if encounters.blank? or user_selected_activities.blank?
+      task.url = "/patients/show/#{patient.id}"
+      return task
+    end
+    art_reason = patient.person.observations.recent(1).question("REASON FOR ART ELIGIBILITY").all rescue nil
+    reason_for_art = art_reason.map{|c|ConceptName.find(c.value_coded_name_id).name}.join(',') rescue ''
+    
+    encounters.each do | type |
+      encounter_available = Encounter.find(:first,:conditions =>["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
+                                     patient.id,EncounterType.find_by_name(type).id,session_date],
+                                     :order =>'encounter_datetime DESC',:limit => 1)
+      reception = Encounter.find(:first,:conditions =>["patient_id = ? AND DATE(encounter_datetime) = ? AND encounter_type = ?",
+                        patient.id,session_date,EncounterType.find_by_name('HIV RECEPTION').id]).collect{|r|r.to_s}.join(',') rescue ''
+        
+      task.encounter_type = type 
+      case type
+        when 'VITALS'
+          if encounter_available.blank? and user_selected_activities.match(/Manage Vitals/i) 
+            task.url = "/encounters/new/vitals?patient_id=#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage Vitals/i) 
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end if reception.match(/PATIENT PRESENT FOR CONSULTATION: YES/i)
+        when 'ART VISIT'
+          if encounter_available.blank? and user_selected_activities.match(/Manage ART visits/i)
+            task.url = "/encounters/new/art_visit?show&patient_id=#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage ART visits/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end if not reason_for_art.upcase ==  'UNKNOWN'
+        when 'PART_FOLLOWUP'
+          if encounter_available.blank? and user_selected_activities.match(/Manage pre ART visits/i)
+            task.url = "/encounters/new/pre_art_visit?show&patient_id=#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage pre ART visits/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end if reason_for_art.upcase ==  'UNKNOWN'
+        when 'HIV STAGING'
+          if encounter_available.blank? and user_selected_activities.match(/Manage HIV staging visits/i) 
+            task.url = "/encounters/new/hiv_staging?show&patient_id=#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage HIV staging visits/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end if (reason_for_art.upcase ==  'UNKNOWN' or reason_for_art.blank?)
+        when 'HIV RECEPTION'
+          if encounter_available.blank? and user_selected_activities.match(/Manage HIV reception visits/i)
+            task.url = "/encounters/new/hiv_reception?show&patient_id=#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage HIV reception visits/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end
+        when 'ART_INITIAL'
+          encounter_art_initial = Encounter.find(:first,:conditions =>["patient_id = ? AND encounter_type = ?",
+                                         patient.id,EncounterType.find_by_name(type).id],
+                                         :order =>'encounter_datetime DESC',:limit => 1)
+          if encounter_art_initial.blank? and user_selected_activities.match(/Manage HIV first visits/i)
+            task.url = "/encounters/new/art_initial?show&patient_id=#{patient.id}"
+            return task
+          elsif encounter_art_initial.blank? and not user_selected_activities.match(/Manage HIV first visits/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end
+        when 'DISPENSING'
+          treatment = Encounter.find(:first,:conditions =>["patient_id = ? AND DATE(encounter_datetime) = ? AND encounter_type = ?",
+                            patient.id,session_date,EncounterType.find_by_name('TREATMENT').id]).observations.to_s rescue ''
+          if encounter_available.blank? and user_selected_activities.include?('Manage drug dispensations')
+            task.url = "/patients/treatment_dashboard/#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage drug dispensations/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end if not treatment.blank?
+        when 'TREATMENT'
+          if encounter_available.blank? and user_selected_activities.match(/Manage prescriptions/i)
+            task.url = "/regimens/new?patient_id=#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage prescriptions/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end
+        when 'ART ADHERENCE'
+          if encounter_available.blank? and user_selected_activities.match(/Manage ART adherence/i)
+            task.url = "/encounters/new/art_adherence?show&patient_id=#{patient.id}"
+            return task
+          elsif encounter_available.blank? and not user_selected_activities.match(/Manage ART adherence/i)
+            task.url = "/patients/show/#{patient.id}"
+            return task
+          end if not patient.drug_given_before(session_date).blank?
+      end
+    end
+    #task.encounter_type = 'Visit complete ...'
+    task.encounter_type = 'Patient dashboard ...'
+    task.url = "/patients/show/#{patient.id}"
+    return task
+  end
+
+
+
 end

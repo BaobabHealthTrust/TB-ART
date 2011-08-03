@@ -92,7 +92,7 @@ Change the date fields to 3tier date
      :condition => '$("ever_registered_at_art_clinic").value.toUpperCase()  == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :helpText => "Has transfer letter?"} %>
      
-  <%= touch_location_tag "SITE TRANSFERRED FROM", @patient, nil,
+  <%= touch_location_tag "TRANSFER IN FROM", @patient, nil,
     {:id => "site_transferred_from",
      :condition => '$("ever_registered_at_art_clinic").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :helpText => "Site transferred from" } %>
@@ -115,7 +115,7 @@ Change the date fields to 3tier date
     :absoluteMax => Date.today,
     :helpText => "Date of ART initiation"} %>
      
-  <%= touch_location_tag "LOCATION OF ART INITIALIZATION", @patient, nil,
+  <%= touch_location_tag "LOCATION OF ART INITIATION", @patient, nil,
     {:id => "location_of_art_initialization",
      :condition => '$("ever_received_art").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :helpText => "Location of ART initiation" } %>
@@ -126,20 +126,49 @@ Change the date fields to 3tier date
        :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO' && $('ever_received_art').value.toUpperCase() == 'YES'",
        :helpText => "Pregnant at ART initiation?" } %>
   <% end %>  
-  
-  <%= touch_text_field_tag "HEIGHT AT ART INITIATION", @patient, nil,
-    {:id => "height_at_art_initiation",
-     :condition => '$("ever_received_art").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
-     :field_type => 'number',
-     :helpText => "Height when ART was started" } %>
      
-  <%= touch_text_field_tag "WEIGHT AT ART INITIATION", @patient, nil,
-    {:id => "weight_at_art_initiation",
-     :condition => '$("ever_received_art").value.toUpperCase()  == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
-     :field_type => 'number',
-     :helpText => "Weight when ART was started" } %>
+    <% if @patient.person.age > 18 and not @patient.current_height == 0 %>
+      <%= hidden_field_tag "observations[][value_numeric]",@patient.current_height %>
+      <%= hidden_field_tag("observations[][concept_name]", "HEIGHT (CM)") %>
+      <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+      <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+    <% else %>
+    <label for='height_at_art_initiation'>Height (cm)</label>
+      <%= text_field_tag "observations[][value_numeric]", nil,
+        {:id => "height_at_art_initiation",
+         :field_type => 'number',
+         :min => number_with_precision(@patient.min_height, :precision => 1),
+         :max => number_with_precision(@patient.max_height, :precision => 1),
+         :absoluteMin => 10,
+         :absoluteMax => 228,
+         :condition => '$("ever_received_art").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+         :units => 'cm',
+         :validationRule => "^([0-9]+)|Unknown$",
+         :validationMessage => "You must enter numbers only (for example 157)",
+         :tt_pageStyleClass => "Numeric NumbersOnly"} %>
+      <%= hidden_field_tag("observations[][concept_name]", "HEIGHT (CM)") %>
+      <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+      <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
+    <% end %>
+     
+    <label for='weight_at_art_initiation'>Weight (Kg)</label>
+      <%= text_field_tag "observations[][value_numeric]", nil,
+        {:id => "weight_at_art_initiation",
+         :field_type => 'number',
+         :min => number_with_precision(@patient.min_weight, :precision => 1),
+         :max => number_with_precision(@patient.max_weight, :precision => 1),
+         :absoluteMin => 0,
+         :absoluteMax => 250,
+         :condition => '$("ever_received_art").value.toUpperCase()  == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
+         :units => 'kg',
+         :validationRule => "([0-9]+\\.[0-9])|Unknown$",
+         :validationMessage => "You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)",
+         :tt_pageStyleClass => "Numeric NumbersOnlyWithDecimal"} %>
+      <%= hidden_field_tag("observations[][concept_name]", "WEIGHT (KG)") %>
+      <%= hidden_field_tag("observations[][patient_id]", @patient.id) %>
+      <%= hidden_field_tag("observations[][obs_datetime]", DateTime.now()) %>
 
-  <%= touch_select_tag "WHO STAGE I CONDITIONS", @patient, concept_set_options('WHO STAGE I ADULT AND PEDS').sort + concept_set_options('WHO STAGE I ADULT').sort,
+  <%= touch_select_tag "WHO STAGE I ADULT AND PEDS", @patient, concept_set_options('WHO STAGE I ADULT AND PEDS').sort + concept_set_options('WHO STAGE I ADULT').sort,
     {:id => "who_stage_one_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
@@ -147,7 +176,7 @@ Change the date fields to 3tier date
      :multiple => "true",
      :helpText => "WHO stage 1 conditions" } %>
 
-  <%= touch_select_tag "WHO STAGE II CONDITIONS", @patient, options_for_select(@select_options['who_stage2']),
+  <%= touch_select_tag "WHO STAGE II ADULT AND PEDS", @patient, options_for_select(@select_options['who_stage2']),
     {:id => "who_stage_two_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
@@ -155,7 +184,7 @@ Change the date fields to 3tier date
      :multiple => "true",
      :helpText => "WHO stage 2 conditions" } %>
 
-  <%= touch_select_tag "WHO STAGE III CONDITIONS", @patient, options_for_select(@select_options['who_stage3']),
+  <%= touch_select_tag "WHO STAGE III ADULT AND PEDS", @patient, options_for_select(@select_options['who_stage3']),
     {:id => "who_stage_three_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
@@ -163,7 +192,7 @@ Change the date fields to 3tier date
      :multiple => "true",
      :helpText => "WHO stage 3 conditions" } %>
      
-  <%= touch_select_tag "WHO STAGE IV CONDITIONS", @patient, options_for_select(@select_options['who_stage4']),
+  <%= touch_select_tag "WHO STAGE IV ADULT AND PEDS", @patient, options_for_select(@select_options['who_stage4']),
     {:id => "who_stage_four_conditions",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :tt_pageStyleClass => "NoKeyboard",
@@ -171,8 +200,10 @@ Change the date fields to 3tier date
      :multiple => "true",
      :helpText => "WHO stage 4 conditions" } %>
 
-  
-  <%= touch_yes_no_unknown_tag "CD4 COUNT AVAILABLE", @patient, nil,
+    <label for='cd4_count_available'>CD4 count available?</label>
+      <%= select_tag "cd4_count_available", options_for_select([['Yes','YES'],['No','NO']]), :id => 'cd4_count_available', :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'", :tt_pageStyleClass => 'NoKeyboard' %>
+        
+  <%#= touch_yes_no_unknown_tag "CD4 COUNT AVAILABLE", @patient, nil,
     {:id => "cd4_count_available",
      :condition => "$('willing_to_register_at_clinic').value.toUpperCase() != 'NO'",
      :helpText => "CD4 count available?" } %>
@@ -197,7 +228,7 @@ Change the date fields to 3tier date
      :field_type => 'number',
      :helpText => "CD4 Count" } %>
 
-  <%= touch_numeric_tag "CD4 PERCENTAGE", @patient, nil,
+  <%= touch_numeric_tag "CD4 PERCENT", @patient, nil,
     {:id => "cd4_percentage",
      :condition => '$("cd4_count_available").value.toUpperCase() == "YES" && $("willing_to_register_at_clinic").value.toUpperCase() != "NO"',
      :field_type => 'number',

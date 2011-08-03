@@ -6,5 +6,6 @@ class ConceptName < ActiveRecord::Base
   has_many :tags, :through => :concept_name_tag_maps, :class_name => 'ConceptNameTag'
   belongs_to :concept, :conditions => {:retired => 0}
   named_scope :tagged, lambda{|tags| tags.blank? ? {} : {:include => :tags, :conditions => ['concept_name_tag.tag IN (?)', Array(tags)]}}
+  named_scope :typed, lambda{|tags| tags.blank? ? {} : {:conditions => ['concept_name_type IN (?)', Array(tags)]}}
 end
 

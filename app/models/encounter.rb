@@ -6,7 +6,7 @@ class Encounter < ActiveRecord::Base
   has_many :drug_orders,  :through   => :orders,  :foreign_key => 'order_id'
   has_many :orders, :dependent => :destroy, :conditions => {:voided => 0}
   belongs_to :type, :class_name => "EncounterType", :foreign_key => :encounter_type, :conditions => {:retired => 0}
-  belongs_to :provider, :class_name => "User", :foreign_key => :provider_id, :conditions => {:voided => 0}
+  belongs_to :provider, :class_name => "User", :foreign_key => :provider_id, :conditions => {:retired => 0}
   belongs_to :patient, :conditions => {:voided => 0}
 
   # TODO, this needs to account for current visit, which needs to account for possible retrospective entry
@@ -18,9 +18,13 @@ class Encounter < ActiveRecord::Base
     self.encounter_datetime = Time.now if self.encounter_datetime.blank?
   end
 
+  def after_save
+    self.add_location_obs
+  end
+
   def after_void(reason = nil)
-    self.orders.each{|row| Pharmacy.voided_stock_adjustment(order) if row.order_type_id == 1 }
-    self.observations.each{|row| row.void(reason) }
+    self.orders.each{|row| Pharmacy.voided_stock_adjustment(order) if row.order_type_id == 1 } rescue []
+    self.observations.each{|row| row.void(reason) } rescue []
     self.find_by_sql("SELECT * FROM encounter ORDER BY encounter_datetime DESC LIMIT 1").orders.each{|row| row.void(reason) } rescue []
   end
 
@@ -64,7 +68,7 @@ class Encounter < ActiveRecord::Base
       vitals << temp_str if temp_str                          
       vitals.join(', ')
     else  
-      observations.collect{|observation| observation.answer_string}.join(", ")
+      observations.collect{|observation| "<b>#{(observation.concept.concept_names.last.name) rescue ""}</b>: #{observation.answer_string}"}.join(", ")
     end  
   end
 
@@ -111,14 +115,6 @@ class Encounter < ActiveRecord::Base
       :conditions => ["obs.voided = 0 AND encounter_type IN (?) AND encounter_datetime >=? AND encounter_datetime <=?",required_encounters_ids,start_date,end_date],
       :group      => "encounter.patient_id,DATE(encounter_datetime)",
       :order      => "encounter.encounter_datetime ASC")
-  end
-
-  def self.lab_activities
-    lab_activities = [
-      ['Lab Order', 'lab_order'],
-      ['Sputum Submission', 'sputum_submission'],
-      ['Lab Results', 'lab_results'],
-    ]
   end
 
   def self.select_options
@@ -223,4 +219,22 @@ class Encounter < ActiveRecord::Base
     }
   end
 
+  def self.get_previous_encounters(patient_id)
+    previous_encounters = self.all(
+              :conditions => ["encounter.voided = ? and patient_id = ?", 0, patient_id],
+              :include => [:observations]
+            )
+
+    return previous_encounters
+  end
+  
+  #form art
+  
+  def self.lab_activities
+    lab_activities = [
+      ['Lab Order', 'lab_order'],
+      ['Sputum Submission', 'sputum_submission'],
+      ['Lab Results', 'lab_results'],
+    ]
+  end
 end

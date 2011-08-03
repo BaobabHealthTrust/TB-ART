@@ -24,8 +24,8 @@ class ApplicationController < ActionController::Base
     #raise Location.current_location.to_yaml
     task = Task.next_task(Location.current_location, patient,session_date)
 #    raise task.to_yaml
-    return task if task.present?
-    #return task.url if task.present? && task.url.present?
+    #return task.url if task.present?
+    return task.url if task.present? && task.url.present?
     return "/patients/show/#{patient.id}" 
   end
 
@@ -34,6 +34,10 @@ class ApplicationController < ActionController::Base
     @redirect_url = redirect_url
     @message = message
     render :template => 'print/print', :layout => nil
+  end
+  
+  def generic_locations
+    Location.workstation_locations
   end
   
 private

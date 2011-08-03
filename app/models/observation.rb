@@ -10,7 +10,8 @@ class Observation < ActiveRecord::Base
   belongs_to :answer_concept_name, :class_name => "ConceptName", :foreign_key => "value_coded_name_id", :conditions => {:voided => 0}
   has_many :concept_names, :through => :concept
 
-  named_scope :recent, lambda {|number| {:order => 'obs_datetime desc', :limit => number}}
+  named_scope :recent, lambda {|number| {:order => 'obs_datetime DESC,date_created DESC', :limit => number}}
+  named_scope :old, lambda {|number| {:order => 'obs_datetime ASC,date_created ASC', :limit => number}}
   named_scope :question, lambda {|concept|
     concept_id = concept.to_i
     concept_id = ConceptName.first(:conditions => {:name => concept}).concept_id rescue 0 if concept_id == 0
@@ -49,7 +50,8 @@ class Observation < ActiveRecord::Base
     value_coded_name = ConceptName.find_by_name(value_coded_or_text)
     if value_coded_name.nil?
       # TODO: this should not be done this way with a brittle hard ref to concept name
-      self.concept_name = "DIAGNOSIS, NON-CODED" if self.concept && self.concept.name && self.concept.name.name == "DIAGNOSIS"
+      #self.concept_name = "DIAGNOSIS, NON-CODED" if self.concept && self.concept.name && self.concept.fullname == "DIAGNOSIS"
+      self.concept_name = "DIAGNOSIS, NON-CODED" if self.concept && self.concept.fullname == "DIAGNOSIS"
       self.value_text = value_coded_or_text
     else
       self.value_coded_name_id = value_coded_name.concept_name_id
@@ -99,7 +101,11 @@ class Observation < ActiveRecord::Base
   def answer_string(tags=[])
     coded_answer_name = self.answer_concept.concept_names.tagged(tags).first.name rescue nil
     coded_answer_name ||= self.answer_concept.concept_names.first.name rescue nil
-    "#{coded_answer_name}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}#{' ['+order.to_s+']' if order_id && tags.include?('order')}"
+    coded_name = "#{coded_answer_name} #{self.value_modifier}#{self.value_text}#{self.value_numeric}#{self.value_datetime.strftime("%d/%b/%Y") rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}#{' ['+order.to_s+']' if order_id && tags.include?('order')}"
+    #the following code is a hack
+    #we need to find a better way because value_coded can also be a location - not only a concept
+    return coded_name unless coded_name.blank?
+    ConceptName.find_by_concept_id(self.value_coded).name rescue ''
   end
 
   def self.patients_with_multiple_start_reasons(start_date , end_date)
@@ -125,14 +131,5 @@ class Observation < ActiveRecord::Base
     end
 
     patients_data
-  end
-
-  def self.new_accession_number
-    last_accn_number = Observation.find(:last, :conditions => ["accession_number IS NOT NULL" ], :order => "accession_number + 0").accession_number.to_s rescue "00" #the rescue is for the initial accession number start up
-    last_accn_number_with_no_chk_dgt = last_accn_number.chop.to_i
-    new_accn_number_with_no_chk_dgt = last_accn_number_with_no_chk_dgt + 1
-    chk_dgt = PatientIdentifier.calculate_checkdigit(new_accn_number_with_no_chk_dgt)
-    new_accn_number = "#{new_accn_number_with_no_chk_dgt}#{chk_dgt}"
-    return new_accn_number.to_i
   end
 end

@@ -40,8 +40,12 @@ class ProgramsController < ApplicationController
   end  
   
   def locations
-    @locations = Location.most_common_program_locations(params[:q] || '')
-    @names = @locations.map{|location| "<li value='#{location.location_id}'>#{location.name}</li>" }
+    #@locations = Location.most_common_program_locations(params[:q] || '')
+    @locations = Location.most_common_locations(params[:q] || '')
+    @names = @locations.map do | location | 
+      next if generic_locations.include?(location.name)
+      "<li value='#{location.location_id}'>#{location.name}</li>" 
+    end
     render :text => @names.join('')
   end
   

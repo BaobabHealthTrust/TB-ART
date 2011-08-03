@@ -119,7 +119,13 @@ class DrugOrder < ActiveRecord::Base
   # We have to recalculate everything each time, because this might be the result
   # of a clinical worker voiding something. 
   def total_drug_supply(patient, encounter = nil, session_date = Date.today)
-    encounter ||= patient.current_dispensation_encounter(session_date)
+    if encounter.blank?  
+      type = EncounterType.find_by_name("DISPENSING")
+      encounter = encounters.find(:first,:conditions =>["DATE(encounter_datetime) = ? AND encounter_type = ?",session_date,type.id])
+    end
+    
+    return [] if encounter.blank?
+   
     amounts_brought = Observation.all(:conditions => 
       ['obs.concept_id = ? AND ' +
        'obs.person_id = ? AND ' +
@@ -140,4 +146,9 @@ class DrugOrder < ActiveRecord::Base
   def amount_needed
     (duration * equivalent_daily_dose) - (quantity || 0)
   end
+
+  def total_required
+    (duration * equivalent_daily_dose)
+  end
+  
 end

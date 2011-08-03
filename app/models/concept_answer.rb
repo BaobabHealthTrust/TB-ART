@@ -8,6 +8,6 @@ class ConceptAnswer < ActiveRecord::Base
   belongs_to :concept, :class_name => 'Concept', :foreign_key => 'concept_id', :conditions => {:retired => 0}
 
   def name
-    self.answer.name.name rescue ''
+    self.answer.fullname rescue ''
   end
 end

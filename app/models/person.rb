@@ -3,6 +3,11 @@ class Person < ActiveRecord::Base
   set_primary_key "person_id"
   include Openmrs
 
+  cattr_accessor :session_datetime
+  cattr_accessor :migrated_datetime
+  cattr_accessor :migrated_creator
+  cattr_accessor :migrated_location
+
   has_one :patient, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
   has_many :names, :class_name => 'PersonName', :foreign_key => :person_id, :dependent => :destroy, :order => 'person_name.preferred DESC', :conditions => {:voided => 0}
   has_many :addresses, :class_name => 'PersonAddress', :foreign_key => :person_id, :dependent => :destroy, :order => 'person_address.preferred DESC', :conditions => {:voided => 0}
@@ -14,7 +19,7 @@ class Person < ActiveRecord::Base
       find(:all, :conditions => ['concept_id = ?', concept_name.concept_id]) rescue []
     end
   end
-  
+
   def after_void(reason = nil)
     self.patient.void(reason) rescue nil
     self.names.each{|row| row.void(reason) }
@@ -29,7 +34,7 @@ class Person < ActiveRecord::Base
   end  
 
   def address
-    "#{self.addresses.first.city_village}" rescue nil
+    "#{self.addresses.first.city_village}"  rescue nil
   end 
 
   def age(today = Date.today)
@@ -58,6 +63,8 @@ class Person < ActiveRecord::Base
         self.birthdate.strftime("??/???/%Y")
       elsif self.birthdate.day == 15 
         self.birthdate.strftime("??/%b/%Y")
+      elsif self.birthdate.day == 1 and self.birthdate.month == 1 
+        self.birthdate.strftime("??/???/%Y")
       end
     else
       self.birthdate.strftime("%d/%b/%Y")
@@ -91,7 +98,6 @@ class Person < ActiveRecord::Base
 
   def demographics
 
-
     if self.birthdate_estimated==1
       birth_day = "Unknown"
       if self.birthdate.month == 7 and self.birthdate.day == 1
@@ -118,15 +124,11 @@ class Person < ActiveRecord::Base
       "addresses" => {
         "county_district" => self.addresses[0].county_district,
         "city_village" => self.addresses[0].city_village,
+        "address1" => self.addresses[0].address1,
         "address2" => self.addresses[0].address2
       },
-    "attributes" => {
-        "occupation" => self.get_attribute('Occupation'),
-        "cell_phone_number" => self.get_attribute('Cell Phone Number'),
-        "home_phone_number" => self.get_attribute('Home Phone Number'),
-        "office_phone_number" => self.get_attribute('Office Phone Number'),
-        "landmark" => self.get_attribute('Landmark Or Plot Number')
-       }}}
+    "attributes" => {"occupation" => self.get_attribute('Occupation'),
+                     "cell_phone_number" => self.get_attribute('Cell Phone Number')}}}
  
     if not self.patient.patient_identifiers.blank? 
       demographics["person"]["patient"] = {"identifiers" => {}}
@@ -138,8 +140,47 @@ class Person < ActiveRecord::Base
     return demographics
   end
 
+  def self.occupations
+    ['','Driver','Housewife','Messenger','Business','Farmer','Salesperson','Teacher',
+     'Student','Security guard','Domestic worker', 'Police','Office worker',
+     'Preschool child','Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other","Unknown"])
+  end
+
+  def remote_demographics
+    demo = self.demographics
+
+    demographics = {
+                   "person" =>
+                   {"attributes" => {
+                      "occupation" => demo['person']['occupation'],
+                      "cell_phone_number" => demo['person']['cell_phone_number']
+                    } ,
+                    "addresses" => 
+                     { "address2"=> demo['person']['addresses']['location'],
+                       "city_village" => demo['person']['addresses']['city_village'],
+                       "address1"  => demo['person']['addresses']['address1'],
+                       "county_district" => ""
+                     },
+                    "age_estimate" => self.birthdate_estimated ,
+                    "birth_month"=> self.birthdate.month ,
+                    "patient" =>{"identifiers"=>
+                                {"National id"=> demo['person']['patient']['identifiers']['National id'] }
+                               },
+                    "gender" => self.gender.first ,
+                    "birth_day" => self.birthdate.day ,
+                    "date_changed" => demo['person']['date_changed'] ,
+                    "names"=>
+                      {
+                        "family_name2" => demo['person']['names']['family_name2'],
+                        "family_name" => demo['person']['names']['family_name'] ,
+                        "given_name" => demo['person']['names']['given_name']
+                      },
+                    "birth_year" => self.birthdate.year }
+                    }
+  end
+
   def self.search_by_identifier(identifier)
-    PatientIdentifier.find_all_by_identifier(identifier).map{|id| id.patient.person} unless identifier.blank?
+    PatientIdentifier.find_all_by_identifier(identifier).map{|id| id.patient.person} unless identifier.blank? rescue nil
   end
 
   def self.search(params)
@@ -220,19 +261,68 @@ class Person < ActiveRecord::Base
 
     results = Person.search(search_params)
 
+=begin
+    national_id = person_demographics["person"]["patient"]["identifiers"]["National id"] rescue nil
+    person = Person.search_by_identifier(national_id) unless national_id.nil?
+    return {} if person.blank? 
+
+    #person_demographics = person.demographics
+    results = {}
+    result_hash = {}
+    gender = person_demographics["person"]["gender"] rescue nil
+    given_name = person_demographics["person"]["names"]["given_name"] rescue nil
+    family_name = person_demographics["person"]["names"]["family_name"] rescue nil
+   # raise"#{gender}"
+    result_hash = {
+      "gender" =>  person_demographics["person"]["gender"],
+      "names" => {"given_name" =>  person_demographics["person"]["names"]["given_name"],
+                  "family_name" =>  person_demographics["person"]["names"]["family_name"],
+                  "family_name2" => person_demographics["person"]["names"]["family_name2"]
+                  },
+      "birth_year" => person_demographics['person']['birth_year'],
+      "birth_month" => person_demographics['person']['birth_month'],
+      "birth_day" => person_demographics['person']['birth_day'],
+      "addresses" => {"city_village" => person_demographics['person']['addresses']['city_village'],
+                      "address2" => nil,
+                      "state_province" => nil,
+                      "county_district" => nil
+                      },
+      "attributes" => {"occupation" => person_demographics['person']['occupation'],
+                      "home_phone_number" => nil,
+                      "office_phone_number" => nil,
+                      "cell_phone_number" => nil
+                      },
+      "patient" => {"identifiers" => {"National id" => person_demographics['person']['patient']['identifiers']['National id'],
+                                      "ARV Number" => ['person']['patient']['identifiers']['ARV Number']
+                                      }
+                   },
+      "date_changed" => person_demographics['person']['date_changed']
+
+    }
+    results["person"] = result_hash
+    return results
+=end
   end
 
   def self.create_from_form(params)
     address_params = params["addresses"]
     names_params = params["names"]
     patient_params = params["patient"]
-    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number|landmark|agrees_phone_text_for_TB_therapy|agrees_to_be_visited_for_TB_therapy/) }
+    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number/) }
     birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
     person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate|occupation/) }
+
+
+    if person_params["gender"].to_s == "Female"
+       person_params["gender"] = 'F'
+    elsif person_params["gender"].to_s == "Male"
+       person_params["gender"] = 'M'
+    end
+
     person = Person.create(person_params)
 
     if birthday_params["birth_year"] == "Unknown"
-      person.set_birthdate_by_age(birthday_params["age_estimate"])
+      person.set_birthdate_by_age(birthday_params["age_estimate"],self.session_datetime || Date.today)
     else
       person.set_birthdate(birthday_params["birth_year"], birthday_params["birth_month"], birthday_params["birth_day"])
     end
@@ -250,37 +340,31 @@ class Person < ActiveRecord::Base
  
     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
-      :value => params["office_phone_number"]) unless params["office_phone_number"].blank?
+      :value => params["office_phone_number"]) unless params["office_phone_number"].blank? rescue nil
  
     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
-      :value => params["home_phone_number"]) unless params["home_phone_number"].blank?
-
-    person.person_attributes.create(
+      :value => params["home_phone_number"]) unless params["home_phone_number"].blank? rescue nil
+=begin
+     person.person_attributes.create(
       :person_attribute_type_id => PersonAttributeType.find_by_name("Landmark Or Plot Number").person_attribute_type_id,
-      :value => params["landmark"]) unless params["landmark"].blank?
-
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("Agrees to phone text for TB therapy").person_attribute_type_id,
-      :value => params["agrees_phone_text_for_TB_therapy"]) unless params["agrees_phone_text_for_TB_therapy"].blank?
- 
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("Agrees to be visited at home for TB therapy").person_attribute_type_id,
-      :value => params["agrees_to_be_visited_for_TB_therapy"]) unless params["agrees_to_be_visited_for_TB_therapy"].blank?
-
+      :value => params["landmark"]) unless params["landmark"].blank? rescue nil
+=end
 # TODO handle the birthplace attribute
- 
+
     if (!patient_params.nil?)
       patient = person.create_patient
 
       patient_params["identifiers"].each{|identifier_type_name, identifier|
+
         identifier_type = PatientIdentifierType.find_by_name(identifier_type_name) || PatientIdentifierType.find_by_name("Unknown id")
         patient.patient_identifiers.create("identifier" => identifier, "identifier_type" => identifier_type.patient_identifier_type_id)
       } if patient_params["identifiers"]
-  
+
       # This might actually be a national id, but currently we wouldn't know
       #patient.patient_identifiers.create("identifier" => patient_params["identifier"], "identifier_type" => PatientIdentifierType.find_by_name("Unknown id")) unless params["identifier"].blank?
     end
+
     return person
   end
 
@@ -345,60 +429,22 @@ class Person < ActiveRecord::Base
     end
   end
 
-   def self.create_tb_index_or_contact(params)
-     tb_index_or_contact = Person.find(params["person_id"]) rescue nil
-     
-     unless tb_index_or_contact #If the TB contact does not exist, create one
-       person = Person.create({"gender" => params["gender"]})
-       
-       #set the person birthdate if it has been passed
-       birthday_params = params["birthday_params"]
-       if birthday_params
-         if birthday_params["birth_year"] == "Unknown"
-           person.set_birthdate_by_age(birthday_params["age_estimate"])
-         else
-           person.set_birthdate(birthday_params["birth_year"], birthday_params["birth_month"], birthday_params["birth_day"])
-         end
-       end
 
-       person.save
-       tb_index_or_contact = person
-       person.names.create({"family_name"=>params["family_name"], "given_name"=>params["given_name"]})
+  def phone_numbers
+    phone_numbers = {}
+    phone_numbers['Cell phone number'] = PersonAttribute.find(:first,
+                                         :conditions => ["person_id = ? AND person_attribute_type_id = ?",
+                                         self.id,PersonAttributeType.find_by_name("Cell Phone Number").id]).value rescue nil
 
-     end
-     rltnship_type = params["relationship"]
-     relationship = Relationship.create({
-                                  "person_a" => params[:patient_id], 
-                                  "relationship" => RelationshipType.find(
-                                                          :first, 
-                                                          :conditions => ["a_is_to_b = ? AND b_is_to_a =?",rltnship_type[0], rltnship_type[1]]
-                                            ).id, 
-                                  "person_b" => tb_index_or_contact.id})
-    
-     return nil
-   end
+    phone_numbers['Office phone number'] = PersonAttribute.find(:first,
+                                         :conditions => ["person_id = ? AND person_attribute_type_id = ?",
+                                         self.id,PersonAttributeType.find_by_name("Office Phone Number").id]).value rescue nil
 
-   def formatted_gender
+    phone_numbers['Home phone number'] = PersonAttribute.find(:first,
+                                         :conditions => ["person_id = ? AND person_attribute_type_id = ?",
+                                         self.id,PersonAttributeType.find_by_name("Home Phone Number").id]).value rescue nil
 
-    if self.gender == "F" then "Female"
-      elsif self.gender == "M" then "Male"
-        else "Unknown"
-    end
-
-  end
-
-  def self.occupations
-    ['','Driver','Housewife','Messenger','Business','Farmer','Salesperson','Teacher',
-     'Student','Security guard','Domestic worker', 'Police','Office worker',
-     'Preschool child','Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other","Unknown"])
-  end
-
-  def is_tb_index_person
-    Relationship.first(:conditions => ["person_b = ? AND relationship = ?",self.id, RelationshipType.first(:conditions => ["a_is_to_b = ? AND b_is_to_a = ?", 'TB Contact Person', 'TB Index Person'])])    
-  end
-  
-  def is_tb_contact_person
-    Relationship.first(:conditions => ["person_b = ? AND relationship = ?",self.id, RelationshipType.first(:conditions => ["a_is_to_b = ? AND b_is_to_a = ?", 'TB Patient', 'TB contact Person'])])    
+    phone_numbers
   end
 
 end

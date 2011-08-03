@@ -66,8 +66,8 @@ module TouchscreenHelper
   def touch_location_tag(concept, patient, value, options={}, time=DateTime.now())
     options = {
       :field_type => 'alpha',
-      #:ajaxURL => '/programs/locations?q=', 
-      :ajaxURL => '/person_addresses/health_facility?search_string=', 
+      :ajaxURL => '/programs/locations?q=', 
+      #:ajaxURL => '/person_addresses/health_facility?search_string=', 
       :allowFreeText => true
     }.merge(options)                 
     touch_text_field_tag(concept, patient, value, options, time)

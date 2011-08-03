@@ -79,4 +79,22 @@ class PatientIdentifier < ActiveRecord::Base
 
     out_of_range_arv_numbers_data
   end
+
+  def self.next_filing_number(type = 'Filing Number')
+    available_numbers = self.find(:all,
+                                  :conditions => ['identifier_type = ?',
+                                  PatientIdentifierType.find_by_name(type).id]).map{ | i | i.identifier }
+    
+    filing_number_prefix = GlobalProperty.find_by_property("filing.number.prefix").property_value rescue "FN101,FN102" 
+    prefix = filing_number_prefix.split(",")[0][0..3] if type.match(/filing/i)
+    prefix = filing_number_prefix.split(",")[1][0..3] if type.match(/Archived/i)
+
+    len_of_identifier = (filing_number_prefix.split(",")[0][-1..-1] + "00000").to_i if type.match(/filing/i)
+    len_of_identifier = (filing_number_prefix.split(",")[1][-1..-1] + "00000").to_i if type.match(/Archived/i)
+    possible_identifiers_range = GlobalProperty.find_by_property("filing.number.range").property_value.to_i rescue 300000
+    possible_identifiers = Array.new(possible_identifiers_range){|i|prefix + (len_of_identifier + i +1).to_s}
+
+    ((possible_identifiers)-(available_numbers.compact.uniq)).first
+  end
+
 end
