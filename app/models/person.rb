@@ -308,7 +308,7 @@ class Person < ActiveRecord::Base
     address_params = params["addresses"]
     names_params = params["names"]
     patient_params = params["patient"]
-    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number/) }
+    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number|landmark|agrees_phone_text_for_TB_therapy|agrees_to_be_visited_for_TB_therapy/) }
     birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
     person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate|occupation/) }
 
