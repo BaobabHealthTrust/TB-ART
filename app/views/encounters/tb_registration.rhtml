@@ -55,7 +55,7 @@ Check applicability of code below
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Duration of current cough" } %>
 
-  <%= touch_select_tag "TB classfication", concept_set_options("TB classfication"),
+  <%= touch_select_tag "TB classification", @patient, concept_set_options("TB classification"),
     {:id => "tb_classification",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "TB classification" } %>

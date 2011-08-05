@@ -150,8 +150,7 @@ class EncountersController < ApplicationController
     @sputum_results = [['1+','1 PLUS'], ['2+','2 PLUS'], ['3+','3 PLUS'],['Negative', 'NEGATIVE'], ['Scanty', 'SCANTY']]
 
     @sputum_orders = Hash.new()
-    @patient.recent_sputum_orders.each{|order| @sputum_orders[order.accession_number] = Concept.find(order.value_coded).name.name rescue order.value_text}
-
+    @patient.recent_sputum_orders.each{|order| @sputum_orders[order.accession_number] = Concept.find(order.value_coded).fullname rescue order.value_text}
 
     redirect_to "/" and return unless @patient
 
