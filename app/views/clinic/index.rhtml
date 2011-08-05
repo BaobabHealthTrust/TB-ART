@@ -18,41 +18,51 @@
               <th colspan=2>Home Page</th>
             </tr>
             <h1 id='project_name'>
+              <div style="font-size: 0.8em; margin-top: 28px;">
               <%= (@location.downcase == "outpatient" ? "OPD" : "tb-art") %>
+              </div>
             </h1>
 
-            <div id="facility"><%= "Martin Preuss Centre" %></div>
-            <!--div id="facility"><%= @facility %></div-->
+            <div id="facility"><%= @facility %></div>
             <div id="location"><%= @location %></div>
-            <div id="date"><%= @date %></div>
+            <% retrospective = 'false'
+               retrospective = 'true' if session[:datetime]
+            %>
+            <div id="date" retrospective="<%= retrospective %>"><%= @date %></div>
             <div id="user"><%= @user %></div>
 
             <select id="tabs">
               <option value='/clinic/overview_tab'>Overview</option>
               <option value='/clinic/reports_tab'>Reports</option>
-              
-              <% unless @roles.include?("Nurse") || @roles.include?("Registration Clerk") || @roles.include?("regstration_clerk") %>
 
-                <!--option value='/clinic/properties_tab'>Properties</option>
-                <option value='/clinic/administration_tab'>Administration</option-->
+              <% unless @roles.include?("Nurse") || @roles.include?("Registration Clerk") || @roles.include?("regstration_clerk") %>
+                <% if User.current_user.admin? %>
+                  <option value='/clinic/properties_tab'>Properties</option>
+                <%end%>
+                <option value='/clinic/administration_tab'>Administration</option>
 
               <% end %>
             </select>
             <select id="links">
-              <option value='/logout'>Logout</option>
-              <%# Show Find / Register Patient button on HIV Reception and Find by Name button
-                  on the rest of the stations %>
 
-              <% if @location =~ /HIV Reception/ %>
-                  <option value='/people/search' ttSize="270px">Find / Register Patient</option>
-              <% else %>
-                  <option value='/people/search' ttSize="320px"><span>Find or Register By Name</span></option>
-              <% end %>
-              <%# Hide Find by ARV Number button on non-HIV workstations %>
+              <option value='/logout' link='/logout'>Logout</option>
+<%# Show Find / Register Patient button on HIV Reception and Find by Name button
+on the rest of the stations %>
+
+              <%# if @location =~ /HIV Reception/ %>
+                <option value='/people/search' link='/people/search' ttSize="295px">Find or Register Patient</option>
+              <%# else %>
+                <!--<option value='/people/search' link='/people/search' ttSize="200px">Find By Name</option>-->
+              <%# end %>
+
+<%# Hide Find by ARV Number button on non-HIV workstations %>
               <% if @location =~ /HIV/ %>
-                <option value="/people/find_by_arv_number" ttSize="260px">Find By ARV Number</option>
+                <option value="/people/find_by_arv_number" ttSize="265px">Find By ARV Number</option>
               <% end %>
-              <option value='/location?from=clinic' ttSize="170px">New Location</option>
+              <% if development_environment? %>
+                <option value='/location?from=clinic' ttSize="100px">Swap Desk</option>
+              <% end %>
+
               <option value='<%= ((session[:datetime].to_date rescue '') != '' ?
                           "/people/reset_datetime" : "/people/set_datetime") %>'  ttSize="100px">
                 <%= ((session[:datetime].to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>
