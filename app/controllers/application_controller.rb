@@ -18,15 +18,16 @@ class ApplicationController < ActionController::Base
     @backtrace = exception.backtrace.join("\n") unless exception.nil?
     render :file => "#{RAILS_ROOT}/app/views/errors/error.rhtml", :layout=> false, :status => 404
   end if RAILS_ENV == 'production'
-
+  
   def next_task(patient)
     session_date = session[:datetime].to_date rescue Date.today
-    #raise Location.current_location.to_yaml
     task = Task.next_task(Location.current_location, patient,session_date)
-#    raise task.to_yaml
-    #return task.url if task.present?
-    return task.url if task.present? && task.url.present?
-    return "/patients/show/#{patient.id}" 
+    begin
+      return task.url if task.present? && task.url.present?
+      return "/patients/show/#{patient.id}" 
+    rescue
+      return "/patients/show/#{patient.id}" 
+    end
   end
 
   def print_and_redirect(print_url, redirect_url, message = "Printing, please wait...")
