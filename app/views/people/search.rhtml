@@ -120,11 +120,13 @@ end -%>
         <label for="person">Select the patient from the following</label>
       <% end -%>
       <select name="person" id="person" dualView="true" dualViewOptions="people">
-        <% if params[:identifier] %>
-          <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the identifier <%=h params[:identifier] -%></option>
-        <% else %>
-          <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the name <%=h params[:given_name] -%> <%=h params[:family_name] -%></option>
-        <% end %>
+        <% if ['Chronic Cough', 'TB Reception'].include?(Location.find(session[:location_id]).name)%>
+          <% if params[:identifier] %>
+            <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the identifier <%=h params[:identifier] -%></option>
+          <% else %>
+            <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the name <%=h params[:given_name] -%> <%=h params[:family_name] -%></option>
+          <% end %>
+        <%end%>
         <% @people.each do |person|
           patient = person.patient rescue []
           next if patient.blank? -%>
