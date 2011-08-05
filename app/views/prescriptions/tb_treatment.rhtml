@@ -56,7 +56,7 @@ Check applicability of code below
     {:id => "tb_symptoms",
      :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "TB symptoms / side effects" } %>
+     :helpText => "TB signs"} %>
 
      <%= touch_select_tag "Drug related side effects", @patient, concept_set_options('Drug related side effects').sort + ['<option>Other</option><option>None</option>'],
     {:id => "drug_side_effects",
