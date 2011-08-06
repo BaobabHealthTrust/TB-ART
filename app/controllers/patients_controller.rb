@@ -37,7 +37,8 @@ class PatientsController < ApplicationController
       @prescriptions = restriction.filter_orders(@prescriptions)
       @historical = restriction.filter_orders(@historical)
     end
-    render :template => 'dashboards/treatment', :layout => false
+    #render :template => 'dashboards/treatment', :layout => false
+    render :template => 'dashboards/dispension_tab', :layout => false
   end
 
   def relationships
@@ -202,9 +203,24 @@ class PatientsController < ApplicationController
       @prescriptions = restriction.filter_orders(@prescriptions)
       @programs = restriction.filter_programs(@programs)
     end
-
     render :template => 'dashboards/overview_tab', :layout => false
+  end
+  
+  def history_treatment
+    #@prescriptions = @patient.orders.current.prescriptions.all
+    type = EncounterType.find_by_name('TREATMENT')
+    session_date = session[:datetime].to_date rescue Date.today
+    @prescriptions = Order.find(:all,
+      :joins => "INNER JOIN encounter e USING (encounter_id)",
+      :conditions => ["encounter_type = ? AND e.patient_id = ?",type.id,@patient.id])
 
+    @historical = @patient.orders.historical.prescriptions.all
+    @restricted = ProgramLocationRestriction.all(:conditions => {:location_id => Location.current_health_center.id })
+    @restricted.each do |restriction|
+      @historical = restriction.filter_orders(@historical)
+    end
+    # render :template => 'dashboards/treatment', :layout => 'dashboard'
+    render :template => 'dashboards/treatment_tab', :layout => false
   end
   
 

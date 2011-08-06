@@ -101,7 +101,7 @@ class PrescriptionsController < ApplicationController
         end  
       end  
     end 
-    redirect_to (params[:auto] == '1' ? "/prescriptions/auto?patient_id=#{@patient.id}" : "/patients/treatment/#{@patient.id}")
+    redirect_to (params[:auto] == '1' ? "/prescriptions/auto?patient_id=#{@patient.id}" : "/encounters/give_drugs?patient_id=#{@patient.id}")
   end
   end
   

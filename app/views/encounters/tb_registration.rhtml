@@ -43,7 +43,9 @@ Check applicability of code below
 
   <%= touch_text_field_tag "TB registration number", @patient, nil,
     {:id => "tb_district_number",
-     :helpText => "TB registration number" } %>
+     :helpText => "TB registration number",
+     :field_type => 'number',
+     :tt_pageStyleClass=>"Numeric NumbersOnly"  } %>
   
   <%= touch_select_tag "DOT Option", @patient, concept_set_options("DOT Option"),
     {:id => "dot_option",

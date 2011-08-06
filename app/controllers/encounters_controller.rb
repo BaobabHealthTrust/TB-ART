@@ -273,7 +273,8 @@ class EncountersController < ApplicationController
       @prescriptions = restriction.filter_orders(@prescriptions)
       @historical = restriction.filter_orders(@historical)
     end
-    render :layout => "menu" 
+    #render :layout => "menu" 
+    render :template => 'dashboards/treatment_dashboard', :layout => false
   end
 
   def lab_orders
