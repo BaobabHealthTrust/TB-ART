@@ -71,12 +71,12 @@ Check applicability of code below
    <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE TB TABLETS REMAINING", @patient, nil,
     {:id => "total_tb_tablets_remaining",
      :condition => '$("refer_to_clinician").value == "NO"',
-     :helpText => "Total number of whole TB tablets remaining (brought to the clinic and left at home)" } %>
+     :helpText => "Total number of TB tablets remaining and brought to clinic" } %>
 
    <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
     {:id => "total_arv_tablets_remaining",
      :condition => '$("refer_to_clinician").value == "NO"',
-     :helpText => "Total number of whole ARV tablets remaining (brought to the clinic and left at home)" } %>
+     :helpText => "Total number of ARV tablets remaining and brought to clinic" } %>
 
      <!--TODO How should we handle 'Show adherence report(TB+ART)'-->
 
@@ -129,7 +129,7 @@ Check applicability of code below
 </form>
 <% end %>
 <div id='sulfurAlert' class='messageBar' style='display:none'>
-  Find ot if patient is alergic to Sulfur<br /> 
+  Ask if patient is alergic to Sulfur<br /> 
   <button onmousedown="$('sulfurAlert').style.display = 'none';"><span>OK</span></button>
 </div> 
 
