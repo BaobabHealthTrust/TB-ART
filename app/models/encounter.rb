@@ -140,6 +140,25 @@ class Encounter < ActiveRecord::Base
        ['Vasectomy', 'VASECTOMY'],
 		   ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
       ],
+      'male_family_planning_methods' => [
+       ['',''],
+       ['Male condoms', 'MALE CONDOMS'],
+       ['Withdrawal', 'WITHDRAWAL'],
+       ['Abstinence', 'ABSTINENCE'],
+       ['Vasectomy', 'VASECTOMY']
+      ],
+      'female_family_planning_methods' => [
+       ['',''],
+       ['Oral contraceptive pills', 'ORAL CONTRACEPTIVE PILLS'],
+		   ['Depo-Provera', 'DEPO-PROVERA'],
+		   ['Intrauterine contraception', 'INTRAUTERINE CONTRACEPTION'],
+       ['Contraceptive implant', 'CONTRACEPTIVE IMPLANT'],
+       ['Female condoms', 'FEMALE CONDOMS'],
+       ['Rhythm method', 'RYTHM METHOD'],
+       ['Abstinence', 'ABSTINENCE'],
+       ['Tubal ligation', 'TUBAL LIGATION'],
+		   ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
+      ],
      'drug_list' => [
           ['',''],
           ["Rifampicin Isoniazid Pyrazinamide and Ethambutol", "RHEZ (RIF, INH, Ethambutol and Pyrazinamide tab)"],
