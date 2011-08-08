@@ -163,7 +163,7 @@ class Encounter < ActiveRecord::Base
         'continue_treatment' => [
           ["",""],
           ["Yes", "YES"],
-          ["DHO Dot site","DHO DOT SITE"],
+          ["DHO DOT site","DHO DOT SITE"],
           ["Transfer Out", "TRANSFER OUT"]
       ],
         'hiv_status' => [
