@@ -44,14 +44,21 @@ Check applicability of code below
       {:id => "pregnant",
        :helpText => "Pregnant?" } %>
   <% end %>  
-  
-  <% if @patient.child_bearing_female? %>
-    <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
-        {:id => "on_fpm",
-          :helpText => "Currently using family planning method" } %>
 
-    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['family_planning_methods']),
-      {:id => "fpm_used",
+  <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
+    {:id => "on_fpm",
+     :helpText => "Currently using family planning method" } %>
+
+  <% if @patient.person.gender == "M" %>
+    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['male_family_planning_methods']),
+      {:id => "mfpm_used",
+       :condition => '$("on_fpm").value == "YES"',
+       :multiple => true,
+       :tt_pageStyleClass => "NoKeyboard",
+       :helpText => "What method?" } %>
+  <% else %>
+    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['female_family_planning_methods']),
+      {:id => "mfpm_used",
        :condition => '$("on_fpm").value == "YES"',
        :multiple => true,
        :tt_pageStyleClass => "NoKeyboard",
@@ -130,7 +137,7 @@ Check applicability of code below
   <%= touch_location_tag "DHO DOT SITE", @patient, nil,
     {:id => "dot_site",
      :condition => '$("continue_treatment_at_this_site").value == "DHO DOT SITE" &&  $("refer_to_clinician").value == "NO"',
-     :helpText => "Lilongwe DHO Dot sites" } %>
+     :helpText => "Lilongwe DHO DOT sites" } %>
   <%= submit_tag "Finish" %>    
 </form>
 <% end %>
