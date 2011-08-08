@@ -90,7 +90,7 @@ Check applicability of code below
       :multiple => true,
      :condition => '$("refer_to_clinician").value == "NO" && $("prescribe_drugs").value == "YES"',
      :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "Select TB regimens" } %>
+     :helpText => "TB regimens" } %>
 
   <%= touch_yes_no_unknown_tag "PRESCRIBE RECOMMENDED DOSAGE", @patient, nil,
       {:id => "prescribe_recommended_dosage",
