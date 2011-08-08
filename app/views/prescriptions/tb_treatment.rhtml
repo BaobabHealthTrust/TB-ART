@@ -1,6 +1,10 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
-</script> 
+</script>
+
+<style>
+  #char { display: none;}
+</style>
 
 <!--.........TODO...........
 This is referred to as ART Enrollment/HIV Visit in the specs
@@ -40,18 +44,20 @@ Check applicability of code below
       {:id => "pregnant",
        :helpText => "Pregnant?" } %>
   <% end %>  
-
-  <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
-      {:id => "on_fpm",
-        :helpText => "Currently using family planning method" } %>
-
-  <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['family_planning_methods']),
-    {:id => "fpm_used",
-     :condition => '$("on_fpm").value == "YES"',
-     :multiple => true,
-     :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "What method?" } %>
   
+  <% if @patient.child_bearing_female? %>
+    <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
+        {:id => "on_fpm",
+          :helpText => "Currently using family planning method" } %>
+
+    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['family_planning_methods']),
+      {:id => "fpm_used",
+       :condition => '$("on_fpm").value == "YES"',
+       :multiple => true,
+       :tt_pageStyleClass => "NoKeyboard",
+       :helpText => "What method?" } %>
+  <% end %>
+
      <%= touch_select_tag "TB symptoms", @patient, concept_set_options('TB symptoms').sort + ['<option>Other</option><option>None</option>'],
     {:id => "tb_symptoms",
      :multiple => true,
