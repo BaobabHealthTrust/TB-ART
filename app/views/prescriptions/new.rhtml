@@ -5,7 +5,9 @@
   .options {
     height:8em;
   }
-  
+
+  #char { display: none; }
+
   #tt_page_common_prescriptions_for_this_diagnosis .options {
     font-size:1em;
     height:24em;
@@ -26,6 +28,7 @@
 </style>
 <script>
   var tt_cancel_destination = "/encounters/give_drugs?patient_id=<%= @patient.patient_id %>"
+  var tt_cancel_show = "/encounters/give_drugs?patient_id=<%= @patient.patient_id %>"
   
   function changeNextButtonText(text){
     $('nextButton').innerHTML = "<span>" + text + "</span>";  
