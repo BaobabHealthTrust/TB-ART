@@ -16,8 +16,16 @@
   function showTaskName(){
     $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Update HIV Status</span></div></div>' 
   }
-
 </script>
+
+<style>
+   .tt_controls_hiv_test_year #char { display: none; }
+
+  .tt_controls_hiv_test_month .keyboard { display:none; }
+  #tt_page_hiv_test_month .options{height:550px;}
+  #tt_page_hiv_test_month .options li{font-size:35px;}
+  #space {display:inline;}
+</style>
 
 <form id='update_hiv_status' action="/encounters/create" method='post'>
   <%= hidden_field_tag "encounter[encounter_type_name]", "UPDATE HIV STATUS" %>
