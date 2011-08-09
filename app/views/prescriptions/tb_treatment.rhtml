@@ -1,5 +1,19 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
+
+  function checkIfExists(searchItem,searchElement){
+    var elem = document.getElementById(searchElement);
+    var elemArray = elem.options;
+    for(var i = 0; i < elemArray.length; i++) {
+      if (elemArray[i].selected == true) {
+        if (elemArray[i].value == searchItem) {
+          return "True";
+          break;
+        }
+      }
+    }
+    return "False";
+  }
 </script>
 
 <style>
@@ -75,7 +89,13 @@ Check applicability of code below
     {:id => "drug_side_effects",
      :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",
+     :tt_onUnLoad => "",
      :helpText => "Drug related side effects" } %>
+
+  <%= touch_text_field_tag "Other", @patient, nil,
+    {:id => "other_side_effect",
+     :condition => 'checkIfExists("Other","drug_side_effects") == "True";',
+     :helpText => "Other drug related side effect" } %>
 
   <%= touch_yes_no_tag "REFER PATIENT TO CLINICIAN", @patient, nil,
       {:id => "refer_to_clinician",
