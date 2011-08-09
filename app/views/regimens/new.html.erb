@@ -2,7 +2,8 @@
 </style>
 <script>
   var patient_id = "<%= @patient.patient_id %>";
-  var tt_cancel_destination = "/patients/treatment/<%= @patient.patient_id %>"
+  /*var tt_cancel_destination = "/patients/treatment/<%= @patient.patient_id %>"*/
+  var tt_cancel_destination = "/encounters/give_drugs?patient_id=<%= @patient.patient_id %>"
   var current_regimens_for_programs = <%= @current_regimens_for_programs.to_json -%>;
   var current_regimen_names_for_programs = <%= @current_regimen_names_for_programs.to_json -%>;
 

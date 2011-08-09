@@ -1,6 +1,10 @@
 <script>
   var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
-</script> 
+</script>
+
+<style>
+  #char { display: none;}
+</style>
 
 <!--.........TODO...........
 This is referred to as ART Enrollment/HIV Visit in the specs
@@ -42,16 +46,25 @@ Check applicability of code below
   <% end %>  
 
   <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
-      {:id => "on_fpm",
-        :helpText => "Currently using family planning method" } %>
+    {:id => "on_fpm",
+     :helpText => "Currently using family planning method" } %>
 
-  <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['family_planning_methods']),
-    {:id => "fpm_used",
-     :condition => '$("on_fpm").value == "YES"',
-     :multiple => true,
-     :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "What method?" } %>
-  
+  <% if @patient.person.gender == "M" %>
+    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['male_family_planning_methods']),
+      {:id => "mfpm_used",
+       :condition => '$("on_fpm").value == "YES"',
+       :multiple => true,
+       :tt_pageStyleClass => "NoKeyboard",
+       :helpText => "What method?" } %>
+  <% else %>
+    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['female_family_planning_methods']),
+      {:id => "mfpm_used",
+       :condition => '$("on_fpm").value == "YES"',
+       :multiple => true,
+       :tt_pageStyleClass => "NoKeyboard",
+       :helpText => "What method?" } %>
+  <% end %>
+
      <%= touch_select_tag "TB symptoms", @patient, concept_set_options('TB symptoms').sort + ['<option>Other</option><option>None</option>'],
     {:id => "tb_symptoms",
      :multiple => true,
@@ -71,12 +84,12 @@ Check applicability of code below
    <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE TB TABLETS REMAINING", @patient, nil,
     {:id => "total_tb_tablets_remaining",
      :condition => '$("refer_to_clinician").value == "NO"',
-     :helpText => "Total number of whole TB tablets remaining (brought to the clinic and left at home)" } %>
+     :helpText => "Total number of TB tablets remaining and brought to clinic" } %>
 
    <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
     {:id => "total_arv_tablets_remaining",
      :condition => '$("refer_to_clinician").value == "NO"',
-     :helpText => "Total number of whole ARV tablets remaining (brought to the clinic and left at home)" } %>
+     :helpText => "Total number of ARV tablets remaining and brought to clinic" } %>
 
      <!--TODO How should we handle 'Show adherence report(TB+ART)'-->
 
@@ -90,7 +103,7 @@ Check applicability of code below
       :multiple => true,
      :condition => '$("refer_to_clinician").value == "NO" && $("prescribe_drugs").value == "YES"',
      :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "Select TB regimens" } %>
+     :helpText => "TB regimens" } %>
 
   <%= touch_yes_no_unknown_tag "PRESCRIBE RECOMMENDED DOSAGE", @patient, nil,
       {:id => "prescribe_recommended_dosage",
@@ -124,12 +137,12 @@ Check applicability of code below
   <%= touch_location_tag "DHO DOT SITE", @patient, nil,
     {:id => "dot_site",
      :condition => '$("continue_treatment_at_this_site").value == "DHO DOT SITE" &&  $("refer_to_clinician").value == "NO"',
-     :helpText => "Lilongwe DHO Dot sites" } %>
+     :helpText => "Lilongwe DHO DOT sites" } %>
   <%= submit_tag "Finish" %>    
 </form>
 <% end %>
 <div id='sulfurAlert' class='messageBar' style='display:none'>
-  Find ot if patient is alergic to Sulfur<br /> 
+  Ask if patient is alergic to Sulfur<br /> 
   <button onmousedown="$('sulfurAlert').style.display = 'none';"><span>OK</span></button>
 </div> 
 
