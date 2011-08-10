@@ -114,7 +114,7 @@
     
     var range = <%= 1.year.to_f -%>;
     var min = <%= @min.to_f -%>;
-    var max = <%= @max.to_f -%>;
+    var max = <%= @max.to_f + 1-%>;
     var max_tick = "<%= @max.strftime("%d-%b") -%>";
 //    patient_data.push([max, 0]);
         
