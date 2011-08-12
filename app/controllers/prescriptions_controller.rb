@@ -22,12 +22,23 @@ class PrescriptionsController < ApplicationController
   def create
     tb_treatment_encounter = false
     tb_treatment_encounter = true if (params[:encounter] && params[:encounter][:encounter_type_name] == 'TB TREATMENT')
+    
     @suggestions = params[:suggestion] || ['New Prescription']
+    
     @patient = Patient.find(params[:patient_id] || session[:patient_id] || params[:encounter][:patient_id]) rescue nil
-    session_date = session[:datetime] || Time.now()
+    
+    unless params[:location]
+      session_date = session[:datetime] || params[:imported_date_created] || Time.now()
+    else
+      session_date = params[:imported_date_created] #Use date_created passed during import
+    end
+    # set current location via params if given
+    Location.current_location = Location.find(params[:location]) if params[:location]
+    
     @encounter = @patient.current_treatment_encounter(session_date)
     @diagnosis = Observation.find(params[:diagnosis]) rescue nil
-    if tb_treatment_encounter
+    
+        if tb_treatment_encounter
       multiple_drug_names = Array.new()
       prescription_time_period = ''
       # Tb treatment observation handling
@@ -76,14 +87,16 @@ class PrescriptionsController < ApplicationController
           DrugOrder.write_order(@encounter, @patient, @diagnosis, drug, start_date, auto_expire_date, drug.dose_strength, "TWICE A DAY (BD)", 0)
         end
       end
-      redirect_to "/encounters/give_drugs?patient_id=#{@patient.id}"
-    else
-
+      redirect_to "/encounters/give_drugs?patient_id=#{@patient.id}" and return
+    end
+    
+    
     @suggestions.each do |suggestion|
       unless (suggestion.blank? || suggestion == '0' || suggestion == 'New Prescription')
         @order = DrugOrder.find(suggestion)
         DrugOrder.clone_order(@encounter, @patient, @diagnosis, @order)
       else
+        
         @formulation = (params[:formulation] || '').upcase
         @drug = Drug.find_by_name(@formulation) rescue nil
         unless @drug
@@ -92,17 +105,22 @@ class PrescriptionsController < ApplicationController
           return
         end  
         start_date = session_date
-        auto_expire_date = session_date + params[:duration].to_i.days
-        prn = params[:prn].to_i || 0
+        auto_expire_date = session_date.to_date + params[:duration].to_i.days
+        prn = params[:prn].to_i
         if params[:type_of_prescription] == "variable"      
           DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, [params[:morning_dose], params[:afternoon_dose], params[:evening_dose], params[:night_dose]], 'VARIABLE', prn)
         else
           DrugOrder.write_order(@encounter, @patient, @diagnosis, @drug, start_date, auto_expire_date, params[:dose_strength], params[:frequency], prn)
         end  
       end  
-    end 
-    redirect_to (params[:auto] == '1' ? "/prescriptions/auto?patient_id=#{@patient.id}" : "/encounters/give_drugs?patient_id=#{@patient.id}")
-  end
+    end
+
+    unless params[:location]
+      redirect_to (params[:auto] == '1' ? "/prescriptions/auto?patient_id=#{@patient.id}" : "/patients/treatment_dashboard/#{@patient.id}")
+    else
+      render :text => 'import success' and return
+    end
+    
   end
   
   def auto
@@ -205,7 +223,16 @@ class PrescriptionsController < ApplicationController
     @options = @orders.map{|o| [o.order_id, o.script] } + @options
     render :layout => false
   end
-
+  
+  # Look up all of the matching drugs for the given drug name
+  def name
+    search_string = (params[:search_string] || '').upcase
+    @drugs = Drug.find(:all, 
+      :select => "name", 
+      :conditions => ["name LIKE ?", '%' + search_string + '%'])
+    render :text => "<li>" + @drugs.map{|drug| drug.name }.join("</li><li>") + "</li>"
+  end
+  
   def tb_treatment
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
     @select_options = Encounter.select_options

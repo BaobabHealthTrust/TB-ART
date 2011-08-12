@@ -102,17 +102,6 @@ class CohortToolController < ApplicationController
                       :end_date   => end_date,
                       :quarter    => params[:report].gsub("_"," ")
         return
-        when "tb_treatment_outcome_and_activities"
-          redirect_to :action       => "tb_treatment_outcome_and_activities",
-                      :quarter      => params[:report],
-                      :report_type  => params[:report_type]
-        return
-        
-        when "tb_supervision_and_case_findings"
-          redirect_to :action       => "tb_supervision_and_case_findings",
-                      :quarter      => params[:report],
-                      :report_type  => params[:report_type]
-        return
       end
     end
   end
@@ -301,18 +290,6 @@ def adherence
       end
       render :layout => 'report'
       return
-  end
-
-  def tb_treatment_outcome_and_activities
-    @quarter    = params[:quarter]
-
-    render :layout => 'clinic'
-  end
-
-  def tb_supervision_and_case_findings
-    @quarter    = params[:quarter]
-
-    render :layout => 'clinic'
   end
 end
 

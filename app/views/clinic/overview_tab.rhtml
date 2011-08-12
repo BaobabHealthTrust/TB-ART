@@ -32,19 +32,19 @@
 
     <table id="stats" cellpadding="14">
       <tr style="color: #fff; background-color: #666;">
-        <th style="text-align:left;">Encounter Type</th>
-        <th><%=User.current_user.username.humanize%></th>
+        <th style="text-align:left;">Task Type</th>
+        <th>Me</th>
         <th>Today</th>
-        <!--th>This Year</th-->
-        <!--th>Total to Date</th-->
+        <th>This Year</th>
+        <th>Total to Date</th>
       </tr>
-      <%@types.each do |type| %>
+      <% @types.each do |type| %>
         <tr class="<%= cycle('even', 'odd') %>">
           <td style="text-align:left;"><%= type %></td>
-          <td><%= @me[type.upcase].to_i %></td>
-          <td><%= @today[type.upcase].to_i %></td>
-          <!--td><%#= @year[type].to_i %></td-->
-          <!--td><%#= @ever[type].to_i %></td-->
+          <td><%= @me[type].to_i %></td>
+          <td><%= @today[type].to_i %></td>
+          <td><%= @year[type].to_i %></td>
+          <td><%= @ever[type].to_i %></td>
         </tr>
       <% end %>
     </table>

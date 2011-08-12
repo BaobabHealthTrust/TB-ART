@@ -14,12 +14,12 @@
       }
 
     </script>
+    <%= stylesheet_link_tag "mateme" %>
     <%= stylesheet_link_tag fancy_or_high_contrast_touch %>
-    <%= stylesheet_link_tag "dashboard" %>
-    <%= stylesheet_link_tag "graytabs" %>
-    <%= javascript_include_tag "dashboard" %>
+    <%= javascript_include_tag "preload" %>
   </head>
-    <body id="container">
+  <body id="mateme">  
+    <div id="container">
       <div id="content">
         <div id="description" style="color:#777;position:absolute;margin-top:-70px;">
           <% if show_intro_text %>
@@ -49,5 +49,6 @@
           
         </div>    
       </div>  
+    </div>
   </body>
 </html>

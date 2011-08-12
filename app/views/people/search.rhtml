@@ -13,6 +13,8 @@ pos = 1
           
     people[<%= pos %>]["gender"] = "<%= person.sex %>";
 
+    people[<%= pos %>]["status"] = "<%=h 'Died' if person.dead == 1 rescue '' -%>";
+
   <% unless person.birthdate.blank? %>
 
       people[<%= pos %>]["birthdate"] = "<%= person.birthdate_formatted rescue "" %>";
@@ -57,8 +59,6 @@ pos = 1
 
   <% end %>
 
-    people[<%= pos %>]["status"] = "<%=h 'Died' if person.dead == 1 rescue '' -%>";
-3
   <%
 
   pos = pos + 1
@@ -120,13 +120,11 @@ end -%>
         <label for="person">Select the patient from the following</label>
       <% end -%>
       <select name="person" id="person" dualView="true" dualViewOptions="people">
-        <% if ['Chronic Cough', 'TB Reception'].include?(Location.find(session[:location_id]).name)%>
-          <% if params[:identifier] %>
-            <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the identifier <%=h params[:identifier] -%></option>
-          <% else %>
-            <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the name <%=h params[:given_name] -%> <%=h params[:family_name] -%></option>
-          <% end %>
-        <%end%>
+        <% if params[:identifier] %>
+          <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the identifier <%=h params[:identifier] -%></option>
+        <% else %>
+          <option value="0" onmousedown="changeNextButtonText('New Patient')">Create a new person with the name <%=h params[:given_name] -%> <%=h params[:family_name] -%></option>
+        <% end %>
         <% @people.each do |person|
           patient = person.patient rescue []
           next if patient.blank? -%>

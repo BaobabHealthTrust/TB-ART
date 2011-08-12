@@ -11,28 +11,27 @@
     </script>
     <%= stylesheet_link_tag fancy_or_high_contrast_touch %>
     <%= stylesheet_link_tag "dashboard" %>
-    <%= stylesheet_link_tag "graytabs" %>
-    <%= javascript_include_tag "dashboard" %>
     <script src="/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
+	<script language="javascript" type="text/javascript" src="/javascripts/jquery.flot.js"></script>
     <script src="/javascripts/touchscreenYesNo.js" type="text/javascript"></script>
     <script type="text/javascript">
-      jQuery(document).ready(function($) {    
-        $('#print_visit').click(function() { window.location = '/patients/print_visit?patient_id=<%= @patient.id -%>' })
-        $('#update_hiv_status').click(function() { window.location = '/encounters/new/update_hiv_status?patient_id=<%= @patient.id -%>'})
-        $('#print_id').click(function() { window.location = '/patients/print_registration?patient_id=<%= @patient.id -%>' })
+      jQuery(document).ready(function($) { 
+        <% if show_lab_results %>  
+          $('#lab_results').click(function() { window.location = '/lab/results/<%=@patient.id%>' })
+        <%end%>
         $('#mastercard').click(function() { window.location = '/patients/mastercard?patient_id=<%= @patient.id -%>?source=<%= @source -%>' })
         $('#finish').click(function() { window.location = "/clinic" })
-        $('#change_task').click(function() { window.location = '/encounter_types?patient_id=<%= @patient.id -%>' })
-        $('#new_tb_index_person').click(function() { window.location = '/people/new_tb_index_person?patient_id=<%= @patient.id -%>'})
-        $('#new_tb_contact_person').click(function() { window.location = '/people/new_tb_contact_person?patient_id=<%= @patient.id -%>'})
-        $('#tb_reception').click(function() { window.location = '/encounters/new/tb_reception?patient_id=<%= @patient.id -%>'})
-        $('#art_enrollment').click(function() { window.location = '/encounters/new/art_enrollment?patient_id=<%= @patient.id -%>'})
-        $('#vitals').click(function() { window.location = '/encounters/new/vitals?patient_id=<%= @patient.id -%>'})
-        $('#clinic_visit').click(function() { window.location = '/encounters/new/clinic_visit?patient_id=<%= @patient.id -%>'})
-        $('#tb_registration').click(function() { window.location = '/encounters/new/tb_registration?patient_id=<%= @patient.id -%>'})
-        $('#tb_treatment').click(function() { window.location = '/encounters/new/tb_treatment?patient_id=<%= @patient.id -%>'})
-        $('#lab').click(function() { window.location = '/encounters/new/lab?patient_id=<%= @patient.id -%>' })
-        //$('#lab').click(function() { window.location = '/encounters/new/label_specimens?patient_id=<%= @patient.id -%>' })
+        $('#additional').click(function() { window.location = '/encounter_types?patient_id=<%= @patient.id -%>' })
+        $('#set_date').click(function() { window.location = "/people/set_datetime/<%=@patient.id%>" })
+
+        session_datetime = '<%=session[:datetime].to_date rescue '' %>'
+        if (session_datetime != ''){
+          document.getElementById('set_date').innerHTML = '<span>Reset date</span>'
+          $('#set_date').click(function() { window.location = '/people/reset_datetime/<%=@patient.id%>' })        
+        } else {
+          document.getElementById('set_date').innerHTML = '<span>Set date</span>'
+          $('#set_date').click(function() { window.location = '/people/set_datetime/<%=@patient.id%>' })        
+        }
 
         // Show the flash
         var flash = $('#flash');
@@ -44,58 +43,38 @@
       
     </script>
   </head>
-    <body id="container">      
+  <body id="mateme">  
+    <div id="container">      
       <div id="content">
-        <div>
-          <div id="content-wrapper" style="float:left;">
-            <div id="personal-details">
-              <h1><%= patient_image(@patient) -%><%= @patient.person.name %></h1>
-            <div><!-- Patient Ifo-->
-              <span class='personal-details-label'> Patient ID:</span> <%= @patient.national_id_with_dashes rescue '' %>
-<span></span> <br/>
-
-              <span class='personal-details-label'> Birthdate:       </span> <span> <%= @patient.person.birthdate_formatted rescue '' %>
-</span><br/>
-
-        </div><!--Patient Info-->
-      </div><!--personal-details-->
-
-
-
-        <div id="flash" class="flash centered" style="display:none;"><%= [flash[:notice], flash[:error], flash[:failure], flash[:success]].compact.join(" ").chomp unless flash.blank? -%></div>
-        <%= yield %> 
-      </div><!--content-wrapper--> 
-              
-        <div id="menu" style="vertical-align:">
-          <button id="give_drugs" class="blue menu-button" onmousedown="window.location = ''"><span>Give Drugs</span></button> <br/>
-          <button id="update_treatment_outcome" class="blue menu-button" onmousedown="window.location = ''"><span>Update Treatment Outcome</span></button> <br/>
-          <button id="update_patient_outcome" class="blue menu-button" onmousedown="window.location = ''"><span>Update Patient Outcome</span></button> <br/>
-          <button id="lab" class="blue menu-button" onmousedown="window.location = ''"><span>Lab</span></button> <br/>
-          <!--button id="tereatment_card" class="blue menu-button" onmousedown="window.location = ''"><span>Treatment Card</span></button--> 
-          <!--button id="master_card" class="blue menu-button" onmousedown="window.location = ''"><span>Master Card</span></button> <br/-->
-          <button id="update_hiv_status" class="blue menu-button" onmousedown="window.location = 'hiv_status.html'"><span>Update HIV Status</span></button> <br/>
-          <button id="print_demographics" class="blue menu-button" onmousedown="window.location = ''"><span>Print Demographics</span></button> <br/>
-          <button id="print_passport_label" class="blue menu-button" onmousedown="window.location = ''"><span>Print Passport Label</span></button> <br/>
-          <button id="change_task" class="blue menu-button" onmousedown="window.location = ''"><span>Change Task</span></button> <br/>
-          <!--button id="print_visit" class="blue menu-button" onmousedown="window.location = ''"><span>Print Visit</span></button> <br/-->
-          <button id="new_tb_index_person" class="blue menu-button" onmousedown="window.location = ''"><span>New TB Index Person</span></button> <br/>
-          <button id="new_tb_contact_person" class="blue menu-button" onmousedown="window.location = ''"><span>New TB Contact Person</span></button> <br/>
-          <button id="tb_reception" class="blue menu-button" onmousedown="window.location = ''"><span>TB Reception</span></button> <br/>
-          <button id="art_enrollment" class="blue menu-button" onmousedown="window.location = ''"><span>ART Enrollment</span></button> <br/>
-          <button id="vitals" class="blue menu-button" onmousedown="window.location = ''"><span>Vitals</span></button> <br/>
-          <button id="clinic_visit" class="blue menu-button" onmousedown="window.location = ''"><span>TB Clinic Visit</span></button> <br/>
-          <button id="tb_registration" class="blue menu-button" onmousedown="window.location = ''"><span>TB Registration</span></button> <br/>
-          <button id="tb_treatment" class="blue menu-button" onmousedown="window.location = ''"><span>TB Treatment</span></button> <br/-->
-          <button id="tb_registration" class="blue menu-button" onmousedown="window.location = ''"><span>TB Registration</span></button> <br/>
-          <button id="vitals" class="blue menu-button" onmousedown="window.location = ''"><span>Vitals</span></button> <br/>
+        <div id="header">
+          <h1><%= patient_image(@patient) -%><%= @patient.person.name %></h1>
+          <div id="identifiers">
+            <% if Location.current_location.name.match(/HIV|ART/i) %>
+              <%= @patient.arv_number || @patient.national_id_with_dashes rescue '' %>
+            <%else%>
+              <%= @patient.national_id_with_dashes rescue '' %>
+            <%end%>
+          </div>
+          <div id="demographics">
+            <span class='title'>Birthdate:</span> <%= @patient.person.birthdate_formatted rescue '' %>
+          </div>
         </div>
-
-      </div> <!--no id div -->
+        <div id="flash" class="flash centered" style="display:none;"><%= [flash[:notice], flash[:error], flash[:failure], flash[:success]].compact.join(" ").chomp unless flash.blank? -%></div>
+        <%= yield %>  
         <div id="footer" class="dark">
           <div id="buttons" class="buttons" style="top:0px">
             <button id="finish" class="green"><span>Finish</span></button>
+            <% unless Location.current_location.name.match('Outpatient') %>
+              <button id="additional" class="yellow"><span>Tasks</span></button>
+              <button id="mastercard" class="yellow"><span>Mastercard</span></button>    
+              <% if show_lab_results %>
+                <button id="lab_results" class="yellow"><span>Lab results</span></button>    
+              <%end%>
+            <%end%>
+            <button id="set_date" class="yellow"><span>Set date</span></button>    
           </div>          
         </div>    
       </div>  
-   </body>
+    </div>
+  </body>
 </html>

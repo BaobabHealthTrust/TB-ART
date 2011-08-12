@@ -91,6 +91,13 @@ class ClinicController < ApplicationController
     @year = Encounter.statistics(@types, :conditions => ['YEAR(encounter_datetime) = YEAR(NOW())'])
     @ever = Encounter.statistics(@types)
 
+    simple_overview = GlobalProperty.find_by_property("simple_application_dashboard").property_value rescue nil
+    if simple_overview != nil
+      if simple_overview == 'true'
+        render :template => 'clinic/overview_simple.rhtml' , :layout => false
+        return
+      end
+    end
     render :layout => false
   end
 
@@ -133,6 +140,11 @@ class ClinicController < ApplicationController
       ["View clinic holidays","/properties/clinic_holidays"],
       ["Set clinic holidays","/properties/set_clinic_holidays"],
       ["Set site code", "/properties/site_code"],
+      ["Manage roles", "/properties/set_role_privileges"],
+      ["Use extended staging format", "/properties/creation?value=use_extended_staging_format"],
+      ["Use user selected task(s)", "/properties/creation?value=use_user_selected_activities"],
+      ["Use filing numbers", "/properties/creation?value=use_filing_numbers"],
+      ["Show lab results", "/properties/creation?value=show_lab_results"],
       ["Set appointment limit", "/properties/set_appointment_limit"]
     ]
     render :layout => false

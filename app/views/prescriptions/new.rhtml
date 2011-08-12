@@ -5,9 +5,7 @@
   .options {
     height:8em;
   }
-
-  #char { display: none; }
-
+  
   #tt_page_common_prescriptions_for_this_diagnosis .options {
     font-size:1em;
     height:24em;
@@ -16,19 +14,50 @@
   #tt_page_frequency .options {
     font-size:1em;
     height:24em;
-  } 
+  }
 
-  .tt_page_prescribe_treatment_for_which_diagnosis #keyboard, 
-  .tt_controls_frequency #keyboard, 
+  .tt_page_prescribe_treatment_for_which_diagnosis #keyboard,
+  .tt_controls_frequency #keyboard,
   .tt_controls_frequency #num,
   .tt_controls_frequency #Unknown {
     display:none;
   }
-  
+
+  #tt_page_generic_drug #viewport {
+    height:350px;
+  }
+
+  #tt_page_formulation #viewport {
+    height:350px;
+  }
+
+  .tt_controls_duration_days #char {
+    display: none;
+  }
+
+  .tt_controls_dose_strength #char {
+    display: none;
+  }
+
+  .tt_controls_morning_dose_strength #char {
+    display: none;
+  }
+
+  .tt_controls_afternoon_dose_strength #char {
+    display: none;
+  }
+
+  .tt_controls_night_dose_strength #char {
+    display: none;
+  }
+
+  .tt_controls_evening_dose_strength #char {
+    display: none;
+  }
+
 </style>
 <script>
-  var tt_cancel_destination = "/encounters/give_drugs?patient_id=<%= @patient.patient_id %>"
-  var tt_cancel_show = "/encounters/give_drugs?patient_id=<%= @patient.patient_id %>"
+  var tt_cancel_destination = "/patients/treatment_dashboard/<%= @patient.patient_id %>"
   
   function changeNextButtonText(text){
     $('nextButton').innerHTML = "<span>" + text + "</span>";  
@@ -87,6 +116,7 @@
   }
   
   function set_info_for_frequency() {
+	alert('Formulation - ' + $('formulation').value);
     $('infoBar'+tstCurrentPage).innerHTML = $('formulation').value + ': ' + $('dose_strength').value + ' ' + units;    
   }
 
@@ -193,7 +223,6 @@
      options = names.map{|n| [n.name, n.name]}
      options << ['', '']
   %>
-  
   <%= select_tag :frequency, options_for_select(options, ''), 
     {:tt_onLoad => "set_info_for_frequency();",     
      :helpText => "Frequency",

@@ -1,5 +1,5 @@
 <script>
-   var tt_cancel_destination = "/clinic"
+   var tt_cancel_destination = "/clinic"; // /properties"
 </script>
 <style>
   table , div {
@@ -157,7 +157,7 @@
       finish_button.innerHTML = "<span>Done</span>"
       tt_cancel_destination = null;
     }else{
-      tt_cancel_destination = "/clinic"
+      tt_cancel_destination = "/clinic" // /properties/"
       finish_button = document.getElementById('finishButton');
       finish_button.innerHTML = "<span>Finish</span>"
       finish_button.setAttribute('onmousedown',tt_cancel_destination);
@@ -211,7 +211,7 @@
     }
 
     if(peads_wkdays_change == false && wkdays_change == false){
-      document.location = "/clinic"
+      document.location = "/clinic" // /properties/"
       return
     }
 

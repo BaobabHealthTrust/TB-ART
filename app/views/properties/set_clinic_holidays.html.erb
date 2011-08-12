@@ -36,8 +36,8 @@
 </style>
 
 <script>
-  try { var tt_cancel_destination = "/clinic";
-  } catch(e) { tt_cancel_destination = "/clinic" }
+  try { var tt_cancel_destination = "/clinic" // /properties/";
+  } catch(e) { tt_cancel_destination = /*"/clinic/properties"*/ "/clinic" }
 
   var date_set = [];
   current_table_caption = null
@@ -76,7 +76,7 @@
     }
 
     if (date_set == [] || date_set == ''){ 
-      tt_cancel_destination = "/clinic";
+      tt_cancel_destination = "/clinic" // /properties/";
       finish_button = document.getElementById('finishButton');
       finish_button.setAttribute('onmousedown',tt_cancel_destination);
     }
@@ -249,7 +249,7 @@
       }
 
       if (change_attribute == selected_dates.length && change_attribute == date_set.length){
-        document.location = "/clinic";
+        document.location = "/clinic" // /properties/";
         return;
       }
     }

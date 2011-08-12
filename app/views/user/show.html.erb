@@ -1,24 +1,16 @@
 <script>
-   var tt_cancel_destination = "/clinic/";
+   var tt_cancel_destination = "/clinic";
 </script>
 <style>
   h1 { padding-left:10px; }
 
   .user_info {
-    float:left;
     background-color: #DDDDDD;
-    width: 70%;
+    height: 461px;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
     margin-top: 1px;
     font-size:25px;
-  }
-
-  div#right{
-  float:right;
-  border: 0px solid black;
-  width:30%;
-  text-align:right;
   }
 
   .userdata {
@@ -45,54 +37,10 @@
     float:right;
   }
 
-  .report_buttons{
-    background-color:grey;
-    border-bottom-color:black;
-    border-bottom-width:1px;
-    border-left-color-ltr-source:physical;
-    border-left-color-rtl-source:physical;
-    border-left-color-value:black;
-    border-left-style-ltr-source:physical;
-    border-left-style-rtl-source:physical;
-    border-left-style-value:solid;
-    border-left-width-ltr-source:physical;
-    border-left-width-rtl-source:physical;
-    border-left-width-value:1px;
-    border-right-color-ltr-source:physical;
-    border-right-color-rtl-source:physical;
-    border-right-color-value:black;
-    border-right-style-ltr-source:physical;
-    border-right-style-rtl-source:physical;
-    border-right-style-value:solid;
-    border-right-width-ltr-source:physical;
-    border-right-width-rtl-source:physical;
-    border-right-width-value:1px;
-    border-top-color:black;
-    /*border-top-style:solid;
-    border-bottom-style:solid;*/
-    border-style:outset;
-    border-top-width:1px;
-    color:white;
-    display:block;
-    padding-bottom:10px;
-    padding-left:10px;
-    padding-right:16px;
-    padding-top:10px;
-    padding-top:10px;
-    text-decoration:none;
-    text-align:center;
-    width:85%;
+  #button_container button {
+    font-size: 15px;
+    width: 235px;
   }
-
-  #activity_buttons{
-  float:right;
-  width:100%
-  }
-
-#activity_buttons td{
-  padding-bottom:5px;
-}
-
 </style>
 
 <br />
@@ -121,16 +69,21 @@
     <td class='blue'>&nbsp;<%=@user.date_created.strftime('%A  %d, %B, %Y') rescue '&nbsp;'%></td>
   </tr>
 </table>
-<br />
-</div>
-
-<div id="right"-->
-  <table id="activity_buttons">
-    <tr>
+<div style = "float:right;">
+<table id = 'button_container'>
+  <tr>
     <td>
-      <a class='report_buttons' href='/user/change_password?id=<%= @user.id -%>'>Change Password</a><br />
-      <a class='report_buttons' href='/user/edit?id=<%= @user.id -%>'>Edit Names</a><br />
+      <button id="edit" class="silver" style="margin-top:10px;"
+        onmousedown="document.location = '/user/edit/<%= @user.id -%>'"><span>Edit User names</span>
+      </button>
     </td>
   </tr>
-  </table>
+  <tr>
+    <td>
+      <button id="change_password" class="silver" style="margin-top:10px;"
+        onmousedown="document.location = '/user/change_password?id=<%= @user.id -%>'"><span>Change Password</span>
+      </button>
+    </td>
+  </tr>
+  </div>
 </div>

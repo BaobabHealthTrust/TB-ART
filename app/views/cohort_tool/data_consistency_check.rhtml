@@ -1,31 +1,19 @@
-<style>
-#summary{
-  position:relative;
-  float:center;
-  width:100%;
-  padding-left:10px;
-  padding-right:10px;
-}
-
-#summary td , th{
-  border-style:solid;
-  border-width:thin;
-  padding:5px;  
-}
-</style>
 <script >
-    tt_cancel_destination = "/Report/data_cleaning"
+    tt_cancel_destination = "/clinic"; // /reports";
+    
+    jQuery(document).ready(function($) {
+      document.getElementById("find").innerHTML = "<span>Back</span>";
+      document.getElementById("find").style.cssFloat = "left";
+
+     })
+    
+    
 </script>
 <%= javascript_include_tag 'jquery' %>
 <%= stylesheet_link_tag 'extra_buttons' %>
 
-<script type="text/javascript">
-  jQuery(document).ready(function($) {
-  document.getElementById('finishButton').innerHTML= "<span>Back<span>";
-  }) 
 </script>
 <h1 align='center'><u>Data Consistency Checks for quarter : <%=params[:quarter]%></u></h1>
-<div style= "position:relative; overflow: auto; height:72%">
 <table id='summary'>
  <tr>
   <th>Checks For</th>
@@ -37,10 +25,10 @@
     <td align='left'><%= data_row[0] %></td>
     <td align='center'><%= link_to_onmousedown "#{data_row[1]}",{:controller =>"cohort_tool", :action => 'list', :report_type => "data_consistency_check",
                            :check_type => "#{data_row[0]}", :source =>"data_consistency_check", :quarter => "#{@report_quarter}"}%></td> 
-    <td><%= data_row[2]%></td>
-    
+    <td><%= data_row[2]%></td> 
 </tr>
 <%end rescue nill%>
+<script>
+  insertBlankRow ();
+</script>
 </table>
-</div>
-

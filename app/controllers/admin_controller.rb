@@ -5,18 +5,6 @@ class AdminController < ApplicationController
     render :layout => "menu"
   end
   
-  def set_datetime
-    # set for 1 second after midnight to designate it as a retrospective date
-    session[:datetime] = Time.mktime(params[:set_year].to_i,params[:set_month].to_i,params[:set_day].to_i,0,0,1) 
-    redirect_to '/clinic'
-  end
-  
-  def reset_datetime
-    # reset the session date to nil - start using the system curr date
-    session[:datetime] = nil
-    redirect_to '/clinic'
-  end
-
   def move_everything_to_previous_day
     # CAREFUL: Only for testing purpose once you know what you do
     # This changes datetime for previous stuff
