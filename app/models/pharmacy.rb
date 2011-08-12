@@ -25,13 +25,6 @@ class Pharmacy < ActiveRecord::Base
     encounter.value_text = reason unless reason.blank?
     encounter.save
   end
-  
-  def self.dispensed_stock_adjustment(encounter)
-    encounter.orders.each do |order|
-      drug_id = order.drug_order.drug_inventory_id ; quantity = order.drug_order.quantity
-      self.drug_dispensed_stock_adjustment(drug_id,quantity,encounter.encounter_datetime.to_date)
-    end
-  end
 
   def self.date_ranges(date)    
     current_range =[]

@@ -60,8 +60,8 @@ class Encounter < ActiveRecord::Base
       o
     elsif name == 'VITALS'
       temp = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("TEMPERATURE (C)") && "#{obs.answer_string}".upcase != 'UNKNOWN' }
-      weight = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("WEIGHT (KG)") && "#{obs.answer_string}".upcase != '0.0' }
-      height = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("HEIGHT (CM)") && "#{obs.answer_string}".upcase != '0.0' }
+      weight = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("WEIGHT (KG)") || obs.concept.concept_names.map(&:name).include?("Weight (kg)") && "#{obs.answer_string}".upcase != '0.0' }
+      height = observations.select {|obs| obs.concept.concept_names.map(&:name).include?("HEIGHT (CM)") || obs.concept.concept_names.map(&:name).include?("Height (cm)") && "#{obs.answer_string}".upcase != '0.0' }
       vitals = [weight_str = weight.first.answer_string + 'KG' rescue 'UNKNOWN WEIGHT',
                 height_str = height.first.answer_string + 'CM' rescue 'UNKNOWN HEIGHT']
       temp_str = temp.first.answer_string + '°C' rescue nil
@@ -129,7 +129,7 @@ class Encounter < ActiveRecord::Base
        ['',''],
        ['Oral contraceptive pills', 'ORAL CONTRACEPTIVE PILLS'],
 		   ['Depo-Provera', 'DEPO-PROVERA'],
-		   ['IUD-Intrauterine device/loop', 'INTRAUTERINE CONTRACEPTION'],
+		   ['Intrauterine contraception', 'INTRAUTERINE CONTRACEPTION'],
        ['Contraceptive implant', 'CONTRACEPTIVE IMPLANT'],
        ['Male condoms', 'MALE CONDOMS'],
        ['Female condoms', 'FEMALE CONDOMS'],
@@ -138,26 +138,6 @@ class Encounter < ActiveRecord::Base
        ['Abstinence', 'ABSTINENCE'],
        ['Tubal ligation', 'TUBAL LIGATION'],
        ['Vasectomy', 'VASECTOMY'],
-		   ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
-      ],
-      'male_family_planning_methods' => [
-       ['',''],
-       ['Male condoms', 'MALE CONDOMS'],
-       ['Withdrawal', 'WITHDRAWAL'],
-       ['Rhythm method', 'RYTHM METHOD'],
-       ['Abstinence', 'ABSTINENCE'],
-       ['Vasectomy', 'VASECTOMY']
-      ],
-      'female_family_planning_methods' => [
-       ['',''],
-       ['Oral contraceptive pills', 'ORAL CONTRACEPTIVE PILLS'],
-		   ['Depo-Provera', 'DEPO-PROVERA'],
-		   ['IUD-Intrauterine device/loop', 'INTRAUTERINE CONTRACEPTION'],
-       ['Contraceptive implant', 'CONTRACEPTIVE IMPLANT'],
-       ['Female condoms', 'FEMALE CONDOMS'],
-       ['Rhythm method', 'RYTHM METHOD'],
-       ['Abstinence', 'ABSTINENCE'],
-       ['Tubal ligation', 'TUBAL LIGATION'],
 		   ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
       ],
      'drug_list' => [
@@ -183,7 +163,7 @@ class Encounter < ActiveRecord::Base
         'continue_treatment' => [
           ["",""],
           ["Yes", "YES"],
-          ["DHO DOT site","DHO DOT SITE"],
+          ["DHO Dot site","DHO DOT SITE"],
           ["Transfer Out", "TRANSFER OUT"]
       ],
         'hiv_status' => [

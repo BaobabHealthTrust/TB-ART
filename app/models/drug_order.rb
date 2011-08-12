@@ -121,7 +121,7 @@ class DrugOrder < ActiveRecord::Base
   def total_drug_supply(patient, encounter = nil, session_date = Date.today)
     if encounter.blank?  
       type = EncounterType.find_by_name("DISPENSING")
-      encounter = Encounter.find(:first,:conditions =>["DATE(encounter_datetime) = ? AND encounter_type = ?",session_date,type.id])
+      encounter = encounters.find(:first,:conditions =>["DATE(encounter_datetime) = ? AND encounter_type = ?",session_date,type.id])
     end
     
     return [] if encounter.blank?

@@ -2,7 +2,7 @@ class EncounterTypesController < ApplicationController
 
   def index
     if GlobalProperty.use_user_selected_activities
-      redirect_to "/user/activities?patient_id=#{params[:patient_id]}"
+      #redirect_to "/user/activities?patient_id=#{params[:patient_id]}"
     end
     # TODO add clever sorting
     @encounter_types = EncounterType.find(:all).map{|enc|enc.name.gsub(/.*\//,"").gsub(/\..*/,"").humanize}
