@@ -138,14 +138,14 @@
 
   <%= text_field_tag "person[birth_day]",  nil, :field_type => 'number', :helpText => 'Birth Day', :condition => '($("person_birth_year").value != "Unknown") && ($("person_birth_month").value != "Unknown")', :tt_onLoad => "getDayOfMonthPicker($('person_birth_year').value, $('person_birth_month').value)" ,:validationJS => "validateDOB()",:validationMessage => 'Please enter a valid date'%>
 
-  <p><label for="region_region_name">Ancestral Region</label></br>
+  <p><label for="region_region_name">Region of Origin</label></br>
   <%= text_field "region" , 'region_name', :xhelpText => 'Region',:tt_requireNextClick => false, :ajaxURL => '/people/region/Region?field=role&value='%></p>
 
 
 
-  <%#= text_field_tag "person[addresses][address2]", params[:address2], {:id => 'address2', :field_type => 'alpha', :helpText => 'Ancestral District', :ajaxURL => '/person_addresses/address2?search_string=', :allowFreeText => true, :condition => '$("address2").value == "" || skipped[tstCurrentPage] == 1', :tt_onLoad => 'seen(tstCurrentPage);' } if ask_home_village %>
+  <%#= text_field_tag "person[addresses][address2]", params[:address2], {:id => 'address2', :field_type => 'alpha', :helpText => 'Home District', :ajaxURL => '/person_addresses/address2?search_string=', :allowFreeText => true, :condition => '$("address2").value == "" || skipped[tstCurrentPage] == 1', :tt_onLoad => 'seen(tstCurrentPage);' } if ask_home_village %>
 
-  <%= text_field_tag "person[addresses][address2]", params[:address2], {:id => 'address2',:tt_requireNextClick => false, :field_type => 'alpha', :helpText => 'Ancestral District', :ajaxURL => '', :allowFreeText => false, :tt_onLoad => "seen(tstCurrentPage); set_ajaxURL_for_suggestions('/people/district/District?filter_value=' ,document.getElementById('region_region_name').value);" } if ask_home_village %>  
+  <%= text_field_tag "person[addresses][address2]", params[:address2], {:id => 'address2',:tt_requireNextClick => false, :field_type => 'alpha', :helpText => 'Home District', :ajaxURL => '', :allowFreeText => false, :tt_onLoad => "seen(tstCurrentPage); set_ajaxURL_for_suggestions('/people/district/District?filter_value=' ,document.getElementById('region_region_name').value);" } if ask_home_village %>  
 
   <p><label for="person_addresses_county_district">Ancestral Traditional Authority (T/A)</label></br>
   <%= text_field "person[addresses]" , 'county_district', :xhelpText => 'Ancestral Traditional Authority (T/A)',:tt_requireNextClick => false, :ajaxURL => '', :tt_onLoad => "set_ajaxURL_for_suggestions('/people/traditional_authority/TraditionalAuthority?filter_value=' ,document.getElementById('address2').value);" %></p>
@@ -200,9 +200,9 @@
     <%= text_field_tag "person[home_phone_number]",  params[:home_phone_number], {:field_type => 'number', :helpText => 'Ground Phone Number', :allowFreeText => true, :tt_pageStyleClass => "Numeric NumbersOnly", :validationRule => "^0\\d{7,9}$|Unknown|Not Available", :validationMessage => "Not a valid phone number" } if ask_ground_phone%>
   <%end%>
 
-  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we send you an sms on this number for treatment?", :condition => "$('cellphone').value !='Unknown'", :tt_onLoad => 'seen(tstCurrentPage);') if ask_sms_for_TB_therapy%>
+  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we send you an SMS for follow-up?", :condition => "$('cellphone').value !='Unknown'", :tt_onLoad => 'seen(tstCurrentPage);') if ask_sms_for_TB_therapy%>
   
-  <%= select_tag("person[agrees_to_be_visited_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_to_be_visited_for_TB_therapy]),:helpText =>"Can we visit you at home for treatment?", :tt_onLoad => 'seen(tstCurrentPage);') if ask_visit_home_for_TB_therapy %>
+  <%= select_tag("person[agrees_to_be_visited_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_to_be_visited_for_TB_therapy]),:helpText =>"Can we visit you at home for follow-up?", :tt_onLoad => 'seen(tstCurrentPage);') if ask_visit_home_for_TB_therapy %>
   
   
   <%#= select_tag("person[occupation]", options_for_select([" ", "Housewife", "Farmer", "Police", "Soldier", "Business", "Teacher", "Student", "Healthcare Worker"].sort.concat(["Other"]) ,params[:occupation]),:helpText =>"Occupation",:allowFreeText => true, :tt_onLoad => 'seen(tstCurrentPage);')%>
