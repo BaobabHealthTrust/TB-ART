@@ -101,14 +101,31 @@ class EncountersController < ApplicationController
       observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
       observation[:person_id] ||= encounter.patient_id
       observation[:concept_name].upcase ||= "DIAGNOSIS" if encounter.type.name.upcase == "OUTPATIENT DIAGNOSIS"
+      
       # Handle multiple select
+      raise ''
+      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(String)
+        observation[:value_coded_or_text_multiple] = observation[:value_coded_or_text_multiple].split(';')
+      end
+      
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
         observation[:value_coded_or_text_multiple].compact!
         observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
       end  
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
+        
         values = observation.delete(:value_coded_or_text_multiple)
-        values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
+        values.each do |value| 
+            observation[:value_coded_or_text] = value
+            if observation[:concept_name].humanize.upcase == "TESTS ORDERED"
+                raise observation[:accession_number].to_s
+            end
+            if observation[:concept_name].humanize == "Tests ordered"
+                observation[:accession_number] = Observation.new_accession_number 
+                raise observation[:accession_number].to_s
+            end
+            Observation.create(observation) 
+        end    
       else      
         observation.delete(:value_coded_or_text_multiple)
 
@@ -307,6 +324,7 @@ class EncountersController < ApplicationController
   end
   
   def lab_orders
+  
     @lab_orders = Encounter.select_options['lab_orders'][params['sample']].collect{|order| order}
     render :text => '<li onmousedown=updateInfoBar(this)>' + @lab_orders.join('</li><li onmousedown=updateInfoBar(this)>') + '</li>'
   end
