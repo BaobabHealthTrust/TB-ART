@@ -328,13 +328,13 @@ class PatientsController < ApplicationController
 
   def next_available_arv_number
     next_available_arv_number = PatientIdentifier.next_available_arv_number
-    render :text => next_available_arv_number.gsub(Location.current_arv_code,'').strip rescue nil
+    render :text => next_available_arv_number.gsub(PatientIdentifier.site_prefix,'').strip rescue nil
   end
   
   def assigned_arv_number
     assigned_arv_number = PatientIdentifier.find(:all,:conditions => ["voided = 0 AND identifier_type = ?",
         PatientIdentifierType.find_by_name("ARV Number").id]).collect{|i|
-      i.identifier.gsub(Location.current_arv_code,'').strip.to_i
+      i.identifier.gsub(PatientIdentifier.site_prefix,'').strip.to_i
     } rescue nil
     render :text => assigned_arv_number.sort.to_json rescue nil 
   end

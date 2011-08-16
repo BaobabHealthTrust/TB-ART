@@ -146,7 +146,7 @@ class EncountersController < ApplicationController
       unless (arv_number_identifier_type != type) and @patient_identifier
         arv_number = identifier[:identifier].strip
         if arv_number.match(/(.*)[A-Z]/i).blank?
-          identifier[:identifier] = "#{Location.current_arv_code} #{arv_number}"
+          identifier[:identifier] = "#{PatientIdentifier.site_prefix} #{arv_number}"
         end
       end
 

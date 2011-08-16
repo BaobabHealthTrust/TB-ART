@@ -871,7 +871,7 @@ EOF
   end
 
   def self.printing_message(new_patient , archived_patient , creating_new_filing_number_for_patient = false)
-    arv_code = Location.current_arv_code
+    arv_code = PatientIdentifier.site_prefix
     new_patient_name = new_patient.name
     new_filing_number = self.printing_filing_number_label(new_patient.get_identifier('Filing Number'))
     old_archive_filing_number = self.printing_filing_number_label(new_patient.old_filing_number('Archived filing number'))
@@ -1014,7 +1014,7 @@ EOF
 
       identifier = params['identifiers'][0][:identifier].strip
       if identifier.match(/(.*)[A-Z]/i).blank?
-        params['identifiers'][0][:identifier] = "#{Location.current_arv_code} #{identifier}"
+        params['identifiers'][0][:identifier] = "#{PatientIdentifier.site_prefix} #{identifier}"
       end
       patient.patient_identifiers.create(params[:identifiers])
     when "name"

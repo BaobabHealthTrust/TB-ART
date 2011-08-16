@@ -26,8 +26,13 @@ class PatientIdentifier < ActiveRecord::Base
     return checkdigit
   end
 
+  def self.site_prefix
+    site_prefix = GlobalProperty.find_by_property("site_prefix").property_value rescue nil
+    return site_prefix
+  end
+
   def self.next_available_arv_number
-    current_arv_code = Location.current_arv_code
+    current_arv_code = self.site_prefix
     type = PatientIdentifierType.find_by_name('ARV Number').id
     current_arv_number_identifiers = PatientIdentifier.find(:all,:conditions => ["identifier_type = ? AND voided = 0",type])
     assigned_arv_ids = current_arv_number_identifiers.collect{|identifier|
