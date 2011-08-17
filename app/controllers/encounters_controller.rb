@@ -117,8 +117,6 @@ class EncountersController < ApplicationController
         values = observation.delete(:value_coded_or_text_multiple)
         values.each do |value| 
             observation[:value_coded_or_text] = value
-            if observation[:concept_name].humanize.upcase == "TESTS ORDERED"
-            end
             if observation[:concept_name].humanize == "Tests ordered"
                 observation[:accession_number] = Observation.new_accession_number 
             end
