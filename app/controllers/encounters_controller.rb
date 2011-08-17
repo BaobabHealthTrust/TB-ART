@@ -103,7 +103,7 @@ class EncountersController < ApplicationController
       observation[:concept_name].upcase ||= "DIAGNOSIS" if encounter.type.name.upcase == "OUTPATIENT DIAGNOSIS"
       
       # Handle multiple select
-      raise ''
+
       if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(String)
         observation[:value_coded_or_text_multiple] = observation[:value_coded_or_text_multiple].split(';')
       end
@@ -118,11 +118,9 @@ class EncountersController < ApplicationController
         values.each do |value| 
             observation[:value_coded_or_text] = value
             if observation[:concept_name].humanize.upcase == "TESTS ORDERED"
-                raise observation[:accession_number].to_s
             end
             if observation[:concept_name].humanize == "Tests ordered"
                 observation[:accession_number] = Observation.new_accession_number 
-                raise observation[:accession_number].to_s
             end
             Observation.create(observation) 
         end    
@@ -193,27 +191,40 @@ class EncountersController < ApplicationController
 
   def new
     @patient = Patient.find(params[:patient_id] || session[:patient_id])
+    @ipt_contacts = @patient.tb_contacts.collect{|person| person unless person.age > 6}.compact rescue []
     @select_options = Encounter.select_options
+    @months_since_last_hiv_test = @patient.months_since_last_hiv_test
+    @tb_patient = @patient.tb_patient?
+    @art_patient = @patient.art_patient?
+    
 =begin
+=end
+
     use_regimen_short_names = GlobalProperty.find_by_property(
       "use_regimen_short_names").property_value rescue "false"
     show_other_regimen = GlobalProperty.find_by_property(
       "show_other_regimen").property_value rescue 'false'
 
     @answer_array = arv_regimen_answers(:patient => @patient,
-      :use_short_names => use_regimen_short_names == "true",
-      :show_other_regimen => show_other_regimen == "true")
-=end
-    hiv_program = Program.find_by_name('HIV Program')
-    @answer_array = regimen_options(hiv_program.regimens, @patient.person.age)
-    @answer_array += [['Other', 'Other'], ['Unknown', 'Unknown']]
+      :use_short_names    => use_regimen_short_names == "true",
+      :show_other_regimen => show_other_regimen      == "true")
+      
+     hiv_program = Program.find_by_name('HIV Program')
+     @answer_array = regimen_options(hiv_program.regimens, @patient.person.age)
+     @answer_array += [['Other', 'Other'], ['Unknown', 'Unknown']]
 
     @hiv_status = @patient.hiv_status
     @hiv_test_date = @patient.hiv_test_date
     @lab_activities = Encounter.lab_activities
+    @tb_classification = [["Pulmonary TB","PULMONARY TB"],["Extra Pulmonary TB","EXTRA PULMONARY TB"]]
+    @tb_patient_category = [["New","NEW"], ["Relapse","RELAPSE"], ["Retreatment after default","RETREATMENT AFTER DEFAULT"], ["Fail","FAIL"], ["Other","OTHER"]]
+    @sputum_visual_appearance = [['Muco-purulent','MUCO-PURULENT'],['Blood-stained','BLOOD-STAINED'],['Saliva','SALIVA']]
+
+    @sputum_results = [['1+','1 PLUS'], ['2+','2 PLUS'], ['3+','3 PLUS'],['Negative', 'NEGATIVE'], ['Scanty', 'SCANTY']]
+
     @sputum_orders = Hash.new()
     @patient.recent_sputum_orders.each{|order| @sputum_orders[order.accession_number] = Concept.find(order.value_coded).fullname rescue order.value_text}
-    
+
     redirect_to "/" and return unless @patient
 
     redirect_to next_task(@patient) and return unless params[:encounter_type]
