@@ -3,19 +3,35 @@
   .tt_controls_scan_specimen_1 #keyboard{
     display:none;
   }
+
   .tt_controls_scan_specimen_2 #keyboard{
     display:none;
   }
+
   .tt_controls_scan_specimen_3 #keyboard{
     display:none;
   }
+
+  .tt_controls_sputum_microscopy_year #char{
+    display:none;
+  }
+
+  .tt_controls_sputum_microscopy_month .keyboard{ display:none; }
+  #tt_page_sputum_microscopy_month .options{height:550px;}
+  #tt_page_sputum_microscopy_month .options li{font-size:30px;}
 </style>
+
 <script>
   var tt_cancel_destination = "/encounters/new/lab?patient_id=<%= @patient.patient_id -%>";
 
   function compileDate(){
     var tmpDate = $('sputum_microscopy_year').value + "-" + $('sputum_microscopy_month').value +"-" +$('sputum_microscopy_day').value;
     return tmpDate;
+  }
+
+  function updateValues(element) {
+    var specimen = $(element).value;
+    return specimen;
   }
 
   barcodeFocusOnce = true;
@@ -63,10 +79,9 @@
     {:id => "visual_appearance_of_sputum_specimen",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Visual appearance of sputum specimen" } %>
-     
      <%acc_numbers = @sputum_orders.collect{|k,v| k}.sort%>
      <%counter = 4%>
-     <%3.times do |i|%>
+     <% (@sputum_orders.size).times do |i|%>
 
     <%element_id = "specimen#{i+1}"%>
     <%destination_id = "specimen_#{i+1}"%>
@@ -78,14 +93,13 @@
        :tt_onLoad => "setupBarcode();inform();barcodeId = 'touchscreenInput#{counter}';",
        :validationRule => reg_ex, 
        :validationMessage => "Not a valid accession number: #{reg_ex}", 
-       #:tt_onUnLoad => "updateValues('#{element_id}','#{destination_id}');",
        :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
-
 
     <%= touch_select_tag "#{@sputum_orders[acc_numbers[i]]} RESULTS", @patient, options_for_select(@sputum_results),
       {:id => "sputum_specimen_#{i+1}_result",
       :tt_pageStyleClass => "NoKeyboard",
       :accession_number => acc_numbers[i],
+      :tt_onLoad => "updateValues('#{element_id}');",
       :helpText => "#{@sputum_orders[acc_numbers[i]]} Results (Accession number: #{acc_numbers[i]})" } %>
       <%counter += 2%>
    <%end%>
