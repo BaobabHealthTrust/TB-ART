@@ -46,31 +46,31 @@
   <%= hidden_field_tag("programs[][date_enrolled]", session[:datetime] ) %>
   <%= hidden_field_tag("programs[][states][][state]", "Pre-ART (Continue)") %>
   
-<!--   <%= touch_yes_no_tag "Transfer in", @patient, nil,
-    {:id => "transfer_in",
+  <%= touch_yes_no_tag "Ever registered at ART clinic", @patient, nil,
+    {:id => "ever_registered_at_ART_clinic",
      :condition => '$("ever_received_art").value == "YES"',
-     :helpText => "Transfer in patient?"} %> -->
+     :helpText => "Ever registered at an ART clinic?"} %>
 
   <%= touch_yes_no_tag "HAS TRANSFER LETTER", @patient, nil,
     {:id => "has_transfer_letter",
-     :condition => '$("ever_received_art").value == "YES"',
+     :condition => '$("ever_registered_at_ART_clinic").value == "YES"',
      :helpText => "Has transfer letter?"} %>
 
   <%= touch_location_tag "LOCATION OF ART INITIATION", @patient, nil,
     {:id => "location_of_art_initialization",
-     :condition => '$("ever_received_art").value == "YES"',
+     :condition => '$("ever_registered_at_ART_clinic").value == "YES"',
      :optional => false,
      :helpText => "Location of ART initiation" } %>
 
   <%= touch_text_field_tag "ART NUMBER AT PREVIOUS LOCATION", @patient, nil,
     {:id => "previous_art_number",
-     :condition => '$("ever_received_art").value == "YES"',
+     :condition => '$("ever_registered_at_ART_clinic").value == "YES"',
      :helpText => "ART number at previous location" } %>
 
   <%= touch_date_tag "DATE ART LAST TAKEN", @patient, nil,
     {:id => "date_art_last_taken",
      :absoluteMax => Date.today,
-     :condition => '$("ever_received_art").value == "YES"',
+     :condition => '$("ever_registered_at_ART_clinic").value == "YES"',
      :helpText => "Date ART last taken"} %>
 
   <%= touch_yes_no_unknown_tag "HAS THE PATIENT TAKEN ART IN THE LAST TWO MONTHS", @patient, nil,
@@ -85,7 +85,7 @@
 
   <%= touch_select_tag "LAST ART DRUGS TAKEN", @patient, options_for_select(@answer_array),
     {:id => "last_art_drugs_taken",
-     :condition => '$("ever_received_art").value == "YES"',
+     :condition => '$("ever_registered_at_ART_clinic").value == "YES"',
      :helpText => "Last ARV drugs taken" } %>
 
   <%= touch_yes_no_tag "FOLLOW UP AGREEMENT", @patient, nil,
