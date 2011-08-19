@@ -5,6 +5,7 @@
   function showLabels(){
     //var ordersArray = tstPageValues[1].split(";")
     var ordersArray = val_arr
+
     var displayText = ""
     for(var i=0;i<ordersArray.length;i++){
       displayText += drawLabel(ordersArray[i])
@@ -21,7 +22,7 @@
 <%= "#{@patient.name} #{@patient.national_id_with_dashes}" %>\
 </span>\
 <span class='labelLine reverse'>"+test_type+"</span>\
-<span class='labelLine'> 421249 || |||| | ||||| | | ||||| || | |</span>\
+<span class='labelLine'> <del>999999 || |||| | ||||| | | ||||| || | |</del></span>\
 <%= "#{DateTime.now.strftime("%d%b%y %H:%M")}" %>\
 </div>\
 "

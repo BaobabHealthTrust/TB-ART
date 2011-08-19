@@ -170,7 +170,7 @@ class PeopleController < ApplicationController
     district_id = District.find_by_name("#{params[:filter_value]}").id
     traditional_authority_conditions = ["name LIKE (?) AND district_id = ?", "#{params[:search_string]}%", district_id]
 
-    traditional_authorities = TraditionalAuthority.find(:all,:conditions => traditional_authority_conditions)
+    traditional_authorities = TraditionalAuthority.find(:all,:conditions => traditional_authority_conditions, :order => 'name')
     traditional_authorities = traditional_authorities.map do |t_a|
       "<li value='#{t_a.name}'>#{t_a.name}</li>"
     end
@@ -181,7 +181,7 @@ class PeopleController < ApplicationController
   def region
     region_conditions = ["name LIKE (?)", "#{params[:value]}%"]
 
-    regions = Region.find(:all,:conditions => region_conditions)
+    regions = Region.find(:all,:conditions => region_conditions, :order => 'name')
     regions = regions.map do |r|
       "<li value='#{r.name}'>#{r.name}</li>"
     end
@@ -193,19 +193,19 @@ class PeopleController < ApplicationController
     region_id = Region.find_by_name("#{params[:filter_value]}").id
     region_conditions = ["name LIKE (?) AND region_id = ? ", "#{params[:search_string]}%", region_id]
 
-    districts = District.find(:all,:conditions => region_conditions)
+    districts = District.find(:all,:conditions => region_conditions, :order => 'name')
     districts = districts.map do |d|
       "<li value='#{d.name}'>#{d.name}</li>"
     end
     render :text => districts.join('') and return
   end
 
-    # Districts containing the string given in params[:value]
+    # Villages containing the string given in params[:value]
   def village
     traditional_authority_id = TraditionalAuthority.find_by_name("#{params[:filter_value]}").id
     village_conditions = ["name LIKE (?) AND traditional_authority_id = ?", "#{params[:search_string]}%", traditional_authority_id]
 
-    villages = Village.find(:all,:conditions => village_conditions)
+    villages = Village.find(:all,:conditions => village_conditions, :order => 'name')
     villages = villages.map do |v|
       "<li value='#{v.name}'>#{v.name}</li>"
     end
