@@ -1,8 +1,22 @@
 <script>
-  var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
+  var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>";
 
   function showTaskName(){
-    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: TB Registration</span></div></div>' 
+    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: TB Registration</span></div></div>';
+  }
+  
+  function set_TB_program_values() {
+    var tb_type = $('touchscreenInput'+tstCurrentPage).value;
+    
+    if (tb_type == "Multi-drug resistant tuberculosis"){
+        document.getElementById("programs__program_id").value = <%="#{Program.find_by_name('MDR-TB PROGRAM').id}"%>;
+        document.getElementById("programs__states__state").value = <%="'Waiting for treatment'"%>;
+    }
+    else
+    {
+        document.getElementById("programs__program_id").value = <%="#{Program.find_by_name('TB PROGRAM').id}"%>;
+        document.getElementById("programs__states__state").value = <%="'Symptomatic but NOT in treatment'"%>;
+    }
   }
 </script> 
 
@@ -19,11 +33,11 @@ Check appropriateness of Encounter type
 Check applicability of code below
 -->
 
-<% if @patient.patient_programs.current.local.map(&:program).map(&:name).include?('HIV PROGRAM') %>
+<% if !@patient_has_closed_TB_program_at_current_location%>
   <div class="inputPage NoKeyboard" id="page" style="display: block;">
     <div id="trigger"></div>
     <div id="infoBar" class="infoBarClass"></div>
-    <label id="helpText" class="helpTextClass" for="">This patient has already been initiated in the HIV program at this location</label>
+    <label id="helpText" class="helpTextClass" for="">This patient has already been initiated in the TB program at this location</label>
   </div>
   <div id="buttons" class="buttonsDiv" style="top:456;">
     <div id="tt_extraButtons"></div>
@@ -71,7 +85,16 @@ Check applicability of code below
   <%= touch_select_tag "TB type", @patient, concept_set_options("TB type"),
     {:id => "tb_type",
      :tt_pageStyleClass => "NoKeyboard",
-     :helpText => "TB type / TB susceptibility" } %>
+     :helpText => "TB type / TB susceptibility",
+     :tt_OnUnload => "set_TB_program_values()"  } %>
+
+  <% if !@patient.patient_programs.current.local.map(&:program).map(&:name).include?('TB PROGRAM') %>
+      <%= hidden_field_tag("programs[][patient_program_id]", nil) %>
+      <%= hidden_field_tag("programs[][program_id]", Program.find_by_name('TB PROGRAM').id)%>
+      <%= hidden_field_tag("programs[][location_id]", Location.current_health_center.id) %>
+      <%= hidden_field_tag("programs[][date_enrolled]", session[:datetime] ) %>
+      <%= hidden_field_tag("programs[][states][][state]", "Symptomatic but NOT in treatment") %>
+  <%end%>
 
   <!--TODO Reminder based on the answer to question 'ever received TB Treatment'-->
 
