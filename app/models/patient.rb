@@ -273,6 +273,25 @@ class Patient < ActiveRecord::Base
     label.print(1)
   end
   
+  def lab_orders_label
+    lab_orders = Encounter.find(:last,:conditions =>["encounter_type = ? and patient_id = ?",
+        EncounterType.find_by_name("LAB ORDERS").id,self.id]).observations.map{|test_type| test_type.name + ' ' + test_type.accession_number rescue nil}
+
+     accession_number = Encounter.find(:last,:conditions =>["encounter_type = ? and patient_id = ?",
+        EncounterType.find_by_name("LAB ORDERS").id,self.id]).observations.map{|test_type| test_type.accession_number + " " rescue nil}
+
+      label = ZebraPrinter::StandardLabel.new
+      label.font_size = 2
+      label.font_horizontal_multiplier = 2
+      label.font_vertical_multiplier = 2
+      label.left_margin = 50
+      label.draw_text("#{self.person.name.titleize.delete("'")} #{self.national_id_with_dashes}",75, 30, 0, 4, 4, 4, false) #'
+      label.draw_multi_text("#{lab_orders}")
+      label.draw_text("#{accession_number}",75, 30, 0, 4, 4, 4, false)
+      label.draw_multi_text("#{DateTime.now.strftime("%d%b%y %H:%M")}")
+      label.print(1)
+  end
+  
   def filing_number_label(num = 1)
     file = self.get_identifier('Filing Number')[0..9]
     file_type = file.strip[3..4]
@@ -286,7 +305,7 @@ class Patient < ActiveRecord::Base
     label.draw_text("Filing area #{file_type}",75, 150, 0, 2, 2, 2, false)
     label.draw_text("Version number: #{version_number}",75, 200, 0, 2, 2, 2, false)
     label.print(num)
-  end  
+  end
 
   def visit_label(date = Date.today)
     result = Location.current_location.name.match(/outpatient/i).nil?
@@ -1108,12 +1127,13 @@ EOF
   #from TB ART TO BART
   
   def hiv_status
-    status = Concept.find(Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV STATUS").concept_id]).value_coded).name.name rescue "UNKNOWN"
+    status = Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV Status").concept_id]).name rescue "UNKNOWN"
+    #raise"#{status.inspect}"
     return status
   end
   
   def hiv_test_date
-    test_date = Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV TEST DATE").concept_id]).value_datetime rescue nil
+    test_date = Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV test date").concept_id]).value_datetime rescue nil
     return test_date
   end
   
