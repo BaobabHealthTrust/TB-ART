@@ -138,7 +138,8 @@ class Encounter < ActiveRecord::Base
        ['Abstinence', 'ABSTINENCE'],
        ['Tubal ligation', 'TUBAL LIGATION'],
        ['Vasectomy', 'VASECTOMY'],
-       ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
+       ['Emergency contraception', 'EMERGENCY CONTRACEPTION'],
+       ['Other','OTHER']
       ],
      'male_family_planning_methods' => [
        ['',''],
@@ -160,7 +161,8 @@ class Encounter < ActiveRecord::Base
        ['Rhythm method', 'RYTHM METHOD'],
        ['Abstinence', 'ABSTINENCE'],
        ['Tubal ligation', 'TUBAL LIGATION'],
-       ['Emergency contraception', 'EMERGENCY CONTRACEPTION']
+       ['Emergency contraception', 'EMERGENCY CONTRACEPTION'],
+       ['Other','OTHER']
       ],
      'drug_list' => [
           ['',''],
