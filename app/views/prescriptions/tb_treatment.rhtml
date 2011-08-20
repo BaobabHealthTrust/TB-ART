@@ -53,32 +53,32 @@ Check applicability of code below
   <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
-  <% if @patient.person.gender == 'F' && @patient.person.age > 15 %>
+  <% if @patient.person.gender == 'F' && @patient.person.age > 13 %>
     <%= touch_yes_no_unknown_tag "PREGNANT?", @patient, nil,
       {:id => "pregnant",
        :helpText => "Pregnant?" } %>
   <% end %>  
+  <%  if @patient.person.age > 13 %>
+    <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
+      {:id => "on_fpm",
+       :helpText => "Currently using family planning method" } %>
 
-  <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
-    {:id => "on_fpm",
-     :helpText => "Currently using family planning method" } %>
-
-  <% if @patient.person.gender == "M" %>
-    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['male_family_planning_methods']),
-      {:id => "mfpm_used",
-       :condition => '$("on_fpm").value == "YES"',
-       :multiple => true,
-       :tt_pageStyleClass => "NoKeyboard",
-       :helpText => "What method?" } %>
-  <% else %>
-    <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['female_family_planning_methods']),
-      {:id => "mfpm_used",
-       :condition => '$("on_fpm").value == "YES"',
-       :multiple => true,
-       :tt_pageStyleClass => "NoKeyboard",
-       :helpText => "What method?" } %>
-  <% end %>
-
+    <% if @patient.person.gender == "M" %>
+      <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['male_family_planning_methods']),
+        {:id => "mfpm_used",
+         :condition => '$("on_fpm").value == "YES"',
+         :multiple => true,
+         :tt_pageStyleClass => "NoKeyboard",
+         :helpText => "What method?" } %>
+    <% else %>
+      <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['female_family_planning_methods']),
+        {:id => "mfpm_used",
+         :condition => '$("on_fpm").value == "YES"',
+         :multiple => true,
+         :tt_pageStyleClass => "NoKeyboard",
+         :helpText => "What method?" } %>
+    <% end %>
+   <% end %>
      <%= touch_select_tag "TB symptoms", @patient, concept_set_options('TB symptoms').sort + ['<option>Other</option><option>None</option>'],
     {:id => "tb_symptoms",
      :multiple => true,
