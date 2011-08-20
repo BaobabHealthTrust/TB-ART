@@ -1131,8 +1131,12 @@ EOF
   def given_tb_medication_before?
     self.orders.each{|order|
       drug_order = order.drug_order
+      drug_order_quantity = drug_order.quantity
+      if drug_order_quantity == nil
+        drug_order_quantity = 0
+      end
       next if drug_order == nil
-      next unless drug_order.quantity > 0
+      next unless drug_order_quantity > 0
       return true if drug_order.drug.tb_medication?
     }
     false
