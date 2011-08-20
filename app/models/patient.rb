@@ -102,6 +102,12 @@ class Patient < ActiveRecord::Base
       alerts << bmi_alert if bmi_alert
     end
 
+    hiv_status = self.hiv_status
+    alerts << "HIV Status : #{hiv_status} more than 3 months" if (hiv_status == 'Negative' && self.months_since_last_hiv_test > 3)
+    alerts << "HIV Status : #{hiv_status}" if hiv_status == 'Unknown'
+
+    alerts << "Lab: Expecting submission of sputum" unless self.sputum_orders_without_submission.empty?
+
     alerts
   end
   
@@ -1148,4 +1154,8 @@ EOF
     Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ? AND (value_coded in (?) OR value_text in (?))", self.id, ConceptName.find_by_name('TESTS ORDERED').concept_id, sputum_concept_ids, sputum_concept_names], :order => "obs_datetime desc", :limit => 3)
   end
   
+  def sputum_orders_without_submission
+    self.recent_sputum_orders.collect{|order| order unless Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ?", self.id, Concept.find_by_name("SPUTUM SUBMISSION")]).map{|o| o.accession_number}.include?(order.accession_number)}.compact rescue []    
+  end
+
 end
