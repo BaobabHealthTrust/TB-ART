@@ -264,6 +264,13 @@ class Encounter < ActiveRecord::Base
         ["Vomiting", "Vomiting"],
         ["Confusion", "Confusion"],
         ["Peripheral neuropathy","Peripheral neuropathy"]
+      ],
+      'tb_patient_categories' => [
+        ['',''],
+        ["New", "New patient"],
+        ["Relapse", "Relapse MDR-TB patient"],
+        ["Treatment after default MDR-TB patient", "Treatment after default MDR-TB patient"],
+        ["Failure", "Failed - TB"]
       ]
     }
   end
