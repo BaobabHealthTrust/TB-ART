@@ -79,13 +79,13 @@ Check applicability of code below
          :helpText => "What method?" } %>
     <% end %>
    <% end %>
-     <%= touch_select_tag "TB symptoms", @patient, concept_set_options('TB symptoms').sort + ['<option>Other</option><option>None</option>'],
+     <%= touch_select_tag "TB symptoms", @patient, options_for_select(@select_options['tb_symptoms']).sort + ['<option>Other</option><option>None</option>'],
     {:id => "tb_symptoms",
      :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "TB signs"} %>
 
-     <%= touch_select_tag "Drug related side effects", @patient, concept_set_options('Drug related side effects').sort + ['<option>Other</option><option>None</option>'],
+     <%= touch_select_tag "Drug related side effects", @patient, options_for_select(@select_options['drug_related_side_effects']).sort + ['<option>Other</option><option>None</option>'],
     {:id => "drug_side_effects",
      :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",
