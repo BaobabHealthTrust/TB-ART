@@ -210,7 +210,7 @@
     <%= text_field_tag "person[home_phone_number]",  params[:home_phone_number], {:field_type => 'number', :helpText => 'Ground Phone Number', :allowFreeText => true, :tt_pageStyleClass => "Numeric NumbersOnly", :validationRule => "^0\\d{7,9}$|Unknown|Not Available", :validationMessage => "Not a valid phone number" } if ask_ground_phone%>
   <%end%>
 
-  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we send you an SMS for follow-up?", :condition => "$('cellphone').value !='Unknown'", :tt_onLoad => 'seen(tstCurrentPage);') if ask_sms_for_TB_therapy%>
+  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we send you an SMS for follow-up?", :condition => "$('cellphone').value !='Unknown' && $('cellphone').value !='N/A'", :tt_onLoad => 'seen(tstCurrentPage);') if ask_sms_for_TB_therapy%>
   
   <%= select_tag("person[agrees_to_be_visited_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_to_be_visited_for_TB_therapy]),:helpText =>"Can we visit you at home for follow-up?", :tt_onLoad => 'seen(tstCurrentPage);') if ask_visit_home_for_TB_therapy %>
   
