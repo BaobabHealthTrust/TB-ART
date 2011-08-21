@@ -269,7 +269,7 @@ class Encounter < ActiveRecord::Base
         ['',''],
         ["New", "New patient"],
         ["Relapse", "Relapse MDR-TB patient"],
-        ["Treatment after default MDR-TB patient", "Treatment after default MDR-TB patient"],
+        ["Retreatment after default", "Treatment after default MDR-TB patient"],
         ["Failure", "Failed - TB"]
       ]
     }
