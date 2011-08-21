@@ -98,7 +98,7 @@ Check applicability of code below
 
   <!--TODO Reminder based on the answer to question 'ever received TB Treatment'-->
 
-  <%= touch_select_tag "TB patient category", @patient,  concept_set_options('TB patient category').sort + ['<option>Other</option>'],
+  <%= touch_select_tag "TB patient category", @patient,  options_for_select(@select_options['tb_patient_categories']).sort + ['<option>Other</option>'],
     {:id => "patient_category",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Patient category" } %>
