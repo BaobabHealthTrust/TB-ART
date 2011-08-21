@@ -101,16 +101,24 @@ Check applicability of code below
       {:id => "refer_to_clinician",
         :helpText => "Refer patient to clinician" } %>
 
-   <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE TB TABLETS REMAINING", @patient, nil,
-    {:id => "total_tb_tablets_remaining",
-     :condition => '$("refer_to_clinician").value == "NO"',
-     :helpText => "Total number of TB tablets remaining (brought to clinic and pills at home)" } %>
+  <% if @patient.is_first_visit? == false %>
+     <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE TB TABLETS REMAINING", @patient, nil,
+      {:id => "total_tb_tablets_remaining",
+       :condition => '$("refer_to_clinician").value == "NO"',
+       :helpText => "Total number of TB tablets remaining (brought to clinic and pills at home)" } %>
+  <%  end %>
 
-   <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
-    {:id => "total_arv_tablets_remaining",
-     :condition => '$("refer_to_clinician").value == "NO"',
-     :helpText => "Total number of ARV tablets remaining (brought to clinic and pills at home)" } %>
-
+  <% if @patient.is_first_visit?  && @patient.transfer_in? %>
+     <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
+      {:id => "total_arv_tablets_remaining",
+       :condition => '$("refer_to_clinician").value == "NO"',
+       :helpText => "Total number of ARV tablets remaining (brought to clinic and pills at home)" } %>
+  <% elsif @patient.is_first_visit? == false %>
+    <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
+      {:id => "total_arv_tablets_remaining",
+       :condition => '$("refer_to_clinician").value == "NO"',
+       :helpText => "Total number of ARV tablets remaining (brought to clinic and pills at home)" } %>
+  <% end %>
      <!--TODO How should we handle 'Show adherence report(TB+ART)'-->
 
   <%= touch_yes_no_unknown_tag "PRESCRIBE DRUGS", @patient, nil,
