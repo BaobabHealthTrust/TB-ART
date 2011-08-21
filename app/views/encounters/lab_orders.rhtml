@@ -1,67 +1,95 @@
 <script>
-  var tt_cancel_destination = "/patients/show/<%= @patient.id%>?auto_load_forms=false"
-  var val_arr = [];
+    var tt_cancel_destination = "/patients/show/<%= @patient.id%>?auto_load_forms=false"
+    var val_arr = [];
+    var val_in_list = [];
 
-  function showLabels(){
-    //var ordersArray = tstPageValues[1].split(";")
-    var ordersArray = val_arr
+    function showLabels(){
+        //var ordersArray = tstPageValues[1].split(";")
+        var ordersArray = val_arr
 
-    var displayText = ""
-    for(var i=0;i<ordersArray.length;i++){
-      displayText += drawLabel(ordersArray[i])
+        var displayText = ""
+        for(var i=0;i<ordersArray.length;i++){
+        displayText += drawLabel(ordersArray[i])
+        }
+
+        $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '</div>' ;
     }
 
-     $('tt_page_summary_').innerHTML = '<div id="summary">' + displayText + '</div>' ;
-  }
-
-  function drawLabel(test_type){
-    //TODO Replace below wtih http://barcode-coder.com/en/barcode-jquery-plugin-201.html
-    label = "\
-<div class='label'>\
-<span class='labelLine'>\
-<%= "#{@patient.name} #{@patient.national_id_with_dashes}" %>\
-</span>\
-<span class='labelLine reverse'>"+test_type+"</span>\
-<span class='labelLine'> <del>999999 || |||| | ||||| | | ||||| || | |</del></span>\
-<%= "#{DateTime.now.strftime("%d%b%y %H:%M")}" %>\
-</div>\
-"
-    return label
-  }
-
-  function updateLaborderUrl(mainTest){
-    var url = '/encounters/lab_orders?sample=' + mainTest + '&search_string=';
-    $('lab_orders').setAttribute('ajaxURL', url);
-  }
-
-  function updateInfoBar(element){
-    var val = unescape(element.innerHTML)
-    var idx = val_arr.indexOf(val);
-    if (idx == -1){
-      val_arr.push(val);
-      }else{
-      val_arr.splice(idx,1)
+    function drawLabel(test_type){
+        //TODO Replace below wtih http://barcode-coder.com/en/barcode-jquery-plugin-201.html
+        label = "\
+        <div class='label'>\
+        <span class='labelLine'>\
+        <%= "#{@patient.name} #{@patient.national_id_with_dashes}" %>\
+        </span>\
+        <span class='labelLine reverse'>"+test_type+"</span>\
+        <span class='labelLine'> <del>999999 || |||| | ||||| | | ||||| || | |</del></span>\
+        <%= "#{DateTime.now.strftime("%d%b%y %H:%M")}" %>\
+        </div>\
+        "
+        return label
     }
-    //tstInputTarget.value = ""
-    $('infoBar'+tstCurrentPage).innerHTML = val_arr.toString();
-    $('final_tests').value = val_arr.join(';');
-  }
 
-   function showTaskName(){
-    $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Lab Order</span></div></div>' 
-  }
-
-  function colourfy(){
-    alert('AA');
-  }
-
-  function updateLabOptions(){
-    opts_arr = document.getElementsByTagName('li')
-    for (var i = 0; i < opts_arr.length; i++){
-      opts_arr[i].setAttribute("onmousedown", "updateInfoBar();updateTouchscreenInputForSelect(this);colourfy();")
+    function updateLaborderUrl(mainTest){
+        var url = '/encounters/lab_orders?sample=' + mainTest + '&search_string=';
+        $('lab_orders').setAttribute('ajaxURL', url);
     }
-  }
 
+    function updateInfoBar(element){
+        var val = unescape(element.innerHTML)
+        var idx = val_arr.indexOf(val);
+        if (idx == -1){
+          val_arr.push(val);
+          }else{
+          val_arr.splice(idx,1)
+        }
+        //tstInputTarget.value = ""
+        $('infoBar'+tstCurrentPage).innerHTML = val_arr.toString();
+        $('final_tests').value = val_arr.join(';');
+    }
+
+    function showTaskName(){
+        $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div><span class="title" style="font-size:40px;">Next Task: Lab Order</span></div></div>' 
+    }
+
+    function colourfy(){
+        alert('AA');
+    }
+
+//opts_arr[i].setAttribute("onmousedown", "updateInfoBar();updateTouchscreenInputForSelect(this);colourfy();");
+    function updateLabOptions(){
+        opts_arr = document.getElementsByTagName('li');
+        val_in_list = [];
+        for (var i = 0; i < opts_arr.length; i++){
+            for(k = 0; k < val_arr.length; k++){
+                if(opts_arr[i].innerHTML.toString() == val_arr[k].toString()){
+                    val_in_list.push(val_arr[k]);
+                }
+            }
+
+        }
+        tstInputTarget.value = val_in_list.join(';');
+        listSuggestions(tstCurrentPage);
+    }
+  
+    function updateNextFinish(){
+        if (tstCurrentPage == 1 || tstCurrentPage == 2){
+            if (tstInputTarget.value == ''){
+                $('nextButton').innerHTML = '<span>Finish</span>';
+                $('nextButton').setAttribute("onmousedown","formSubmit()");
+            }
+            else{
+                $('nextButton').innerHTML = '<span>Next</span>';
+                $('nextButton').setAttribute("onmousedown","gotoNextPage()");
+            }
+            setTimeout(updateNextFinish, 500);
+        }
+    }
+
+    function formSubmit()
+    {
+        document.getElementById("label_specimens").submit();
+    }
 </script>
 <style>
   #space { display:inline; font-size:1.2em; }
@@ -101,11 +129,13 @@
   <%= select_tag "main_tests", options_for_select(@select_options['lab_orders'].collect{|k,v| k}.unshift(" ")), 
     {:helptext => 'Main tests', 
       :id => 'main_tests',
+      :tt_onLoad => "updateNextFinish();",
+      :optional => true,
      :tt_onUnLoad => 'updateLaborderUrl($("main_tests").value);'}%>
 
   <%= select_tag "lab_orders", options_for_select([]),
     {:id => "lab_orders",
-     :tt_onLoad => '$("infoBar"+tstCurrentPage).innerHTML = val_arr.toString();updateLabOptions();',
+     :tt_onLoad => '$("infoBar"+tstCurrentPage).innerHTML = val_arr.toString();setTimeout("updateLabOptions()",500);',
      :ajaxURL => '',
      :tt_onUnLoad => "",
      :multiple => true,
