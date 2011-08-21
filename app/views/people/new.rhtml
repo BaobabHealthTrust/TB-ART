@@ -157,16 +157,16 @@
 
   <%= text_field_tag "person[addresses][address2]", params[:address2], {:id => 'address2',:tt_requireNextClick => false, :field_type => 'alpha', :helpText => 'Home District', :ajaxURL => '', :allowFreeText => false, :tt_onLoad => "seen(tstCurrentPage); set_ajaxURL_for_suggestions('/people/district/District?filter_value=' ,document.getElementById('region_region_name').value);" } if ask_home_village %>  
 
-  <p><label for="person_addresses_county_district">Ancestral Traditional Authority (T/A)</label></br>
+  <p><label for="person_addresses_county_district">Ancestral Traditional Authority (T/A) or area of residence</label><br/>
   <%= text_field "person[addresses]" , 'county_district', :xhelpText => 'Ancestral Traditional Authority (T/A)',:tt_requireNextClick => false, :ajaxURL => '', :tt_onLoad => "set_ajaxURL_for_suggestions('/people/traditional_authority/TraditionalAuthority?filter_value=' ,document.getElementById('address2').value);" %></p>
 
-<p><label for="filter_region">Current Region</label></br>
+<p><label for="filter_region">Current Region</label><br/>
 <%= text_field "filter" , 'region', :xhelpText => 'Region', :tt_requireNextClick => false, :ajaxURL => '', :tt_onLoad => "set_ajaxURL_for_suggestions('/people/region/Region?filter_value=' ,document.getElementById('person_addresses_county_district').value);" %></p>
 
 
 <%= text_field_tag "filter_district", '', {:id => 'filter_district', :field_type => 'alpha', :helpText => 'Current District', :tt_requireNextClick => false, :ajaxURL => '', :allowFreeText => false, :tt_onLoad => "seen(tstCurrentPage); set_ajaxURL_for_suggestions('/people/district/District?filter_value=' ,document.getElementById('filter_region').value);" } if ask_home_village %>  
 
-<p><label for="filter_t_a">Current Traditional Authority (T/A)</label></br>
+<p><label for="filter_t_a">Traditional Authority (T/A) or area of residence</label></br>
 
 <%= text_field "filter" , 't_a', :xhelpText => 'Current Traditional Authority (T/A)', :tt_requireNextClick => false, :ajaxURL => '', :tt_onLoad => "set_ajaxURL_for_suggestions('/people/traditional_authority/TraditionalAuthority?filter_value=' ,document.getElementById('filter_district').value);" %></p>
 
@@ -210,7 +210,7 @@
     <%= text_field_tag "person[home_phone_number]",  params[:home_phone_number], {:field_type => 'number', :helpText => 'Ground Phone Number', :allowFreeText => true, :tt_pageStyleClass => "Numeric NumbersOnly", :validationRule => "^0\\d{7,9}$|Unknown|Not Available", :validationMessage => "Not a valid phone number" } if ask_ground_phone%>
   <%end%>
 
-  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we send you an SMS for follow-up?", :condition => "$('cellphone').value !='Unknown'", :tt_onLoad => 'seen(tstCurrentPage);') if ask_sms_for_TB_therapy%>
+  <%= select_tag("person[agrees_phone_text_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_phone_text_for_TB_therapy]),:helpText =>"Can we send you an SMS for follow-up?", :condition => "$('cellphone').value !='Unknown' && $('cellphone').value !='N/A'", :tt_onLoad => 'seen(tstCurrentPage);') if ask_sms_for_TB_therapy%>
   
   <%= select_tag("person[agrees_to_be_visited_for_TB_therapy]", options_for_select([" ", "Yes", "No", "Unknown"] ,params[:agrees_to_be_visited_for_TB_therapy]),:helpText =>"Can we visit you at home for follow-up?", :tt_onLoad => 'seen(tstCurrentPage);') if ask_visit_home_for_TB_therapy %>
   

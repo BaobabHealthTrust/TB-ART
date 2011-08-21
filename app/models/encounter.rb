@@ -239,7 +239,39 @@ class Encounter < ActiveRecord::Base
         "Stool" => ["Full stool analysis", "Culture & sensitivity"],
         "Sputum" => ["AAFB(1st)", "AAFB(2nd)", "AAFB(3rd)", "Culture"],
         "Swab" => ["Microscopy", "Culture & sensitivity"]
-      }
+      },
+      'tb_symptoms' => [
+        ['',''],
+        ["Cough lasting more than three weeks", "Cough lasting more than three weeks"],
+        ["Bronchial breathing", "Bronchial breathing"],
+        ["Shortness of breath", "Shortness of breath"],
+        ["Crackles", "Crackles"],
+        ["Failure to thrive", "Failure to thrive"],
+        ["Chest pain", "Chest pain"],
+        ["Weight loss", "Weight loss"],
+        ["Relapsing fever", "Relapsing fever"],
+        ["Fatigue", "Fatigue"],
+        ["Bloody cough", "Hemoptysis"],
+        ["Peripheral neuropathy","Peripheral neuropathy"]
+      ],
+      'drug_related_side_effects' => [
+        ['',''],
+        ["Deafness", "Deafness"],
+        ["Dizziness", "Dizziness"],
+        ["Yellow eyes", "Jaundice"],
+        ["Skin itching/purpura", "Skin itching"],
+        ["Visual impairment", "Visual impairment"],
+        ["Vomiting", "Vomiting"],
+        ["Confusion", "Confusion"],
+        ["Peripheral neuropathy","Peripheral neuropathy"]
+      ],
+      'tb_patient_categories' => [
+        ['',''],
+        ["New", "New patient"],
+        ["Relapse", "Relapse MDR-TB patient"],
+        ["Retreatment after default", "Treatment after default MDR-TB patient"],
+        ["Failure", "Failed - TB"]
+      ]
     }
   end
 

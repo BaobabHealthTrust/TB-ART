@@ -1177,5 +1177,25 @@ EOF
   def sputum_orders_without_submission
     self.recent_sputum_orders.collect{|order| order unless Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ?", self.id, Concept.find_by_name("SPUTUM SUBMISSION")]).map{|o| o.accession_number}.include?(order.accession_number)}.compact rescue []    
   end
+  
+  def is_first_visit?
+    clinic_encounters = ["APPOINTMENT","ART VISIT","VITALS","HIV STAGING",
+                          'ART ADHERENCE','DISPENSING','ART_INITIAL', "LAB ORDERS",
+                          "LAB RESULTS","HIV RECEPTION","SPUTUM SUBMISSION",
+                          "TB RECEPTION","TB REGISTRATION","TB TREATMENT",
+                          "TB_FOLLOWUP"
+                          ]
+    current_date = Time.now.strftime("%d-%b-%Y")
+
+    clinic_encounter_ids = EncounterType.find(:all,:conditions => ["name IN (?)",clinic_encounters]).collect{| e | e.id }
+    first_encounter_date = self.encounters.find(:first,
+      :order => 'encounter_datetime',
+      :conditions => ['encounter_type IN (?)',clinic_encounter_ids]).encounter_datetime.strftime("%d-%b-%Y") rescue 'Unknown'
+
+    return true if first_encounter_date == 'Unknown'
+    return true if current_date == first_encounter_date
+    return false if current_date > first_encounter_date
+
+  end
 
 end

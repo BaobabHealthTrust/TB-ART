@@ -29,11 +29,12 @@
   <label for='reason_for_clinic_visit'>Reason for clinical visit</label>
   <%= touch_select_tag "REASON FOR CLINICAL VISIT", @patient, options_for_select(@select_options['reason_for_tb_clinic_visit']),{:id => "reason_for_clinic_visit",} %>
 
-  <label for='need_to_see_clinician'>Any need to see a clinician?</label>
-  <%= touch_yes_no_unknown_tag "ANY NEED TO SEE A CLINICIAN",
-            @patient, "YES",{:id => "need_to_see_clinician",
-            :condition => '$("reason_for_clinic_visit").value != "CLINICAL REVIEW" && $("reason_for_clinic_visit").value != "X-RAY RESULT INTERPRETATION"'} %>
-  
+  <%if @patient.is_first_visit? == false %>
+    <label for='need_to_see_clinician'>Any need to see a clinician?</label>
+    <%= touch_yes_no_unknown_tag "ANY NEED TO SEE A CLINICIAN",
+              @patient, "YES",{:id => "need_to_see_clinician",
+              :condition => '$("reason_for_clinic_visit").value != "CLINICAL REVIEW" && $("reason_for_clinic_visit").value != "X-RAY RESULT INTERPRETATION"' } %>
+ <% end %>
 
   <%if (@hiv_status == 'UNKNOWN' || (@hiv_status == "Negative  " || (@hiv_status == "Unknown  " && (@months_since_last_hiv_test.nil? || @months_since_last_hiv_test >= 3))))%>
   

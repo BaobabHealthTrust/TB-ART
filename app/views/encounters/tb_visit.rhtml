@@ -1,0 +1,176 @@
+<script>
+  var tt_cancel_destination = "/patients/show/<%= @patient.patient_id %>"
+
+  function checkIfExists(searchItem,searchElement){
+    var elem = document.getElementById(searchElement);
+    var elemArray = elem.options;
+    for(var i = 0; i < elemArray.length; i++) {
+      if (elemArray[i].selected == true) {
+        if (elemArray[i].value == searchItem) {
+          return "True";
+          break;
+        }
+      }
+    }
+    return "False";
+  }
+</script>
+
+<style>
+  #char { display: none;}
+</style>
+
+<!--.........TODO...........
+This is referred to as ART Enrollment/HIV Visit in the specs
+
+Concepts - mostly in caps
+Skip logic - implement and verify
+Get @answer_array_values
+Check multi select especially on WHO staging conditions
+Change the date fields to 3tier date
+Check appropriateness of Encounter type
+
+Check applicability of code below
+-->
+
+<% if @patient.patient_programs.current.local.map(&:program).map(&:name).include?('HIV PROGRAM') %>
+  <div class="inputPage NoKeyboard" id="page" style="display: block;">
+    <div id="trigger"></div>
+    <div id="infoBar" class="infoBarClass"></div>
+    <label id="helpText" class="helpTextClass" for="">This patient has already been initiated in the HIV program at this location</label>
+  </div>
+  <div id="buttons" class="buttonsDiv" style="top:456;">
+    <div id="tt_extraButtons"></div>
+    <button onmousedown="window.location=tt_cancel_destination;" id="cancelButton" class="button navButton red"><span>Cancel</span></button>
+  </div>  
+  <script>
+		setTimeout("window.location=tt_cancel_destination;", 5000);
+  </script>
+<% else %>
+<form id='appointment' action="/prescriptions/create" method='post'>
+  <%= hidden_field_tag "encounter[encounter_type_name]", "TB TREATMENT" %>
+  <%= hidden_field_tag "encounter[patient_id]", @patient.id %>
+  <%= hidden_field_tag "encounter[encounter_datetime]", DateTime.now() %>
+  <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
+
+  <% if @patient.person.gender == 'F' && @patient.person.age > 13 %>
+    <%= touch_yes_no_unknown_tag "PREGNANT?", @patient, nil,
+      {:id => "pregnant",
+       :helpText => "Pregnant?" } %>
+  <% end %>  
+  <%  if @patient.person.age > 13 %>
+    <%= touch_yes_no_unknown_tag "CURRENTLY USING FAMILY PLANNING METHOD", @patient, nil,
+      {:id => "on_fpm",
+       :helpText => "Currently using family planning method" } %>
+
+    <% if @patient.person.gender == "M" %>
+      <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['male_family_planning_methods']),
+        {:id => "mfpm_used",
+         :condition => '$("on_fpm").value == "YES"',
+         :multiple => true,
+         :tt_pageStyleClass => "NoKeyboard",
+         :helpText => "What method?" } %>
+    <% else %>
+      <%= touch_select_tag "FAMILY PLANNING METHOD", @patient, options_for_select(@select_options['female_family_planning_methods']),
+        {:id => "mfpm_used",
+         :condition => '$("on_fpm").value == "YES"',
+         :multiple => true,
+         :tt_pageStyleClass => "NoKeyboard",
+         :helpText => "What method?" } %>
+    <% end %>
+   <% end %>
+     <%= touch_select_tag "TB symptoms", @patient, options_for_select(@select_options['tb_symptoms']).sort + ['<option>Other</option><option>None</option>'],
+    {:id => "tb_symptoms",
+     :multiple => true,
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "TB signs"} %>
+
+     <%= touch_select_tag "Drug related side effects", @patient, options_for_select(@select_options['drug_related_side_effects']).sort + ['<option>Other</option><option>None</option>'],
+    {:id => "drug_side_effects",
+     :multiple => true,
+     :tt_pageStyleClass => "NoKeyboard",
+     :tt_onUnLoad => "",
+     :helpText => "Drug related side effects" } %>
+
+  <%= touch_text_field_tag "Other", @patient, nil,
+    {:id => "other_side_effect",
+     :condition => 'checkIfExists("Other","drug_side_effects") == "True";',
+     :helpText => "Other drug related side effect" } %>
+
+  <%= touch_yes_no_tag "REFER PATIENT TO CLINICIAN", @patient, nil,
+      {:id => "refer_to_clinician",
+        :helpText => "Refer patient to clinician" } %>
+
+  <% if @patient.is_first_visit? == false %>
+     <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE TB TABLETS REMAINING", @patient, nil,
+      {:id => "total_tb_tablets_remaining",
+       :condition => '$("refer_to_clinician").value == "NO"',
+       :helpText => "Total number of TB tablets remaining (brought to clinic and pills at home)" } %>
+  <%  end %>
+
+  <% if @patient.is_first_visit?  && @patient.transfer_in? %>
+     <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
+      {:id => "total_arv_tablets_remaining",
+       :condition => '$("refer_to_clinician").value == "NO"',
+       :helpText => "Total number of ARV tablets remaining (brought to clinic and pills at home)" } %>
+  <% elsif @patient.is_first_visit? == false %>
+    <%= touch_numeric_tag "TOTAL NUMBER OF WHOLE ARV TABLETS REMAINING", @patient, nil,
+      {:id => "total_arv_tablets_remaining",
+       :condition => '$("refer_to_clinician").value == "NO"',
+       :helpText => "Total number of ARV tablets remaining (brought to clinic and pills at home)" } %>
+  <% end %>
+     <!--TODO How should we handle 'Show adherence report(TB+ART)'-->
+
+  <%= touch_yes_no_unknown_tag "PRESCRIBE DRUGS", @patient, nil,
+      {:id => "prescribe_drugs",
+     :condition => '$("refer_to_clinician").value == "NO"',
+        :helpText => "Prescribe TB regimens this visit" } %>
+
+  <%= touch_select_tag "PRESCRIBED DRUGS", @patient, options_for_select(@select_options['drug_list']),
+    {:id => "prescribed_drugs",
+      :multiple => true,
+     :condition => '$("refer_to_clinician").value == "NO" && $("prescribe_drugs").value == "YES"',
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "TB regimens" } %>
+
+  <%= touch_yes_no_unknown_tag "PRESCRIBE RECOMMENDED DOSAGE", @patient, nil,
+      {:id => "prescribe_recommended_dosage",
+     :condition => '$("refer_to_clinician").value == "NO" && $("prescribe_drugs").value == "YES"',
+        :helpText => "Prescribe recommended dosage for patient" } %>
+
+  <%= touch_yes_no_unknown_tag "PRESCRIBE COTRAMOXAZOLE", @patient, nil,
+    {:id => "prescribe_cpt",
+      :tt_onLoad => '$("sulfurAlert").style.display = "block";',
+     :condition => '$("refer_to_clinician").value == "NO"',
+        :helpText => "Prescribe Cotramoxazole" } %>
+
+  <%= touch_select_tag "PRESCRIPTION TIME PERIOD", @patient, options_for_select(@select_options['presc_time_period']),
+    {:id => "prescription_time_period",
+     :condition => '$("refer_to_clinician").value == "NO"',
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "Prescription time period" } %>
+
+
+  <%= touch_select_tag "CONTINUE TREATMENT AT THIS SITE", @patient, options_for_select(@select_options['continue_treatment']),
+    {:id => "continue_treatment_at_this_site",
+     :condition => '$("refer_to_clinician").value == "NO"',
+     :tt_pageStyleClass => "NoKeyboard",
+     :helpText => "Continue treatment at this site" } %>
+
+  <%= touch_location_tag "TRANSFER OUT SITE", @patient, nil,
+    {:id => "transfer_out_site",
+     :condition => '$("continue_treatment_at_this_site").value == "TRANSFER OUT" && $("refer_to_clinician").value == "NO"',
+     :helpText => "Transfer out destination" } %>
+
+  <%= touch_location_tag "DHO DOT SITE", @patient, nil,
+    {:id => "dot_site",
+     :condition => '$("continue_treatment_at_this_site").value == "DHO DOT SITE" &&  $("refer_to_clinician").value == "NO"',
+     :helpText => "Lilongwe DHO DOT sites" } %>
+  <%= submit_tag "Finish" %>    
+</form>
+<% end %>
+<div id='sulfurAlert' class='messageBar' style='display:none'>
+  Ask if patient is alergic to Sulfur<br /> 
+  <button onmousedown="$('sulfurAlert').style.display = 'none';"><span>OK</span></button>
+</div> 
+
