@@ -1,15 +1,15 @@
-# production:
-#   adapter: mysql
-#   database: openmrs
-#   username: root
-#   password:
-#   host: localhost
+production:
+  adapter: mysql
+  database: openmrs_tbart
+  username: root
+  password: m4t3m3
+  host: localhost
 
 development:
   adapter: mysql
-  database: bart2_development
+  database: openmrs_tbart
   username: root
-  password: password
+  password: m4t3m3
   host: localhost
 
 test: &TEST

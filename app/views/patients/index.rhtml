@@ -19,7 +19,7 @@
               <th colspan=2>Patient Dashboard</th>
             </tr>
             <h1 id='project_name'>
-               tb-art
+              BART
             </h1>
             <span id='patient_name'><%= @patient.name rescue "" %></span>
             <span id='patient_id'><%= @patient.national_id_with_dashes rescue "" %></span>
@@ -32,12 +32,10 @@
 
                 <span value="<%= @patient.reason_for_art_eligibility rescue "" %>">Reason for Starting</span>
               <% end %>
-              
               <% if (@patient.hiv_status rescue nil) != nil && (@patient.hiv_status) != "" %>
 
                 <span value="<%= @patient.hiv_status rescue "" %>">HIV Status</span>
               <% end %>
-
               <% if (@patient.arv_number rescue nil) != nil && (@patient.arv_number) != " " %>
 
                 <span value="<%= @patient.arv_number rescue "" %>">ARV Number</span>
@@ -74,15 +72,17 @@
                 <select id="links">
                   <option value='/patients/treatment_dashboard/<%= @patient.id -%>'>Treatment</option>
                   <option value='/patients/guardians_dashboard/<%= @patient.id -%>'>Guardians</option>
-                  <option value='/patients/programs_dashboard/<%= @patient.id -%>'>Outcomes</option>
+                  <%if User.current_user.activities.include?('Manage Patient Programs')%>
+                    <option value='/patients/programs_dashboard/<%= @patient.id -%>'>Outcomes</option>
+                  <%end%>
                   <option value='/patients/show/<%= @patient.id -%>?source=opd'>OPD</option>
                 </select>
                 <select id="navigation_links">
-                  <option link="/encounter_types?patient_id=<%= @patient.id -%>" ttSize = "160px">Tasks</option>
+                    <option link="/encounter_types?patient_id=<%= @patient.id -%>" ttSize = "160px">Tasks</option>
                   <option link="/patients/mastercard_menu?patient_id=<%= @patient.id -%>&source=<%= @source -%>">Mastercard</option>
                   <% if show_lab_results %>
                     <option link="/lab/results/<%=@patient.id -%>">Lab results</option>
-                  <%end rescue false%>
+                  <%end%>
                     <option link='<%= ((session[:datetime].to_date rescue '') != '' ?
                           "/people/reset_datetime/#{@patient.id}" : "/people/set_datetime/#{@patient.id}") %>'  ttSize="160px">
                      <%= ((session[:datetime].to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>

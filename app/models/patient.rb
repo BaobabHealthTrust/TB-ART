@@ -107,7 +107,6 @@ class Patient < ActiveRecord::Base
     alerts << "HIV Status : #{hiv_status}" if "#{hiv_status.gsub(" ",'')}" == 'Unknown'
 
     alerts << "Lab: Expecting submission of sputum" unless self.sputum_orders_without_submission.empty?
-
     alerts
   end
   
@@ -130,7 +129,7 @@ class Patient < ActiveRecord::Base
     id = self.national_id(force)
     id[0..4] + "-" + id[5..8] + "-" + id[9..-1] rescue id
   end
-  
+
   def demographics_label
     demographics = Mastercard.demographics(self)
     hiv_staging = Encounter.find(:last,:conditions =>["encounter_type = ? and patient_id = ?",
@@ -313,7 +312,7 @@ class Patient < ActiveRecord::Base
 
       return print_labels
   end
-  
+
   def filing_number_label(num = 1)
     file = self.get_identifier('Filing Number')[0..9]
     file_type = file.strip[3..4]
@@ -327,7 +326,7 @@ class Patient < ActiveRecord::Base
     label.draw_text("Filing area #{file_type}",75, 150, 0, 2, 2, 2, false)
     label.draw_text("Version number: #{version_number}",75, 200, 0, 2, 2, 2, false)
     label.print(num)
-  end
+  end  
 
   def visit_label(date = Date.today)
     result = Location.current_location.name.match(/outpatient/i).nil?
@@ -557,15 +556,19 @@ class Patient < ActiveRecord::Base
     return patient.age(initiation_date) unless initiation_date.nil?
   end
 
-  def set_received_regimen(encounter,order)
+  def set_received_regimen(encounter,prescription)
     dispense_finish = true ; dispensed_drugs_concept_ids = []
     
-    ( order.encounter.orders || [] ).each do | order |
-      dispense_finish = false if order.drug_order.amount_needed > 0
-      dispensed_drugs_concept_ids << Drug.find(order.drug_order.drug_inventory_id).concept_id
+    prescription.orders.each do | order |
+      next if not order.drug_order.drug.arv?
+      dispensed_drugs_concept_ids << order.drug_order.drug.concept_id
+      if (order.drug_order.amount_needed > 0)
+        dispense_finish = false
+      end
     end
 
     return unless dispense_finish
+    return if dispensed_drugs_concept_ids.blank?
 
     regimen_id = ActiveRecord::Base.connection.select_value <<EOF
 SELECT concept_id FROM drug_ingredient 
@@ -912,7 +915,7 @@ EOF
   end
 
   def self.printing_message(new_patient , archived_patient , creating_new_filing_number_for_patient = false)
-    arv_code = PatientIdentifier.site_prefix
+    arv_code = Location.current_arv_code
     new_patient_name = new_patient.name
     new_filing_number = self.printing_filing_number_label(new_patient.get_identifier('Filing Number'))
     old_archive_filing_number = self.printing_filing_number_label(new_patient.old_filing_number('Archived filing number'))
@@ -1147,12 +1150,12 @@ EOF
   end
   
   #from TB ART TO BART
-  
+
   def hiv_status
     status = Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV Status").concept_id]).name rescue "UNKNOWN"
     return status
   end
-  
+
   def hiv_test_date
     test_date = Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV test date").concept_id]).value_datetime rescue nil
     return test_date
@@ -1188,11 +1191,11 @@ EOF
     sputum_concept_ids = ConceptName.find(:all, :conditions => ["name IN (?)", sputum_concept_names]).map(&:concept_id)
     Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ? AND (value_coded in (?) OR value_text in (?))", self.id, ConceptName.find_by_name('TESTS ORDERED').concept_id, sputum_concept_ids, sputum_concept_names], :order => "obs_datetime desc", :limit => 3)
   end
-  
+
   def sputum_orders_without_submission
-    self.recent_sputum_orders.collect{|order| order unless Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ?", self.id, Concept.find_by_name("SPUTUM SUBMISSION")]).map{|o| o.accession_number}.include?(order.accession_number)}.compact rescue []    
+    self.recent_sputum_orders.collect{|order| order unless Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ?", self.id, Concept.find_by_name("SPUTUM SUBMISSION")]).map{|o| o.accession_number}.include?(order.accession_number)}.compact rescue []
   end
-  
+
   def is_first_visit?
     clinic_encounters = ["APPOINTMENT","ART VISIT","VITALS","HIV STAGING",
                           'ART ADHERENCE','DISPENSING','ART_INITIAL', "LAB ORDERS",
@@ -1212,5 +1215,5 @@ EOF
     return false if current_date > first_encounter_date
 
   end
-
+  
 end

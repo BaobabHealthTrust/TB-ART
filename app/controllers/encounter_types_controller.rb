@@ -6,7 +6,7 @@ class EncounterTypesController < ApplicationController
 
         privileges = role_privileges.each.map{ |role_privilege_pair| role_privilege_pair["privilege"].humanize }
 
-        @encounter_privilege_map = GlobalProperty.find_by_property("encounter_privilege_map").property_value.to_s
+        @encounter_privilege_map = GlobalProperty.find_by_property("encounter_privilege_map").property_value.to_s rescue ''
 
         @encounter_privilege_map = @encounter_privilege_map.split(",")
 
@@ -17,11 +17,10 @@ class EncounterTypesController < ApplicationController
         end
 
         roles_for_the_user = []
-
+		
         privileges.each do |privilege|
             roles_for_the_user  << @encounter_privilege_hash[privilege] if !@encounter_privilege_hash[privilege].nil?
         end
-        
         roles_for_the_user = roles_for_the_user.uniq
 
         if GlobalProperty.use_user_selected_activities
@@ -32,13 +31,13 @@ class EncounterTypesController < ApplicationController
         @encounter_types = EncounterType.find(:all).map{|enc|enc.name.gsub(/.*\//,"").gsub(/\..*/,"").humanize}
         @available_encounter_types = Dir.glob(RAILS_ROOT+"/app/views/encounters/*.rhtml").map{|file|file.gsub(/.*\//,"").gsub(/\..*/,"").humanize}
         @available_encounter_types -= @available_encounter_types - @encounter_types
+				
 
         @available_encounter_types = ((@available_encounter_types) - ((@available_encounter_types - roles_for_the_user) + (roles_for_the_user - @available_encounter_types)))
         @available_encounter_types = @available_encounter_types.sort
   end
 
   def show
-    redirect_to "/prescriptions/tb_treatment?patient_id=#{params[:patient_id]}" and return if params[:encounter_type] == 'TB Treatment'
     redirect_to "/encounters/new/#{params["encounter_type"].downcase.gsub(/ /,"_")}?#{params.to_param}" and return
   end
 

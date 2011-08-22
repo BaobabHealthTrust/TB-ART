@@ -35,12 +35,17 @@ class PatientsController < ApplicationController
   def opdshow
     session_date = session[:datetime].to_date rescue Date.today
     encounter_types = EncounterType.find(:all,:conditions =>["name IN (?)",
-        ['REGISTRATION','OUTPATIENT DIAGNOSIS','REFER PATIENT OUT?','DISPENSING']]).map{|e|e.id}
+        ['REGISTRATION','OUTPATIENT DIAGNOSIS','REFER PATIENT OUT?','OUTPATIENT RECEPTION','DISPENSING']]).map{|e|e.id}
     @encounters = Encounter.find(:all,:select => "encounter_id , name encounter_type_name, count(*) c",
       :joins => "INNER JOIN encounter_type ON encounter_type_id = encounter_type",
       :conditions =>["patient_id = ? AND encounter_type IN (?) AND DATE(encounter_datetime) = ?",
         params[:id],encounter_types,session_date],
-      :group => 'encounter_type').collect{|rec| [ rec.encounter_id , rec.encounter_type_name , rec.c ] }
+      :group => 'encounter_type').collect do |rec| 
+        if User.current_user.user_roles.map{|r|r.role}.join(',').match(/Registration|Clerk/i)
+          next unless rec.observations[0].to_s.match(/Workstation location:   Outpatient/i)
+        end
+        [ rec.encounter_id , rec.encounter_type_name , rec.c ] 
+      end
     
     render :template => 'dashboards/opdoverview_tab', :layout => false
   end
@@ -146,6 +151,9 @@ class PatientsController < ApplicationController
       @links << ["Filing number (Create)","/patients/set_filing_number/#{patient.id}"]
     end 
 
+    if GlobalProperty.use_user_selected_activities
+      @links << ["Change user activities","/user/activities/#{User.current_user.id}?patient_id=#{patient.id}"]
+    end 
     render :template => 'dashboards/personal_tab', :layout => false
   end
 
@@ -178,21 +186,11 @@ class PatientsController < ApplicationController
     @encounter.void
     show and return
   end
-
+  
   def print_registration
     print_and_redirect("/patients/national_id_label/?patient_id=#{@patient.id}", next_task(@patient))  
   end
-
-  def print_lab_orders
-    print_and_redirect("/patients/lab_orders_label/?patient_id=#{@patient.id}", next_task(@patient))
-  end
-
-  def lab_orders_label
-    patient = Patient.find(@patient.id)
-    label_commands = patient.lab_orders_label
-    send_data(label_commands.to_s,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{patient.id}#{rand(10000)}.lbl", :disposition => "inline")
-  end
-
+  
   def dashboard_print_national_id
     unless params[:redirect].blank?
       redirect = "/#{params[:redirect]}/#{params[:id]}"
@@ -231,7 +229,17 @@ class PatientsController < ApplicationController
     print_string = @patient.national_id_label rescue (raise "Unable to find patient (#{params[:patient_id]}) or generate a national id label for that patient")
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:patient_id]}#{rand(10000)}.lbl", :disposition => "inline")
   end
- 
+
+  def print_lab_orders
+    print_and_redirect("/patients/lab_orders_label/?patient_id=#{@patient.id}", next_task(@patient))
+  end
+
+  def lab_orders_label
+    patient = Patient.find(@patient.id)
+    label_commands = patient.lab_orders_label
+    send_data(label_commands.to_s,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{patient.id}#{rand(10000)}.lbl", :disposition => "inline")
+  end
+
   def filing_number_label
     patient = Patient.find(params[:id])
     label_commands = patient.filing_number_label

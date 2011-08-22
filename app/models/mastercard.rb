@@ -14,8 +14,6 @@ class Mastercard
    :first_positive_hiv_test_site, :first_positive_hiv_test_date, :first_positive_hiv_test_arv_number,
    :first_positive_hiv_test_type, :months_on_art
 
-
-
   def self.demographics(patient_obj)
     visits = self.new()
     person_demographics = patient_obj.person.demographics
@@ -34,9 +32,9 @@ class Mastercard
     visits.bmi = patient_obj.initial_bmi
     visits.agrees_to_followup = patient_obj.person.observations.recent(1).question("Agrees to followup").all rescue nil
     visits.agrees_to_followup = visits.agrees_to_followup.to_s.split(':')[1].strip rescue nil
-    visits.hiv_test_date = patient_obj.person.observations.recent(1).question("FIRST POSITIVE HIV TEST DATE").all rescue nil
+    visits.hiv_test_date = patient_obj.person.observations.recent(1).question("Confirmatory HIV test date").all rescue nil
     visits.hiv_test_date = visits.hiv_test_date.to_s.split(':')[1].strip rescue nil
-    visits.hiv_test_location = patient_obj.person.observations.recent(1).question("FIRST POSITIVE HIV TEST LOCATION").all rescue nil
+    visits.hiv_test_location = patient_obj.person.observations.recent(1).question("Confirmatory HIV test location").all rescue nil
     visits.hiv_test_location = visits.hiv_test_location.to_s.split(':')[1].strip rescue nil
     visits.guardian = patient_obj.person.relationships.map{|r|Person.find(r.person_b).name}.join(' : ') rescue 'NONE'
     visits.reason_for_art_eligibility = patient_obj.reason_for_art_eligibility
@@ -105,7 +103,7 @@ class Mastercard
       }.compact
     end
 
-    ans = ["EXTRAPULMONARY TUBERCULOSIS (EPTB)","PULMONARY TUBERCULOSIS WITHIN THE LAST 2 YEARS","PULMONARY TUBERCULOSIS","KAPOSIS SARCOMA"]
+    ans = ["Extrapulmonary tuberculosis (EPTB)","Pulmonary tuberculosis within the last 2 years","Pulmonary tuberculosis","Kaposis sarcoma"]
     staging_ans = patient_obj.person.observations.recent(1).question("WHO STG CRIT").all
 
     visits.ks = 'Yes' if staging_ans.map{|obs|ConceptName.find(obs.value_coded_name_id).name}.include?(ans[3])
@@ -162,23 +160,23 @@ class Mastercard
       concept_name = obs.to_s.split(':')[0].strip rescue nil
       next if concept_name.blank?
       case concept_name
-      when 'EVER RECEIVED ART?'
+      when 'Ever received ART?'
         visits.ever_received_art = obs.to_s.split(':')[1].strip rescue nil
-      when 'LAST ART DRUGS TAKEN'
+      when 'Last ART drugs taken'
         visits.last_art_drugs_taken = obs.to_s.split(':')[1].strip rescue nil
-      when 'DATE ART LAST TAKEN'
+      when 'Date ART last taken'
         visits.last_art_drugs_date_taken = obs.value_datetime.to_date rescue nil
-      when 'FIRST POSITIVE HIV TEST LOCATION'
+      when 'Confirmatory HIV test location'
         visits.first_positive_hiv_test_site = obs.to_s.split(':')[1].strip rescue nil
-      when 'ART NUMBER AT PREVIOUS LOCATION'
+      when 'ART number at previous location'
         visits.first_positive_hiv_test_arv_number = obs.to_s.split(':')[1].strip rescue nil
-      when 'FIRST POSITIVE HIV TEST TYPE'
+      when 'Confirmatory HIV test type'
         visits.first_positive_hiv_test_type = obs.to_s.split(':')[1].strip rescue nil
-      when 'FIRST POSITIVE HIV TEST DATE'
+      when 'Confirmatory HIV test date'
         visits.first_positive_hiv_test_date = obs.value_datetime.to_date rescue nil
       end
     end rescue []
-    
+
     visits
   end
 
@@ -191,7 +189,7 @@ class Mastercard
       observations = Observation.find(:all,
         :conditions =>["voided = 0 AND person_id = ? AND Date(obs_datetime) = ?",
         patient_obj.patient_id,encounter_date.to_date],:order =>"obs_datetime")
-    end    
+    end
 
     clinic_encounters = ["APPOINTMENT", "HEIGHT","WEIGHT","REGIMEN","TB STATUS","SYMPTOMS",
       "VISIT","BMI","PILLS BROUGHT",'ADHERENCE','NOTES','DRUGS GIVEN']
@@ -207,19 +205,19 @@ class Mastercard
          case field
           when 'APPOINTMENT'
             concept_name = obs.concept.fullname rescue nil
-            next unless concept_name == 'APPOINTMENT DATE'
+            next unless concept_name == 'APPOINTMENT DATE' || concept_name == 'Appointment date'
             patient_visits[visit_date].appointment_date = obs.value_datetime
           when 'HEIGHT'
             concept_name = obs.concept.fullname rescue nil
-            next unless concept_name == 'HEIGHT (CM)'
+            next unless concept_name == 'HEIGHT (CM)' || concept_name == 'Height (cm)'
             patient_visits[visit_date].height = obs.value_numeric
           when "WEIGHT"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'WEIGHT (KG)'
+            next unless concept_name == 'WEIGHT (KG)' || concept_name == 'Weight (kg)'
             patient_visits[visit_date].weight = obs.value_numeric
           when "BMI"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'BODY MASS INDEX, MEASURED'
+            next unless concept_name == 'BODY MASS INDEX, MEASURED' || concept_name == 'Body mass index, measured'
             patient_visits[visit_date].bmi = obs.value_numeric
           when "VISIT"
             concept_name = obs.concept.fullname rescue []
@@ -229,7 +227,7 @@ class Mastercard
             patient_visits[visit_date].visit_by+= "G" if concept_name == 'RESPONSIBLE PERSON PRESENT' and !obs.value_text.blank?
           when "TB STATUS"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'TB STATUS'
+            next unless concept_name == 'TB STATUS' || concept_name == 'TB status'
             status = ConceptName.find(obs.value_coded_name_id).name rescue nil
             patient_visits[visit_date].tb_status = status
             patient_visits[visit_date].tb_status = 'noSup' if status == 'TB NOT SUSPECTED'
@@ -238,7 +236,7 @@ class Mastercard
             patient_visits[visit_date].tb_status = 'Rx' if status == 'CONFIRMED TB ON TREATMENT'
           when "DRUGS GIVEN"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'AMOUNT DISPENSED'
+            next unless concept_name == 'AMOUNT DISPENSED' || concept_name == 'Amount dispensed'
             drug_name = Drug.find(obs.value_drug).name
             if drug_name.match(/Cotrimoxazole/i)
               patient_visits[visit_date].cpt += obs.value_numeric unless patient_visits[visit_date].cpt.blank?
@@ -249,27 +247,27 @@ class Mastercard
             end
           when "REGIMEN"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'ARV REGIMENS RECEIVED ABSTRACTED CONSTRUCT'
-            patient_visits[visit_date].reg =  obs.value_text 
+            next unless concept_name == 'WHAT TYPE OF ANTIRETROVIRAL REGIMEN' || concept_name == 'What type of antiretroviral regimen'
+            patient_visits[visit_date].reg =  Concept.find_by_concept_id(obs.value_coded).concept_names.typed("SHORT").first.name
           when "SYMPTOMS"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'SYMPTOM PRESENT'
-            symptoms = obs.to_s.split(':').map{|sy|sy.strip.capitalize unless sy == 'SYMPTOM PRESENT'}.compact rescue []
+            next unless concept_name == 'SYMPTOM PRESENT' || concept_name == 'Symptom present'
+            symptoms = obs.to_s.split(':').map{|sy|sy.strip.capitalize unless sy == 'SYMPTOM PRESENT' || sy == 'Symptom present'}.compact rescue []
             patient_visits[visit_date].s_eff = symptoms.join("<br/>") unless symptoms.blank?
           when "PILLS BROUGHT"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'AMOUNT OF DRUG BROUGHT TO CLINIC'
+            next unless concept_name == 'AMOUNT OF DRUG BROUGHT TO CLINIC' || concept_name == 'Amount of drug brought to clinic'
             patient_visits[visit_date].pills = [] if patient_visits[visit_date].pills.blank?
             patient_visits[visit_date].pills << [Drug.find(obs.order.drug_order.drug_inventory_id).name,obs.value_numeric] rescue []
           when "ADHERENCE"
             concept_name = obs.concept.fullname rescue []
-            next unless concept_name == 'WHAT WAS THE PATIENTS ADHERENCE FOR THIS DRUG ORDER'
-            next if obs.value_text.blank?
+            next unless concept_name == 'WHAT WAS THE PATIENTS ADHERENCE FOR THIS DRUG ORDER' || concept_name == 'What was the patients adherence for this drug order'
+            next if obs.value_numeric.blank?
             patient_visits[visit_date].adherence = [] if patient_visits[visit_date].adherence.blank?
-            patient_visits[visit_date].adherence << [Drug.find(obs.order.drug_order.drug_inventory_id).name,(obs.value_text + '%')]
+            patient_visits[visit_date].adherence << [Drug.find(obs.order.drug_order.drug_inventory_id).name,(obs.value_numeric.to_s + '%')]
           when "NOTES"
             concept_name = obs.concept.fullname.strip rescue []
-            next unless concept_name == 'CLINICAL NOTES CONSTRUCT'
+            next unless concept_name == 'CLINICAL NOTES CONSTRUCT' || concept_name == 'Clinical notes construct'
             patient_visits[visit_date].notes+= '<br/>' + obs.value_text unless patient_visits[visit_date].notes.blank?
             patient_visits[visit_date].notes = obs.value_text if patient_visits[visit_date].notes.blank?
          end

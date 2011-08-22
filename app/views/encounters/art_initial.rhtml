@@ -9,7 +9,7 @@
 
   .tt_controls_last_arv_drugs_taken .keyboard { display:none; }
 
-   #date{ display:none; }
+  #date{ display:none; }
 
   #tt_page_last_arv_drugs_taken .options{height:450px;}
   #tt_page_last_arv_drugs_taken .options li{font-size:35px;}
@@ -41,14 +41,14 @@
   <%= hidden_field_tag "encounter[provider_id]", session[:user_id] %>
 
   <label for='ever_received_art'>Ever received ARVs?</label>
-    <%= touch_select_tag("EVER RECEIVED ART", @patient, options_for_select([['Yes','YES'],['No','NO']]), {:id => 'ever_received_art'}) %>
-
   <%= hidden_field_tag("programs[][patient_program_id]", nil) %>
   <%= hidden_field_tag("programs[][program_id]", Program.find_by_name('HIV PROGRAM').id) %>
   <%= hidden_field_tag("programs[][location_id]", Location.current_health_center.id) %>
   <%= hidden_field_tag("programs[][date_enrolled]", session[:datetime] ) %>
   <%= hidden_field_tag("programs[][states][][state]", "Pre-ART (Continue)") %>
   
+  <%= touch_select_tag("EVER RECEIVED ART", @patient, options_for_select([['Yes','YES'],['No','NO']]), {:id => 'ever_received_art'}) %>
+
   <%= touch_yes_no_tag "Ever registered at ART clinic", @patient, nil,
     {:id => "ever_registered_at_ART_clinic",
      :condition => '$("ever_received_art").value == "YES"',
@@ -68,7 +68,7 @@
   <%= touch_text_field_tag "ART NUMBER AT PREVIOUS LOCATION", @patient, nil,
     {:id => "previous_art_number",
      :condition => '$("ever_registered_at_ART_clinic").value == "YES"',
-     :helpText => "ARV number at previous location" } %>
+     :helpText => "ART number at previous location" } %>
 
   <%= touch_date_tag "DATE ART LAST TAKEN", @patient, nil,
     {:id => "date_art_last_taken",

@@ -24,7 +24,14 @@ class Encounter < ActiveRecord::Base
 
   def after_void(reason = nil)
     self.orders.each{|row| Pharmacy.voided_stock_adjustment(order) if row.order_type_id == 1 } rescue []
-    self.observations.each{|row| row.void(reason) } rescue []
+    self.observations.each do |row| 
+      if not row.order_id.blank?
+        ActiveRecord::Base.connection.execute <<EOF
+UPDATE drug_order SET quantity = NULL WHERE order_id = #{row.order_id};
+EOF
+      end rescue nil
+      row.void(reason) 
+    end rescue []
     self.find_by_sql("SELECT * FROM encounter ORDER BY encounter_datetime DESC LIMIT 1").orders.each{|row| row.void(reason) } rescue []
   end
 

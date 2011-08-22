@@ -14,53 +14,53 @@ pos = 1
 
     people.push({});
 
-    people[<%= pos %>]["name"] = "<%= person.name %>";
+    people[<%= pos %>]["Name"] = "<%= person.name %>";
           
-    people[<%= pos %>]["gender"] = "<%= person.sex %>";
+    people[<%= pos %>]["Gender"] = "<%= person.sex %>";
 
-    people[<%= pos %>]["status"] = "<%=h 'Died' if person.dead == 1 rescue '' -%>";
+    people[<%= pos %>]["Status"] = "<%=h 'Died' if person.dead == 1 rescue '' -%>";
 
   <% unless person.birthdate.blank? %>
 
-      people[<%= pos %>]["birthdate"] = "<%= person.birthdate_formatted rescue "" %>";
+      people[<%= pos %>]["Birthdate"] = "<%= person.birthdate_formatted rescue "" %>";
 
-      people[<%= pos %>]["age"] = "<%= person.age rescue "" %>";
+      people[<%= pos %>]["Age"] = "<%= person.age rescue "" %>";
 
   <% end %>
 
   <% if person.addresses.first && person.addresses.first.address2.present? %>
             
-      people[<%= pos %>]["home_district"] = "<%=h person.addresses.first.address2 -%>";
+      people[<%= pos %>]["Home District"] = "<%=h person.addresses.first.address2 -%>";
 
   <% end %>
 
   <% if person.addresses.first && person.addresses.first.county_district.present? %>
 
-      people[<%= pos %>]["ancestral_traditional_authority_(t/a)"] = "<%=h person.addresses.first.county_district -%>";
+      people[<%= pos %>]["Ancestral Traditional Authority(T/A)"] = "<%=h person.addresses.first.county_district -%>";
 
   <% end %>
 
   <% if person.addresses.first && person.addresses.first.city_village.present? %>
 
-      people[<%= pos %>]["current_residence"] = "<%=h person.addresses.first.city_village -%>";
+      people[<%= pos %>]["Current Residence"] = "<%=h person.addresses.first.city_village -%>";
 
   <% end %>
 
   <% if person.names.first && person.names.first.family_name2.present? %>
             
-      people[<%= pos %>]["mother_surname"] = "<%=h person.names.first.family_name2 -%>";
+      people[<%= pos %>]["Mother Surname"] = "<%=h person.names.first.family_name2 -%>";
 
   <% end %>
 
   <% unless person.patient.blank? %>
     
-      people[<%= pos %>]["arv_number"] = "<%=h person.patient.arv_number rescue "" -%>";
+      people[<%= pos %>]["ARV Number"] = "<%=h person.patient.arv_number rescue "" -%>";
 
-      people[<%= pos %>]["patient_id"] = "<%=h person.patient.national_id rescue "" -%>";
+      people[<%= pos %>]["Patient National ID"] = "<%=h person.patient.national_id rescue "" -%>";
 
-      people[<%= pos %>]["eid_number"] = "<%=h person.patient.eid_number rescue "" -%>";
+      people[<%= pos %>]["EID Number"] = "<%=h person.patient.eid_number rescue "" -%>";
 
-      people[<%= pos %>]["pre_art_number"] = "<%=h person.patient.pre_art_number rescue "" -%>";
+      people[<%= pos %>]["Pre-ART Number"] = "<%=h person.patient.pre_art_number rescue "" -%>";
 
   <% end %>
 

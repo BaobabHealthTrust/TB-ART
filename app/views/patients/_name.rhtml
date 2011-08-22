@@ -14,7 +14,7 @@
     style.value = "position: absolute; z-index: 100; left: 47px; font-size: 44px;"
     prefix.setAttributeNode(style)
     inputElement.setAttribute("style","text-align:right;width:924px;")
-    prefix.innerHTML = "<%=PatientIdentifier.site_prefix rescue nil %>"
+    prefix.innerHTML = "<%=Location.current_arv_code rescue nil %>"
     inputElement.parentNode.insertBefore(prefix, inputElement)
     style.value+= 'left:35px;'
     prefix.setAttributeNode(style)
