@@ -29,16 +29,20 @@
   <label for='reason_for_clinic_visit'>Reason for clinical visit</label>
   <%= touch_select_tag "REASON FOR CLINICAL VISIT", @patient, options_for_select(@select_options['reason_for_tb_clinic_visit']),{:id => "reason_for_clinic_visit",} %>
 
-  <label for='need_to_see_clinician'>Any need to see a clinician?</label>
-  <%= touch_yes_no_unknown_tag "ANY NEED TO SEE A CLINICIAN",
-            @patient, "YES",{:id => "need_to_see_clinician",
-            :condition => '$("reason_for_clinic_visit").value != "CLINICAL REVIEW" && $("reason_for_clinic_visit").value != "X-RAY RESULT INTERPRETATION"'} %>
-  
+  <%if @patient.is_first_visit? == false %>
+    <label for='need_to_see_clinician'>Any need to see a clinician?</label>
+    <%= touch_yes_no_unknown_tag "ANY NEED TO SEE A CLINICIAN",
+              @patient, "YES",{:id => "need_to_see_clinician",
+              :condition => '$("reason_for_clinic_visit").value != "CLINICAL REVIEW" && $("reason_for_clinic_visit").value != "X-RAY RESULT INTERPRETATION"' } %>
+ <% end %>
 
-  <%if (@hiv_status.upcase == 'UNKNOWN' || (@hiv_status.upcase == "NEGATIVE" && (@months_since_last_hiv_test.nil? || @months_since_last_hiv_test >= 3)))%>
+  <%if (@hiv_status == 'UNKNOWN' || (@hiv_status == "Negative  " || (@hiv_status == "Unknown  " && (@months_since_last_hiv_test.nil? || @months_since_last_hiv_test >= 3))))%>
+  
     <label for='hiv_test_results_within_3_months'>Any HIV test results within the last 3 months?</label>
     <%= touch_yes_no_unknown_tag "HIV TEST RESULTS WITHIN 3 MONTHS", @patient, nil,{:id => "hiv_test_results_within_3_months"} %>
-  <%end%>
+  <% else %>
+    <%= touch_hidden_tag "HIV TEST RESULTS WITHIN 3 MONTHS", @patient, nil, {:id => "hiv_test_results_within_3_months", :value_coded => false}%>    
+  <% end %>
   <!--Show HTC reminder if the person is Negative and has no results with the last 3 months or if person's hiv status is uknown-->
   <%= text_field_tag :summary, nil, { :tt_onLoad => "$('hivTestReminder').style.display = 'block';", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'HTC Reminder', :condition => '$("hiv_test_results_within_3_months").value == "NO"'} %>
 

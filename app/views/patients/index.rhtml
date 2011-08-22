@@ -32,6 +32,11 @@
 
                 <span value="<%= @patient.reason_for_art_eligibility rescue "" %>">Reason for Starting</span>
               <% end %>
+              
+              <% if (@patient.hiv_status rescue nil) != nil && (@patient.hiv_status) != "" %>
+
+                <span value="<%= @patient.hiv_status rescue "" %>">HIV Status</span>
+              <% end %>
 
               <% if (@patient.arv_number rescue nil) != nil && (@patient.arv_number) != " " %>
 

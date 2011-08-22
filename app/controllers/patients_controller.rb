@@ -178,11 +178,21 @@ class PatientsController < ApplicationController
     @encounter.void
     show and return
   end
-  
+
   def print_registration
     print_and_redirect("/patients/national_id_label/?patient_id=#{@patient.id}", next_task(@patient))  
   end
-  
+
+  def print_lab_orders
+    print_and_redirect("/patients/lab_orders_label/?patient_id=#{@patient.id}", next_task(@patient))
+  end
+
+  def lab_orders_label
+    patient = Patient.find(@patient.id)
+    label_commands = patient.lab_orders_label
+    send_data(label_commands.to_s,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{patient.id}#{rand(10000)}.lbl", :disposition => "inline")
+  end
+
   def dashboard_print_national_id
     unless params[:redirect].blank?
       redirect = "/#{params[:redirect]}/#{params[:id]}"
