@@ -149,4 +149,13 @@ class Observation < ActiveRecord::Base
     new_accn_number = "#{new_accn_number_with_no_chk_dgt}#{chk_dgt}"
     return new_accn_number.to_i
   end
+
+  def to_s_location(tags=[])
+    formatted_name = self.concept_name.tagged(tags).name rescue nil
+    formatted_name ||= self.concept_name.name rescue nil
+    formatted_name ||= self.concept.concept_names.tagged(tags).first.name rescue nil
+    formatted_name ||= self.concept.concept_names.first.name rescue 'Unknown concept name'
+    "#{formatted_name}:  #{Location.find(self.answer_string(tags)).name}"
+  end
+  
 end
