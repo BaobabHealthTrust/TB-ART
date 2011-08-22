@@ -103,8 +103,8 @@ class Patient < ActiveRecord::Base
     end
 
     hiv_status = self.hiv_status
-    alerts << "HIV Status : #{hiv_status} more than 3 months" if (hiv_status == 'Negative' && self.months_since_last_hiv_test > 3)
-    alerts << "HIV Status : #{hiv_status}" if hiv_status == 'Unknown'
+    alerts << "HIV Status : #{hiv_status} more than 3 months" if ("#{hiv_status.gsub(" ",'')}" == 'Negative' && self.months_since_last_hiv_test > 3)
+    alerts << "HIV Status : #{hiv_status}" if "#{hiv_status.gsub(" ",'')}" == 'Unknown'
 
     alerts << "Lab: Expecting submission of sputum" unless self.sputum_orders_without_submission.empty?
 
@@ -1150,7 +1150,6 @@ EOF
   
   def hiv_status
     status = Observation.find(:last, :conditions => ["person_id = ? AND concept_id = ?", self.id, ConceptName.find_by_name("HIV Status").concept_id]).name rescue "UNKNOWN"
-    #raise"#{status.inspect}"
     return status
   end
   
