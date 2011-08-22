@@ -295,9 +295,9 @@ class Patient < ActiveRecord::Base
           label.font_horizontal_multiplier = 2
           label.font_vertical_multiplier = 2
           label.left_margin = 50
-          label.draw_text("#{self.person.name.titleize.delete("'")} #{self.national_id_with_dashes}",75, 30, 0, 4, 4, 4, false)
+          label.draw_multi_text("#{self.person.name.titleize.delete("'")} #{self.national_id_with_dashes}")
           label.draw_multi_text("#{lab_orders[i].name rescue nil}")
-          label.draw_text("#{accession_number rescue nil}",75, 30, 0, 4, 4, 4, false)
+          label.draw_multi_text("#{accession_number rescue nil}")
           label.draw_multi_text("#{DateTime.now.strftime("%d-%b-%Y %H:%M")}")
           labels << label
           end
