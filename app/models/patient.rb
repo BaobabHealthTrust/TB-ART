@@ -295,6 +295,7 @@ class Patient < ActiveRecord::Base
           label.font_horizontal_multiplier = 2
           label.font_vertical_multiplier = 2
           label.left_margin = 50
+          label.draw_barcode(50,180,0,1,5,15,120,false,"#{accession_number}")
           label.draw_multi_text("#{self.person.name.titleize.delete("'")} #{self.national_id_with_dashes}")
           label.draw_multi_text("#{lab_orders[i].name rescue nil}")
           label.draw_multi_text("#{accession_number rescue nil}")
