@@ -107,7 +107,7 @@ class Patient < ActiveRecord::Base
     alerts << "HIV Status : #{hiv_status}" if "#{hiv_status.gsub(" ",'')}" == 'Unknown'
 
     alerts << "Lab: Expecting submission of sputum" unless self.sputum_orders_without_submission.empty?
-    alerts << "Lab: Waiting for sputum results" unless !self.sputum_submissions_waiting_for_results.empty?
+    alerts << "Lab: Waiting for sputum results" unless self.sputum_submissions_waiting_for_results.empty?
     alerts
   end
   
@@ -295,9 +295,10 @@ class Patient < ActiveRecord::Base
           label.font_horizontal_multiplier = 2
           label.font_vertical_multiplier = 2
           label.left_margin = 50
-          label.draw_text("#{self.person.name.titleize.delete("'")} #{self.national_id_with_dashes}",75, 30, 0, 4, 4, 4, false)
+          label.draw_barcode(50,180,0,1,5,15,120,false,"#{accession_number}")
+          label.draw_multi_text("#{self.person.name.titleize.delete("'")} #{self.national_id_with_dashes}")
           label.draw_multi_text("#{lab_orders[i].name rescue nil}")
-          label.draw_text("#{accession_number rescue nil}",75, 30, 0, 4, 4, 4, false)
+          label.draw_multi_text("#{accession_number rescue nil}")
           label.draw_multi_text("#{DateTime.now.strftime("%d-%b-%Y %H:%M")}")
           labels << label
           end
@@ -1204,8 +1205,9 @@ EOF
   end
 
   def sputum_submissions_waiting_for_results
-    self.recent_sputum_submissions.collect{|order| order unless Observation.find(:all, :conditions => ["person_id = ? AND concept_id = ?", self.id, Concept.find_by_name(Encounter.find(:last,:conditions =>["encounter_type = ? and patient_id = ?",
-        EncounterType.find_by_name("LAB RESULTS").id,self.id]).observations)]).map{|o| o.accession_number}.include?(order.accession_number)}.compact rescue []
+    sputum_results = Encounter.find(:last,:conditions =>["encounter_type = ? and patient_id = ?",
+        EncounterType.find_by_name("LAB RESULTS").id,self.id]).name rescue []
+    return sputum_results
   end
 
   def is_first_visit?
