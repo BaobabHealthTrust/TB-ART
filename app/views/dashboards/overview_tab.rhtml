@@ -33,6 +33,7 @@
   .even {
      -moz-border-radius: 15px;
   }
+  .noneWarnings {color:black;background:orange;}
 </style>
 <div  style="display: table; width: 99%;">
   <div  style="display: table-row;">
@@ -65,7 +66,6 @@
           </div>
 
         </div>
-
 
         <div style="display: table-cell; width: 50%; padding: 10px; border: 1px solid #eee; -moz-border-radius: 15px;">
 
@@ -101,10 +101,17 @@
               <!-- h2>Alerts</h2 -->
               <ul class="list" style="height:140px; -moz-border-radius: 15px;">
                 <% for alert in @alerts do %>
-                    <li class="data <%= cycle('even', 'odd') %>"
-                        <%= (alert.include?("Missed") ? "style='background-color: #f33; -moz-border-radius: 15px;'" : "") %> >
-                      <div class="patient_state"><%=h alert %></div>
-                    </li>
+                    <% if alert.include?("Missed") %>
+                      <li class="data <%= cycle('even', 'odd') %>"
+                          <%= (alert.include?("Missed") ? "style='background-color: #f33; -moz-border-radius: 15px;'" : "") %> >
+                        <div class="patientState"><%=h alert %></div>
+                      </li>
+                     <% else %>
+                        <li class="data <%= cycle('even', 'odd') %>" >
+
+                         <div class="noneWarnings"><%=h alert %></div>
+                      </li>
+                     <% end %>
                   <% end %>
                   <% if @alerts.blank? %>
                     <li class="data even">
