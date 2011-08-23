@@ -106,6 +106,7 @@
     {:id => "visual_appearance_of_sputum_specimen",
      :tt_pageStyleClass => "NoKeyboard",
      :helpText => "Visual appearance of sputum specimen" } %>
+
      <%acc_numbers = @sputum_orders.collect{|k,v| k}.sort%>
      <%counter = 4%>
      <% (@sputum_orders.size).times do |i|%>
@@ -119,7 +120,7 @@
        :field_type => 'number',
        :tt_onLoad => "setupBarcode();inform();barcodeId = 'touchscreenInput#{counter}';",
        :validationCode => "acc_numbers_check[__$('touchscreenInput' + tstCurrentPage).value] != undefined",
-       :validationMessage => "Not a valid accession number: #{reg_ex} or a duplicate accession_numeber",
+       :validationMessage => "Not a valid accession number: #{reg_ex} or a duplicate accession_number",
        :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
 
     <%= touch_select_tag "#{@sputum_orders[acc_numbers[i]]} RESULTS", @patient, options_for_select(@sputum_results),
