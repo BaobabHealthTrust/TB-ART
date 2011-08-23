@@ -1229,5 +1229,58 @@ EOF
     return false if current_date > first_encounter_date
 
   end
+
+  def recent_lab_orders_label(test_list)
+    lab_orders = test_list
+    labels = []
+    i = 0
+    lab_orders.each{|test|
+      observation = Observation.find(test.to_i)
+
+      accession_number = "#{observation.accession_number rescue nil}"
+
+        if accession_number != ""
+          label = 'label' + i.to_s
+          label = ZebraPrinter::StandardLabel.new
+          label.font_size = 2
+          label.font_horizontal_multiplier = 2
+          label.font_vertical_multiplier = 2
+          label.left_margin = 50
+          label.draw_barcode(50,180,0,1,5,15,120,false,"#{accession_number}")
+          label.draw_multi_text("#{self.person.name.titleize.delete("'")} #{self.national_id_with_dashes}")
+          label.draw_multi_text("#{observation.name rescue nil}")
+          label.draw_multi_text("#{accession_number rescue nil}")
+          label.draw_multi_text("#{observation.date_created.strftime("%d-%b-%Y %H:%M")}")
+          labels << label
+         end
+
+         i = i + 1
+    }
+     
+      print_labels = []
+      label = 0
+      while label <= labels.size
+        print_labels << labels[label].print(1) if labels[label] != nil
+        label = label + 1
+      end
+
+      return print_labels
+  end
+
+  def get_recent_lab_orders_label
+    encounters = Encounter.find(:all,:conditions =>["encounter_type = ? and patient_id = ?",
+        EncounterType.find_by_name("LAB ORDERS").id,self.id]).last(5)
+      observations = []
+
+    encounters.each{|encounter|
+      encounter.observations.each{|observation|
+       unless observation['concept_id'] == Concept.find_by_name("Workstation location").concept_id
+          observations << ["#{ConceptName.find_by_concept_id(observation['value_coded'].to_i).name} : #{observation['date_created'].strftime("%Y-%m-%d") }",
+                            "#{observation['obs_id']}"]
+       end
+      }
+    }
+    return observations
+  end
   
 end
