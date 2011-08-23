@@ -9,6 +9,8 @@
 <script>
   var sputumOrders = <%= @sputum_orders.to_json %>
   var tt_cancel_destination = "/encounters/new/lab?patient_id=<%= @patient.patient_id -%>";
+  var acc_numbers = {<%= @sputum_orders.collect{|k,v| "#{k}:'#{v}'"}.sort.join(",")%>};
+  var acc_numbers_check = {<%= @sputum_orders.collect{|k,v| "#{k}:'#{v}'"}.sort.join(",")%>};
 
   barcodeFocusOnce = true;
   setTimeout("setupBarcode()", 300);
@@ -84,18 +86,19 @@ Check applicability of code below
 
   <%= text_field_tag :task_name, nil, { :tt_onLoad => "showTaskName()", :optional => "true", :tt_pageStyleClass => "NoControls", :helpText => 'Task'} %>
 
-  <%3.times do |i|%>
+  <% (@sputum_orders.size).times do |i|%>
     <%element_id = "specimen#{i+1}"%>
     <%destination_id = "specimen_#{i+1}"%>
     <%reg_ex = @sputum_orders.collect{|k,v| k}.join('|')%>
+
     <%= text_field_tag element_id, nil, 
       {:id => element_id,
        :helpText => "Scan specimen #{i+1}", 
        :field_type => 'number',
        :tt_onLoad => "inform();barcodeId = 'touchscreenInput#{i}';",
-       :validationRule => reg_ex, 
-       :validationMessage => "Not a valid accession number: #{reg_ex}", 
-       :tt_onUnLoad => "updateValues('#{element_id}','#{destination_id}');",
+       :validationCode => "acc_numbers_check[__$('touchscreenInput' + tstCurrentPage).value] != undefined",
+       :validationMessage => "Not a valid accession number: #{reg_ex} or a duplicate accession_number",
+       :tt_onUnLoad => "updateValues('#{element_id}','#{destination_id}');delete acc_numbers_check[__$('#{element_id}').value]",
        :tt_pageStyleClass => "Numeric NumbersOnly"}  %>
 
        <%= touch_hidden_tag "SPUTUM SUBMISSION", @patient, nil, :id => destination_id, :accession_number =>  0%>
