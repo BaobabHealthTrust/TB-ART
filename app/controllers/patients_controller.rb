@@ -153,7 +153,10 @@ class PatientsController < ApplicationController
 
     if GlobalProperty.use_user_selected_activities
       @links << ["Change user activities","/user/activities/#{User.current_user.id}?patient_id=#{patient.id}"]
-    end 
+    end
+
+    @links << ["Recent Lab Orders Label","/patients/recent_lab_orders?patient_id=#{patient.id}"]
+
     render :template => 'dashboards/personal_tab', :layout => false
   end
 
@@ -238,6 +241,25 @@ class PatientsController < ApplicationController
     patient = Patient.find(@patient.id)
     label_commands = patient.lab_orders_label
     send_data(label_commands.to_s,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{patient.id}#{rand(10000)}.lbl", :disposition => "inline")
+  end
+
+  def recent_lab_orders_print
+    patient = Patient.find(params[:id])
+    lab_orders_label = params[:lab_tests].split(":")
+
+    label_commands = patient.recent_lab_orders_label(lab_orders_label)
+    send_data(label_commands.to_s,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{patient.id}#{rand(10000)}.lbl", :disposition => "inline")
+  end
+
+  def print_recent_lab_orders_label
+    #patient = Patient.find(params[:id])
+    lab_orders_label = params[:lab_tests].join(":")
+    
+    #raise lab_orders_label.to_s
+    #label_commands = patient.recent_lab_orders_label(lab_orders_label)
+    #send_data(label_commands.to_s,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{patient.id}#{rand(10000)}.lbl", :disposition => "inline")
+
+    print_and_redirect("/patients/recent_lab_orders_print/#{params[:id]}?lab_tests=#{lab_orders_label}" , "/patients/show/#{params[:id]}")
   end
 
   def filing_number_label
@@ -614,7 +636,15 @@ class PatientsController < ApplicationController
     count = '0' if count.blank?
     render :text => count
   end
-  
+
+  def recent_lab_orders
+    patient = Patient.find(params[:patient_id])
+    @lab_order_labels = patient.get_recent_lab_orders_label
+    @patient_id = params[:patient_id]
+  end
+
+
+
   private
   
   
