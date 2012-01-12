@@ -79,7 +79,7 @@ Check applicability of code below
          :helpText => "What method?" } %>
     <% end %>
    <% end %>
-     <%= touch_select_tag "TB symptoms", @patient, concept_set_options('TB symptoms').sort + ['<option>Other</option><option>None</option>'],
+     <%= touch_select_tag "TB symptoms", @patient, concept_set_options('TB symptoms').sort + ['<option>Other</option><option>None</option>'] - [],
     {:id => "tb_symptoms",
      :multiple => true,
      :tt_pageStyleClass => "NoKeyboard",

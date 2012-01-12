@@ -237,7 +237,8 @@ class Encounter < ActiveRecord::Base
         "Urine" => ["Urine microscopy", "Urinanalysis", "Culture & sensitivity"],
         "Aspirate" => ["Full aspirate analysis"],
         "Stool" => ["Full stool analysis", "Culture & sensitivity"],
-        "Sputum" => ["AAFB(1st)", "AAFB(2nd)", "AAFB(3rd)", "Culture"],
+        "Sputum-AAFB" => ["AAFB(1st)", "AAFB(2nd)", "AAFB(3rd)"],
+        "Culture" => ["Culture(1st)", "Culture(2st)"],
         "Swab" => ["Microscopy", "Culture & sensitivity"]
       },
       'tb_symptoms' => [

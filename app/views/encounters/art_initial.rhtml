@@ -95,7 +95,7 @@
     {:id => "agrees_to_followup",
     :helpText => "Agrees to follow-up?" } %>
 
-  <%= touch_select_tag "CONFIRMATORY HIV TEST TYPE", @patient, options_for_select([['HIV RAPID TEST','HIV RAPID TEST'],['HIV PCR','HIV PCR'],['UNKNOWN','UNKNOWN']]),
+  <%= touch_select_tag "CONFIRMATORY HIV TEST TYPE", @patient, options_for_select([['HIV Rapid Test','HIV RAPID TEST'],['HIV PCR','HIV PCR'],['Unknown','UNKNOWN']]),
     {:id => "type_of_confirmatory_hiv_test",
      :helpText => "Type of confirmatory HIV test" } %>
 
