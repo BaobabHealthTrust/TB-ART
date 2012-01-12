@@ -153,9 +153,11 @@ class ClinicController < ApplicationController
   def administration_tab
     @reports =  [
                   ['/clinic/users_tab','User accounts/settings'],
-                  ['/clinic/management_tab','Drug Management'],
                   ['/clinic/location_management_tab','Location Management']
                 ]
+    if User.current_user.admin?
+      @reports << ['/clinic/management_tab','Drug Management']
+    end
     @landing_dashboard = 'clinic_administration'
     render :layout => false
   end
@@ -186,10 +188,12 @@ class ClinicController < ApplicationController
 
   def location_management_tab
     @reports =  [
-                  ['/location/new?act=create','Add location'],
-                  ['/location/new?act=delete','Delete location'],
                   ['/location/new?act=print','Print location']
                 ]
+    if User.current_user.admin?
+      @reports << ['/location/new?act=create','Add location']
+      @reports << ['/location/new?act=delete','Delete location']
+    end
     render :layout => false
   end
 

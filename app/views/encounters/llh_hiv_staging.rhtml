@@ -624,7 +624,7 @@ if not reason_for_art.blank? and not art_reasons.upcase == 'UNKNOWN'%>
   <%= touch_hidden_tag "REASON FOR ART ELIGIBILITY", @patient, "", :id => "reason_for_art_eligibility" %>
   
   <label for='summary'>Summary</label>
-  <%= text_field_tag :summary, nil, { :tt_onLoad => "summary();", :optional => "true"} %>
+  <%= text_field_tag :summary, nil, { :tt_onLoad => "summary();", :optional => "true", :tt_pageStyleClass => "NoControls" } %>
   
   <%= submit_tag "Finish" %>    
 </form>

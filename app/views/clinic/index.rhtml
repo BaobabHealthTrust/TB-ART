@@ -34,14 +34,10 @@
             <select id="tabs">
               <option value='/clinic/overview_tab'>Overview</option>
               <option value='/clinic/reports_tab'>Reports</option>
-
-              <% unless @roles.include?("Nurse") || @roles.include?("Registration Clerk") || @roles.include?("regstration_clerk") %>
-                <% if User.current_user.admin? %>
-                  <option value='/clinic/properties_tab'>Properties</option>
-                <%end%>
-                <option value='/clinic/administration_tab'>Administration</option>
-
-              <% end %>
+              <% if User.current_user.admin? %>
+                <option value='/clinic/properties_tab'>Properties</option>
+              <%end%>
+              <option value='/clinic/administration_tab'>Administration</option>
             </select>
             <select id="links">
 

@@ -67,10 +67,9 @@ class DispensationsController < ApplicationController
                :state => "ON ANTIRETROVIRALS",:start_date => session[:datetime] || Time.now()) if @drug.arv? rescue nil
       unless @order.blank?
         @order.drug_order.total_drug_supply(@patient, @encounter,session_date.to_date)
-        dispension_completed = @patient.set_received_regimen(@encounter, @order) if @order.drug_order.drug.arv?
 
         #checks if the prescription is satisfied
-        complete = dispension_complete(@patient.current_treatment_encounter(session_date))
+        complete = dispension_complete(@patient,@encounter,@patient.current_treatment_encounter(session_date))
         if complete
           unless params[:location]
             redirect_to :controller => 'encounters',:action => 'new',:start_date => @order.start_date.to_date,
@@ -116,13 +115,19 @@ class DispensationsController < ApplicationController
 
   private
 
-  def dispension_complete(prescription)
-    complete = true
-    prescription.drug_orders.each do | drug_order |
-      if (0.0 < drug_order.amount_needed)
-        complete = false
-      end
+  def dispension_complete(patient,encounter,prescription)
+    complete = false
+    prescription.orders.each do | order |
+      if (order.drug_order.amount_needed <= 0)
+        complete = true
+      else
+        complete = false and break
+      end 
     end
-    complete
+
+    if complete
+      dispension_completed = patient.set_received_regimen(encounter,prescription) 
+    end
+    return complete
   end
 end

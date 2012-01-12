@@ -27,7 +27,12 @@ module ApplicationHelper
   def ask_home_village
     GlobalProperty.find_by_property("demographics.home_village").property_value == "yes" rescue false
   end
-  
+
+  def site_prefix
+    site_prefix = GlobalProperty.find_by_property("site_prefix").property_value rescue false
+    return site_prefix
+  end
+
   def ask_mothers_surname
     GlobalProperty.find_by_property("demographics.mothers_surname").property_value == "yes" rescue false
   end
@@ -154,7 +159,7 @@ module ApplicationHelper
     options = set.map{|item|next if item.concept.blank? ; [item.concept.fullname] }
     return options
   end
-  
+
   def development_environment?
     ENV['RAILS_ENV'] == 'development'
   end

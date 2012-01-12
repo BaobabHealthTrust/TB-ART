@@ -60,7 +60,12 @@ class ApplicationController < ActionController::Base
   def generic_locations
     Location.workstation_locations
   end
-  
+
+  def site_prefix
+    site_prefix = GlobalProperty.find_by_property("site_prefix").property_value rescue false
+    return site_prefix
+  end
+
   def use_user_selected_activities
     GlobalProperty.find_by_property('use.user.selected.activities').property_value == "yes" rescue false
   end
